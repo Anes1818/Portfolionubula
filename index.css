@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Editorial Minimalist Design System
+  Mahesh P Pai — Portfolio v2
+  ───────────────────────────────────────────────────────────────────
+  Inspired by: bold serif typography, pure white canvas,
+  generous whitespace, and cinematic motion.
+  All colors in HSL format.
+*/
+
+@layer base {
+  :root {
+    /* Core palette */
+    --background:            0 0% 100%;
+    --foreground:            0 0% 5%;
+
+    /* Cards */
+    --card:                  0 0% 100%;
+    --card-foreground:       0 0% 5%;
+
+    /* Popover */
+    --popover:               0 0% 100%;
+    --popover-foreground:    0 0% 5%;
+
+    /* Primary — deep black for bold statements */
+    --primary:               0 0% 5%;
+    --primary-foreground:    0 0% 100%;
+
+    /* Secondary — subtle warm gray */
+    --secondary:             0 0% 97%;
+    --secondary-foreground:  0 0% 10%;
+
+    /* Muted */
+    --muted:                 0 0% 97%;
+    --muted-foreground:      0 0% 40%;
+
+    /* Accent — warm off-white */
+    --accent:                40 15% 97%;
+    --accent-foreground:     0 0% 5%;
+
+    /* Destructive */
+    --destructive:           0 84% 60%;
+    --destructive-foreground:0 0% 100%;
+
+    /* Borders */
+    --border:                0 0% 92%;
+    --input:                 0 0% 92%;
+    --ring:                  0 0% 5%;
+
+    /* Shape */
+    --radius:                0rem;
+
+    /* Sidebar */
+    --sidebar-background:    0 0% 98%;
+    --sidebar-foreground:    0 0% 20%;
+    --sidebar-primary:       0 0% 8%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent:        0 0% 95%;
+    --sidebar-accent-foreground:  0 0% 8%;
+    --sidebar-border:        0 0% 90%;
+    --sidebar-ring:          0 0% 8%;
+
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans:  'Inter', system-ui, sans-serif;
+    --font-mono:  'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+    /* Layout */
+    --section-padding:  clamp(5rem, 10vw, 8rem);
+    --page-padding-x:   clamp(1.5rem, 5vw, 4rem);
+
+    /* StarBorder theming (light mode = white inner bg) */
+    --star-border-bg:        #ffffff;
+    --star-border-radius:    60px;
+    --star-border-thickness: 2px;
+
+    /* Transitions */
+    --ease-cinematic: cubic-bezier(0.76, 0, 0.24, 1);
+    --ease-spring:    cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dark {
+    --background:            0 0% 6%;
+    --foreground:            0 0% 95%;
+    --card:                  0 0% 8%;
+    --card-foreground:       0 0% 95%;
+    --popover:               0 0% 8%;
+    --popover-foreground:    0 0% 95%;
+    --primary:               0 0% 95%;
+    --primary-foreground:    0 0% 6%;
+    --secondary:             0 0% 15%;
+    --secondary-foreground:  0 0% 90%;
+    --muted:                 0 0% 15%;
+    --muted-foreground:      0 0% 60%;
+    --accent:                0 0% 12%;
+    --accent-foreground:     0 0% 95%;
+    --destructive:           0 62% 30%;
+    --destructive-foreground:0 0% 95%;
+    --border:                0 0% 18%;
+    --input:                 0 0% 18%;
+    --ring:                  0 0% 85%;
+    --sidebar-background:    0 0% 8%;
+    --sidebar-foreground:    0 0% 90%;
+    --sidebar-primary:       0 0% 90%;
+    --sidebar-primary-foreground: 0 0% 8%;
+    --sidebar-accent:        0 0% 15%;
+    --sidebar-accent-foreground:  0 0% 90%;
+    --sidebar-border:        0 0% 18%;
+    --sidebar-ring:          0 0% 85%;
+
+    /* StarBorder dark mode */
+    --star-border-bg: #0a0a0a;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    /*
+     * DO NOT add scroll-behavior: smooth here — Lenis handles smooth scrolling.
+     * Doing both creates a janky double-scroll effect.
+     *
+     * DO NOT use !important on margin/padding — Tailwind's preflight already
+     * resets these. !important just adds specificity noise.
+     */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    /*
+     * overflow-x: clip (not hidden) — critical distinction:
+     * clip: does NOT create a scroll container, so position:sticky works.
+     * hidden: DOES create a scroll container, breaking sticky children.
+     */
+    overflow-x: clip;
+    background-color: hsl(var(--background));
+    /* Improve font rendering on all platforms */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    /* Native smooth scroll fallback for browsers without Lenis support */
+    scroll-behavior: auto;
+  }
+
+  #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  /* Headings always use the serif display font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Body copy — comfortable reading measure */
+  p {
+    line-height: 1.7;
+    max-width: 68ch;
+  }
+
+  /* Monospace strings (labels, numbers, tags) */
+  .mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Text reveal animation (clip-path wipe)
+   Usage: <span class="text-reveal">...</span>
+   Apply --clip-value via GSAP or CSS animation.
+──────────────────────────────────────────────────────────── */
+@layer components {
+  .text-reveal {
+    --clip-value: 100%;
+    clip-path: inset(0 var(--clip-value) 0 0);
+    will-change: clip-path;
+  }
+
+  /* Section wrapper — consistent padding */
+  .section {
+    padding-top:    var(--section-padding);
+    padding-bottom: var(--section-padding);
+    padding-left:   var(--page-padding-x);
+    padding-right:  var(--page-padding-x);
+  }
+
+  /* Label / tag pill */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;   /* 11px */
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Thin horizontal rule */
+  .rule {
+    width: 100%;
+    height: 1px;
+    background: hsl(var(--border));
+  }
+
+  /*
+   * Magnetic hover target.
+   * JS (GSAP) moves `--mx` and `--my` to shift the element
+   * toward the cursor. Works with any inline-block/flex child.
+   */
+  .magnetic {
+    --mx: 0px;
+    --my: 0px;
+    transform: translate(var(--mx), var(--my));
+    transition: transform 0.4s var(--ease-spring);
+  }
+
+  /* Underline reveal on hover (bottom to left) */
+  .hover-underline {
+    position: relative;
+  }
+  .hover-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s var(--ease-cinematic);
+  }
+  .hover-underline:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Custom scrollbar — matches the editorial monochrome palette
+──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar         { width: 3px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: hsl(var(--foreground) / 0.15); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--foreground) / 0.35); }
+
+/* Firefox */
+* { scrollbar-width: thin; scrollbar-color: hsl(var(--foreground) / 0.15) transparent; }
+
+/* ────────────────────────────────────────────────────────────
+   Reduced motion — respect OS accessibility setting.
+   Disables ALL transitions and animations globally.
+──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
