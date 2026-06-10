@@ -1,0 +1,28 @@
+{
+  "id": 101,
+  "title": "ROBUSTE Stand Mixer",
+  "category": "cuisine",
+  "basePrice": 199.0,
+  "oldPrice": 249.0,
+  "images": [
+    "images/mixer-black.jpg",
+    "images/mixer-white.jpg",
+    "images/mixer-red.jpg"
+  ],
+  "description_short": "5-quart tilt-head stand mixer with 10 speeds",
+  "description_long": "A future-ready example product showing the variant-aware model: one marketing product, multiple sellable SKUs.",
+  "features": ["5-quart bowl", "10 speeds", "Tilt-head design", "Includes whisk + dough hook"],
+  "badge": "New",
+  "options": [
+    { "name": "Color", "type": "swatch", "values": ["Black", "White", "Red"] },
+    { "name": "Power", "type": "button", "values": ["600W", "1000W"] }
+  ],
+  "variants": [
+    { "sku": "MIX-BLK-600", "options": { "Color": "Black", "Power": "600W" },  "priceDelta": 0,   "stock": 12, "image": "images/mixer-black.jpg" },
+    { "sku": "MIX-BLK-1000", "options": { "Color": "Black", "Power": "1000W" }, "priceDelta": 40,  "stock": 3,  "image": "images/mixer-black.jpg" },
+    { "sku": "MIX-WHT-600", "options": { "Color": "White", "Power": "600W" },  "priceDelta": 0,   "stock": 0,  "image": "images/mixer-white.jpg" },
+    { "sku": "MIX-WHT-1000", "options": { "Color": "White", "Power": "1000W" }, "priceDelta": 40,  "stock": 7,  "image": "images/mixer-white.jpg" },
+    { "sku": "MIX-RED-600", "options": { "Color": "Red", "Power": "600W" },    "priceDelta": 15,  "stock": 5,  "image": "images/mixer-red.jpg" },
+    { "sku": "MIX-RED-1000", "options": { "Color": "Red", "Power": "1000W" },   "priceDelta": 55,  "stock": 0,  "image": "images/mixer-red.jpg" }
+  ]
+}

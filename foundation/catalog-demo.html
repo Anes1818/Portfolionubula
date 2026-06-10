@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROBUSTE — Variant Catalog Demo</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#666; --line:#e6e6e6; --brand:#111; --ok:#0a7d33; --warn:#b25b00; --bad:#b00020; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--ink); margin: 0; background: #fafafa; }
+  .wrap { max-width: 880px; margin: 32px auto; padding: 0 20px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:24px; display:grid; grid-template-columns: 280px 1fr; gap:28px; }
+  @media (max-width:680px){ .card{ grid-template-columns:1fr; } }
+  .thumb { width:100%; aspect-ratio:1/1; border-radius:12px; background:#f0f0f0 center/cover no-repeat; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:13px; border:1px solid var(--line); }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .cat { color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
+  .price { font-size:28px; font-weight:700; margin:14px 0 2px; }
+  .old { color:var(--muted); text-decoration:line-through; font-size:16px; font-weight:400; margin-left:8px; }
+  .sku { color:var(--muted); font-size:12px; font-family:ui-monospace,Menlo,monospace; }
+  .opt { margin:18px 0 6px; font-weight:600; font-size:14px; }
+  .row { display:flex; flex-wrap:wrap; gap:8px; }
+  .swatch, .btnopt { border:1px solid var(--line); background:#fff; border-radius:10px; padding:9px 14px; cursor:pointer; font-size:14px; }
+  .swatch.sel, .btnopt.sel { border-color:var(--brand); box-shadow:0 0 0 2px var(--brand) inset; font-weight:600; }
+  .swatch.disabled, .btnopt.disabled { opacity:.4; cursor:not-allowed; text-decoration:line-through; }
+  .stock { margin:16px 0; font-size:14px; font-weight:600; }
+  .stock.in_stock{ color:var(--ok);} .stock.low_stock{ color:var(--warn);} .stock.out_of_stock{ color:var(--bad);}
+  .buy { margin-top:8px; width:100%; padding:14px; border:0; border-radius:12px; background:var(--brand); color:#fff; font-size:16px; cursor:pointer; }
+  .buy:disabled { background:#bbb; cursor:not-allowed; }
+  .note { margin-top:14px; font-size:12px; color:var(--muted); line-height:1.5; }
+  .dot { display:inline-block; width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.15);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="cat" id="cat"></p>
+  <div class="card">
+    <div>
+      <div class="thumb" id="thumb">image</div>
+      <p class="sku" id="sku"></p>
+    </div>
+    <div>
+      <h1 id="title"></h1>
+      <div class="price"><span id="price"></span><span class="old" id="old"></span></div>
+      <div id="options"></div>
+      <div class="stock" id="stock"></div>
+      <button class="buy" id="buy">Add to cart</button>
+      <p class="note">This single product page is driven entirely by <code>catalog.js</code>. Price, image, SKU, and stock all react to the selected variant. Sold-out combinations are blocked — try <b>White · 600W</b> or <b>Red · 1000W</b>.</p>
+    </div>
+  </div>
+</div>
+
+<script src="money.js"></script>
+<script src="store.config.js"></script>
+<script src="catalog.js"></script>
+<script>
+const COLORS = { Black:"#222", White:"#eee", Red:"#c0392b" };
+// Inlined sample (a real page would fetch this from products.json).
+const product = {
+  id:101, title:"ROBUSTE Stand Mixer", category:"cuisine", basePrice:199, oldPrice:249,
+  images:[""],
+  options:[
+    { name:"Color", type:"swatch", values:["Black","White","Red"] },
+    { name:"Power", type:"button", values:["600W","1000W"] }
+  ],
+  variants:[
+    { sku:"MIX-BLK-600",  options:{Color:"Black",Power:"600W"},  priceDelta:0,  stock:12 },
+    { sku:"MIX-BLK-1000", options:{Color:"Black",Power:"1000W"}, priceDelta:40, stock:3  },
+    { sku:"MIX-WHT-600",  options:{Color:"White",Power:"600W"},  priceDelta:0,  stock:0  },
+    { sku:"MIX-WHT-1000", options:{Color:"White",Power:"1000W"}, priceDelta:40, stock:7  },
+    { sku:"MIX-RED-600",  options:{Color:"Red",Power:"600W"},    priceDelta:15, stock:5  },
+    { sku:"MIX-RED-1000", options:{Color:"Red",Power:"1000W"},   priceDelta:55, stock:0  }
+  ]
+};
+
+let selected = Catalog.defaultSelection(product);
+
+const $ = (id) => document.getElementById(id);
+$("cat").textContent = product.category;
+$("title").textContent = product.title;
+$("old").textContent = product.oldPrice ? Money.format(product.oldPrice, "USD") : "";
+
+// Does ANY in-stock variant exist for this option value (given the rest of the selection)?
+function valueAvailable(optName, val) {
+  const trial = Object.assign({}, selected, { [optName]: val });
+  const v = Catalog.findVariant(product, trial);
+  return Catalog.isAvailable(v);
+}
+
+function renderOptions() {
+  const host = $("options"); host.innerHTML = "";
+  product.options.forEach(opt => {
+    const label = document.createElement("div"); label.className="opt"; label.textContent = opt.name; host.appendChild(label);
+    const row = document.createElement("div"); row.className="row";
+    opt.values.forEach(val => {
+      const el = document.createElement("button");
+      el.className = (opt.type==="swatch" ? "swatch" : "btnopt");
+      if (selected[opt.name]===val) el.classList.add("sel");
+      const avail = valueAvailable(opt.name, val);
+      if (!avail) el.classList.add("disabled");
+      if (opt.type==="swatch") { el.innerHTML = '<span class="dot" style="background:'+(COLORS[val]||'#ccc')+'"></span>'+val; }
+      else el.textContent = val;
+      el.onclick = () => { selected[opt.name]=val; render(); };
+      row.appendChild(el);
+    });
+    host.appendChild(row);
+  });
+}
+
+function render() {
+  renderOptions();
+  const v = Catalog.findVariant(product, selected);
+  const price = Catalog.priceFor(product, v);
+  $("price").textContent = Money.format(price, "USD");
+  $("sku").textContent = v ? "SKU: "+v.sku : "—";
+  const c = selected.Color; const dot = COLORS[c]||"#ccc";
+  $("thumb").style.background = dot; $("thumb").textContent = c + " unit";
+  $("thumb").style.color = (c==="White") ? "#888" : "#fff";
+  const state = Catalog.stockState(v ? v.stock : 0);
+  const stockEl = $("stock"); stockEl.className = "stock "+state;
+  stockEl.textContent = state==="out_of_stock" ? "Out of stock"
+      : state==="low_stock" ? ("Only "+v.stock+" left — order soon") : "In stock";
+  const buy = $("buy"); buy.disabled = !Catalog.isAvailable(v);
+  buy.textContent = buy.disabled ? "Unavailable" : ("Add to cart — "+Money.format(price,"USD"));
+}
+render();
+</script>
+</body>
+</html>

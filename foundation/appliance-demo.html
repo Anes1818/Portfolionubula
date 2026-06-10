@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROBUSTE Appliances — Foundation Demo</title>
+<!--
+  This page PROVES the foundation modules work. Open it in any browser.
+  It loads store.config.js + money.js and uses them to:
+   1) render appliance products with correct USD formatting,
+   2) switch the display currency live (Intl formatting),
+   3) pick a COLOR variant,
+   4) estimate US shipping + sales tax + order total at checkout.
+-->
+<style>
+  :root{--ink:#1f2733;--brand:#2563eb;--brand2:#1e40af;--soft:#f1f5fb;--line:#e2e8f0;--muted:#64748b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#fff}
+  header{background:linear-gradient(135deg,#2563eb,#1e3a8a);color:#fff;padding:26px 20px}
+  header .wrap{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  header h1{margin:0;font-size:1.5rem;letter-spacing:.3px}
+  header p{margin:4px 0 0;opacity:.85;font-size:.9rem}
+  .ccy{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:8px 12px;font-size:.95rem}
+  .ccy option{color:#222}
+  main{max-width:1040px;margin:0 auto;padding:24px 20px 60px}
+  h2{font-size:1.1rem;margin:30px 0 12px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+  .card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 18px rgba(37,99,235,.06);display:flex;flex-direction:column}
+  .thumb{height:130px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:3rem}
+  .card .body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .cat{font-size:.7rem;text-transform:uppercase;letter-spacing:.6px;color:var(--brand2);font-weight:700}
+  .title{font-weight:700;font-size:1rem;line-height:1.25}
+  .price{font-size:1.15rem;font-weight:800;color:var(--brand2)}
+  .colors{display:flex;gap:6px;margin-top:auto}
+  .colors button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 4px;font-size:.78rem;cursor:pointer;transition:.15s}
+  .colors button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .panel{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--soft);max-width:480px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .panel label{font-size:.85rem;font-weight:600;display:block;margin:10px 0 6px}
+  .panel select,.panel input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:#fff}
+  .totals{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px;font-size:.96rem}
+  .totals div{display:flex;justify-content:space-between;padding:3px 0}
+  .totals .grand{font-weight:800;font-size:1.1rem;color:var(--brand2);border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+  .free{color:#15803d;font-weight:700}
+  .hint{color:var(--muted);font-size:.82rem;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div>
+      <h1>🔌 ROBUSTE Appliances</h1>
+      <p>Foundation demo — USD-first, US shipping + tax, multi-currency capability</p>
+    </div>
+    <div>
+      <label for="ccy" style="font-size:.8rem;opacity:.85;display:block;margin-bottom:4px">Display currency</label>
+      <select id="ccy" class="ccy"></select>
+    </div>
+  </div>
+</header>
+
+<main>
+  <h2>Featured appliances</h2>
+  <div id="grid" class="grid"></div>
+
+  <h2>Order estimator (US shipping + sales tax)</h2>
+  <div class="panel">
+    <div class="row">
+      <div style="flex:1;min-width:160px">
+        <label for="subtotal">Cart subtotal (USD)</label>
+        <input id="subtotal" type="number" min="0" step="0.01" value="49.99">
+      </div>
+      <div style="flex:1;min-width:160px">
+        <label for="state">Ship to state</label>
+        <select id="state"></select>
+      </div>
+    </div>
+    <label for="method">Shipping method</label>
+    <select id="method"></select>
+    <div class="totals" id="totals"></div>
+    <p class="hint">Free standard shipping over $99. Sales tax is destination-based (added at checkout, US-style). Switch the header currency to see totals reformatted.</p>
+  </div>
+</main>
+
+<script src="store.config.js"></script>
+<script src="money.js"></script>
+<script>
+  // Sample appliance catalog (base prices in USD = StoreConfig.baseCurrency).
+  var PRODUCTS = [
+    { id:1, emoji:'💨', cat:'Hair care', title:'PRO2000 Hair Dryer',        basePrice:39.00 },
+    { id:2, emoji:'🧴', cat:'Hair care', title:'LCB200N Straightening Brush',basePrice:29.00 },
+    { id:3, emoji:'👕', cat:'Garment care', title:'SteamPro Iron',          basePrice:34.00 },
+    { id:4, emoji:'🍟', cat:'Kitchen', title:'AirChef 5L Air Fryer',          basePrice:89.00 }
+  ];
+
+  var currentCurrency = StoreConfig.baseCurrency;     // 'USD'
+  var colorChoice = {};
+  var COLORS = (StoreConfig.variantOptions.filter(function(o){return o.name==='Color';})[0]||{values:['Black']}).values;
+  PRODUCTS.forEach(function(p){ colorChoice[p.id] = COLORS[0]; });
+
+  // Currency switcher from config (capability demo).
+  var ccy = document.getElementById('ccy');
+  StoreConfig.supportedCurrencies.forEach(function(c){
+    var o=document.createElement('option'); o.value=c; o.textContent=c; ccy.appendChild(o);
+  });
+  ccy.value = currentCurrency;
+  ccy.addEventListener('change', function(){ currentCurrency=this.value; render(); estimate(); });
+
+  // State + method dropdowns from config.
+  var stateSel = document.getElementById('state');
+  ['CA','NY','TX','FL','WA','IL','OR'].forEach(function(s){
+    var o=document.createElement('option'); o.value=s;
+    o.textContent = s + (StoreConfig.salesTax.ratesByState[s]!=null ? ' ('+(StoreConfig.salesTax.ratesByState[s]*100).toFixed(2)+'%)' : ' (no tax)');
+    stateSel.appendChild(o);
+  });
+  var methodSel = document.getElementById('method');
+  StoreConfig.fulfillment.methods.forEach(function(m){
+    var o=document.createElement('option'); o.value=m.id; o.textContent=m.label+' — '+Money.price(m.fee,'USD'); methodSel.appendChild(o);
+  });
+  stateSel.addEventListener('change', estimate);
+  methodSel.addEventListener('change', estimate);
+  document.getElementById('subtotal').addEventListener('input', estimate);
+
+  function render(){
+    var grid=document.getElementById('grid'); grid.innerHTML='';
+    PRODUCTS.forEach(function(p){
+      var shown = Money.price(p.basePrice, currentCurrency);
+      var colorsHtml = COLORS.map(function(c){
+        var active = colorChoice[p.id]===c ? ' active' : '';
+        return '<button class="colbtn'+active+'" data-pid="'+p.id+'" data-c="'+c+'">'+c+'</button>';
+      }).join('');
+      grid.innerHTML +=
+        '<div class="card"><div class="thumb">'+p.emoji+'</div><div class="body">'+
+          '<div class="cat">'+p.cat+'</div><div class="title">'+p.title+'</div>'+
+          '<div class="price">'+shown+'</div><div class="colors">'+colorsHtml+'</div>'+
+        '</div></div>';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.colbtn'), function(btn){
+      btn.addEventListener('click', function(){ colorChoice[+this.dataset.pid]=this.dataset.c; render(); });
+    });
+  }
+
+  function estimate(){
+    var subtotal = parseFloat(document.getElementById('subtotal').value)||0;
+    var ship = StoreConfig.shippingFee(methodSel.value, subtotal);
+    var rate = StoreConfig.taxRateForState(stateSel.value);
+    var tax = (subtotal + ship) * rate;   // US: tax usually on goods (+ sometimes shipping)
+    var grand = subtotal + ship + tax;
+    var shipLabel = ship===0 ? '<span class="free">FREE</span>' : Money.price(ship,currentCurrency);
+    document.getElementById('totals').innerHTML =
+      '<div><span>Subtotal</span><span>'+Money.price(subtotal,currentCurrency)+'</span></div>'+
+      '<div><span>Shipping</span><span>'+shipLabel+'</span></div>'+
+      '<div><span>Sales tax ('+(rate*100).toFixed(2)+'%)</span><span>'+Money.price(tax,currentCurrency)+'</span></div>'+
+      '<div class="grand"><span>Total</span><span>'+Money.price(grand,currentCurrency)+'</span></div>';
+  }
+
+  render();
+  estimate();
+</script>
+</body>
+</html>

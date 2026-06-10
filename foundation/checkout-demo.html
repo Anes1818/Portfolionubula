@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROBUSTE — US Checkout Demo</title>
+<style>
+  :root{ --ink:#1a1a1a; --muted:#666; --line:#e0e0e0; --brand:#111; --bad:#b00020; --ok:#0a7d33; }
+  *{box-sizing:border-box;} body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:#fafafa;margin:0;}
+  .wrap{max-width:900px;margin:32px auto;padding:0 20px;display:grid;grid-template-columns:1fr 320px;gap:28px;}
+  @media(max-width:740px){.wrap{grid-template-columns:1fr;}}
+  h1{font-size:22px;margin:0 0 16px;} h2{font-size:15px;margin:22px 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px;}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fff;}
+  input.err,select.err{border-color:var(--bad);background:#fff6f6;}
+  .msg{color:var(--bad);font-size:12px;margin-top:3px;min-height:14px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;} .grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;}
+  .check{display:flex;align-items:center;gap:8px;margin:14px 0;} .check input{width:auto;}
+  .methods{display:flex;gap:10px;flex-wrap:wrap;}
+  .method{flex:1;min-width:130px;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;}
+  .method.sel{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand) inset;}
+  .method b{display:block;} .method span{color:var(--muted);font-size:12px;}
+  .summary{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;align-self:start;position:sticky;top:24px;}
+  .line{display:flex;justify-content:space-between;margin:8px 0;font-size:14px;} .line.total{font-size:18px;font-weight:700;border-top:1px solid var(--line);padding-top:12px;margin-top:12px;}
+  .free{color:var(--ok);font-weight:600;}
+  .pay{margin-top:16px;width:100%;padding:14px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-size:16px;cursor:pointer;}
+  .ok-banner{background:#eafaf0;border:1px solid #b7e4c7;color:#0a7d33;border-radius:10px;padding:12px;font-size:14px;margin-top:14px;display:none;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <form class="card" id="form" novalidate>
+    <h1>Checkout</h1>
+    <h2>Contact</h2>
+    <label>Full name</label><input name="fullName" autocomplete="name"><div class="msg" data-for="fullName"></div>
+    <div class="grid2">
+      <div><label>Email</label><input name="email" autocomplete="email"><div class="msg" data-for="email"></div></div>
+      <div><label>Phone (US)</label><input name="phone" placeholder="(415) 555-2671"><div class="msg" data-for="phone"></div></div>
+    </div>
+    <h2>Shipping address</h2>
+    <label>Street address</label><input name="address1" autocomplete="address-line1"><div class="msg" data-for="address1"></div>
+    <label>Apartment, suite (optional)</label><input name="address2"><div class="msg"></div>
+    <div class="grid3">
+      <div><label>City</label><input name="city"><div class="msg" data-for="city"></div></div>
+      <div><label>State</label><select name="state"><option value="">—</option></select><div class="msg" data-for="state"></div></div>
+      <div><label>ZIP</label><input name="zip" placeholder="10001"><div class="msg" data-for="zip"></div></div>
+    </div>
+    <h2>Shipping method</h2>
+    <div class="methods" id="methods"></div>
+    <div class="ok-banner" id="okBanner">✓ Order validated. In production this is where Stripe would collect payment (Step 6).</div>
+  </form>
+
+  <aside class="summary">
+    <h2 style="margin-top:0">Order summary</h2>
+    <div class="line"><span>Subtotal</span><span id="sSub"></span></div>
+    <div class="line"><span>Shipping <small id="sMethod" style="color:#999"></small></span><span id="sShip"></span></div>
+    <div class="line"><span>Sales tax <small id="sRate" style="color:#999"></small></span><span id="sTax"></span></div>
+    <div class="line total"><span>Total</span><span id="sTotal"></span></div>
+    <button class="pay" id="pay" form="form">Place order</button>
+    <p style="font-size:12px;color:#999;margin-top:10px">Demo cart subtotal: <b>$80.00</b>. Tax follows the selected <b>state</b>; shipping is free over $99.</p>
+  </aside>
+</div>
+
+<script src="money.js"></script>
+<script src="store.config.js"></script>
+<script src="checkout.js"></script>
+<script>
+const SUBTOTAL = 80;
+let method = StoreConfig.fulfillment.methods[0].id;
+const $ = (s,el=document)=>el.querySelector(s);
+const form = document.getElementById("form");
+
+// Populate states from DATA (not a hardcoded wilayas[] array).
+const stateSel = form.state;
+Object.keys(Checkout.US_STATES).forEach(code=>{
+  const o=document.createElement("option"); o.value=code; o.textContent=code+" — "+Checkout.US_STATES[code]; stateSel.appendChild(o);
+});
+
+// Shipping method cards.
+const methodsHost=document.getElementById("methods");
+function renderMethods(){
+  methodsHost.innerHTML="";
+  StoreConfig.fulfillment.methods.forEach(m=>{
+    const free = SUBTOTAL >= StoreConfig.fulfillment.freeShippingOver;
+    const el=document.createElement("div"); el.className="method"+(m.id===method?" sel":"");
+    el.innerHTML=`<b>${m.label}</b><span>${free?"FREE":Money.format(m.fee,"USD")} · ${m.etaDays?m.etaDays+" business days":""}</span>`;
+    el.onclick=()=>{method=m.id; renderMethods(); update();};
+    methodsHost.appendChild(el);
+  });
+}
+
+function readForm(){
+  const d={}; ["fullName","email","phone","address1","address2","city","state","zip"].forEach(n=>d[n]=form[n].value);
+  return d;
+}
+
+function update(showErrors){
+  const addr=readForm();
+  const res=Checkout.validateCheckout({ billing:addr, method:method, subtotal:SUBTOTAL });
+  const s=res.summary;
+  $("#sSub").textContent=Money.format(s.subtotal,"USD");
+  $("#sShip").innerHTML = s.shipping===0 ? '<span class="free">FREE</span>' : Money.format(s.shipping,"USD");
+  $("#sMethod").textContent = "("+method+")";
+  $("#sRate").textContent = s.taxRate ? "("+(s.taxRate*100).toFixed(3)+"%)" : "";
+  $("#sTax").textContent=Money.format(s.tax,"USD");
+  $("#sTotal").textContent=Money.format(s.total,"USD");
+  // field errors
+  document.querySelectorAll(".msg[data-for]").forEach(m=>{ m.textContent=""; const inp=form[m.getAttribute("data-for")]; if(inp) inp.classList.remove("err"); });
+  if(showErrors){
+    const errs=res.errors.billing||{};
+    Object.keys(errs).forEach(f=>{ const m=document.querySelector('.msg[data-for="'+f+'"]'); if(m)m.textContent=errs[f]; if(form[f])form[f].classList.add("err"); });
+  }
+  return res;
+}
+
+form.addEventListener("input", ()=>update(false));
+form.addEventListener("change", ()=>update(false));
+form.addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const res=update(true);
+  document.getElementById("okBanner").style.display = res.valid ? "block" : "none";
+  if(res.valid) console.log("Normalized order:", Checkout.normalizeAddress(readForm()), res.summary);
+});
+
+renderMethods(); update(false);
+</script>
+</body>
+</html>

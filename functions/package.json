@@ -1,0 +1,17 @@
+{
+  "name": "robuste-functions",
+  "description": "Stripe payment backend for ROBUSTE Appliances",
+  "engines": { "node": "20" },
+  "main": "index.js",
+  "scripts": {
+    "sync-lib": "rm -rf lib && cp -r ../lib lib",
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "npm run sync-lib && firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^4.9.0",
+    "stripe": "^14.25.0"
+  },
+  "private": true
+}
