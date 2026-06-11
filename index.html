@@ -1,787 +1,1972 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GREM5BTR7T"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-GREM5BTR7T');
-</script>
-<meta name="description" content="Robuste eulma - أجهزة منزلية عالية الجودة بأسعار تنافسية في الجزائر مع ضمان سنة واحدة وتوصيل سريع">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hi, I'm Anes — a freelance web developer who hand-codes fast, custom websites and online stores for businesses that want to stand out." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nebula — Custom Websites by Anes" />
+  <meta property="og:description" content="I'm Anes — I design and hand-code custom websites and online stores. You work directly with me, start to finish." />
+  <title>Nebula — Custom Websites, Built by Anes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
 
-<!-- أيقونات الموقع -->
-<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<style>
+/* ==========================================================================
+   STUDIO ENHANCED — All 9 Enhancements Active
+   01 Scroll-progress bar
+   02 Magnetic buttons
+   03 3-D feat-card tilt
+   04 3-D template-card tilt
+   05 Live iframe preview
+   06 WebGL bloom overlay
+   07 Horizontal pinned process
+   08 Formspree form
+   09 Cookie returning-visitor variant
+========================================================================== */
 
-<meta name="theme-color" content="#ff6600">
-<title>ROBUSTE eulma - المتجر الرسمي</title>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: auto; overflow-x: hidden; }
+body {
+  font-family: 'Manrope', system-ui, sans-serif;
+  background: #0a0a0a; color: #e8e8e4;
+  line-height: 1.6; overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; width: 100%; }
+ul { list-style: none; }
+button { font: inherit; border: none; background: none; cursor: none; }
 
-<!-- Google Fonts (Tajawal) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+:root {
+  --bg:#0a0a0a; --bg-raised:#0f0f0f; --surface:#111;
+  --surface-2:#171717; --surface-3:#1e1e1e;
+  --border:rgba(255,255,255,.055); --border-soft:rgba(255,255,255,.035);
+  --text:#e8e8e4; --text-muted:#525250;
+  --text-dim:#2e2e2c;
+  --accent:#c9a96e; --accent-dim:rgba(201,169,110,.12);
+  --accent-rgb:201,169,110;
+  --green:#4caf8a; --blue:#5b8fff;
+  --font-serif:'Cinzel',Georgia,serif;
+  --font-sans:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --r-xs:4px; --r-sm:8px; --r-md:16px; --r-lg:28px; --r-xl:40px;
+  --sp:clamp(5rem,10vw,9rem); --px:clamp(1.25rem,5vw,3.5rem);
+  --maxw:1280px;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out:cubic-bezier(0.76,0,0.24,1);
+  --ease-back:cubic-bezier(0.34,1.56,0.64,1);
+}
 
-<!-- Bootstrap -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+/* GHOST PROJECT CARDS — Hero right side */
+.hero-ghost-cards {
+  position: absolute;
+  right: clamp(2rem, 8vw, 7rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(220px, 28vw, 340px);
+  height: 340px;
+  pointer-events: none;
+  z-index: 2;
+}
+.ghost-card {
+  position: absolute;
+  width: 100%;
+  border: 1px solid rgba(201,169,110,.25);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  transition: opacity .4s;
+}
+.ghost-card:nth-child(1) {
+  top: 0; left: 0;
+  opacity: .18;
+  transform: rotate(-6deg) translateY(0px);
+  animation: ghostFloat1 6s ease-in-out infinite;
+}
+.ghost-card:nth-child(2) {
+  top: 20px; left: 10px;
+  opacity: .35;
+  transform: rotate(-2deg) translateY(0px);
+  animation: ghostFloat2 6s ease-in-out infinite;
+}
+.ghost-card:nth-child(3) {
+  top: 42px; left: 20px;
+  opacity: .72;
+  transform: rotate(1.5deg) translateY(0px);
+  animation: ghostFloat3 6s ease-in-out infinite;
+}
+.ghost-card-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .3rem;
+}
+.ghost-card-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,.4);
+}
+.ghost-card-url {
+  flex: 1;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(201,169,110,.1);
+  border: 1px solid rgba(201,169,110,.15);
+}
+.ghost-card-img {
+  width: 100%;
+  height: 80px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(201,169,110,.07) 0%, rgba(255,255,255,.04) 100%);
+  border: 1px solid rgba(201,169,110,.1);
+  margin-bottom: .4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ghost-card-img-line {
+  width: 40%;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(201,169,110,.2);
+}
+.ghost-card-title {
+  font-family: var(--font-serif);
+  font-size: .85rem;
+  font-weight: 700;
+  color: rgba(232,232,228,.6);
+  letter-spacing: .03em;
+}
+.ghost-card-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(201,169,110,.5);
+  border: 1px solid rgba(201,169,110,.2);
+  border-radius: 4px;
+  padding: .15rem .5rem;
+  width: fit-content;
+}
+@keyframes ghostFloat1 {
+  0%,100% { transform: rotate(-6deg) translateY(0px); }
+  50%      { transform: rotate(-6deg) translateY(-14px); }
+}
+@keyframes ghostFloat2 {
+  0%,100% { transform: rotate(-2deg) translateY(0px); }
+  50%      { transform: rotate(-2deg) translateY(-10px); }
+}
+@keyframes ghostFloat3 {
+  0%,100% { transform: rotate(1.5deg) translateY(0px); }
+  50%      { transform: rotate(1.5deg) translateY(-7px); }
+}
+@media (max-width: 768px) {
+  .hero-ghost-cards { display: none; }
+}
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+/* 01. SCROLL PROGRESS BAR */
+#scroll-progress {
+  position: fixed; top: 0; left: 0;
+  height: 2px; width: 0%;
+  background: linear-gradient(to right, var(--accent), rgba(var(--accent-rgb),.3));
+  z-index: 9000;
+  pointer-events: none;
+  transition: opacity .4s;
+  transform-origin: left center;
+}
+#scroll-progress::after {
+  content: '';
+  position: absolute; right: 0; top: -3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb),.8);
+}
 
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+/* VEIL */
+#veil {
+  position: fixed; inset: 0;
+  background: var(--bg); z-index: 8000;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+#veil-logo {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem,4vw,2.5rem);
+  font-weight: 700; letter-spacing: .1em;
+  color: var(--accent); opacity: 0;
+}
 
-<link rel="stylesheet" href="style.css">
+/* Returning visitor banner */
+#rv-banner {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 7500; pointer-events: none;
+  padding: .6rem 1.5rem;
+  background: rgba(10,10,10,.9);
+  border: 1px solid rgba(var(--accent-rgb),.25);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  font-family: var(--font-mono); font-size: .65rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0; top: -40px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+
+/* AMBIENT CANVAS */
+#ambientCanvas {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right,black 0%,black 10%,transparent 20%,transparent 80%,black 90%,black 100%);
+  mask-image: linear-gradient(to right,black 0%,black 10%,transparent 20%,transparent 80%,black 90%,black 100%);
+  opacity: .5;
+}
+@media (max-width:768px) {
+  #ambientCanvas {
+    -webkit-mask-image: linear-gradient(to bottom,black 0%,rgba(0,0,0,.4) 50%,transparent 85%);
+    mask-image: linear-gradient(to bottom,black 0%,rgba(0,0,0,.4) 50%,transparent 85%);
+    opacity: .3;
+  }
+}
+
+/* CUSTOM CURSOR */
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--accent); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%) scale(1);
+  transition: transform .2s var(--ease-out), background .2s;
+}
+#cursor-ring {
+  position: fixed; width: 38px; height: 38px;
+  border: 1px solid rgba(var(--accent-rgb),.35); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .4s var(--ease-out), height .4s var(--ease-out);
+}
+body.cursor-hover #cursor { transform: translate(-50%,-50%) scale(2.5); }
+body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(var(--accent-rgb),.15); }
+@media (hover:none),(max-width:768px) {
+  #cursor,#cursor-ring { display:none!important; }
+  body,a,button { cursor:auto; } a,button { cursor:pointer; }
+}
+
+/* UTILITIES */
+.z1 { position:relative; z-index:1; }
+[data-reveal] { opacity:0; transform:translateY(32px); }
+.tag {
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); padding:.35rem .85rem;
+  border:1px solid rgba(var(--accent-rgb),.25);
+  border-radius:100px; background:var(--accent-dim);
+}
+.tag::before {
+  content:''; width:5px; height:5px; border-radius:50%;
+  background:var(--green); animation:tagPulse 2.5s ease infinite;
+}
+@keyframes tagPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+.section-eyebrow {
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); display:flex; align-items:center; gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.section-eyebrow::before { content:''; width:2rem; height:1px; background:var(--accent); flex-shrink:0; }
+.section-title {
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,4rem);
+  font-weight:700; letter-spacing:-.01em; line-height:1.08;
+}
+.section-desc { font-size:clamp(.9rem,1.5vw,1.05rem); color:var(--text-muted); line-height:1.8; max-width:48ch; }
+.wrev .wrev-word { display:inline; opacity:.06; will-change:opacity; }
+.clip-reveal { position:relative; color:var(--text-dim); --clip:100%; }
+.clip-reveal::before {
+  content:attr(data-text); position:absolute; inset:0;
+  color:var(--text); clip-path:inset(0 0 var(--clip) 0); will-change:clip-path;
+}
+
+/* 02. MAGNETIC BUTTONS */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.6rem; padding:.95rem 2rem;
+  font-family:var(--font-sans); font-size:.875rem;
+  font-weight:700; letter-spacing:.02em;
+  border-radius:100px; white-space:nowrap;
+  position:relative; overflow:hidden;
+  transition: box-shadow .35s var(--ease-out);
+  cursor:none; will-change:transform;
+}
+.btn::after {
+  content:''; position:absolute; inset:0;
+  background:rgba(255,255,255,.08); opacity:0;
+  border-radius:inherit; transition:opacity .25s;
+}
+.btn:hover::after { opacity:1; }
+.btn-primary {
+  background:var(--accent); color:#0a0a0a;
+  box-shadow:0 0 32px rgba(var(--accent-rgb),.2);
+}
+.btn-primary:hover { box-shadow:0 8px 40px rgba(var(--accent-rgb),.4); }
+.btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+.btn-ghost:hover { border-color:rgba(255,255,255,.2); }
+.btn-lg { padding:1.15rem 2.5rem; font-size:.95rem; }
+.btn-full { width:100%; justify-content:center; }
+.btn-arrow-icon { display:inline-block; transition:transform .3s var(--ease-out); }
+.btn:hover .btn-arrow-icon { transform:translate(3px,-3px); }
+
+/* NAVIGATION */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:600;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.35rem var(--px);
+  transition:background .5s, border-color .5s, padding .4s;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled {
+  background:rgba(10,10,10,.85);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  border-bottom-color:var(--border); padding:1rem var(--px);
+}
+.nav-logo {
+  font-family:var(--font-serif); font-size:1.35rem; font-weight:800;
+  letter-spacing:.06em; color:var(--text); position:relative; z-index:700;
+}
+.nav-logo span { color:var(--accent); }
+.nav-links { display:flex; gap:2.5rem; }
+.nav-links a {
+  font-size:.82rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--text-muted); transition:color .25s; position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-3px; left:0;
+  width:0; height:1px; background:var(--accent);
+  transition:width .35s var(--ease-out);
+}
+.nav-links a:hover { color:var(--text); }
+.nav-links a:hover::after { width:100%; }
+.nav-right { display:flex; align-items:center; gap:1.5rem; }
+.nav-toggle {
+  display:none; flex-direction:column; gap:5px;
+  padding:10px; cursor:none; position:relative; z-index:700;
+}
+.nav-toggle span {
+  display:block; width:24px; height:1.5px; background:var(--text);
+  transition:transform .4s var(--ease-in-out), opacity .3s; transform-origin:center;
+}
+.nav-overlay {
+  position:fixed; inset:0; z-index:500; background:#0a0a0a;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.5rem; opacity:0; pointer-events:none; transition:opacity .4s;
+}
+.nav-overlay.open { opacity:1; pointer-events:all; }
+.nav-overlay-link {
+  font-family:var(--font-serif);
+  font-size:clamp(2.5rem,10vw,4.5rem);
+  font-weight:700; letter-spacing:-.01em;
+  color:var(--text-muted); transition:color .25s; padding:.35rem 0;
+}
+.nav-overlay-link:hover { color:var(--text); }
+.nav-overlay-cta { margin-top:2rem; }
+.nav-overlay-foot {
+  position:absolute; bottom:2.5rem;
+  font-family:var(--font-mono); font-size:.65rem;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* HERO */
+.hero {
+  position:relative; min-height:100svh;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.hero-canvas,
+.hero-bloom {
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+}
+.hero-bloom {
+  z-index:1;
+  mix-blend-mode:screen;
+  opacity:.38;
+  filter:blur(22px) brightness(2.2) saturate(1.4);
+}
+.hero-orb {
+  position:absolute; border-radius:50%;
+  pointer-events:none; z-index:1; will-change:transform;
+}
+.hero-orb--a {
+  width:clamp(280px,30vw,520px); height:clamp(280px,30vw,520px);
+  top:-5%; right:-10%;
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.08) 0%,transparent 68%);
+  filter:blur(50px);
+}
+.hero-orb--b {
+  width:clamp(180px,20vw,360px); height:clamp(180px,20vw,360px);
+  bottom:15%; left:-8%;
+  background:radial-gradient(circle,rgba(91,143,255,.05) 0%,transparent 70%);
+  filter:blur(60px);
+}
+.hero-orb--c {
+  width:1px; height:clamp(140px,22vh,260px);
+  top:18%; right:18%;
+  background:linear-gradient(to bottom,transparent,rgba(var(--accent-rgb),.3),transparent);
+}
+.hero-body {
+  position:relative; z-index:2; flex:1;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:calc(5rem + 80px) var(--px) 5rem; max-width:1100px;
+}
+.hero-eyebrow { margin-bottom:2.5rem; opacity:0; transform:translateY(12px); }
+.hero-headline {
+  font-family:var(--font-serif);
+  font-size:clamp(3.8rem,10vw,9rem);
+  font-weight:800; letter-spacing:-.025em; line-height:.92; margin-bottom:2.5rem;
+}
+.hero-line { display:block; overflow:hidden; }
+.hero-line-inner { display:block; opacity:0; transform:translateY(110%); }
+.hero-line--gold .hero-line-inner { color:var(--accent); }
+.hero-sub {
+  font-size:clamp(.95rem,1.6vw,1.15rem); color:var(--text-muted);
+  line-height:1.8; max-width:500px; margin-bottom:3rem;
+  opacity:0; transform:translateY(16px);
+}
+.hero-actions { display:flex; flex-wrap:wrap; gap:1rem; opacity:0; transform:translateY(16px); }
+.hero-stats {
+  position:absolute; bottom:clamp(2rem,5vw,4rem); right:var(--px);
+  display:flex; gap:2.5rem; opacity:0; transform:translateY(16px); z-index:2;
+}
+.hero-stat-num {
+  font-family:var(--font-serif); font-size:clamp(1.6rem,3vw,2.5rem);
+  font-weight:700; color:var(--text); line-height:1;
+}
+.hero-stat-num span { color:var(--accent); }
+.hero-stat-label {
+  font-family:var(--font-mono); font-size:.62rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin-top:.4rem;
+}
+.hero-scroll-hint {
+  position:absolute; bottom:clamp(2rem,5vw,4rem); left:var(--px);
+  display:flex; align-items:center; gap:.75rem; z-index:2; opacity:0;
+}
+.hero-scroll-hint span {
+  font-family:var(--font-mono); font-size:.62rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--text-muted);
+}
+.hero-scroll-line {
+  width:3rem; height:1px;
+  background:linear-gradient(to right,var(--text-muted),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%,100%{opacity:.6;transform:scaleX(1)} 50%{opacity:.2;transform:scaleX(.5)} }
+
+/* MARQUEE */
+.marquee-band {
+  position:relative; z-index:2; overflow:hidden;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.015); padding:.9rem 0;
+}
+.marquee-track { display:flex; white-space:nowrap; animation:marquee 28s linear infinite; }
+.marquee-item {
+  display:inline-flex; align-items:center; gap:1.5rem;
+  font-family:var(--font-mono); font-size:.68rem;
+  font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-muted); padding-right:2.5rem;
+}
+.marquee-dot { color:var(--accent); font-size:.8rem; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* PHILOSOPHY */
+.philosophy {
+  padding:var(--sp) var(--px); display:flex; justify-content:center;
+  border-bottom:1px solid var(--border); position:relative; z-index:1;
+}
+.philosophy-inner { max-width:920px; }
+.philosophy-quote {
+  font-family:var(--font-serif);
+  font-size:clamp(1.7rem,3.8vw,3.2rem);
+  font-weight:600; line-height:1.3; letter-spacing:-.01em;
+}
+
+/* SHOWCASE */
+.showcase {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  overflow:hidden; position:relative; z-index:1;
+}
+.showcase-header { max-width:680px; margin-bottom:clamp(3rem,7vw,6rem); }
+.showcase-heading {
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,5.5vw,5rem);
+  font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:1.25rem;
+}
+.showcase-heading em { font-style:italic; color:var(--accent); }
+.tracks { display:flex; flex-direction:column; overflow:hidden; margin-bottom:clamp(3.5rem,8vw,6.5rem); }
+.track {
+  border-top:1px solid var(--border); padding:.9rem 0; overflow:hidden;
+}
+.track:last-child { border-bottom:1px solid var(--border); }
+.track-inner {
+  display:flex; gap:3rem; align-items:center; will-change:transform;
+  transform:translateX(35%);
+}
+.track[data-dir="l"] .track-inner { transform:translateX(-35%); }
+.track-inner span {
+  font-family:var(--font-serif);
+  font-size:clamp(1.25rem,2.8vw,2.2rem);
+  font-weight:600; letter-spacing:.015em;
+  color:var(--text-muted); white-space:nowrap; transition:color .35s;
+}
+.track-inner span.sep { color:var(--text-dim); font-size:1rem; }
+.track-inner span:not(.sep):hover { color:var(--text); }
+
+/* 03. FEAT CARDS */
+.feat-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden;
+  perspective:900px;
+}
+.feat-card {
+  background:var(--surface); padding:2.5rem 2rem;
+  opacity:0; transform:translateY(22px) rotateX(0) rotateY(0);
+  transition:background .35s, transform .12s linear, box-shadow .35s;
+  position:relative; overflow:hidden;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.feat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(to right,transparent,rgba(var(--accent-rgb),.4),transparent);
+  opacity:0; transition:opacity .35s;
+}
+.feat-card:hover { background:var(--surface-2); }
+.feat-card:hover::before { opacity:1; }
+.feat-card-icon { font-size:1.5rem; color:var(--accent); margin-bottom:1.4rem; display:block; }
+.feat-card h3 { font-size:1rem; font-weight:700; letter-spacing:-.025em; margin-bottom:.6rem; }
+.feat-card p { font-size:.84rem; color:var(--text-muted); line-height:1.7; }
+.feat-card-shine {
+  position:absolute; inset:0; border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0%, transparent 65%);
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.feat-card:hover .feat-card-shine { opacity:1; }
+
+/* TEMPLATES GALLERY */
+.templates {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  position:relative; z-index:1;
+}
+.templates-header {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  flex-wrap:wrap; gap:1.5rem; margin-bottom:clamp(3rem,7vw,5.5rem);
+}
+.templates-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));
+  gap:1.75rem;
+  perspective:1200px;
+}
+
+/* 04. TEMPLATE CARD 3-D TILT + 05. LIVE IFRAME PREVIEW */
+.tpl-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); overflow:hidden;
+  opacity:0; transform:translateY(40px) rotateX(0) rotateY(0);
+  transition:border-color .35s, box-shadow .35s, transform .12s linear;
+  transform-style:preserve-3d; will-change:transform;
+  position:relative;
+}
+.tpl-card:hover {
+  border-color:rgba(var(--accent-rgb),.25);
+  box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(var(--accent-rgb),.08);
+}
+.tpl-preview {
+  position:relative; height:280px; overflow:hidden;
+}
+.tpl-preview--flower  { background:linear-gradient(135deg,#1a0e10 0%,#2d1519 40%,#1f1012 100%); }
+.tpl-preview--perfume { background:linear-gradient(135deg,#191410 0%,#28200e 40%,#1c180b 100%); }
+.tpl-preview--ecom    { background:linear-gradient(135deg,#0c1220 0%,#111d32 40%,#0f1629 100%); }
+.tpl-preview-inner {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center; padding:1.75rem;
+}
+.tpl-iframe-wrap {
+  position:absolute; inset:0; z-index:3;
+  opacity:0; transition:opacity .5s var(--ease-out);
+  pointer-events:none;
+}
+.tpl-card:hover .tpl-iframe-wrap { opacity:1; pointer-events:all; }
+.tpl-iframe-wrap iframe {
+  width:400%; height:400%;
+  transform:scale(.25); transform-origin:top left;
+  border:none; pointer-events:none;
+  border-radius:0;
+}
+.tpl-overlay {
+  position:absolute; inset:0; z-index:4;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(10,10,10,.55);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  opacity:0; transition:opacity .35s;
+}
+.tpl-card:hover .tpl-overlay { opacity:1; }
+.tpl-mobile-cta {
+  display:none; text-align:center; padding:.75rem 1.5rem 0;
+  font-family:var(--font-mono); font-size:.72rem;
+  font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); text-decoration:underline; text-underline-offset:4px;
+}
+.tpl-body { padding:2rem; }
+.tpl-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.tpl-tag {
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+}
+.tpl-num { font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted); font-weight:600; }
+.tpl-name { font-family:var(--font-serif); font-size:1.3rem; font-weight:700; letter-spacing:-.015em; margin-bottom:.65rem; }
+.tpl-desc { font-size:.855rem; color:var(--text-muted); line-height:1.7; margin-bottom:1.35rem; }
+.tpl-features { display:flex; flex-direction:column; gap:.4rem; }
+.tpl-features li { font-size:.8rem; color:var(--text-muted); padding-left:1.1rem; position:relative; }
+.tpl-features li::before { content:'—'; position:absolute; left:0; color:var(--accent); font-size:.7rem; }
+.tpl-shine {
+  position:absolute; inset:0; border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%,rgba(var(--accent-rgb),.04) 0%,transparent 65%);
+  opacity:0; pointer-events:none; transition:opacity .2s; z-index:5;
+}
+.tpl-card:hover .tpl-shine { opacity:1; }
+
+/* Mock browser */
+.mock {
+  width:100%; max-width:290px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px; overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+.mock-bar {
+  height:28px; padding:0 10px;
+  background:rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex; align-items:center; gap:5px;
+}
+.mock-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.12); }
+.mock-body { padding:1rem; display:flex; flex-direction:column; gap:.5rem; }
+.mock-hero-line { height:8px; border-radius:4px; background:rgba(255,255,255,.1); }
+.mock-accent-bar { height:3px; width:40%; border-radius:2px; opacity:.9; }
+.mock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; padding:.25rem 0 .5rem; }
+.mock-product { height:48px; border-radius:6px; background:rgba(255,255,255,.06); }
+
+/* SERVICES */
+.services {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  display:grid; grid-template-columns:1fr 1.7fr;
+  gap:clamp(3rem,8vw,7rem); align-items:start;
+  position:relative; z-index:1;
+}
+.services-left { position:sticky; top:9rem; }
+.services-list { display:flex; flex-direction:column; }
+.svc-item {
+  display:grid; grid-template-columns:3.5rem 1fr 2.5rem;
+  gap:1.5rem; align-items:start; padding:2.25rem 0;
+  border-bottom:1px solid var(--border);
+  opacity:0; transform:translateX(-20px); transition:background .3s;
+}
+.svc-item:first-child { border-top:1px solid var(--border); }
+.svc-num { font-family:var(--font-mono); font-size:.68rem; font-weight:700; color:var(--text-dim); padding-top:.25rem; letter-spacing:.1em; }
+.svc-body h3 { font-size:1.1rem; font-weight:800; letter-spacing:-.035em; margin-bottom:.5rem; transition:color .25s; }
+.svc-body p { font-size:.855rem; color:var(--text-muted); line-height:1.65; }
+.svc-arrow { font-size:1.3rem; color:var(--text-dim); transform:rotate(-35deg); transition:transform .35s var(--ease-out),color .35s; padding-top:.15rem; }
+.svc-item:hover .svc-body h3 { color:var(--accent); }
+.svc-item:hover .svc-arrow { color:var(--accent); transform:rotate(0deg); }
+
+/* 07. HORIZONTAL PINNED PROCESS */
+.process {
+  position:relative; z-index:1;
+  border-bottom:1px solid var(--border);
+}
+.process-pin-wrap {
+  position:relative;
+}
+.process-sticky {
+  position:sticky; top:0;
+  width:100%; height:100svh;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.process-header {
+  padding:var(--px) var(--px) 2rem;
+  flex-shrink:0; max-width:680px;
+}
+.process-header .section-eyebrow { margin-top: clamp(4rem,6vw,5rem); }
+.process-track-wrap {
+  flex:1; overflow:hidden;
+  display:flex; align-items:center;
+  padding:0 var(--px);
+}
+.process-track {
+  display:flex; gap:clamp(2.5rem,5vw,4.5rem);
+  align-items:flex-start; will-change:transform;
+  padding-right:var(--px);
+}
+.step {
+  flex:0 0 clamp(260px,35vw,420px);
+  padding:2rem 2.5rem 2rem 0;
+  opacity:0; transform:translateX(40px);
+  position:relative; border-top:2px solid var(--border);
+}
+.step-progress-line {
+  position:absolute; top:-2px; left:0;
+  height:2px; width:0;
+  background:linear-gradient(to right,var(--accent),rgba(var(--accent-rgb),.3));
+  transition:width 1s var(--ease-out); z-index:1;
+}
+.step.active .step-progress-line { width:100%; }
+.step-num {
+  font-family:var(--font-mono); font-size:.68rem; font-weight:700;
+  letter-spacing:.14em; color:var(--accent); margin-bottom:1.75rem;
+  display:flex; align-items:center; gap:.6rem;
+}
+.step-num-circle {
+  width:28px; height:28px; border-radius:50%;
+  border:1px solid rgba(var(--accent-rgb),.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.65rem; background:var(--accent-dim);
+}
+.step h3 {
+  font-family:var(--font-serif); font-size:1.3rem; font-weight:700;
+  letter-spacing:-.015em; margin-bottom:.75rem;
+}
+.step p { font-size:.855rem; color:var(--text-muted); line-height:1.7; }
+.process-dots {
+  display:flex; gap:.6rem; align-items:center;
+  padding:0 var(--px) 2rem; flex-shrink:0;
+}
+.process-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--text-dim);
+  transition:background .4s, transform .4s var(--ease-back);
+}
+.process-dot.active { background:var(--accent); transform:scale(1.5); }
+
+@media (max-width:768px) {
+  .process-pin-wrap { height:auto !important; }
+  .process-sticky { position:relative; height:auto; display:block; }
+  .process-header .section-eyebrow { margin-top:0; }
+  .process-track-wrap { overflow:visible; display:block; padding:0 var(--px); }
+  .process-track { flex-direction:column; gap:0; transform:none !important; }
+  .step { flex:none; width:100%; padding:2rem 0; opacity:1 !important; transform:none !important; border-top:1px solid var(--border); border-left:none; }
+  .step-progress-line { display:none; }
+  .process-dots { display:none; }
+  .process-header { padding-top:calc(var(--sp) * .5); }
+  .process { padding-bottom:var(--sp); }
+}
+
+/* STATEMENT */
+.statement {
+  padding:var(--sp) var(--px);
+  display:flex; flex-direction:column; align-items:center; gap:3rem;
+  text-align:center; border-bottom:1px solid var(--border);
+  background:var(--bg-raised); position:relative; z-index:1; overflow:hidden;
+}
+.statement-quote {
+  font-family:var(--font-serif);
+  font-size:clamp(1.6rem,3.8vw,3rem);
+  font-weight:600; line-height:1.3; max-width:900px;
+}
+
+/* 08. CONTACT */
+.contact {
+  padding:var(--sp) var(--px);
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:clamp(3rem,8vw,7rem); border-bottom:1px solid var(--border);
+  align-items:start; position:relative; z-index:1;
+}
+.contact-headline {
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,4rem);
+  font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:1.25rem;
+}
+.contact-headline span { color:var(--accent); font-style:italic; }
+.contact-desc { font-size:.95rem; color:var(--text-muted); line-height:1.8; margin-bottom:2.5rem; max-width:40ch; }
+.contact-channels { display:flex; flex-direction:column; gap:.85rem; }
+.contact-ch {
+  display:flex; align-items:center; gap:1.1rem;
+  padding:1.1rem 1.35rem; border-radius:var(--r-md);
+  border:1px solid var(--border); background:var(--surface);
+  transition:border-color .3s, background .3s, transform .3s var(--ease-out);
+}
+.contact-ch:hover { border-color:rgba(var(--accent-rgb),.3); background:var(--surface-2); transform:translateX(4px); }
+.contact-ch-icon {
+  width:2.35rem; height:2.35rem; border-radius:50%;
+  background:var(--accent-dim); display:flex; align-items:center;
+  justify-content:center; color:var(--accent); font-size:1rem; flex-shrink:0;
+}
+.contact-ch-label { font-family:var(--font-mono); font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.15rem; }
+.contact-ch-val { font-size:.92rem; font-weight:700; color:var(--text); }
+.contact-socials { display:flex; gap:1rem; margin-top:1.5rem; flex-wrap:wrap; }
+.contact-social {
+  font-family:var(--font-mono); font-size:.7rem; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted);
+  display:inline-flex; align-items:center; gap:.4rem; transition:color .25s;
+}
+.contact-social:hover { color:var(--accent); }
+.contact-form { display:flex; flex-direction:column; gap:1.25rem; }
+.form-group { display:flex; flex-direction:column; gap:.5rem; }
+.form-group label {
+  font-family:var(--font-mono); font-size:.65rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted);
+}
+.form-group input,.form-group textarea,.form-group select {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:var(--font-sans); font-size:1rem;
+  padding:1rem 1.15rem; outline:none; resize:none;
+  transition:border-color .25s, background .25s;
+}
+.form-group input::placeholder,.form-group textarea::placeholder { color:var(--text-dim); }
+.form-group input:focus,.form-group textarea:focus {
+  border-color:rgba(var(--accent-rgb),.5); background:var(--surface-2);
+}
+.form-status {
+  padding:.9rem 1.15rem; border-radius:var(--r-sm);
+  font-size:.855rem; font-weight:600; display:none;
+  border:1px solid;
+}
+.form-status.success { color:#4caf8a; background:rgba(76,175,138,.08); border-color:rgba(76,175,138,.25); display:block; }
+.form-status.error   { color:#ff6b6b; background:rgba(255,107,107,.08); border-color:rgba(255,107,107,.25); display:block; }
+.form-note { font-size:.75rem; color:var(--text-muted); text-align:center; margin-top:-.25rem; }
+
+/* FOOTER */
+.footer { padding:2.5rem var(--px); position:relative; z-index:1; }
+.footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; flex-wrap:wrap; gap:1.5rem; }
+.footer-logo { font-family:var(--font-serif); font-size:1.2rem; font-weight:800; letter-spacing:.06em; }
+.footer-logo span { color:var(--accent); }
+.footer-nav { display:flex; gap:2rem; flex-wrap:wrap; }
+.footer-nav a { font-size:.8rem; font-weight:600; letter-spacing:.04em; color:var(--text-muted); text-transform:uppercase; transition:color .25s; }
+.footer-nav a:hover { color:var(--text); }
+.footer-bottom {
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:.75rem;
+  font-family:var(--font-mono); font-size:.65rem; letter-spacing:.1em; color:var(--text-dim);
+  border-top:1px solid var(--border); padding-top:1.5rem;
+}
+
+/* RESPONSIVE */
+@media (max-width:1024px) {
+  .services { grid-template-columns:1fr; gap:3rem; }
+  .services-left { position:static; }
+  .contact { grid-template-columns:1fr; gap:3.5rem; }
+}
+@media (max-width:768px) {
+  .nav-links,.nav-right>.btn { display:none; }
+  .nav-toggle { display:flex; }
+  .hero-body { padding-top:calc(4rem + 70px); padding-bottom:7rem; }
+  .hero-stats { right:var(--px); gap:1.75rem; }
+  .hero-orb--c { display:none; }
+  .feat-grid { grid-template-columns:1fr; }
+  .tpl-card:hover { transform:none !important; }
+  .tpl-overlay { opacity:0; }
+  .tpl-mobile-cta { display:block; }
+  .svc-item { grid-template-columns:3rem 1fr; }
+  .svc-arrow { display:none; }
+  .hero-actions { flex-direction:column; }
+  .hero-actions .btn { width:100%; }
+  .footer-top { flex-direction:column; align-items:flex-start; }
+  .footer-bottom { flex-direction:column; }
+}
+@media (max-width:480px) {
+  .hero-headline { font-size:clamp(3rem,13vw,4.5rem); }
+  .hero-stats { flex-direction:column; gap:1.25rem; bottom:1.5rem; }
+  :root { --sp:clamp(4rem,10vw,6rem); }
+}
+@media (hover:none) {
+  .btn:active { transform:scale(.97); }
+  .btn:hover { transform:none; }
+}
+@supports (padding:max(0px)) {
+  .nav { padding-left:max(var(--px),env(safe-area-inset-left)); padding-right:max(var(--px),env(safe-area-inset-right)); }
+  .footer { padding-bottom:max(2.5rem,env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
+</style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light fixed-top glass-navbar">
-    <div class="container">
-        <a class="navbar-brand" href="index.html">
-            <img src="https://i.postimg.cc/7P7BK44r/f525e1dd-9f2c-4160-aed1-882a8b28b75c-20250703-131500-0000.png"
-                 alt="شعار ROBUSTE" width="180" height="auto" style="max-height:50px;">
-            <span class="d-none d-lg-inline fw-bold fs-4 ms-2" style="color: #FF6B35;">ROBUSTE eulma</span>
-        </a>
 
-        <div class="d-flex align-items-center ms-3">
-            <button class="theme-toggle" id="themeToggle" title="الوضع المظلم" aria-label="الوضع المظلم">
-                <i class="bi bi-moon"></i>
-            </button>
-        </div>
+<!-- 01. SCROLL PROGRESS BAR -->
+<div id="scroll-progress"></div>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="القائمة">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<!-- 09. RETURNING VISITOR BANNER (shown via JS) -->
+<div id="rv-banner">Welcome back ✦ Ready to take the next step?</div>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item mx-2"><a class="nav-link active" href="index.html">الرئيسية</a></li>
-                <li class="nav-item"><a class="nav-link" href="#products">المنتجات</a></li>
-                <li class="nav-item"><a class="nav-link" href="#reviews">آراء العملاء</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">اتصل بنا</a></li>
-            </ul>
-        </div>
+<!-- VEIL -->
+<div id="veil"><span id="veil-logo">Nebula.</span></div>
 
-    </div>
+<!-- AMBIENT CANVAS -->
+<canvas id="ambientCanvas"></canvas>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <a href="#" class="nav-logo" aria-label="Nebula by Anes home">Nebula<span>.</span></a>
+  <div class="nav-links" role="list">
+    <a href="#about" role="listitem">About</a>
+    <a href="#showcase" role="listitem">Work</a>
+    <a href="#templates" role="listitem">Templates</a>
+    <a href="#services" role="listitem">Services</a>
+    <a href="#process" role="listitem">Process</a>
+    <a href="#contact" role="listitem">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a href="#contact" class="btn btn-ghost" aria-label="Start a project">Let's Talk</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navOverlay">
+      <span></span><span></span>
+    </button>
+  </div>
 </nav>
 
-<div class="status-indicator" id="statusIndicator" style="display: none;">
-    <div class="alert alert-dismissible fade show" role="alert" aria-live="polite">
-        <span id="statusMessage"></span>
-        <button type="button" class="btn-close" onclick="hideStatus()" aria-label="إغلاق"></button>
-    </div>
+<div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true">
+  <a href="#about"     class="nav-overlay-link">About</a>
+  <a href="#showcase"  class="nav-overlay-link">Work</a>
+  <a href="#templates" class="nav-overlay-link">Templates</a>
+  <a href="#services"  class="nav-overlay-link">Services</a>
+  <a href="#process"   class="nav-overlay-link">Process</a>
+  <a href="#contact"   class="nav-overlay-link">Contact</a>
+  <a href="#contact" class="btn btn-primary nav-overlay-cta">Start a Project &nbsp;&#8599;</a>
+  <span class="nav-overlay-foot">Nebula — custom websites, built by Anes</span>
 </div>
 
-<!-- القسم الرئيسي Hero -->
-<section class="hero-container position-relative">
-    <div class="hero-image-container">
-        <img width="3780" height="1890" src="images/banner.webp" alt="أجهزة منزلية" class="hero-image" loading="lazy">
-        <div class="image-overlay"></div>
+<!-- HERO -->
+<section class="hero" id="hero" aria-label="Hero">
+  <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-orb hero-orb--a" id="orbA" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb--b" id="orbB" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb--c" id="orbC" aria-hidden="true"></div>
+  <div class="hero-body">
+    <div class="hero-eyebrow" id="heroEyebrow">
+      <span class="tag" id="heroTag">Available for new projects &nbsp;✦&nbsp; Built by Anes</span>
     </div>
-    <div class="hero-content container text-center position-absolute top-50 start-50 translate-middle">
-        <h1 class="hero-title">أجهزة منزلية تجعل حياتك أسهل</h1>
-        <p class="hero-subtitle">جودة عالية بأسعار تنافسية لكل منزل جزائري مع خدمة توصيل سريعة وضمان سنة واحدة</p>
-        <div>
-            <a href="#products" class="btn btn-orange btn-lg px-4 me-2"><i class="bi bi-cart"></i> تسوق الآن</a>
-            <a href="#contact" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-headset"></i> اتصل بنا</a>
-        </div>
+    <h1 class="hero-headline" id="heroHeadline">
+      <span class="hero-line"><span class="hero-line-inner" id="hl1">Fast, custom websites</span></span>
+      <span class="hero-line"><span class="hero-line-inner" id="hl2">that make your brand</span></span>
+      <span class="hero-line hero-line--gold"><span class="hero-line-inner" id="hl3">stand out.</span></span>
+    </h1>
+    <p class="hero-sub" id="heroSub">
+      I'm a hands-on freelance web developer. I hand-code fast, custom websites and online
+      stores from scratch — no page-builders, no recycled templates, no team to slow things down.
+      Just me, your brand, and clean code built to grow with you.
+    </p>
+    <div class="hero-actions" id="heroActions">
+      <a href="#showcase" class="btn btn-primary btn-lg">
+        See What's Possible <span class="btn-arrow-icon">&#8599;</span>
+      </a>
+      <a href="#contact" class="btn btn-ghost btn-lg">Start Your Project</a>
     </div>
+  </div>
+  <div class="hero-stats" id="heroStats">
+    <div><div class="hero-stat-num">100<span>%</span></div><div class="hero-stat-label">Hand-coded, no builders</div></div>
+    <div><div class="hero-stat-num">1<span>:</span>1</div><div class="hero-stat-label">You work with me directly</div></div>
+    <div><div class="hero-stat-num">24<span>h</span></div><div class="hero-stat-label">Typical reply time</div></div>
+  </div>
+  <div class="hero-scroll-hint" id="heroScroll" aria-hidden="true">
+    <span>Scroll</span><div class="hero-scroll-line"></div>
+  </div>
+
+  <div class="hero-ghost-cards" aria-hidden="true">
+    <div class="ghost-card">
+      <div class="ghost-card-bar">
+        <span class="ghost-card-dot"></span><span class="ghost-card-dot"></span><span class="ghost-card-dot"></span>
+        <div class="ghost-card-url"></div>
+      </div>
+      <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
+      <div class="ghost-card-title">Florist Shop</div>
+      <div class="ghost-card-tag">Coming soon</div>
+    </div>
+    <div class="ghost-card">
+      <div class="ghost-card-bar">
+        <span class="ghost-card-dot"></span><span class="ghost-card-dot"></span><span class="ghost-card-dot"></span>
+        <div class="ghost-card-url"></div>
+      </div>
+      <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
+      <div class="ghost-card-title">Portfolio Template</div>
+      <div class="ghost-card-tag">In progress</div>
+    </div>
+    <div class="ghost-card">
+      <div class="ghost-card-bar">
+        <span class="ghost-card-dot"></span><span class="ghost-card-dot"></span><span class="ghost-card-dot"></span>
+        <div class="ghost-card-url"></div>
+      </div>
+      <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
+      <div class="ghost-card-title">Robuste Store</div>
+      <div class="ghost-card-tag">Live ✦</div>
+    </div>
+  </div>
 </section>
 
-<!-- عرض الشرائح (Slideshow) -->
-<div class="slideshow-container1">
-  <div class="mySlides1 fade1">
-    <img src="images/signal-2025-08-21-103443_002.webp" style="width:100%" alt="عرض المنتجات" loading="eager">
+<!-- MARQUEE -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">Custom Websites <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">E-Commerce Stores <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Brand Systems <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Admin Panels <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Digital Experiences <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Product Stores <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Business Growth <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Custom Websites <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">E-Commerce Stores <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Brand Systems <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Admin Panels <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Digital Experiences <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Product Stores <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Business Growth <span class="marquee-dot">&bull;</span></span>
   </div>
-  <div class="mySlides1 fade1">
-    <img src="images/signal-2025-08-21-103443_003.webp" style="width:100%" alt="عروض خاصة" loading="eager">
-  </div>
-  <div class="mySlides1 fade1">
-    <img src="images/signal-2025-08-21-103443_004.webp" style="width:100%" alt="جودة المنتجات" loading="eager">
-  </div>
-  <div class="mySlides1 fade1">
-    <img src="images/signal-2025-08-21-103443_005.webp" style="width:100%" alt="ضمان المنتجات" loading="eager">
-  </div>
-  <div class="mySlides1 fade1">
-    <img src="images/4_20250820_152310_0003.webp" style="width:100%" alt="توصيل سريع" loading="eager">
-  </div>
-  <a class="prev1" onclick="plusSlides1(-1)" role="button" tabindex="0" aria-label="السابق">&#10094;</a>
-  <a class="next1" onclick="plusSlides1(1)" role="button" tabindex="0" aria-label="التالي">&#10095;</a>
 </div>
 
-<br>
-<div style="text-align:center">
-  <span class="dot1" onclick="currentSlide1(1)" role="button" tabindex="0" aria-label="صورة 1"></span>
-  <span class="dot1" onclick="currentSlide1(2)" role="button" tabindex="0" aria-label="صورة 2"></span>
-  <span class="dot1" onclick="currentSlide1(3)" role="button" tabindex="0" aria-label="صورة 3"></span>
-  <span class="dot1" onclick="currentSlide1(4)" role="button" tabindex="0" aria-label="صورة 4"></span>
-  <span class="dot1" onclick="currentSlide1(5)" role="button" tabindex="0" aria-label="صورة 5"></span>
-</div>
+<!-- PHILOSOPHY -->
+<section class="philosophy z1" aria-labelledby="philHeading">
+  <div class="philosophy-inner">
+    <p class="section-eyebrow" aria-hidden="true">Philosophy</p>
+    <h2 class="philosophy-quote wrev" id="philText">
+      I don't copy. I craft experiences shaped around your brand —
+      and templates built to the same standard.
+      Your customers, and the results you actually need.
+    </h2>
+  </div>
+</section>
 
-<!-- شريط الثقة والمزايا -->
-<section class="trust-bar">
-  <div class="container">
-    <div class="trust-grid">
-      <div class="trust-item">
-        <div class="trust-icon"><i class="bi bi-truck"></i></div>
-        <div class="trust-text">
-          <span class="trust-title">توصيل حتى باب البيت</span>
-          <span class="trust-sub">إلى جميع الولايات</span>
+<!-- ABOUT -->
+<section class="about z1" id="about" aria-labelledby="aboutHeading">
+  <style>
+    .about{padding:var(--sp) var(--px);max-width:var(--maxw);margin:0 auto;}
+    .about-inner{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2rem,5vw,5.5rem);align-items:center;}
+    .about-portrait{display:flex;flex-direction:column;align-items:center;}
+    .about-avatar{width:clamp(150px,18vw,230px);height:clamp(150px,18vw,230px);border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,var(--surface-3),var(--surface) 72%);border:1px solid var(--border);font-family:var(--font-serif);font-size:clamp(3.2rem,6vw,5.5rem);color:var(--accent);box-shadow:0 35px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);}
+    .about-portrait-note{margin-top:1.1rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;}
+    .about em{color:var(--accent);font-style:normal;}
+    .about-lead{font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--text);margin:1.4rem 0 1rem;line-height:1.55;}
+    .about-text{color:var(--text-muted);font-size:clamp(.95rem,1.3vw,1.05rem);line-height:1.7;margin-bottom:1.6rem;}
+    .about-points{display:grid;gap:.7rem;margin-bottom:1.6rem;}
+    .about-points li{display:flex;gap:.7rem;align-items:flex-start;color:var(--text);font-size:.97rem;}
+    .about-points li span{color:var(--accent);flex:none;}
+    .about-honest{font-family:var(--font-mono);font-size:.82rem;line-height:1.6;color:var(--text-muted);border-left:2px solid var(--accent);padding-left:1rem;}
+    @media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:2.5rem;}.about-portrait{order:-1;}}
+  </style>
+  <div class="about-inner">
+    <div class="about-portrait">
+      <div class="about-avatar">A</div>
+      <p class="about-portrait-note">↑ Add your photo here</p>
+    </div>
+    <div class="about-content">
+      <p class="section-eyebrow">About</p>
+      <h2 class="section-title" id="aboutHeading">You work with <em>me</em> — not a faceless studio</h2>
+      <p class="about-lead">I'm Anes, the developer behind Nebula. There's no agency, no account managers, no markup — when you hire me, you talk to the person actually designing and writing the code.</p>
+      <p class="about-text">I'm early in my journey, and I treat that as my edge. I'm hands-on with every detail, I reply fast, and I care about your project like it's my own portfolio piece. No outsourcing, no recycled templates, no "that's not in the package." Just direct, honest work and clean custom code.</p>
+      <ul class="about-points">
+        <li><span>✦</span> You talk to the builder — never a salesperson</li>
+        <li><span>✦</span> Every line written from scratch, no page-builders</li>
+        <li><span>✦</span> Fast replies, flexible scope, fair freelance pricing</li>
+        <li><span>✦</span> You own 100% of the files, forever</li>
+      </ul>
+      <p class="about-honest">Robuste — the store below — is live and running. The florist and portfolio demos are in progress. Real work, shown honestly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section class="showcase z1" id="showcase" aria-labelledby="showcaseHeading">
+  <div class="showcase-header">
+    <p class="section-eyebrow">Showcase</p>
+    <h2 class="showcase-heading" id="showcaseHeading">Everything is <em>customizable</em></h2>
+    <p class="section-desc">
+      Every color, layout, font, product and feature you see here can be reimagined
+      and rebuilt for your brand — from a local flower shop to a high-growth e-commerce brand.
+    </p>
+  </div>
+  <div class="tracks" id="showcaseTracks">
+    <div class="track" data-dir="r">
+      <div class="track-inner">
+        <span>Flower Shops</span><span class="sep">&middot;</span>
+        <span>Perfume Stores</span><span class="sep">&middot;</span>
+        <span>E-Commerce</span><span class="sep">&middot;</span>
+        <span>Restaurants</span><span class="sep">&middot;</span>
+        <span>Boutiques</span><span class="sep">&middot;</span>
+        <span>Startups</span><span class="sep">&middot;</span>
+        <span>Flower Shops</span><span class="sep">&middot;</span>
+        <span>Perfume Stores</span><span class="sep">&middot;</span>
+        <span>E-Commerce</span><span class="sep">&middot;</span>
+      </div>
+    </div>
+    <div class="track" data-dir="l">
+      <div class="track-inner">
+        <span>Colors</span><span class="sep">&middot;</span>
+        <span>Layouts</span><span class="sep">&middot;</span>
+        <span>Typography</span><span class="sep">&middot;</span>
+        <span>Branding</span><span class="sep">&middot;</span>
+        <span>Products</span><span class="sep">&middot;</span>
+        <span>Functionality</span><span class="sep">&middot;</span>
+        <span>Colors</span><span class="sep">&middot;</span>
+        <span>Layouts</span><span class="sep">&middot;</span>
+        <span>Typography</span><span class="sep">&middot;</span>
+      </div>
+    </div>
+    <div class="track" data-dir="r">
+      <div class="track-inner">
+        <span>Local Businesses</span><span class="sep">&middot;</span>
+        <span>Service Providers</span><span class="sep">&middot;</span>
+        <span>Digital Brands</span><span class="sep">&middot;</span>
+        <span>Product Creators</span><span class="sep">&middot;</span>
+        <span>Agencies</span><span class="sep">&middot;</span>
+        <span>Local Businesses</span><span class="sep">&middot;</span>
+        <span>Service Providers</span><span class="sep">&middot;</span>
+        <span>Digital Brands</span><span class="sep">&middot;</span>
+      </div>
+    </div>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&loz;</span>
+      <h3>Visual Identity</h3>
+      <p>Colors, fonts, imagery, spacing — all matched to your brand's personality and target customers.</p>
+    </div>
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&#9635;</span>
+      <h3>Layout &amp; Structure</h3>
+      <p>Pages and flows designed around how your customers think, browse, and buy.</p>
+    </div>
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&#9889;</span>
+      <h3>Features &amp; Functions</h3>
+      <p>Catalogs, booking, dashboards, automation — built exactly for your workflow.</p>
+    </div>
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&#8599;</span>
+      <h3>Growth-Ready</h3>
+      <p>SEO, speed, mobile optimization — built so customers find you and stay.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATES -->
+<section class="templates z1" id="templates" aria-labelledby="tplHeading">
+  <div class="templates-header">
+    <div>
+      <p class="section-eyebrow">Templates &amp; Demos</p>
+      <h2 class="section-title clip-reveal" id="tplHeading">Real experiences for real businesses</h2>
+    </div>
+    <p class="section-desc">Live demos you can explore. Each one is a starting point — not a limit.</p>
+  </div>
+  <div class="templates-grid">
+
+    <article class="tpl-card" data-tpl-color="#d4a5a5">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--flower">
+        <div class="tpl-preview-inner" data-mock>
+          <div class="mock">
+            <div class="mock-bar"><div class="mock-dot"></div><div class="mock-dot"></div><div class="mock-dot"></div></div>
+            <div class="mock-body">
+              <div class="mock-accent-bar" style="background:#d4a5a5"></div>
+              <div class="mock-hero-line" style="width:70%"></div>
+              <div class="mock-hero-line" style="width:48%;opacity:.55"></div>
+            </div>
+            <div class="mock-grid"><div class="mock-product"></div><div class="mock-product"></div><div class="mock-product"></div></div>
+          </div>
+        </div>
+        <div class="tpl-overlay">
+          <a href="#" class="btn btn-primary">View Demo &nbsp;&#8599;</a>
         </div>
       </div>
-      <div class="trust-item">
-        <div class="trust-icon"><i class="bi bi-shield-check"></i></div>
-        <div class="trust-text">
-          <span class="trust-title">ضمان عام</span>
-          <span class="trust-sub">جودة مضمونة</span>
+      <div class="tpl-mobile-cta"><a href="#">View Demo &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Flower Shop</span><span class="tpl-num">01</span></div>
+        <h3 class="tpl-name">Bloom Experience</h3>
+        <p class="tpl-desc">Soft, elegant presence for florists. Showcase arrangements, take orders, and tell your story beautifully online.</p>
+        <ul class="tpl-features">
+          <li>Product catalog with categories</li>
+          <li>Order &amp; inquiry system</li>
+          <li>Occasion-based filtering</li>
+          <li>Mobile-first, fast loading</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="tpl-card" data-tpl-color="#c9a96e">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--perfume">
+        <div class="tpl-preview-inner" data-mock>
+          <div class="mock">
+            <div class="mock-bar"><div class="mock-dot"></div><div class="mock-dot"></div><div class="mock-dot"></div></div>
+            <div class="mock-body">
+              <div class="mock-accent-bar" style="background:#c9a96e"></div>
+              <div class="mock-hero-line" style="width:75%"></div>
+              <div class="mock-hero-line" style="width:52%;opacity:.55"></div>
+            </div>
+            <div class="mock-grid"><div class="mock-product"></div><div class="mock-product"></div><div class="mock-product"></div></div>
+          </div>
+        </div>
+        <div class="tpl-overlay">
+          <a href="#" class="btn btn-primary">View Demo &nbsp;&#8599;</a>
         </div>
       </div>
-      <div class="trust-item">
-        <div class="trust-icon"><i class="bi bi-headset"></i></div>
-        <div class="trust-text">
-          <span class="trust-title">خدمة ما بعد الشراء</span>
-          <span class="trust-sub">دعم دائم لك</span>
+      <div class="tpl-mobile-cta"><a href="#">View Demo &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Perfume Store</span><span class="tpl-num">02</span></div>
+        <h3 class="tpl-name">Essence Experience</h3>
+        <p class="tpl-desc">Luxury, high-conversion store for perfume brands. Immersive product presentation meets frictionless checkout.</p>
+        <ul class="tpl-features">
+          <li>Luxury product galleries</li>
+          <li>Scent storytelling sections</li>
+          <li>COD &amp; delivery integration</li>
+          <li>Upsell &amp; bundle system</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="tpl-card" data-tpl-color="#5b8fff">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--ecom">
+        <div class="tpl-preview-inner" data-mock>
+          <div class="mock">
+            <div class="mock-bar"><div class="mock-dot"></div><div class="mock-dot"></div><div class="mock-dot"></div></div>
+            <div class="mock-body">
+              <div class="mock-accent-bar" style="background:#5b8fff"></div>
+              <div class="mock-hero-line" style="width:65%"></div>
+              <div class="mock-hero-line" style="width:44%;opacity:.55"></div>
+            </div>
+            <div class="mock-grid"><div class="mock-product"></div><div class="mock-product"></div><div class="mock-product"></div></div>
+          </div>
+        </div>
+        <div class="tpl-overlay">
+          <a href="#" class="btn btn-primary">View Demo &nbsp;&#8599;</a>
         </div>
       </div>
-      <div class="trust-item">
-        <div class="trust-icon"><i class="bi bi-cash-coin"></i></div>
-        <div class="trust-text">
-          <span class="trust-title">دفع يد بيد</span>
-          <span class="trust-sub">ادفع عند الاستلام</span>
+      <div class="tpl-mobile-cta"><a href="#">View Demo &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">E-Commerce</span><span class="tpl-num">03</span></div>
+        <h3 class="tpl-name">Commerce Experience</h3>
+        <p class="tpl-desc">Performance-focused store built to convert visitors from the first scroll. Admin-ready and analytics-tracked.</p>
+        <ul class="tpl-features">
+          <li>Product management system</li>
+          <li>Conversion-optimized flows</li>
+          <li>Admin dashboard</li>
+          <li>Analytics &amp; tracking ready</li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services z1" id="services" aria-labelledby="svcHeading">
+  <div class="services-left">
+    <p class="section-eyebrow">What I Build</p>
+    <h2 class="section-title clip-reveal" id="svcHeading" style="margin-bottom:1.5rem">The full stack of your online presence</h2>
+    <p class="section-desc">From storefront to backend — everything your business needs to operate and grow online.</p>
+  </div>
+  <div class="services-list">
+    <div class="svc-item"><div class="svc-num">01</div><div class="svc-body"><h3>Business Websites</h3><p>Brand-first websites that communicate credibility, attract customers, and represent your business 24&thinsp;/&thinsp;7 — even while you sleep.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">02</div><div class="svc-body"><h3>E-Commerce Stores</h3><p>Online stores built to sell — product management, fast checkout, mobile-first, conversion-optimized, COD-ready for any market.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">03</div><div class="svc-body"><h3>Admin Dashboards</h3><p>Custom management interfaces so you control your data, orders, inventory and content without limitations or third-party fees.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">04</div><div class="svc-body"><h3>Product Management Systems</h3><p>Full backend systems built around how you actually work — inventory, orders, customers, reports, all in one place.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">05</div><div class="svc-body"><h3>Custom Web Solutions</h3><p>Got something unique in mind? I build from scratch — APIs, integrations, automation, booking systems, and beyond.</p></div><div class="svc-arrow">&#8599;</div></div>
+  </div>
+</section>
+
+<!-- 07. HORIZONTAL PINNED PROCESS -->
+<section class="process z1" id="process" aria-labelledby="processHeading">
+  <div class="process-pin-wrap" id="processPinWrap">
+    <div class="process-sticky" id="processSticky">
+      <div class="process-header">
+        <p class="section-eyebrow">How It Works</p>
+        <h2 class="section-title" id="processHeading">From idea to live — a clear path</h2>
+      </div>
+      <div class="process-track-wrap">
+        <div class="process-track" id="processTrack">
+          <div class="step" data-step="0">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">01</span></div>
+            <h3>Idea</h3>
+            <p>We talk about your business, your goals, your customers, and the problems you want to solve. I listen more than I speak.</p>
+          </div>
+          <div class="step" data-step="1">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">02</span></div>
+            <h3>Design</h3>
+            <p>I craft a visual direction — layouts, colors, and flows — that feels unmistakably like your brand. You approve before we build.</p>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">03</span></div>
+            <h3>Development</h3>
+            <p>Clean, fast, intentional code. Every interaction is purposeful. Every page loads instantly. Built to last, not to patch.</p>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">04</span></div>
+            <h3>Launch</h3>
+            <p>Your website goes live. You own every file. I make sure it runs, ranks, and converts from day one.</p>
+          </div>
         </div>
+      </div>
+      <div class="process-dots" id="processDots">
+        <div class="process-dot active" data-dot="0"></div>
+        <div class="process-dot" data-dot="1"></div>
+        <div class="process-dot" data-dot="2"></div>
+        <div class="process-dot" data-dot="3"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- قسم العروض الخاصة (أسماء المنتجات تبقى كما هي) -->
-<section class="offers-section">
-  <div class="container position-relative">
-    <div class="text-center mb-5">
-      <h2 class="offers-title">🔥 عروض حصرية 🔥</h2>
-      <p class="offer-subtitle">استفد من عروضنا الاستثنائية مع تخفيضات تصل إلى 30% على أفضل الأجهزة المنزلية. العرض محدود زمنياً!</p>
+<!-- STATEMENT -->
+<section class="statement z1" aria-label="Closing statement">
+  <h2 class="statement-quote wrev" id="stmtText">
+    The website you're looking at right now —
+    its layout, its animations, its feel —
+    can be built for your business.
+  </h2>
+  <a href="#contact" class="btn btn-primary btn-lg" data-reveal>Let's Build Yours &nbsp;&#8599;</a>
+</section>
+
+<!-- 08. CONTACT — Formspree -->
+<section class="contact z1" id="contact" aria-labelledby="contactHeading">
+  <div class="contact-left" data-reveal>
+    <p class="section-eyebrow">Get In Touch</p>
+    <h2 class="contact-headline" id="contactHeading">Ready to build something <span>real?</span></h2>
+    <p class="contact-desc">Tell me about your business. I'll tell you exactly what's possible — and how fast we can get there.</p>
+    <div class="contact-channels">
+      <a href="mailto:nebulastudiosite@mail.com" class="contact-ch">
+        <span class="contact-ch-icon" aria-hidden="true">&#9993;</span>
+        <div class="contact-ch-info">
+          <div class="contact-ch-label">Email</div>
+          <div class="contact-ch-val">nebulastudiosite@mail.com</div>
+        </div>
+      </a>
+      <a href="https://wa.me/213656360457" class="contact-ch" target="_blank" rel="noopener noreferrer">
+        <span class="contact-ch-icon" aria-hidden="true">&#9711;</span>
+        <div class="contact-ch-info">
+          <div class="contact-ch-label">WhatsApp</div>
+          <div class="contact-ch-val">+213 656 360 457</div>
+        </div>
+      </a>
     </div>
-
-    <!-- العد التنازلي -->
-    <div class="offer-timer">
-      <div class="timer-title">⏳ ينتهي العرض خلال :</div>
-      <div class="timer-content">
-        <div class="timer-item">
-          <div class="timer-value" id="days">03</div>
-          <div class="timer-label">أيام</div>
-        </div>
-        <div class="timer-item">
-          <div class="timer-value" id="hours">12</div>
-          <div class="timer-label">ساعات</div>
-        </div>
-        <div class="timer-item">
-          <div class="timer-value" id="minutes">45</div>
-          <div class="timer-label">دقائق</div>
-        </div>
-        <div class="timer-item">
-          <div class="timer-value" id="seconds">30</div>
-          <div class="timer-label">ثواني</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- المنتجات المعروضة (أسماء المنتجات الأصلية بالفرنسية) -->
-    <div class="offer-products" id="offerProducts">
-      <!-- منتج 1 -->
-      <div class="offer-product">
-        <div class="offer-product-discount">-15%</div>
-        <div class="offer-product-badge">الأكثر مبيعاً</div>
-
-        <div id="carousel-offer-1" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carousel-offer-1" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
-            <button type="button" data-bs-target="#carousel-offer-1" data-bs-slide-to="1" aria-label="صورة 2"></button>
-            <button type="button" data-bs-target="#carousel-offer-1" data-bs-slide-to="2" aria-label="صورة 3"></button>
-          </div>
-
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <a href="product.html?pid=100"><img src="images/Robuste Defroisseur 1.jpg" class="d-block w-100" alt="Défroisseur Vapeur" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=100"><img src="images/Robuste Defroisseur 2.jpg" class="d-block w-100" alt="Défroisseur Vapeur vue de côté" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=100"><img src="images/Robuste Defroisseur.jpg" class="d-block w-100" alt="Défroisseur Vapeur en action" loading="lazy"></a>
-            </div>
-          </div>
-
-          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-1" data-bs-slide="prev" aria-label="السابق">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-1" data-bs-slide="next" aria-label="التالي">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <a href="product.html?pid=100" class="offer-product-content-link">
-        <div class="offer-product-content">
-          <h4 class="offer-product-title">Défroisseur Vapeur Professionnel 1800W</h4>
-          <div class="price-container">
-            <div class="offer-product-price">6 600 دج</div>
-            <div class="offer-product-old-price">7 000 دج</div>
-          </div>
-          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
-        </div>
-        </a>
-      </div>
-
-      <!-- منتج 2 -->
-      <div class="offer-product">
-        <div class="offer-product-discount">-20%</div>
-        <div class="offer-product-badge">جديد</div>
-
-        <div id="carousel-offer-2" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carousel-offer-2" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
-            <button type="button" data-bs-target="#carousel-offer-2" data-bs-slide-to="1" aria-label="صورة 2"></button>
-            <button type="button" data-bs-target="#carousel-offer-2" data-bs-slide-to="2" aria-label="صورة 3"></button>
-          </div>
-
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <a href="product.html?pid=101"><img src="images/ASPIRATEUR SOUFFLEUR A MAIN.png" class="d-block w-100" alt="Aspirateur Souffleur" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=101"><img src="images/ASPIRATEUR SOUFFLEUR A MAIN 2.png" class="d-block w-100" alt="Aspirateur Souffleur accessoires" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=101"><img src="images/ASPIRATEUR SOUFFLEUR A MAIN 3.png" class="d-block w-100" alt="Aspirateur Souffleur en action" loading="lazy"></a>
-            </div>
-          </div>
-
-          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-2" data-bs-slide="prev" aria-label="السابق">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-2" data-bs-slide="next" aria-label="التالي">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <a href="product.html?pid=101" class="offer-product-content-link">
-        <div class="offer-product-content">
-          <h4 class="offer-product-title">Aspirateur Souffleur Sans Fil 20V</h4>
-          <div class="price-container">
-            <div class="offer-product-price">5 100 دج</div>
-            <div class="offer-product-old-price">5 500 دج</div>
-          </div>
-          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
-        </div>
-        </a>
-      </div>
-
-      <!-- منتج 3 -->
-      <div class="offer-product">
-        <div class="offer-product-discount">-25%</div>
-        <div class="offer-product-badge">الأعلى مبيعاً</div>
-
-        <div id="carousel-offer-3" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carousel-offer-3" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
-            <button type="button" data-bs-target="#carousel-offer-3" data-bs-slide-to="1" aria-label="صورة 2"></button>
-          </div>
-
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <a href="product.html?pid=102"><img src="images/NETTOYEUR DE TACHES 4 EN 1.jpg" class="d-block w-100" alt="Nettoyeur de Taches 4 en 1" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=102"><img src="images/NETTOYEUR DE TACHES 4 EN 1 robuste.jpg" class="d-block w-100" alt="Nettoyeur de Taches vue arrière" loading="lazy"></a>
-            </div>
-          </div>
-
-          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-3" data-bs-slide="prev" aria-label="السابق">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-3" data-bs-slide="next" aria-label="التالي">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <a href="product.html?pid=102" class="offer-product-content-link">
-        <div class="offer-product-content">
-          <h4 class="offer-product-title">Nettoyeur de Taches 4 en 1 Professionnel</h4>
-          <div class="price-container">
-            <div class="offer-product-price">23 500 دج</div>
-            <div class="offer-product-old-price">25 000 دج</div>
-          </div>
-          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
-        </div>
-        </a>
-      </div>
-
-      <!-- منتج 4 -->
-      <div class="offer-product">
-        <div class="offer-product-discount">-14%</div>
-        <div class="offer-product-badge">عرض خاص</div>
-
-        <div id="carousel-offer-4" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carousel-offer-4" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
-            <button type="button" data-bs-target="#carousel-offer-4" data-bs-slide-to="1" aria-label="صورة 2"></button>
-            <button type="button" data-bs-target="#carousel-offer-4" data-bs-slide-to="2" aria-label="صورة 3"></button>
-          </div>
-
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <a href="product.html?pid=103"><img src="images/PANINEUSE ET GRILL 1000W.png" class="d-block w-100" alt="Panineuse et Grill" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=103"><img src="images/PANINEUSE ET GRILL 1000W 2.png" class="d-block w-100" alt="Panineuse et Grill 2" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=103"><img src="images/PANINEUSE ET GRILL 1000W 3.jpeg" class="d-block w-100" alt="Panineuse et Grill 3" loading="lazy"></a>
-            </div>
-          </div>
-
-          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-4" data-bs-slide="prev" aria-label="السابق">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-4" data-bs-slide="next" aria-label="التالي">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <a href="product.html?pid=103" class="offer-product-content-link">
-        <div class="offer-product-content">
-          <h4 class="offer-product-title">Panineuse et Grill 1000W</h4>
-          <div class="price-container">
-            <div class="offer-product-price">6 900 دج</div>
-            <div class="offer-product-old-price">8 000 دج</div>
-          </div>
-          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
-        </div>
-        </a>
-      </div>
-
-      <!-- منتج 5 -->
-      <div class="offer-product">
-        <div class="offer-product-discount">-24%</div>
-        <div class="offer-product-badge">عرض خاص</div>
-
-        <div id="carousel-offer-5" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carousel-offer-5" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
-            <button type="button" data-bs-target="#carousel-offer-5" data-bs-slide-to="1" aria-label="صورة 2"></button>
-            <button type="button" data-bs-target="#carousel-offer-5" data-bs-slide-to="2" aria-label="صورة 3"></button>
-          </div>
-
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <a href="product.html?pid=4"><img src="images/FRITEUSE DF 900 W.png" class="d-block w-100" alt="Friteuse DF 900 W" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=4"><img src="images/FRITEUSE DF 900 W 2.png" class="d-block w-100" alt="Friteuse DF 900 W 2" loading="lazy"></a>
-            </div>
-            <div class="carousel-item">
-              <a href="product.html?pid=4"><img src="images/FRITEUSE DF 900 W 3.jpeg" class="d-block w-100" alt="Friteuse DF 900 W 3" loading="lazy"></a>
-            </div>
-          </div>
-
-          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-5" data-bs-slide="prev" aria-label="السابق">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-5" data-bs-slide="next" aria-label="التالي">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <a href="product.html?pid=4" class="offer-product-content-link">
-        <div class="offer-product-content">
-          <h4 class="offer-product-title">Friteuse DF 900 W</h4>
-          <div class="price-container">
-            <div class="offer-product-price">5 900 دج</div>
-            <div class="offer-product-old-price">7 800 دج</div>
-          </div>
-          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
-        </div>
-        </a>
-      </div>
+    <div class="contact-socials">
+      <a href="https://www.instagram.com/nebulaa_studio" class="contact-social" target="_blank" rel="noopener noreferrer">Instagram &#8599;</a>
     </div>
   </div>
+
+  <form class="contact-form" id="contactForm"
+        action="https://formspree.io/f/YOUR_FORM_ID"
+        method="POST" novalidate data-reveal>
+    <div class="form-group">
+      <label for="fname">Your Name</label>
+      <input type="text" id="fname" name="name" placeholder="Ahmed Benali" autocomplete="name" required />
+    </div>
+    <div class="form-group">
+      <label for="fbusiness">Business Type</label>
+      <input type="text" id="fbusiness" name="business" placeholder="Flower shop, clothing brand, restaurant…" />
+    </div>
+    <div class="form-group">
+      <label for="fbudget">Budget Range</label>
+      <input type="text" id="fbudget" name="budget" placeholder="e.g. $500–$1500" />
+    </div>
+    <div class="form-group">
+      <label for="fmessage">What do you need?</label>
+      <textarea id="fmessage" name="message" rows="4" placeholder="Tell me about your project, your goals, your deadline…" required></textarea>
+    </div>
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+    <div class="form-status" id="formStatus"></div>
+    <button type="submit" class="btn btn-primary btn-full" id="formBtn">Send Message &nbsp;&#10003;</button>
+    <p class="form-note">No spam. No obligations. Just a real conversation.</p>
+  </form>
 </section>
 
-<!-- قسم المنتجات (يتم تحميلها بواسطة main.js، أسماء المنتجات الأصلية تبقى كما هي) -->
-<section id="products" class="py-5">
-    <div class="container">
-        <h2 class="section-title">أحدث منتجاتنا</h2>
-
-        <div class="categories-filter mb-5">
-            <div class="d-flex flex-wrap justify-content-center gap-2">
-                <button class="btn btn-outline-primary category-btn active" data-category="all" aria-label="عرض الكل">الكل</button>
-                <button class="btn btn-outline-primary category-btn" data-category="coiffure" aria-label="العناية بالشعر">العناية بالشعر</button>
-                <button class="btn btn-outline-primary category-btn" data-category="cuisine" aria-label="أجهزة المطبخ">أجهزة المطبخ</button>
-                <button class="btn btn-outline-primary category-btn" data-category="beauté" aria-label="العناية الشخصية">العناية الشخصية</button>
-                <button class="btn btn-outline-primary category-btn" data-category="maison" aria-label="الأجهزة المنزلية">الأجهزة المنزلية</button>
-                <button class="btn btn-outline-primary category-btn" data-category="jardin" aria-label="الحديقة">الحديقة</button>
-                <button class="btn btn-outline-primary category-btn" data-category="café" aria-label="آلات القهوة">آلات القهوة</button>
-            </div>
-        </div>
-
-        <div class="row" id="productsContainer"></div>
-    </div>
-</section>
-
-<!-- قسم آراء العملاء -->
-<section id="reviews" class="py-5 bg-light">
-    <div class="container">
-        <h2 class="section-title">آراء العملاء</h2>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="review-card">
-                    <div class="d-flex">
-                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Omar" class="rounded-circle me-3" width="60" height="60" alt="صورة عمر">
-                        <div>
-                            <h5 class="mb-0">عمر</h5>
-                            <div class="text-warning">
-                                <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="mt-3">"جودة المنتج ممتازة والتوصيل كان في الموعد، شكراً لفريق ROBUSTE!"</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="review-card">
-                    <div class="d-flex">
-                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Rose" class="rounded-circle me-3" width="60" height="60" alt="صورة روز">
-                        <div>
-                            <h5 class="mb-0">روز بلانش</h5>
-                            <div class="text-warning">
-                                <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-half"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="mt-3">"أنا سعيدة بعلامة ROBUSTE، أستخدم منتجاتكم منذ سنوات عديدة."</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="review-card">
-                    <div class="d-flex">
-                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Mohamed" class="rounded-circle me-3" width="60" height="60" alt="صورة محمد">
-                        <div>
-                            <h5 class="mb-0">محمد</h5>
-                            <div class="text-warning">
-                                <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="mt-3">"الدفع عند الاستلام مريح جداً، والمنتج يعمل بكفاءة عالية، أنصح بالتعامل معهم."</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- نافذة الطلب (Order Modal) -->
-<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirm your order</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="order-summary mb-4">
-                    <h6 class="mb-3">Order summary</h6>
-                    <div class="d-flex align-items-center">
-                        <img id="productImage" class="product-image-thumb me-3" src="" alt="Product image">
-                        <div>
-                            <h5 id="productNameDisplay" class="mb-1"></h5>
-                            <p id="productPrice" class="mb-0 text-primary fw-bold"></p>
-                        </div>
-                    </div>
-                </div>
-                <form id="orderForm">
-                    <input type="hidden" id="productName">
-                    <input type="hidden" id="productPriceValue">
-                    <input type="hidden" id="productImageUrl">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="fullName" class="form-label">Full name<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="fullName" required aria-required="true">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Phone<span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="phone" required aria-required="true">
-                            <small class="text-muted">e.g. (415) 555-0132</small>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" required aria-required="true">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="orderState" class="form-label">State<span class="text-danger">*</span></label>
-                            <select class="form-select" id="orderState" required aria-required="true">
-                                <option value="">Select state…</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Street address<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="address" required aria-required="true">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="city" class="form-label">City<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="city" required aria-required="true">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="zip" class="form-label">ZIP code<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="zip" inputmode="numeric" required aria-required="true">
-                        </div>
-                    </div>
-                    <div id="orderSummaryBox" class="order-totals mb-3"></div>
-                    <div id="orderErrors" class="text-danger small mb-2"></div>
-                    <p class="text-muted small mb-0"><i class="bi bi-lock-fill"></i> Secure card payment via Stripe on the next step.</p>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-orange" id="submitOrderBtn" onclick="submitOrder()">Place order</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- قسم الاتصال -->
-<section id="contact" class="py-5">
-    <div class="container">
-        <h2 class="section-title">اتصل بنا</h2>
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="contact-card h-100">
-                    <h4 class="mb-4">معلومات الاتصال</h4>
-                    <div class="d-flex mb-3">
-                        <div class="me-3 text-primary">
-                            <i class="bi bi-geo-alt fs-4"></i>
-                        </div>
-                        <div>
-                            <h5>العنوان</h5>
-                            <p class="mb-0">Rue Bourquaa El Manouar, 426 Parcelle, El Eulma, Sétif, Algérie</p>
-                        </div>
-                    </div>
-                    <div class="d-flex mb-3">
-                        <div class="me-3 text-primary">
-                            <i class="bi bi-telephone fs-4"></i>
-                        </div>
-                        <div>
-                            <h5>الهاتف</h5>
-                            <p class="mb-0">0656360457</p>
-                        </div>
-                    </div>
-                    <div class="d-flex mb-3">
-                        <div class="me-3 text-primary">
-                            <i class="bi bi-envelope fs-4"></i>
-                        </div>
-                        <div>
-                            <h5>البريد الإلكتروني</h5>
-                            <p class="mb-0">laidaouih@gmail.com</p>
-                        </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="me-3 text-primary">
-                            <i class="bi bi-clock fs-4"></i>
-                        </div>
-                        <div>
-                            <h5>ساعات العمل</h5>
-                            <p class="mb-0">يومياً من 07:00 إلى 16:00</p>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <h5>تابعنا على</h5>
-                        <div class="d-flex mt-3">
-                            <a href="https://www.facebook.com/share/19QooaXfy8/" class="social-icon" aria-label="فيسبوك">
-                                <i class="bi bi-facebook"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="contact-card h-100">
-                    <h4 class="mb-4">أرسل لنا رسالة</h4>
-                    <form id="contactForm">
-                        <div class="mb-3">
-                            <label for="contactName" class="form-label">اسمك<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="contactName" required aria-required="true">
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactEmail" class="form-label">بريدك الإلكتروني<span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="contactEmail" required aria-required="true">
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactPhone" class="form-label">رقم الهاتف</label>
-                            <input type="tel" class="form-control" id="contactPhone">
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactMessage" class="form-label">رسالتك<span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="contactMessage" rows="4" required aria-required="true"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-orange w-100">
-                            <span id="contactSubmitText">إرسال الرسالة</span>
-                            <span id="contactSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="contact-card">
-                    <h4 class="mb-4">موقع المتجر</h4>
-                    <a href="https://maps.app.goo.gl/Cpk1L8fAadgE9pB76" target="_blank" style="display: block; text-decoration: none;" aria-label="فتح الموقع على الخريطة">
-                        <div class="map-container" style="position: relative; width: 100%; height: 300px;">
-                            <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.123456789012!2d5.7129892!3d36.1524645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12f2d5f1a5a5a5a5%3A0x12f2d5f1a5a5a5a5!2sROBUSTE%20EL%20EULMA!5e0!3m2!1sen!2sdz!4v1621234567890!5m2!1sen!2sdz"
-                                width="100%"
-                                height="100%"
-                                style="border:0; border-radius: 8px; pointer-events: none;"
-                                allowfullscreen=""
-                                loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"
-                                title="موقع متجر ROBUSTE EL EULMA">
-                            </iframe>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- التذييل Footer -->
-<footer class="py-5 bg-dark text-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <h5 class="mb-3">نبذة عن ROBUSTE</h5>
-                <p>متجر متخصص في الأجهزة المنزلية عالية الجودة بأسعار تنافسية. نقدم أفضل المنتجات مع توصيل سريع.</p>
-                <ul class="list-unstyled small mb-0">
-                    <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>العلمة، ولاية سطيف، الجزائر</li>
-                    <li class="mb-2"><i class="bi bi-telephone me-2"></i><span dir="ltr">+213 656 36 04 57</span></li>
-                    <li class="mb-2"><i class="bi bi-envelope me-2"></i>laidaouih@gmail.com</li>
-                </ul>
-                <div class="mt-3">
-                    <a href="https://www.facebook.com/share/19QooaXfy8/" class="social-icon" aria-label="فيسبوك">
-                        <i class="bi bi-facebook"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 mb-4">
-                <h5 class="mb-3">روابط سريعة</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">الرئيسية</a></li>
-                    <li class="mb-2"><a href="#products" class="text-white text-decoration-none">المنتجات</a></li>
-                    <li class="mb-2"><a href="#reviews" class="text-white text-decoration-none">آراء العملاء</a></li>
-                    <li class="mb-2"><a href="#contact" class="text-white text-decoration-none">اتصل بنا</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-4 mb-4">
-                <h5 class="mb-3">خدمة العملاء</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="privacy.html" class="text-white text-decoration-none">سياسة الخصوصية</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-4 mb-4">
-                <h5 class="mb-3">اشترك في صفحتنا</h5>
-                <p>اشترك لتصلك أحدث العروض</p>
-                <div class="mt-3">
-                    <a href="https://www.facebook.com/share/19QooaXfy8/" class="btn btn-orange w-100" target="_blank" aria-label="الاشتراك في فيسبوك">اشترك الآن</a>
-                </div>
-            </div>
-        </div>
-        <hr class="my-4 bg-light">
-        <div class="row">
-            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                <p class="mb-0">&copy; 2025 ROBUSTE. جميع الحقوق محفوظة.</p>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-md-end">
-                    <p class="mb-2 mb-md-0 me-md-3">الدفع متاح ببطاقة الذهب</p>
-                    <img src="https://i.postimg.cc/bY06X2YN/logo-round.png" alt="طرق الدفع" style="width: 30px; height: auto;">
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-top">
+    <span class="footer-logo">Nebula<span>.</span></span>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="#about">About</a>
+      <a href="#showcase">Work</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 Nebula — built by Anes. All rights reserved.</span>
+    <span>Built with intention — every pixel, every interaction.</span>
+  </div>
 </footer>
 
-<!-- زر واتساب -->
-<a href="https://wa.me/213656360457" class="whatsapp-btn" target="_blank" aria-label="واتساب">
-    <i class="bi bi-whatsapp"></i>
-</a>
 
-<!-- سلة عائمة قابلة للسحب -->
-<div class="floating-cart" id="floatingCart">
-    <div class="cart-icon-container">
-        <button class="cart-btn-drag" id="dragCartBtn">
-            <i class="bi bi-cart3"></i>
-            <span id="cartCountFloat">0</span>
-        </button>
-        <span class="cart-label-float">السلة</span>
-    </div>
-</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  gsap.registerPlugin(ScrollTrigger)
+  const isMobile = () => window.innerWidth <= 768
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches
 
-<!-- Toast للمنبهات -->
-<div id="statusToast" style="position: fixed; top: 90px; right: 20px; z-index: 9999; max-width: 320px;"></div>
+  let lenis
+  try {
+    lenis = new Lenis({
+      duration: 1.25,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    })
+    ;(function rf(t) { lenis.raf(t); ScrollTrigger.update(); requestAnimationFrame(rf) })(0)
+    lenis.on('scroll', ScrollTrigger.update)
+  } catch(e) {}
 
-<!-- السلة الجانبية -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="cartOffcanvasLabel">سلة التسوق</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="إغلاق"></button>
-    </div>
-    <div class="offcanvas-body">
-        <div id="cartItems" class="mb-3">
-            <div class="text-center py-5" id="emptyCartMessage">
-                <i class="bi bi-cart-x display-4 d-block mb-4" style="font-size: 4rem; opacity: 0.3;"></i>
-                <h4 class="mb-3">سلة التسوق فارغة</h4>
-                <p class="text-muted mb-4">لم تقم بإضافة أي منتجات إلى السلة بعد</p>
-                <a href="#products" class="btn btn-orange btn-lg px-5 py-2" id="emptyCartBtn">
-                    <i class="bi bi-cart-plus me-2"></i> استكشف المنتجات
-                </a>
-            </div>
-        </div>
+  const progressBar = document.getElementById('scroll-progress')
+  function updateProgress() {
+    const total = document.documentElement.scrollHeight - innerHeight
+    const pct   = Math.min((scrollY / total) * 100, 100)
+    progressBar.style.width = pct + '%'
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true })
+  if (lenis) lenis.on('scroll', updateProgress)
 
-        <div class="cart-summary border-top pt-3">
-            <div class="d-flex justify-content-between mb-2">
-                <span>المجموع:</span>
-                <span id="cartTotal">0 دج</span>
-            </div>
-            <button class="btn btn-orange w-100" onclick="checkout()" id="checkoutBtn" disabled aria-label="إنهاء الطلب">
-                <i class="bi bi-bag-check"></i> إنهاء الطلب
-            </button>
-        </div>
-    </div>
-</div>
+  ;(function cookieVariant() {
+    const KEY = 'studio_visit'
+    const isReturning = document.cookie.split(';').some(c => c.trim().startsWith(KEY + '='))
+    const exp = new Date(Date.now() + 30 * 864e5).toUTCString()
+    document.cookie = `${KEY}=1; expires=${exp}; path=/; SameSite=Lax`
 
-<!-- النصوص البرمجية الخارجية -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="firebase-init.js"></script>
-<script src="cart.js"></script>
-<script src="lib/money.js"></script>
-<script src="lib/store.config.js"></script>
-<script src="lib/checkout.js"></script>
-<script src="lib/payments.js"></script>
-<script src="lib/orders.js"></script>
-<script src="main.js"></script>
-<script src="i18n.js"></script>
-<script src="analytics.js"></script>
-<script src="telegram.js"></script>
+    if (isReturning) {
+      const tag = document.getElementById('heroTag')
+      if (tag) { tag.innerHTML = '&#9670;&nbsp; Welcome back, good to see you'; }
+      const sub = document.getElementById('heroSub')
+      if (sub) sub.textContent = "Good to have you back. Let's build something great for your business — whenever you're ready."
+      const banner = document.getElementById('rv-banner')
+      if (banner) {
+        setTimeout(() => {
+          gsap.to(banner, { top: 0, opacity: 1, duration: .7, ease: 'power3.out' })
+          setTimeout(() => gsap.to(banner, { opacity: 0, top: -40, duration: .5, ease: 'power2.in' }), 4000)
+        }, 2600)
+      }
+    }
+  })()
 
-<!-- لا توجد أية سكربتات لترجمة أسماء المنتجات أو العلامة التجارية -->
+  ;(function particles() {
+    const canvas = document.getElementById('ambientCanvas')
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let W = canvas.width = innerWidth
+    let H = canvas.height = innerHeight
+    let mob = W <= 768
+    const PAL = [[201,169,110],[201,169,110],[232,232,228],[91,143,255],[232,232,228]]
+    const COUNT = 55
+    function mp(atBottom) {
+      const col = PAL[Math.floor(Math.random() * PAL.length)]
+      const roll = Math.random()
+      const r = roll < .07 ? 1.7 : roll < .25 ? 1.1 : 0.55
+      return {
+        x: Math.random() * W, y: atBottom ? H + Math.random() * 120 : Math.random() * H,
+        vy: -(0.04 + Math.random() * .12), vx: (Math.random() - .5) * .055,
+        r, col, phase: Math.random() * Math.PI * 2, freq: .003 + Math.random() * .004,
+        alpha: 0, peak: (r > 1.4 ? .2 : r > .9 ? .13 : .07) * (mob ? .5 : 1)
+      }
+    }
+    let pts = Array.from({length: COUNT}, () => mp(false)), fr = 0
+    ;(function tick() {
+      requestAnimationFrame(tick); fr++
+      ctx.clearRect(0, 0, W, H)
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i]
+        p.y += p.vy; p.x += p.vx + Math.sin(fr * p.freq + p.phase) * .18
+        if (p.alpha < p.peak) p.alpha = Math.min(p.peak, p.alpha + .0018)
+        if (p.y < -10) { pts[i] = mp(true); continue }
+        if (p.x < -6) p.x = W + 6; if (p.x > W + 6) p.x = -6
+        const [r,g,b] = p.col
+        if (p.r > 1.2) {
+          const g2 = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*8)
+          g2.addColorStop(0, `rgba(${r},${g},${b},${(p.alpha*.5).toFixed(3)})`)
+          g2.addColorStop(.45,`rgba(${r},${g},${b},${(p.alpha*.07).toFixed(3)})`)
+          g2.addColorStop(1,  `rgba(${r},${g},${b},0)`)
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*8,0,Math.PI*2); ctx.fillStyle=g2; ctx.fill()
+        }
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+        ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha.toFixed(3)})`; ctx.fill()
+      }
+    })()
+    window.addEventListener('resize', () => {
+      W = canvas.width = innerWidth; H = canvas.height = innerHeight; mob = W <= 768
+      pts.forEach(p => p.peak = (p.r > 1.4 ? .2 : p.r > .9 ? .13 : .07) * (mob ? .5 : 1))
+    })
+  })()
+
+  const cursorDot  = document.getElementById('cursor')
+  const cursorRing = document.getElementById('cursor-ring')
+  let mx = 0, my = 0, rx = 0, ry = 0
+  if (cursorDot && window.matchMedia('(pointer:fine)').matches) {
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY
+      gsap.set(cursorDot, {x: mx, y: my})
+    })
+    ;(function rf() { rx += (mx-rx)*.11; ry += (my-ry)*.11; gsap.set(cursorRing, {x:rx,y:ry}); requestAnimationFrame(rf) })()
+    document.querySelectorAll('a, button, .feat-card, .tpl-card').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'))
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'))
+    })
+  } else {
+    if (cursorDot)  cursorDot.style.display  = 'none'
+    if (cursorRing) cursorRing.style.display = 'none'
+  }
+
+  const heroCanvas  = document.getElementById('heroCanvas')
+  const heroSection = document.getElementById('hero')
+  let bloomCanvas = null
+
+  if (heroCanvas && typeof THREE !== 'undefined') {
+    const vsrc = `
+      varying vec2 vUv;
+      void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+    `
+    const fsrc = `
+      uniform float uProgress; uniform vec2 uResolution; uniform vec3 uColor; uniform float uSpread;
+      varying vec2 vUv;
+      float hash(vec2 p) { vec3 p3=vec3(p.xy,1.0); return fract(sin(dot(p3,vec3(37.1,61.7,12.4)))*3758.5453); }
+      float noise(vec2 p) { vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y); }
+      float fbm(vec2 p) { float v=0.0; v+=noise(p*1.0)*.5; v+=noise(p*2.1)*.25; v+=noise(p*4.3)*.125; return v; }
+      void main() {
+        float aspect = uResolution.x / uResolution.y;
+        vec2 centered = (vUv - 0.5) * vec2(aspect,1.0);
+        float edge = vUv.y - uProgress * 1.25;
+        float n = fbm(centered * 15.0);
+        float d = edge + n * uSpread;
+        float px = 1.0 / uResolution.y;
+        float alpha = 1.0 - smoothstep(-px, px, d);
+        gl_FragColor = vec4(uColor, alpha * 0.14);
+      }
+    `
+    const scene = new THREE.Scene()
+    const camera = new THREE.OrthographicCamera(-1,1,1,-1,0,1)
+    const renderer = new THREE.WebGLRenderer({canvas: heroCanvas, alpha: true, antialias: false})
+    const material = new THREE.ShaderMaterial({
+      vertexShader: vsrc, fragmentShader: fsrc,
+      uniforms: {
+        uProgress:   {value: 0},
+        uResolution: {value: new THREE.Vector2(heroSection.offsetWidth, heroSection.offsetHeight)},
+        uColor:      {value: new THREE.Vector3(201/255, 169/255, 110/255)},
+        uSpread:     {value: 0.42},
+      },
+      transparent: true,
+    })
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), material))
+
+    function resizeGL() {
+      const w = heroSection.offsetWidth, h = heroSection.offsetHeight
+      renderer.setSize(w, h)
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+      material.uniforms.uResolution.value.set(w, h)
+      if (bloomCanvas) { bloomCanvas.width = w; bloomCanvas.height = h }
+    }
+    resizeGL()
+    window.addEventListener('resize', resizeGL)
+
+    bloomCanvas = document.createElement('canvas')
+    bloomCanvas.className = 'hero-bloom'
+    bloomCanvas.setAttribute('aria-hidden', 'true')
+    heroSection.insertBefore(bloomCanvas, heroSection.firstChild)
+    const bloomCtx = bloomCanvas.getContext('2d')
+    bloomCanvas.width  = heroSection.offsetWidth
+    bloomCanvas.height = heroSection.offsetHeight
+
+    let prog = 0
+    ;(function glLoop() {
+      material.uniforms.uProgress.value = prog
+      renderer.render(scene, camera)
+      try { bloomCtx.clearRect(0,0,bloomCanvas.width,bloomCanvas.height); bloomCtx.drawImage(heroCanvas, 0, 0) } catch(e){}
+      requestAnimationFrame(glLoop)
+    })()
+
+    const onScroll = () => {
+      prog = Math.min(scrollY / Math.max(heroSection.offsetHeight - innerHeight, 1), 1.1)
+    }
+    if (lenis) lenis.on('scroll', ({scroll}) => { prog = Math.min(scroll / Math.max(heroSection.offsetHeight - innerHeight, 1), 1.1) })
+    else window.addEventListener('scroll', onScroll)
+  }
+
+  const veil     = document.getElementById('veil')
+  const veilLogo = document.getElementById('veil-logo')
+  gsap.timeline()
+    .to(veilLogo, {opacity:1, duration:.5, ease:'power2.out'})
+    .to(veilLogo, {opacity:0, duration:.4, ease:'power2.in'}, 1.1)
+    .to(veil,     {opacity:0, duration:.7, ease:'power2.out', onComplete:()=>veil.remove()}, 1.4)
+
+  const heroTL = gsap.timeline({delay:1.8, defaults:{ease:'power3.out'}})
+  heroTL
+    .to('#heroEyebrow',       {opacity:1, y:0, duration:.9})
+    .to('.hero-line-inner',   {opacity:1, y:0, duration:1.1, stagger:.15}, .25)
+    .to('#heroSub',           {opacity:1, y:0, duration:.9}, .6)
+    .to('#heroActions',       {opacity:1, y:0, duration:.8}, .75)
+    .to('#heroStats',         {opacity:1, y:0, duration:.8}, .85)
+    .to('#heroScroll',        {opacity:1, duration:.6}, 1.1)
+
+  gsap.to('#heroHeadline', { y:-60, ease:'none', scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1.2} })
+  gsap.to('#orbA', { y:-200, ease:'none', scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true} })
+  gsap.to('#orbB', { y:-320, ease:'none', scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true} })
+
+  function initWordReveal(el) {
+    if (!el) return
+    const words = el.textContent.trim().split(/\s+/)
+    el.innerHTML = words.map(w => `<span class="wrev-word">${w}&nbsp;</span>`).join('')
+    const spans = el.querySelectorAll('.wrev-word')
+    ScrollTrigger.create({
+      trigger: el, start:'top 76%', end:'bottom 34%', scrub:1.6,
+      onUpdate: self => {
+        const p = self.progress, n = spans.length
+        spans.forEach((s,i) => {
+          const lo = i/n, hi = (i+1)/n
+          let op = .06
+          if (p >= hi) op = 1
+          else if (p >= lo) op = .06 + ((p-lo)/(hi-lo)) * .94
+          s.style.opacity = op
+          s.style.color   = op > .45 ? 'var(--text)' : 'var(--text-muted)'
+        })
+      }
+    })
+  }
+  initWordReveal(document.getElementById('philText'))
+  initWordReveal(document.getElementById('stmtText'))
+
+  document.querySelectorAll('.clip-reveal').forEach(el => {
+    el.setAttribute('data-text', el.textContent.trim())
+    ScrollTrigger.create({
+      trigger:el, start:'top 75%', end:'bottom 42%', scrub:1.4,
+      onUpdate: self => el.style.setProperty('--clip', `${Math.max(0, 100 - self.progress*100)}%`)
+    })
+  })
+
+  ScrollTrigger.create({
+    trigger:'#showcaseTracks', start:'top 92%', end:'top 10%', scrub:1.8,
+    onUpdate: self => {
+      const p = self.progress
+      document.querySelectorAll('.track[data-dir="r"] .track-inner').forEach(el => gsap.set(el, {x:`${35-p*35}%`}))
+      document.querySelectorAll('.track[data-dir="l"] .track-inner').forEach(el => gsap.set(el, {x:`${-35+p*35}%`}))
+    }
+  })
+
+  document.querySelectorAll('[data-reveal]').forEach((el,i) => {
+    ScrollTrigger.create({
+      trigger:el, start:'top 88%', once:true,
+      onEnter: () => gsap.to(el, {opacity:1, y:0, duration:.75, ease:'power3.out', delay:(i%5)*.1})
+    })
+  })
+
+  document.querySelectorAll('.feat-card').forEach((card, i) => {
+    ScrollTrigger.create({
+      trigger:card, start:'top 88%', once:true,
+      onEnter:()=>gsap.to(card, {opacity:1, y:0, duration:.65, ease:'power2.out', delay:i*.1})
+    })
+    if (prefersReducedMotion || isMobile()) return
+    const shine = card.querySelector('.feat-card-shine')
+    card.addEventListener('mousemove', e => {
+      const r   = card.getBoundingClientRect()
+      const x   = (e.clientX - r.left) / r.width  - .5
+      const y   = (e.clientY - r.top)  / r.height - .5
+      const rx  = -y * 14
+      const ry  =  x * 14
+      gsap.to(card, {
+        rotateX: rx, rotateY: ry,
+        transformPerspective: 700,
+        scale: 1.03,
+        duration: .25, ease: 'power2.out', overwrite: 'auto'
+      })
+      if (shine) {
+        shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(255,255,255,.10) 0%, transparent 65%)`
+      }
+    })
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {rotateX:0, rotateY:0, scale:1, duration:.6, ease:'elastic.out(1,.4)', overwrite:'auto'})
+      if (shine) shine.style.background = ''
+    })
+  })
+
+  function buildIframeSrc(accentColor, label, bgGradient) {
+    return `<!DOCTYPE html><html><head><style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      body{background:${bgGradient};font-family:system-ui;color:#e8e8e4;min-height:100vh;overflow:hidden}
+      .nav{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;border-bottom:1px solid rgba(255,255,255,.08)}
+      .logo{font-size:1.1rem;font-weight:800;letter-spacing:.1em;color:${accentColor}}
+      .nav-cta{background:${accentColor};color:#0a0a0a;font-size:.75rem;font-weight:700;letter-spacing:.06em;padding:.45rem 1.1rem;border-radius:100px}
+      .hero{padding:3rem 2rem 2rem;}
+      .eyebrow{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:${accentColor};margin-bottom:1rem;}
+      .h1{font-size:2.2rem;font-weight:800;line-height:1.05;margin-bottom:.9rem;}
+      .h1 em{color:${accentColor};font-style:normal;}
+      .sub{font-size:.85rem;color:rgba(232,232,228,.5);line-height:1.6;margin-bottom:1.5rem;}
+      .cta{display:inline-block;background:${accentColor};color:#0a0a0a;font-weight:700;font-size:.8rem;padding:.65rem 1.5rem;border-radius:100px;}
+      .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;padding:0 2rem;margin-top:1.5rem;}
+      .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;height:100px;}
+      .card-line{height:7px;border-radius:4px;background:rgba(255,255,255,.1);margin-bottom:.5rem;}
+      .card-acc{height:3px;width:50%;border-radius:2px;background:${accentColor};}
+    </style></head><body>
+      <div class="nav"><span class="logo">${label}</span><span class="nav-cta">Get Started</span></div>
+      <div class="hero">
+        <div class="eyebrow">Premium Experience</div>
+        <div class="h1">Built for your<br><em>${label}</em></div>
+        <div class="sub">Every section, every color, every feature<br>customized for your brand and your customers.</div>
+        <span class="cta">Explore Demo &rarr;</span>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="card-line"></div><div class="card-acc"></div></div>
+        <div class="card"><div class="card-line" style="width:70%"></div><div class="card-acc"></div></div>
+        <div class="card"><div class="card-line" style="width:55%"></div><div class="card-acc"></div></div>
+      </div>
+    </body></html>`
+  }
+
+  const tplData = [
+    { color: '#d4a5a5', label: 'Bloom', bg: 'linear-gradient(135deg,#1a0e10,#2d1519,#1f1012)' },
+    { color: '#c9a96e', label: 'Essence', bg: 'linear-gradient(135deg,#191410,#28200e,#1c180b)' },
+    { color: '#5b8fff', label: 'Commerce', bg: 'linear-gradient(135deg,#0c1220,#111d32,#0f1629)' },
+  ]
+
+  document.querySelectorAll('.tpl-card').forEach((card, i) => {
+    ScrollTrigger.create({
+      trigger:card, start:'top 88%', once:true,
+      onEnter:()=>gsap.to(card, {opacity:1, y:0, duration:.85, ease:'power3.out', delay:i*.14})
+    })
+
+    const data = tplData[i]
+    if (data) {
+      const preview = card.querySelector('.tpl-preview')
+      const iframeWrap = document.createElement('div')
+      iframeWrap.className = 'tpl-iframe-wrap'
+      const iframe = document.createElement('iframe')
+      iframe.setAttribute('sandbox', 'allow-same-origin')
+      iframe.setAttribute('loading', 'lazy')
+      iframe.setAttribute('title', `${data.label} template preview`)
+      iframe.srcdoc = buildIframeSrc(data.color, data.label, data.bg)
+      iframeWrap.appendChild(iframe)
+      preview.insertBefore(iframeWrap, preview.querySelector('.tpl-overlay'))
+    }
+
+    if (prefersReducedMotion || isMobile()) return
+    const shine = card.querySelector('.tpl-shine')
+    card.addEventListener('mousemove', e => {
+      const r  = card.getBoundingClientRect()
+      const x  = (e.clientX - r.left) / r.width  - .5
+      const y  = (e.clientY - r.top)  / r.height - .5
+      gsap.to(card, {
+        rotateX: -y * 10, rotateY: x * 10,
+        transformPerspective: 900, scale: 1.02,
+        duration: .25, ease: 'power2.out', overwrite:'auto'
+      })
+      if (shine) shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(${data ? data.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(',') : '201,169,110'},.06) 0%, transparent 60%)`
+    })
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {rotateX:0, rotateY:0, scale:1, duration:.7, ease:'elastic.out(1,.35)', overwrite:'auto'})
+      if (shine) shine.style.background = ''
+    })
+  })
+
+  document.querySelectorAll('.svc-item').forEach((item,i) => {
+    ScrollTrigger.create({
+      trigger:item, start:'top 88%', once:true,
+      onEnter:()=>gsap.to(item, {opacity:1, x:0, duration:.7, ease:'power2.out', delay:i*.09})
+    })
+  })
+
+  ;(function initProcess() {
+    const pinWrap = document.getElementById('processPinWrap')
+    const track   = document.getElementById('processTrack')
+    const sticky  = document.getElementById('processSticky')
+    const steps   = Array.from(track.querySelectorAll('.step'))
+    const dots    = Array.from(document.querySelectorAll('.process-dot'))
+
+    if (isMobile()) {
+      steps.forEach(step => {
+        step.style.opacity = 1; step.style.transform = 'none'
+        step.classList.add('active')
+      })
+      return
+    }
+
+    const STEP_W = () => steps[0].offsetWidth + parseFloat(getComputedStyle(track).gap)
+    const totalDist = () => STEP_W() * (steps.length - 1)
+
+    const SCROLL_PER_STEP = () => innerHeight * 1.1
+    const setHeight = () => {
+      pinWrap.style.height = (innerHeight + SCROLL_PER_STEP() * steps.length) + 'px'
+    }
+    setHeight()
+    window.addEventListener('resize', () => { setHeight(); ScrollTrigger.refresh() })
+
+    ScrollTrigger.create({
+      trigger: pinWrap, start: 'top top',
+      end: () => `+=${SCROLL_PER_STEP() * steps.length}`,
+      pin: sticky, pinSpacing: false,
+      onUpdate: self => {
+        const p    = self.progress
+        const dist = totalDist()
+        gsap.set(track, { x: -dist * Math.min(p * (steps.length / (steps.length - .9)), 1) })
+
+        const rawIdx  = p * steps.length
+        const stepIdx = Math.min(Math.floor(rawIdx), steps.length - 1)
+        const stepFrac = rawIdx - stepIdx
+
+        steps.forEach((step, i) => {
+          const inRange  = i <= stepIdx
+          const isCurrent = i === stepIdx
+          gsap.to(step, {
+            opacity: inRange ? 1 : .2,
+            x: 0,
+            duration: .4, ease: 'power2.out', overwrite: 'auto'
+          })
+          const line = step.querySelector('.step-progress-line')
+          if (line) {
+            if (i < stepIdx)       line.style.width = '100%'
+            else if (isCurrent)    line.style.width = (stepFrac * 100) + '%'
+            else                   line.style.width = '0%'
+          }
+        })
+
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === stepIdx)
+        })
+      }
+    })
+  })()
+
+  if (!prefersReducedMotion && !isMobile()) {
+    document.querySelectorAll('.btn').forEach(btn => {
+      const STRENGTH = 0.38
+      btn.addEventListener('mousemove', e => {
+        const r    = btn.getBoundingClientRect()
+        const cx   = r.left + r.width / 2
+        const cy   = r.top  + r.height / 2
+        const dx   = (e.clientX - cx) * STRENGTH
+        const dy   = (e.clientY - cy) * STRENGTH
+        gsap.to(btn, {
+          x: dx, y: dy,
+          duration: .35, ease: 'power2.out', overwrite: 'auto'
+        })
+      })
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x:0, y:0, duration:.7, ease:'elastic.out(1,.4)', overwrite:'auto' })
+      })
+    })
+  }
+
+  const form      = document.getElementById('contactForm')
+  const formBtn   = document.getElementById('formBtn')
+  const formStat  = document.getElementById('formStatus')
+
+  if (form) {
+    form.addEventListener('submit', async e => {
+      e.preventDefault()
+      formStat.className  = 'form-status'
+      formStat.style.display = 'none'
+
+      const name = form.name.value.trim()
+      const msg  = form.message.value.trim()
+      if (!name || !msg) {
+        gsap.to(formBtn, {x:-8, duration:.07, yoyo:true, repeat:5, ease:'power1.inOut'})
+        formStat.textContent = 'Please fill in your name and message.'
+        formStat.className   = 'form-status error'
+        return
+      }
+
+      const originalText = formBtn.innerHTML
+      formBtn.innerHTML   = 'Sending…'
+      formBtn.disabled    = true
+      gsap.to(formBtn, {opacity:.7, duration:.25})
+
+      try {
+        const data  = new FormData(form)
+        const res   = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        })
+        const json  = await res.json()
+
+        if (res.ok) {
+          formStat.textContent = '✓ Message sent! I\'ll get back to you within 24 hours.'
+          formStat.className   = 'form-status success'
+          form.reset()
+          gsap.from(formStat, {opacity:0, y:8, duration:.5, ease:'power2.out'})
+          setTimeout(() => {
+            const whatsappHint = document.createElement('p')
+            whatsappHint.style.cssText = 'font-size:.78rem;color:var(--text-muted);margin-top:.5rem;'
+            whatsappHint.innerHTML = 'You can also reach me directly on <a href="https://wa.me/00000000000" style="color:var(--accent)" target="_blank">WhatsApp ↗</a> for a faster reply.'
+            formStat.after(whatsappHint)
+            setTimeout(()=>whatsappHint.remove(), 8000)
+          }, 1200)
+        } else {
+          throw new Error(json.error || 'Submission failed')
+        }
+      } catch(err) {
+        formStat.textContent = '✕ Something went wrong. Please email me directly.'
+        formStat.className   = 'form-status error'
+      } finally {
+        formBtn.innerHTML = originalText
+        formBtn.disabled  = false
+        gsap.to(formBtn, {opacity:1, duration:.25})
+      }
+    })
+  }
+
+  const nav        = document.getElementById('nav')
+  const navToggle  = document.getElementById('navToggle')
+  const navOverlay = document.getElementById('navOverlay')
+  let menuOpen = false
+
+  ScrollTrigger.create({
+    start:'top -50',
+    onEnter:    ()=>nav.classList.add('scrolled'),
+    onLeaveBack:()=>nav.classList.remove('scrolled'),
+  })
+
+  function openMenu() {
+    menuOpen = true; navOverlay.classList.add('open')
+    navToggle.setAttribute('aria-expanded','true')
+    document.body.style.overflow = 'hidden'
+    const [s1,s2] = navToggle.querySelectorAll('span')
+    gsap.to(s1,{rotation:45,y:6.5,duration:.4,ease:'power2.inOut'})
+    gsap.to(s2,{rotation:-45,y:-6.5,duration:.4,ease:'power2.inOut'})
+  }
+  function closeMenu() {
+    menuOpen = false; navOverlay.classList.remove('open')
+    navToggle.setAttribute('aria-expanded','false')
+    document.body.style.overflow = ''
+    const [s1,s2] = navToggle.querySelectorAll('span')
+    gsap.to(s1,{rotation:0,y:0,duration:.4,ease:'power2.inOut'})
+    gsap.to(s2,{rotation:0,y:0,duration:.4,ease:'power2.inOut'})
+  }
+  navToggle.addEventListener('click', ()=>menuOpen?closeMenu():openMenu())
+  document.addEventListener('keydown', e=>{if(e.key==='Escape'&&menuOpen)closeMenu()})
+  navOverlay.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu))
+
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const t = document.querySelector(a.getAttribute('href'))
+      if (!t) return
+      e.preventDefault()
+      if (lenis) lenis.scrollTo(t, {offset:-(nav.offsetHeight+20)})
+      else window.scrollTo({top:t.getBoundingClientRect().top+scrollY-(nav.offsetHeight+20),behavior:'smooth'})
+    })
+  })
+
+})
+</script>
 </body>
 </html>
