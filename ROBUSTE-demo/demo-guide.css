@@ -1,0 +1,137 @@
+/* ============================================================
+   ROBUSTE — Portfolio Demo Guide layer
+   Self-contained overlay: tour, popping arrows, annotations,
+   "customizable" badges, owner-notification illustration,
+   EN/AR language toggle. Scoped under .rd- to avoid clashes.
+   ============================================================ */
+:root{
+  --rd-accent:#ff6600;
+  --rd-accent-2:#ff9a3d;
+  --rd-ink:#10151f;
+  --rd-card:#ffffff;
+  --rd-shadow:0 18px 50px rgba(8,15,30,.28);
+}
+.rd-hidden{display:none !important;}
+*[dir] .rd-en,*[dir] .rd-ar{display:none;}
+html[data-rd-lang="en"] .rd-en{display:inline;}
+html[data-rd-lang="ar"] .rd-ar{display:inline;}
+html[data-rd-lang="en"] .rd-en-block{display:block;}
+html[data-rd-lang="ar"] .rd-ar-block{display:block;}
+
+/* ---------- Control dock (bottom) ---------- */
+.rd-dock{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  z-index:2147483000;display:flex;gap:8px;align-items:center;
+  background:rgba(16,21,31,.92);backdrop-filter:blur(10px);
+  color:#fff;padding:8px 10px;border-radius:999px;box-shadow:var(--rd-shadow);
+  font-family:'Segoe UI',system-ui,-apple-system,'Noto Sans Arabic',sans-serif;}
+.rd-dock button{border:0;cursor:pointer;font:inherit;font-weight:600;
+  border-radius:999px;padding:9px 15px;display:flex;align-items:center;gap:7px;
+  transition:.18s transform,.18s background;white-space:nowrap;}
+.rd-dock button:active{transform:scale(.96);}
+.rd-dock .rd-play{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-2));color:#fff;}
+.rd-dock .rd-play:hover{filter:brightness(1.07);}
+.rd-dock .rd-ghost{background:rgba(255,255,255,.12);color:#fff;}
+.rd-dock .rd-ghost:hover{background:rgba(255,255,255,.22);}
+.rd-dock .rd-lang{background:#fff;color:var(--rd-ink);padding:0;overflow:hidden;}
+.rd-dock .rd-lang span{padding:9px 12px;display:inline-block;transition:.15s;}
+.rd-dock .rd-lang .on{background:var(--rd-accent);color:#fff;}
+.rd-dock .rd-dot{width:8px;height:8px;border-radius:50%;background:#36d399;
+  box-shadow:0 0 0 0 rgba(54,211,153,.6);animation:rd-pulse 2s infinite;margin:0 2px;}
+@keyframes rd-pulse{0%{box-shadow:0 0 0 0 rgba(54,211,153,.55)}70%{box-shadow:0 0 0 9px rgba(54,211,153,0)}100%{box-shadow:0 0 0 0 rgba(54,211,153,0)}}
+.rd-dock .rd-label{font-size:.7rem;opacity:.8;font-weight:600;letter-spacing:.04em;margin-inline-start:2px;}
+@media(max-width:560px){.rd-dock .rd-label{display:none;} .rd-dock button{padding:9px 12px;}}
+
+/* ---------- Hotspots (pulsing dots that pop an arrow+label) ---------- */
+.rd-hotspot{position:absolute;z-index:2147482000;width:26px;height:26px;
+  margin:-13px 0 0 -13px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--rd-accent) 70%);
+  box-shadow:0 4px 14px rgba(255,102,0,.5);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:13px;font-family:system-ui,sans-serif;}
+.rd-hotspot::before{content:"";position:absolute;inset:-6px;border-radius:50%;
+  border:2px solid var(--rd-accent);animation:rd-ring 2.2s infinite;}
+@keyframes rd-ring{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+.rd-hotspot:hover{transform:scale(1.12);}
+
+/* popping arrow + bubble */
+.rd-pop{position:absolute;z-index:2147482100;max-width:260px;
+  background:var(--rd-card);color:var(--rd-ink);border-radius:14px;padding:12px 14px;
+  box-shadow:var(--rd-shadow);font-family:'Segoe UI',system-ui,'Noto Sans Arabic',sans-serif;
+  font-size:.86rem;line-height:1.5;opacity:0;transform:translateY(8px) scale(.96);
+  transition:.22s cubic-bezier(.2,.9,.3,1.3);pointer-events:none;border:1px solid rgba(255,102,0,.18);}
+.rd-pop.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.rd-pop h5{margin:0 0 4px;font-size:.92rem;color:var(--rd-accent);font-weight:800;}
+.rd-pop .rd-tag{display:inline-flex;align-items:center;gap:5px;margin-top:8px;
+  background:rgba(255,102,0,.1);color:var(--rd-accent);font-weight:700;
+  font-size:.7rem;padding:3px 9px;border-radius:999px;}
+.rd-arrow{position:absolute;z-index:2147482090;pointer-events:none;
+  filter:drop-shadow(0 4px 6px rgba(255,102,0,.35));opacity:0;transition:.25s;}
+.rd-arrow.show{opacity:1;animation:rd-arrow-bob 1.4s ease-in-out infinite;}
+@keyframes rd-arrow-bob{0%,100%{transform:translate(0,0)}50%{transform:translate(0,-6px)}}
+.rd-arrow path{stroke:var(--rd-accent);stroke-width:3.5;fill:none;stroke-linecap:round;}
+.rd-arrow polygon{fill:var(--rd-accent);}
+
+/* ---------- Guided tour (spotlight) ---------- */
+.rd-tour-backdrop{position:fixed;inset:0;z-index:2147481000;
+  background:rgba(8,12,22,.62);opacity:0;transition:.25s;pointer-events:none;}
+.rd-tour-backdrop.show{opacity:1;pointer-events:auto;}
+.rd-spotlight{position:absolute;border-radius:14px;
+  box-shadow:0 0 0 9999px rgba(8,12,22,.62),0 0 0 3px var(--rd-accent),0 0 28px 6px rgba(255,102,0,.55);
+  transition:.35s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.rd-tip{position:fixed;z-index:2147481200;max-width:330px;width:min(330px,90vw);
+  background:var(--rd-card);color:var(--rd-ink);border-radius:16px;
+  box-shadow:var(--rd-shadow);padding:18px;opacity:0;transform:translateY(10px);
+  transition:.28s;font-family:'Segoe UI',system-ui,'Noto Sans Arabic',sans-serif;}
+.rd-tip.show{opacity:1;transform:translateY(0);}
+.rd-tip .rd-step{font-size:.7rem;font-weight:700;letter-spacing:.08em;
+  color:var(--rd-accent);text-transform:uppercase;}
+.rd-tip h4{margin:6px 0 6px;font-size:1.12rem;font-weight:800;line-height:1.25;}
+.rd-tip p{margin:0;font-size:.9rem;line-height:1.55;color:#3a4252;}
+.rd-tip .rd-tag{display:inline-flex;align-items:center;gap:5px;margin-top:11px;
+  background:rgba(255,102,0,.1);color:var(--rd-accent);font-weight:700;
+  font-size:.72rem;padding:4px 10px;border-radius:999px;}
+.rd-tip .rd-actions{display:flex;align-items:center;gap:8px;margin-top:16px;}
+.rd-tip .rd-progress{flex:1;font-size:.74rem;color:#8b94a5;font-weight:600;}
+.rd-tip .rd-actions button{border:0;cursor:pointer;font:inherit;font-weight:700;
+  border-radius:10px;padding:9px 15px;transition:.16s;}
+.rd-tip .rd-next{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-2));color:#fff;}
+.rd-tip .rd-next:hover{filter:brightness(1.07);}
+.rd-tip .rd-back{background:#eef1f6;color:#3a4252;}
+.rd-tip .rd-back:hover{background:#e2e7ef;}
+.rd-tip .rd-skip{position:absolute;top:12px;inset-inline-end:14px;
+  background:transparent;border:0;color:#aab2c0;cursor:pointer;font-size:1.15rem;line-height:1;}
+
+/* ---------- Owner notification illustration ---------- */
+.rd-owner{position:fixed;top:84px;inset-inline-end:18px;z-index:2147483100;
+  width:min(360px,92vw);background:#0f1722;color:#e9eef6;border-radius:18px;
+  box-shadow:0 26px 60px rgba(0,0,0,.45);overflow:hidden;
+  transform:translateX(120%);transition:.5s cubic-bezier(.2,.9,.3,1.2);
+  font-family:'Segoe UI',system-ui,'Noto Sans Arabic',sans-serif;}
+.rd-owner.show{transform:translateX(0);}
+.rd-owner .rd-ohead{display:flex;align-items:center;gap:10px;padding:13px 15px;
+  background:linear-gradient(135deg,#229ED9,#1b80b3);}
+.rd-owner .rd-ohead .rd-tg{width:34px;height:34px;border-radius:50%;background:#fff;
+  display:flex;align-items:center;justify-content:center;color:#229ED9;font-size:20px;}
+.rd-owner .rd-ohead b{font-size:.95rem;}
+.rd-owner .rd-ohead small{display:block;opacity:.85;font-size:.72rem;}
+.rd-owner .rd-obody{padding:14px 16px;font-size:.86rem;line-height:1.6;}
+.rd-owner .rd-obody .rd-line{display:flex;gap:7px;margin-bottom:3px;}
+.rd-owner .rd-obody .rd-line span:first-child{opacity:.7;min-width:74px;}
+.rd-owner .rd-channels{display:flex;gap:8px;padding:0 16px 12px;}
+.rd-owner .rd-channels .rd-ch{flex:1;background:rgba(255,255,255,.07);border-radius:10px;
+  padding:8px;text-align:center;font-size:.72rem;}
+.rd-owner .rd-channels .rd-ch i{font-style:normal;font-size:18px;display:block;margin-bottom:3px;}
+.rd-owner .rd-ofoot{background:rgba(255,255,255,.06);padding:11px 16px;
+  font-size:.8rem;line-height:1.5;border-top:1px solid rgba(255,255,255,.08);}
+.rd-owner .rd-ofoot b{color:#36d399;}
+.rd-owner .rd-oclose{position:absolute;top:10px;inset-inline-end:12px;background:transparent;
+  border:0;color:#fff;opacity:.8;font-size:1.2rem;cursor:pointer;}
+.rd-owner .rd-badge-demo{position:absolute;bottom:10px;inset-inline-end:12px;
+  font-size:.62rem;background:rgba(255,255,255,.14);padding:2px 7px;border-radius:6px;opacity:.7;}
+
+/* ---------- Admin demo banner ---------- */
+.rd-admin-banner{position:relative;z-index:5;margin:0;padding:11px 16px;
+  background:linear-gradient(135deg,#fff7ed,#ffedd5);color:#9a3412;
+  border-bottom:1px solid #fed7aa;font-size:.84rem;line-height:1.5;
+  font-family:'Segoe UI',system-ui,'Noto Sans Arabic',sans-serif;display:flex;gap:9px;align-items:flex-start;}
+.rd-admin-banner b{color:#7c2d12;}
+.rd-admin-banner .rd-ico{font-size:1.05rem;line-height:1.2;}
