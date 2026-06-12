@@ -3,13 +3,13 @@
 
     // ============== تهيئة Firebase ==============
     const firebaseConfig = {
-        apiKey: "AIzaSyBTrnKCYOtfSSDYtmVQbzP2HcwgkLT565Y",
-        authDomain: "robuste-c8e0f.firebaseapp.com",
-        projectId: "robuste-c8e0f",
-        storageBucket: "robuste-c8e0f.appspot.com",
-        messagingSenderId: "975609984963",
-        appId: "1:975609984963:web:a481efb493a88d7bc7af76",
-        measurementId: "G-DWT7MZN028"
+        apiKey: "DEMO_DISABLED",
+        authDomain: "demo.firebaseapp.com",
+        projectId: "demo-project",
+        storageBucket: "demo.appspot.com",
+        messagingSenderId: "000000000000",
+        appId: "1:000000000000:web:demo",
+        measurementId: "G-DEMO000000"
     };
 
     // تهيئة Firebase
@@ -24,7 +24,7 @@
 
     // تهيئة EmailJS
     if (typeof emailjs !== 'undefined') {
-        emailjs.init("k77vdaUWPpnLrfTnS");
+        emailjs.init("DEMO_DISABLED");
     }
 
     // قائمة الولايات الجزائرية

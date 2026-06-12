@@ -1,0 +1,646 @@
+/*
+ ================================================================
+  ROBUSTE eulma — International Professional Layer v2
+  Strategy: SURGICAL ONLY. No layout overrides. No gap creation.
+  Every rule here either adds polish or fixes something specific.
+  Load AFTER style.css.
+ ================================================================
+*/
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --p-radius-sm: 8px;
+  --p-radius-md: 12px;
+  --p-radius-lg: 18px;
+  --p-radius-pill: 999px;
+
+  --p-shadow-xs: 0 1px 3px rgba(0,0,0,.06);
+  --p-shadow-sm: 0 2px 10px rgba(0,0,0,.08);
+  --p-shadow-md: 0 6px 24px rgba(0,0,0,.10);
+  --p-shadow-lg: 0 12px 40px rgba(0,0,0,.13);
+  --p-glow:      0 4px 22px rgba(255,107,53,.30);
+
+  --p-ease:   cubic-bezier(.22,1,.36,1);
+  --p-spring: cubic-bezier(.34,1.56,.64,1);
+  --p-fast:   160ms;
+  --p-base:   260ms;
+}
+
+/* ============================================================
+   GLOBAL — smoothing, selection, scroll, accessibility
+   ============================================================ */
+html { scroll-behavior: smooth; }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(255,107,53,.18);
+  color: inherit;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+  border-radius: var(--p-radius-pill);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) { outline: none !important; }
+
+/* ============================================================
+   NAVBAR — polish only, NO layout change
+   ============================================================ */
+.glass-navbar {
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  transition: box-shadow var(--p-base) var(--p-ease),
+              background var(--p-base) var(--p-ease) !important;
+}
+
+.glass-navbar.p-scrolled {
+  box-shadow: 0 2px 18px rgba(0,0,0,.10) !important;
+}
+
+[data-theme="dark"] .glass-navbar.p-scrolled {
+  box-shadow: 0 2px 18px rgba(0,0,0,.35) !important;
+}
+
+.navbar-brand img {
+  transition: transform var(--p-base) var(--p-spring);
+}
+.navbar-brand:hover img { transform: scale(1.04); }
+
+.nav-link {
+  border-radius: var(--p-radius-sm);
+  transition: color var(--p-fast), background var(--p-fast) !important;
+}
+.nav-link:hover {
+  color: var(--primary) !important;
+  background: rgba(255,107,53,.07);
+}
+
+/* ============================================================
+   PRODUCT CARDS — polish without touching heights
+   ============================================================ */
+.product-card {
+  border-color: rgba(0,0,0,.08) !important;
+  border-radius: var(--p-radius-md) !important;
+  box-shadow: var(--p-shadow-xs) !important;
+  transition: transform var(--p-base) var(--p-ease),
+              box-shadow var(--p-base) var(--p-ease),
+              border-color var(--p-base) !important;
+}
+
+.product-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--p-shadow-lg) !important;
+  border-color: rgba(255,107,53,.18) !important;
+}
+
+.image-container {
+  background: #f7f7f7 !important;
+}
+[data-theme="dark"] .image-container { background: #252525 !important; }
+
+.product-image {
+  transition: transform 350ms var(--p-ease) !important;
+}
+.product-card:hover .product-image { transform: scale(1.06) !important; }
+
+/* Product title */
+.product-title {
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  line-height: 1.42 !important;
+}
+[data-theme="dark"] .product-title { color: #f0f0f0 !important; }
+
+/* Price — keep Amazon red but make it pop */
+.current-price {
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  letter-spacing: -.01em;
+}
+
+.old-price {
+  font-size: .78rem !important;
+  opacity: .7;
+}
+
+/* Discount badge — pill style */
+.discount-badge {
+  background: linear-gradient(135deg, #e8000d, #c0000a) !important;
+  border-radius: var(--p-radius-pill) !important;
+  font-size: .7rem !important;
+  font-weight: 800 !important;
+  padding: 3px 8px !important;
+  letter-spacing: .02em;
+  box-shadow: 0 2px 8px rgba(200,0,10,.30) !important;
+}
+
+/* Product badge */
+.product-badge {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border-radius: var(--p-radius-pill) !important;
+  font-size: .68rem !important;
+  font-weight: 700 !important;
+  padding: 3px 9px !important;
+  top: 10px !important;
+  right: 10px !important;
+}
+
+/* Stock badges — softer, not harsh */
+.stock-available {
+  background: rgba(40,167,69,.12) !important;
+  color: #218738 !important;
+  border: 1px solid rgba(40,167,69,.22) !important;
+  border-radius: var(--p-radius-pill) !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+}
+.stock-unavailable {
+  background: rgba(220,53,69,.10) !important;
+  color: #b02a37 !important;
+  border: 1px solid rgba(220,53,69,.18) !important;
+  border-radius: var(--p-radius-pill) !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+}
+
+/* Add to cart button */
+.add-to-cart-btn,
+.btn-orange {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  border-radius: var(--p-radius-sm) !important;
+  transition: transform var(--p-fast) var(--p-spring),
+              box-shadow var(--p-base) !important;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.add-to-cart-btn::before,
+.btn-orange::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,.15) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.add-to-cart-btn:hover,
+.btn-orange:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--p-glow) !important;
+  color: #fff !important;
+}
+
+.add-to-cart-btn:active,
+.btn-orange:active {
+  transform: scale(.97) translateY(0) !important;
+}
+
+.add-to-cart-btn.p-success {
+  background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+}
+
+.add-to-cart-btn[disabled],
+.add-to-cart-btn:disabled {
+  background: #d0d0d0 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* ============================================================
+   CATEGORY FILTER PILLS
+   ============================================================ */
+.category-btn {
+  border-radius: var(--p-radius-pill) !important;
+  font-weight: 600 !important;
+  transition: all var(--p-base) var(--p-ease) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.category-btn:hover {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  background: rgba(255,107,53,.06) !important;
+}
+
+.category-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: var(--p-glow) !important;
+}
+
+/* ============================================================
+   SECTION TITLES — sharper, more editorial
+   ============================================================ */
+.section-title {
+  letter-spacing: -.02em !important;
+  font-size: clamp(1.4rem, 3.5vw, 1.9rem) !important;
+}
+
+.section-subtitle {
+  display: block;
+  text-align: center;
+  color: #888;
+  font-size: .9rem;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  line-height: 1.55;
+}
+[data-theme="dark"] .section-subtitle { color: #999; }
+
+/* ============================================================
+   INLINE TRUST STRIP — inside product section
+   ============================================================ */
+.inline-trust-strip {
+  background: #fff;
+  border: 1px solid rgba(255,107,53,.14);
+  border-radius: var(--p-radius-md);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 20px 0 28px;
+  box-shadow: var(--p-shadow-xs);
+}
+[data-theme="dark"] .inline-trust-strip {
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,107,53,.18);
+}
+.inline-trust-strip .itrust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+}
+[data-theme="dark"] .inline-trust-strip .itrust-item { color: #ccc; }
+.inline-trust-strip .itrust-item i {
+  color: var(--primary);
+  font-size: .95rem;
+}
+
+/* ============================================================
+   OFFER CARDS — polish only
+   ============================================================ */
+.offer-product {
+  border-radius: var(--p-radius-lg) !important;
+  overflow: hidden !important;
+  transition: transform var(--p-base) var(--p-ease),
+              box-shadow var(--p-base) !important;
+  border: 1px solid rgba(0,0,0,.07) !important;
+}
+.offer-product:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,.15) !important;
+}
+
+.offer-product-discount {
+  background: linear-gradient(135deg, #e8000d, #c0000a) !important;
+  border-radius: var(--p-radius-pill) !important;
+  font-weight: 800 !important;
+  font-size: .74rem !important;
+  letter-spacing: .02em;
+  box-shadow: 0 2px 8px rgba(200,0,10,.25) !important;
+}
+
+.offer-product-badge {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border-radius: var(--p-radius-pill) !important;
+  font-size: .7rem !important;
+  font-weight: 700 !important;
+}
+
+.offer-product-title {
+  font-weight: 700 !important;
+  letter-spacing: -.01em;
+}
+
+.offer-product-price {
+  font-weight: 800 !important;
+  letter-spacing: -.01em;
+}
+
+.offer-btn {
+  transition: transform var(--p-fast) var(--p-spring),
+              box-shadow var(--p-base) !important;
+}
+.offer-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--p-glow) !important;
+}
+.offer-btn:active { transform: scale(.97) !important; }
+
+/* ============================================================
+   TRUST BAR — enhance what's already there
+   ============================================================ */
+.trust-item {
+  transition: transform var(--p-base) var(--p-ease),
+              box-shadow var(--p-base) !important;
+}
+.trust-item:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: var(--p-shadow-md) !important;
+  border-color: rgba(255,107,53,.18) !important;
+}
+
+/* ============================================================
+   REVIEW CARDS — professional upgrades
+   ============================================================ */
+.review-card {
+  border-radius: var(--p-radius-lg) !important;
+  border: 1px solid rgba(0,0,0,.07) !important;
+  transition: transform var(--p-base) var(--p-ease),
+              box-shadow var(--p-base) !important;
+  position: relative;
+}
+.review-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--p-shadow-lg) !important;
+  border-color: rgba(255,107,53,.15) !important;
+}
+[data-theme="dark"] .review-card {
+  background: #1e1e1e !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+/* Stars */
+.review-card .text-warning i { color: #f5a623 !important; }
+
+/* Verified badge */
+.review-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .73rem;
+  font-weight: 600;
+  color: #28a745;
+  background: rgba(40,167,69,.10);
+  border: 1px solid rgba(40,167,69,.18);
+  padding: 2px 8px;
+  border-radius: var(--p-radius-pill);
+  margin-top: 10px;
+}
+
+/* ============================================================
+   ORDER MODAL — international checkout feel
+   ============================================================ */
+.modal-content {
+  border-radius: var(--p-radius-lg) !important;
+  border: none !important;
+  box-shadow: var(--p-shadow-lg) !important;
+  overflow: hidden;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border: none !important;
+  padding: 18px 22px !important;
+}
+.modal-title { color: #fff !important; font-weight: 800 !important; }
+
+.form-control,
+.form-select {
+  border-radius: var(--p-radius-sm) !important;
+  border: 1.5px solid rgba(0,0,0,.13) !important;
+  transition: border-color var(--p-fast), box-shadow var(--p-fast) !important;
+  font-family: 'Tajawal', sans-serif !important;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(255,107,53,.12) !important;
+}
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  color: #f0f0f0 !important;
+}
+
+.order-summary {
+  border-radius: var(--p-radius-md) !important;
+  border: 1px solid rgba(255,107,53,.18) !important;
+  background: rgba(255,107,53,.05) !important;
+}
+
+/* ============================================================
+   CART OFFCANVAS
+   ============================================================ */
+.offcanvas-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+}
+.offcanvas-title { color: #fff !important; font-weight: 800 !important; }
+
+.cart-item {
+  border-radius: var(--p-radius-md) !important;
+  border: 1px solid rgba(0,0,0,.07) !important;
+  transition: box-shadow var(--p-base) !important;
+}
+.cart-item:hover { box-shadow: var(--p-shadow-sm) !important; }
+
+/* ============================================================
+   CONTACT CARDS
+   ============================================================ */
+.contact-card {
+  border-radius: var(--p-radius-lg) !important;
+  border: 1px solid rgba(0,0,0,.07) !important;
+  transition: transform var(--p-base) var(--p-ease),
+              box-shadow var(--p-base),
+              border-color var(--p-base) !important;
+}
+.contact-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: var(--p-shadow-md) !important;
+  border-color: rgba(255,107,53,.18) !important;
+}
+[data-theme="dark"] .contact-card {
+  background: #1e1e1e !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+/* ============================================================
+   FLOATING BUTTONS — WhatsApp & Cart
+   ============================================================ */
+.whatsapp-btn {
+  box-shadow: 0 4px 16px rgba(37,211,102,.38) !important;
+  transition: transform var(--p-base) var(--p-spring),
+              box-shadow var(--p-base) !important;
+}
+.whatsapp-btn:hover {
+  transform: scale(1.12) !important;
+  box-shadow: 0 8px 28px rgba(37,211,102,.50) !important;
+}
+
+.cart-btn-drag {
+  box-shadow: 0 4px 16px rgba(255,107,53,.30) !important;
+  transition: transform var(--p-base) var(--p-spring),
+              box-shadow var(--p-base) !important;
+}
+.cart-btn-drag:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 22px rgba(255,107,53,.45) !important;
+}
+
+/* Cart bounce animation */
+@keyframes p-cartBounce {
+  0%,100% { transform: translateY(0) scale(1); }
+  35%      { transform: translateY(-7px) scale(1.08); }
+  65%      { transform: translateY(-2px) scale(1.02); }
+}
+.cart-btn-drag.p-bounce {
+  animation: p-cartBounce .5s var(--p-spring);
+}
+
+/* ============================================================
+   SOCIAL ICON POLISH
+   ============================================================ */
+.social-icon {
+  background: rgba(255,107,53,.10) !important;
+  border: 1.5px solid rgba(255,107,53,.2) !important;
+  color: var(--primary) !important;
+  border-radius: 50% !important;
+  transition: background var(--p-fast), transform var(--p-base) var(--p-spring),
+              box-shadow var(--p-fast) !important;
+}
+.social-icon:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+  transform: scale(1.15) !important;
+  box-shadow: var(--p-glow) !important;
+  border-color: transparent !important;
+}
+
+/* ============================================================
+   SKELETON LOADING STATE
+   ============================================================ */
+@keyframes p-skeleton {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.p-skeleton {
+  background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 37%,#f0f0f0 63%);
+  background-size: 400px 100%;
+  animation: p-skeleton 1.3s ease infinite;
+  border-radius: var(--p-radius-sm);
+}
+[data-theme="dark"] .p-skeleton {
+  background: linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.03) 37%,rgba(255,255,255,.06) 63%);
+  background-size: 400px 100%;
+}
+
+/* ============================================================
+   SCROLL PROGRESS BAR (top of page)
+   ============================================================ */
+#p-progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  z-index: 9999;
+  transition: width .1s linear;
+}
+
+/* ============================================================
+   FOOTER — link hover color
+   ============================================================ */
+footer a {
+  transition: color var(--p-fast) !important;
+  text-decoration: none !important;
+}
+footer a:hover { color: var(--primary) !important; }
+
+/* ============================================================
+   STATUS TOAST — top center, more modern
+   ============================================================ */
+.status-indicator .alert {
+  border-radius: var(--p-radius-md) !important;
+  border: none !important;
+  box-shadow: var(--p-shadow-lg) !important;
+  font-weight: 600 !important;
+}
+
+/* ============================================================
+   MOBILE TOUCH POLISH (≤ 576px)
+   ============================================================ */
+@media (max-width: 576px) {
+  .product-card:hover {
+    /* Don't float cards on mobile — kills scroll */
+    transform: none !important;
+    box-shadow: var(--p-shadow-sm) !important;
+  }
+  .add-to-cart-btn:hover,
+  .btn-orange:hover {
+    transform: none !important;
+  }
+  .add-to-cart-btn:active,
+  .btn-orange:active {
+    transform: scale(.96) !important;
+    background: var(--primary-dark) !important;
+  }
+  .category-btn:hover {
+    transform: none !important;
+  }
+  .category-btn:active { transform: scale(.95) !important; }
+  .offer-product:hover {
+    transform: none !important;
+    box-shadow: var(--p-shadow-md) !important;
+  }
+}
+
+/* ============================================================
+   DARK MODE REFINEMENTS
+   ============================================================ */
+[data-theme="dark"] .product-card {
+  background: #1c1c1e !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+[data-theme="dark"] .product-card:hover {
+  border-color: rgba(255,107,53,.25) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,.4) !important;
+}
+[data-theme="dark"] .inline-trust-strip {
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,107,53,.18) !important;
+}
+[data-theme="dark"] .category-btn {
+  background: rgba(255,255,255,.05) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  color: #e0e0e0 !important;
+}
+[data-theme="dark"] .section-subtitle { color: #aaa !important; }
+
+/* ============================================================
+   PRINT — hide chrome
+   ============================================================ */
+@media print {
+  .glass-navbar,.floating-cart,.whatsapp-btn,
+  .trust-bar,.offers-section,footer,#p-progress {
+    display: none !important;
+  }
+}
