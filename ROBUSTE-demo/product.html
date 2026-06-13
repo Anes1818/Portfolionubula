@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
+<script src="config.js"></script>
 <!-- DEMO BUILD: mock backend, no real API keys/tokens or network calls -->
 <script src="demo-mock.js"></script>
 <link rel="stylesheet" href="demo-tour.css">
@@ -781,7 +782,7 @@ body {
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
 // Firebase + EmailJS config — vendor libs are deferred, so init runs in initVendors() on DOMContentLoaded
-const firebaseConfig = { apiKey: "DEMO_DISABLED", authDomain: "demo.firebaseapp.com", projectId: "demo-project", storageBucket: "demo.appspot.com", messagingSenderId: "000000000000", appId: "1:000000000000:web:demo" };
+const firebaseConfig = (window.STORE_CONFIG && window.STORE_CONFIG.firebase && window.STORE_CONFIG.firebase.config) || { apiKey: "DEMO_DISABLED", authDomain: "demo.firebaseapp.com", projectId: "demo-project", storageBucket: "demo.appspot.com", messagingSenderId: "000000000000", appId: "1:000000000000:web:demo" };
 let db = null;
 function initVendors() {
     if (typeof AOS !== 'undefined') { try { AOS.init({ duration: 600, once: true, disable: function(){ try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 768; } catch(e){ return false; } } }); } catch(e){} }
@@ -797,8 +798,8 @@ if (wilayaSelect) wilayas.forEach(w => { let opt = document.createElement('optio
 
 // إدارة السلة
 let cart = [];
-function loadCart() { try { const c = localStorage.getItem('robuste_cart'); if(c) cart = JSON.parse(c); } catch(e){} updateCartUI(); }
-function saveCart() { try { localStorage.setItem('robuste_cart', JSON.stringify(cart)); } catch(e){} updateCartUI(); }
+function loadCart() { try { const c = localStorage.getItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart'); if(c) cart = JSON.parse(c); } catch(e){} updateCartUI(); }
+function saveCart() { try { localStorage.setItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart', JSON.stringify(cart)); } catch(e){} updateCartUI(); }
 function updateCartUI() { 
     const totalItems = cart.reduce((s,i)=> s + (i.quantity||1), 0);
     document.getElementById('cartCountFloat').innerText = totalItems;
@@ -809,7 +810,7 @@ function renderCartItems() {
     if(!container) return;
     if(cart.length === 0) {
         container.innerHTML = `<div class="empty-cart-cta"><i class="bi bi-bag-x"></i><h5 class="mt-2">سلة التسوق فارغة</h5><p class="text-muted">استكشف منتجاتنا وأضف ما يناسبك</p><a href="index.html#products" class="btn btn-outline-modern mt-2" onclick="toggleCart()">تصفح المنتجات</a></div>`;
-        document.getElementById('cartTotalAmount').innerText = '0 د.ج';
+        document.getElementById('cartTotalAmount').innerText = window.StoreTemplate ? window.StoreTemplate.formatMoney(0) : '0 د.ج';
         return;
     }
     let html = ''; let total = 0;
@@ -819,7 +820,7 @@ function renderCartItems() {
             <img loading="lazy" decoding="async" src="${item.image}" width="60" class="rounded-3" alt="منتج في السلة">
             <div class="flex-grow-1">
                 <h6 class="mb-1">${item.name}</h6>
-                <div class="text-primary fw-bold">${item.price.toLocaleString()} د.ج</div>
+                <div class="text-primary fw-bold">${window.StoreTemplate ? window.StoreTemplate.formatMoney(item.price) : (item.price.toLocaleString() + ' د.ج')}</div>
                 <div class="d-flex gap-2 mt-2">
                     <button class="btn btn-sm btn-outline-secondary" onclick="updateQty(${idx}, ${item.quantity-1})">-</button>
                     <span class="px-2">${item.quantity}</span>
@@ -830,7 +831,7 @@ function renderCartItems() {
         </div>`;
     });
     container.innerHTML = html;
-    document.getElementById('cartTotalAmount').innerText = `${total.toLocaleString()} د.ج`;
+    document.getElementById('cartTotalAmount').innerText = window.StoreTemplate ? window.StoreTemplate.formatMoney(total) : `${total.toLocaleString()} د.ج`;
 }
 function updateQty(idx, newQty) { if(newQty<1) return removeCartItem(idx); cart[idx].quantity = newQty; saveCart(); }
 function removeCartItem(idx) { cart.splice(idx,1); saveCart(); showToast("تم إزالة المنتج", "success"); }
@@ -849,7 +850,7 @@ function checkoutFromCart() {
     document.getElementById('orderProductName').value = `${cart.length} منتج`;
     document.getElementById('orderProductPrice').value = totalCart;
     document.getElementById('modalProductTitle').innerText = `${cart.length} منتج مختلف`;
-    document.getElementById('modalProductPrice').innerText = `${totalCart.toLocaleString()} د.ج`;
+    document.getElementById('modalProductPrice').innerText = window.StoreTemplate ? window.StoreTemplate.formatMoney(totalCart) : `${totalCart.toLocaleString()} د.ج`;
     document.getElementById('modalProductImg').src = first.image;
     new bootstrap.Modal(document.getElementById('orderModal')).show();
 }
@@ -861,7 +862,7 @@ function showOrderSuccess(orderId, phone, total) {
     overlay.style.cssText = 'position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;';
     var phoneHtml = phone ? '<p style="font-size:1.05rem;font-weight:700;color:#1b5e20;margin:0 0 4px;direction:ltr;">' + phone + '</p>' : '';
     var orderHtml = orderId ? '<div><strong>رقم الطلب:</strong> ' + orderId + '</div>' : '';
-    var totalHtml = (total || total === 0) ? '<div><strong>المبلغ الإجمالي:</strong> ' + total.toLocaleString() + ' د.ج</div>' : '';
+    var totalHtml = (total || total === 0) ? '<div><strong>المبلغ الإجمالي:</strong> ' + (window.StoreTemplate ? window.StoreTemplate.formatMoney(total) : (total.toLocaleString() + ' د.ج')) + '</div>' : '';
     overlay.innerHTML = '<div style="background:#fff;border-radius:20px;max-width:420px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);border-top:6px solid #2e7d32;">' +
         '<div style="font-size:3.4rem;line-height:1;color:#2e7d32;"><i class="bi bi-check-circle-fill"></i></div>' +
         '<h3 style="margin-top:10px;font-weight:800;color:#2e7d32;font-size:clamp(1.4rem,5vw,2rem);">تم تأكيد طلبكم</h3>' +
@@ -869,11 +870,12 @@ function showOrderSuccess(orderId, phone, total) {
         phoneHtml +
         '<p style="font-size:1.1rem;font-weight:700;color:#2e7d32;margin:6px 0 14px;">شكراً لثقتكم بنا</p>' +
         '<div style="background:rgba(46,125,50,.08);border-radius:12px;padding:10px 14px;font-size:.92rem;color:#444;display:inline-block;text-align:start;">' + orderHtml + totalHtml + '</div>' +
-        '<div style="margin-top:16px;"><a href="https://wa.me/213656360457" target="_blank" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:10px;"><i class="bi bi-whatsapp"></i> تواصل عبر واتساب</a></div>' +
+        '<div style="margin-top:16px;"><a href="' + (window.StoreTemplate ? window.StoreTemplate.waUrl('استفسار عن الطلب ' + (orderId || '')) : 'https://wa.me/213656360457') + '" target="_blank" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:10px;"><i class="bi bi-whatsapp"></i> تواصل عبر واتساب</a></div>' +
         '<div style="margin-top:10px;"><button type="button" id="orderSuccessClose" style="background:transparent;border:none;color:#888;font-size:.9rem;cursor:pointer;">إغلاق</button></div>' +
         '</div>';
     overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
+    try { if (window.StoreTemplate) { window.StoreTemplate.maybeAddPaymentCta(overlay.querySelector('div'), { orderId: orderId, phone: phone, totalPrice: total }); window.StoreTemplate.announceOrder({ orderId: orderId, phone: phone, totalPrice: total }); } } catch(e) {}
     var closeBtn = document.getElementById('orderSuccessClose');
     if(closeBtn){ closeBtn.addEventListener('click', function(){ overlay.remove(); }); }
     setTimeout(function(){ var o = document.getElementById('orderSuccessOverlay'); if(o) o.remove(); }, 9000);
@@ -903,7 +905,8 @@ async function submitOrderFinal() {
     try {
         const docRef = await db.collection('orders').add(orderData);
         const productsList = cart.map(p => `${p.name} x${p.quantity}`).join(', ');
-        await emailjs.send("service_lc1q5k8", "template_a15g7yg", { order_id: docRef.id, customer_name: fullName, customer_phone: phone, wilaya, address, total_price: totalPrice.toLocaleString(), products: productsList });
+        var ecfg = (window.STORE_CONFIG && window.STORE_CONFIG.emailjs) || {};
+        await emailjs.send(ecfg.serviceId || "DEMO_SERVICE_ID", ecfg.orderTemplateId || "DEMO_ORDER_TEMPLATE", { order_id: docRef.id, customer_name: fullName, customer_phone: phone, wilaya, address, total_price: totalPrice.toLocaleString(), products: productsList });
         showOrderSuccess(docRef.id, phone, totalPrice);
         cart = []; saveCart();
         bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
@@ -916,8 +919,8 @@ async function submitOrderFinal() {
 const urlParams = new URLSearchParams(window.location.search);
 const productId = parseInt(urlParams.get('pid'));
 let currentProduct = null;
-const SEO_DOMAIN = "https://www.robustedz.store";
-function seoAbsUrl(u){ if(!u) return "https://i.postimg.cc/bY06X2YN/logo-round.png"; if(/^https?:\/\//i.test(u)) return u; return SEO_DOMAIN + "/" + encodeURI(String(u).replace(/^\/+/, "")); }
+const SEO_DOMAIN = (window.STORE_CONFIG && window.STORE_CONFIG.business && window.STORE_CONFIG.business.siteUrl) || "https://example.com";
+function seoAbsUrl(u){ if(!u) return (window.STORE_CONFIG && window.STORE_CONFIG.business && window.STORE_CONFIG.business.paymentLogo) || "https://i.postimg.cc/bY06X2YN/logo-round.png"; if(/^https?:\/\//i.test(u)) return u; return SEO_DOMAIN + "/" + encodeURI(String(u).replace(/^\/+/, "")); }
 function seoSetMeta(attr, key, val){ var el=document.querySelector("meta["+attr+"='"+key+"']"); if(!el){ el=document.createElement("meta"); el.setAttribute(attr,key); document.head.appendChild(el); } el.setAttribute("content", val); }
 function seoSetCanonical(href){ var el=document.querySelector("link[rel='canonical']"); if(!el){ el=document.createElement("link"); el.setAttribute("rel","canonical"); document.head.appendChild(el); } el.setAttribute("href", href); }
 function applyProductSEO(p){
@@ -926,7 +929,7 @@ function applyProductSEO(p){
     var url = SEO_DOMAIN + "/product.html?pid=" + p.id;
     var img = seoAbsUrl(p.images && p.images[0]);
     var desc = String(p.description_short || p.description_long || "منتج عالي الجودة من ROBUSTE").replace(/\s+/g, " ").trim().slice(0,160);
-    var title = p.title + " | ROBUSTE";
+    var title = p.title + " | " + ((window.STORE_CONFIG && window.STORE_CONFIG.business && window.STORE_CONFIG.business.name) || "ROBUSTE");
     document.title = title;
     seoSetMeta("name","description",desc);
     seoSetCanonical(url);
@@ -939,9 +942,9 @@ function applyProductSEO(p){
     seoSetMeta("name","twitter:description",desc);
     seoSetMeta("name","twitter:image",img);
     seoSetMeta("property","product:price:amount",String(p.price));
-    seoSetMeta("property","product:price:currency","DZD");
+    seoSetMeta("property","product:price:currency",((window.STORE_CONFIG && window.STORE_CONFIG.currency && window.STORE_CONFIG.currency.code) || "DZD"));
     var avail = (p.stock==null || Number(p.stock)>0) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock";
-    var ld = { "@context":"https://schema.org/", "@type":"Product", "name":p.title, "image":[img], "description":String(p.description_long||p.description_short||""), "sku":String(p.id), "brand":{"@type":"Brand","name":"ROBUSTE"}, "offers":{ "@type":"Offer", "url":url, "priceCurrency":"DZD", "price":Number(p.price)||0, "availability":avail, "itemCondition":"https://schema.org/NewCondition" } };
+    var ld = { "@context":"https://schema.org/", "@type":"Product", "name":p.title, "image":[img], "description":String(p.description_long||p.description_short||""), "sku":String(p.id), "brand":{"@type":"Brand","name":((window.STORE_CONFIG && window.STORE_CONFIG.business && window.STORE_CONFIG.business.shortName) || "ROBUSTE")}, "offers":{ "@type":"Offer", "url":url, "priceCurrency":((window.STORE_CONFIG && window.STORE_CONFIG.currency && window.STORE_CONFIG.currency.code) || "DZD"), "price":Number(p.price)||0, "availability":avail, "itemCondition":"https://schema.org/NewCondition" } };
     var s = document.getElementById("product-jsonld");
     if(!s){ s=document.createElement("script"); s.type="application/ld+json"; s.id="product-jsonld"; document.head.appendChild(s); }
     s.textContent = JSON.stringify(ld);
@@ -1036,7 +1039,8 @@ async function submitExpressOrder() {
         const orderData = { products:[{ id:currentProduct.id, name:currentProduct.title, price:currentProduct.price, quantity:qty, image:currentProduct.images[0] }], customer:name, phone, wilaya, address:"", payment:"الدفع عند الاستلام", totalPrice:total, timestamp:new Date().toISOString() };
         try { if (typeof window.sendOrderToTelegram === 'function') { window.sendOrderToTelegram(orderData); } } catch (e) {}
         const docRef = await db.collection('orders').add(orderData);
-        await emailjs.send("service_lc1q5k8", "template_a15g7yg", { order_id:docRef.id, customer_name:name, customer_phone:phone, wilaya, total_price:total.toLocaleString(), products:`${currentProduct.title} x${qty}` });
+        var ecfg = (window.STORE_CONFIG && window.STORE_CONFIG.emailjs) || {};
+        await emailjs.send(ecfg.serviceId || "DEMO_SERVICE_ID", ecfg.orderTemplateId || "DEMO_ORDER_TEMPLATE", { order_id:docRef.id, customer_name:name, customer_phone:phone, wilaya, total_price:total.toLocaleString(), products:`${currentProduct.title} x${qty}` });
         showOrderSuccess(docRef.id, phone, total);
         document.getElementById('expressForm').reset();
     } catch(e) { showToast("حدث خطأ", "error"); }
@@ -1178,7 +1182,8 @@ async function submitReview(){
     try{
         try{ if(typeof window.sendReviewToTelegram==="function"){ window.sendReviewToTelegram(review); } }catch(e){}
         try{ if(db){ await db.collection("reviews").add(review); } }catch(e){ console.warn("firebase review", e); }
-        try{ if(typeof emailjs!=="undefined"){ await emailjs.send("service_lc1q5k8", "template_11pkq0k", { from_name:name, from_email:"review@robuste.dz", phone_number:"-", message:"تقييم ("+selectedRating+"/5) للمنتج "+review.productName+": "+text }); } }catch(e){ console.warn("emailjs review", e); }
+        try{ if(typeof emailjs!=="undefined"){ var ecfg = (window.STORE_CONFIG && window.STORE_CONFIG.emailjs) || {};
+        await emailjs.send(ecfg.serviceId || "DEMO_SERVICE_ID", ecfg.contactTemplateId || "DEMO_CONTACT_TEMPLATE", { from_name:name, from_email:"review@example.com", phone_number:"-", message:"تقييم ("+selectedRating+"/5) للمنتج "+review.productName+": "+text }); } }catch(e){ console.warn("emailjs review", e); }
         appendReviewCard(review);
         showToast("شكراً لك! تم إرسال تقييمك بنجاح", "success");
         try{ bootstrap.Modal.getInstance(document.getElementById("reviewModal")).hide(); }catch(e){}
@@ -1197,6 +1202,7 @@ window.submitExpressOrder = submitExpressOrder; window.directBuy = directBuy; wi
 <script src="analytics.js"></script>
 <script src="telegram.js"></script>
 <!-- DEMO showcase layer -->
+<script src="template-core.js"></script>
 <script src="demo-enhance.js"></script>
 <script src="demo-tour.js"></script>
 </body>

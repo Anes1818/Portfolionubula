@@ -43,3 +43,12 @@ rotate them on the real project:
 - Revoke/regenerate the Telegram bot token via **@BotFather**
 - Rotate the Firebase web config / lock down Firestore rules
 - Rotate the EmailJS key
+
+
+## Step 1 template-base upgrade
+- Edit `config.js` for each client.
+- `template-core.js` applies branding, contact links, currency, and payment CTA logic.
+- `telegram.js` is Worker-ready and contains no bot token.
+- `workers/telegram-worker.js` is the secure relay sample.
+- `firebase/firestore.rules` is the production starting point.
+- See `HANDOVER-TEMPLATE.md`.

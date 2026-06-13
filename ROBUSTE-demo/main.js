@@ -24,7 +24,7 @@
 
     // تهيئة EmailJS
     if (typeof emailjs !== 'undefined') {
-        emailjs.init("DEMO_DISABLED");
+        emailjs.init((window.STORE_CONFIG && window.STORE_CONFIG.emailjs && window.STORE_CONFIG.emailjs.publicKey) || "DEMO_DISABLED");
     }
 
     // قائمة الولايات الجزائرية
@@ -491,7 +491,7 @@
     // تحميل السلة من localStorage
     function loadCart() {
         try {
-            var cartData = localStorage.getItem('robuste_cart');
+            var cartData = localStorage.getItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart');
             if (cartData) {
                 cart = JSON.parse(cartData);
             }
@@ -546,7 +546,7 @@
                                 '<i class="bi bi-cart-plus me-2"></i> استكشف المنتجات' +
                                 '</a>';
             cartItems.appendChild(emptyDiv);
-            cartTotal.textContent = '0 د.ج';
+            cartTotal.textContent = (window.StoreTemplate ? window.StoreTemplate.formatMoney(0) : '0 د.ج');
             return;
         }
         
@@ -564,7 +564,7 @@
                 '<img src="' + (item.image || '') + '" alt="' + (item.name || 'منتج') + '" class="cart-item-img me-3" loading="lazy">' +
                 '<div class="cart-item-details flex-grow-1">' +
                 '<div class="cart-item-title mb-1">' + (item.name || 'منتج بدون اسم') + '</div>' +
-                '<div class="cart-item-price mb-2">' + (item.price || 0) + ' د.ج</div>' +
+                '<div class="cart-item-price mb-2">' + (window.StoreTemplate ? window.StoreTemplate.formatMoney(item.price || 0) : ((item.price || 0) + ' د.ج')) + '</div>' +
                 '<div class="quantity-controls d-flex align-items-center">' +
                 '<button class="quantity-btn decrease-btn" data-index="' + i + '">-</button>' +
                 '<input type="number" class="quantity-input mx-2" value="' + (item.quantity || 1) + '" min="1" data-index="' + i + '" readonly>' +
@@ -579,7 +579,7 @@
             cartItems.appendChild(itemElement);
         }
         
-        cartTotal.textContent = total.toLocaleString('ar-DZ') + ' د.ج';
+        cartTotal.textContent = window.StoreTemplate ? window.StoreTemplate.formatMoney(total) : (total.toLocaleString('ar-DZ') + ' د.ج');
         
         // إضافة معالجي الأحداث بعد عرض العناصر
         attachCartEventListeners();
@@ -645,7 +645,7 @@
         cart[index].quantity = newQuantity;
         
         try {
-            localStorage.setItem('robuste_cart', JSON.stringify(cart));
+            localStorage.setItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart', JSON.stringify(cart));
         } catch (e) {
             console.error('خطأ في تحديث السلة:', e);
         }
@@ -662,7 +662,7 @@
         cart.splice(index, 1);
         
         try {
-            localStorage.setItem('robuste_cart', JSON.stringify(cart));
+            localStorage.setItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart', JSON.stringify(cart));
         } catch (e) {
             console.error('خطأ في تحديث السلة:', e);
         }
@@ -727,7 +727,7 @@
         
         // حفظ السلة في localStorage
         try {
-            localStorage.setItem('robuste_cart', JSON.stringify(cart));
+            localStorage.setItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart', JSON.stringify(cart));
         } catch (e) {
             console.error('خطأ في حفظ السلة:', e);
             showStatus('تعذر حفظ السلة، قد تكون ذاكرة التخزين ممتلئة', 'error');
@@ -940,7 +940,8 @@
         
         // إرسال إيميل عبر EmailJS
         if (typeof emailjs !== 'undefined') {
-            return emailjs.send("service_lc1q5k8", "template_a15g7yg", {
+            var ecfg = (window.STORE_CONFIG && window.STORE_CONFIG.emailjs) || {};
+            return emailjs.send(ecfg.serviceId || "DEMO_SERVICE_ID", ecfg.orderTemplateId || "DEMO_ORDER_TEMPLATE", {
                 order_id: orderId,
                 customer_name: fullName,
                 customer_phone: phone,
@@ -968,14 +969,13 @@
             '<div><strong>رقم الطلب:</strong> ' + orderId + '</div>' +
             '<div><strong>المبلغ الإجمالي:</strong> ' + total.toLocaleString() + ' د.ج</div>' +
             '</div>' +
-            '<a href="https://wa.me/213656360457?text=' + encodeURIComponent(
-                'استفسار عن الطلب ' + orderId + '\nالاسم: ' + fullName + '\nعدد المنتجات: ' + cart.length + '\nالمجموع: ' + total.toLocaleString() + ' د.ج\nرقم الهاتف: ' + phone
-            ) + '" class="btn whatsapp-contact-btn mt-2 w-100" target="_blank">' +
+            '<a href="' + (window.StoreTemplate ? window.StoreTemplate.waUrl('استفسار عن الطلب ' + orderId + '\nالاسم: ' + fullName + '\nعدد المنتجات: ' + cart.length + '\nالمجموع: ' + total.toLocaleString() + ' د.ج\nرقم الهاتف: ' + phone) : ('https://wa.me/213656360457?text=' + encodeURIComponent('استفسار عن الطلب ' + orderId))) + '" class="btn whatsapp-contact-btn mt-2 w-100" target="_blank">' +
             '<i class="bi bi-whatsapp"></i> تواصل عبر واتساب (اختياري)' +
             '</a>' +
             '</div>';
         
         showStatus(successMessage, 'success');
+        try { if (window.StoreTemplate) window.StoreTemplate.announceOrder({ orderId: orderId, customer: fullName, phone: phone, totalPrice: total }); } catch(e) {}
         
         // إعادة تعيين زر الإرسال
         isSubmittingOrder = false;
@@ -988,7 +988,7 @@
 
     function clearCartAndResetForm() {
         cart = [];
-        localStorage.removeItem('robuste_cart');
+        localStorage.removeItem((window.STORE_CONFIG && window.STORE_CONFIG.storage && window.STORE_CONFIG.storage.cartKey) || 'robuste_cart');
         updateCartCount();
         document.getElementById('orderForm').reset();
         if (orderModal) {
@@ -1049,7 +1049,8 @@
         
         if (typeof emailjs !== 'undefined') {
             // إرسال رسالة الاتصال عبر EmailJS
-            emailjs.send("service_lc1q5k8", "template_11pkq0k", {
+            var ecfg = (window.STORE_CONFIG && window.STORE_CONFIG.emailjs) || {};
+            emailjs.send(ecfg.serviceId || "DEMO_SERVICE_ID", ecfg.contactTemplateId || "DEMO_CONTACT_TEMPLATE", {
                 from_name: name,
                 from_email: email,
                 phone_number: phone,
