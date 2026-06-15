@@ -1,0 +1,103 @@
+/* ============================================================
+   ROBUSTE — Phone-first UX layer
+   Loaded LAST so it safely overrides without touching style.css.
+   Goals: bigger tap targets, no iOS input zoom, smoother
+   mobile navigation, sticky order CTA, cleaner spacing.
+   ============================================================ */
+
+/* --- Global: smoother text + no horizontal overflow on phones --- */
+html { -webkit-text-size-adjust: 100%; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+}
+
+/* --- Prevent iOS auto-zoom on focus: inputs must be >=16px --- */
+@media (max-width: 768px) {
+  input, select, textarea,
+  .form-control, .form-select {
+    font-size: 16px !important;
+  }
+}
+
+/* --- Tap targets: min 44px height for anything tappable --- */
+@media (max-width: 768px) {
+  .btn,
+  .nav-link,
+  .category-btn,
+  .navbar-toggler,
+  .theme-toggle,
+  .form-control,
+  .form-select {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn-lg { min-height: 52px; }
+  /* Quantity steppers and small action buttons stay comfortably tappable */
+  .cart-item .btn-sm { min-width: 38px; min-height: 38px; }
+}
+
+/* --- Hero: tighter, more readable on phones --- */
+@media (max-width: 768px) {
+  .hero-title { font-size: clamp(1.5rem, 6vw, 2rem); line-height: 1.25; }
+  .hero-subtitle { font-size: 0.98rem; line-height: 1.6; margin-top: 0.5rem; }
+  .hero-content .btn { width: 100%; margin: 0.35rem 0 !important; }
+}
+
+/* --- Category filter: horizontal swipe strip instead of wrapping mess --- */
+@media (max-width: 768px) {
+  #productsContainer { row-gap: 0.25rem; }
+  .category-btn {
+    white-space: nowrap;
+    border-radius: 999px;
+    padding-inline: 16px;
+  }
+}
+
+/* --- Product cards: tighter gutters, clear price/CTA hierarchy --- */
+@media (max-width: 575.98px) {
+  #productsContainer > [class*="col-"] { padding-inline: 6px; }
+  .product-card { border-radius: 14px; }
+  .product-card .card-title,
+  .product-card h5 { font-size: 0.95rem; line-height: 1.35; }
+}
+
+/* --- Sticky bottom order CTA on the product page (mobile only) ---
+   The "طلب سريع" express order card sticks above the fold bottom so
+   the buyer can always confirm without scrolling back up. */
+@media (max-width: 768px) {
+  .quick-order-card {
+    position: sticky;
+    bottom: 12px;
+    z-index: 60;
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.18);
+    backdrop-filter: saturate(1.1);
+  }
+  .btn-submit-express { min-height: 52px; font-size: 1.05rem; font-weight: 700; }
+}
+
+/* --- Order / review modals: full-width sheet feel on phones --- */
+@media (max-width: 575.98px) {
+  .modal-dialog { margin: 0.5rem; }
+  .modal-content { border-radius: 16px; }
+  .modal-footer .btn { flex: 1 1 auto; }
+}
+
+/* --- Floating controls: keep WhatsApp + cart clear of the sticky CTA --- */
+@media (max-width: 768px) {
+  .whatsapp-btn { width: 52px; height: 52px; font-size: 26px; }
+  .floating-cart { bottom: 84px; }
+}
+
+/* --- Sticky navbar polish: subtle shadow + safe-area padding --- */
+@media (max-width: 768px) {
+  .glass-navbar { box-shadow: 0 2px 14px rgba(0,0,0,0.08); }
+  .navbar { padding-top: max(0.4rem, env(safe-area-inset-top)); }
+}
+
+/* --- Respect users who prefer reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}

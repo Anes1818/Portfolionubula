@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- DEMO BUILD: mock backend, no real API keys/tokens or network calls -->
+<script src="demo-mock.js"></script>
+<link rel="stylesheet" href="demo-tour.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة إدارة الطلبات | ROBUSTE</title>
+
+<!-- Bootstrap RTL + Icons (same CDNs already used by the site) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- Firebase (same compat SDK version as the rest of the site) + Auth -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+
+<style>
+  :root { --brand:#ff6b00; --brand-dark:#e85d00; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f5f6f8; }
+  * { box-sizing:border-box; }
+  body { font-family:'Segoe UI',Tahoma,Arial,sans-serif; background:var(--bg); color:var(--ink); margin:0; }
+
+  #loginGate { position:fixed; inset:0; background:linear-gradient(135deg,#1f2937,#374151); display:flex; align-items:center; justify-content:center; z-index:2000; }
+  #loginGate .card { width:min(92vw,400px); border:none; border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  #loginGate .brand-dot { width:54px;height:54px;border-radius:14px;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.6rem; }
+
+  .navbar-admin { background:#fff; border-bottom:1px solid var(--line); }
+  .navbar-admin .logo { font-weight:800; color:var(--brand); letter-spacing:.5px; }
+
+  .stat-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; height:100%; transition:transform .15s ease, box-shadow .15s ease; }
+  .stat-card:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.06); }
+  .stat-card .label { color:var(--muted); font-size:.85rem; font-weight:600; }
+  .stat-card .value { font-size:1.7rem; font-weight:800; margin-top:4px; }
+  .stat-icon { width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem; }
+
+  .chart-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; height:100%; }
+  .chart-card h6 { font-weight:800; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .bar-row:last-child { margin-bottom:0; }
+  .bar-label { width:84px; font-size:.8rem; color:var(--muted); flex-shrink:0; }
+  .bar-track { flex-grow:1; background:#f1f2f4; border-radius:8px; height:22px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:8px; min-width:2px; transition:width .45s ease; }
+  .bar-val { font-size:.8rem; font-weight:700; width:30px; text-align:left; flex-shrink:0; }
+  .daybars { display:flex; align-items:flex-end; gap:4px; height:150px; }
+  .daybar { flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; }
+  .daybar .col { width:100%; background:var(--brand); border-radius:4px 4px 0 0; min-height:2px; transition:height .45s ease; }
+  .daybar .d-label { font-size:.6rem; color:var(--muted); margin-top:5px; }
+  .chart-empty { color:var(--muted); font-size:.85rem; text-align:center; padding:30px 0; }
+
+  .toolbar { background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
+
+  .table-wrap { background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  table.orders { width:100%; border-collapse:collapse; }
+  table.orders th { background:#fafbfc; font-size:.82rem; color:var(--muted); text-align:right; padding:12px 14px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  table.orders td { padding:12px 14px; border-bottom:1px solid #f1f2f4; font-size:.9rem; vertical-align:middle; }
+  table.orders tr:last-child td { border-bottom:none; }
+  table.orders tbody tr { cursor:pointer; transition:background .12s ease; }
+  table.orders tbody tr:hover { background:#fff8f2; }
+  table.orders tbody tr.archived-row { background:#fafafa; opacity:.7; }
+  table.orders tbody tr.archived-row:hover { background:#f3f4f6; }
+  .order-id { font-family:monospace; font-size:.8rem; color:var(--muted); }
+  .arch-tag { font-size:.65rem; background:#e5e7eb; color:#6b7280; padding:.15em .5em; border-radius:6px; margin-right:4px; }
+
+  .badge-status { font-size:.78rem; font-weight:700; padding:.4em .7em; border-radius:999px; white-space:nowrap; }
+  .s-new { background:#e0f2fe; color:#0369a1; }
+  .s-confirmed { background:#ede9fe; color:#6d28d9; }
+  .s-preparing { background:#fef3c7; color:#b45309; }
+  .s-delivered { background:#dcfce7; color:#15803d; }
+  .s-cancelled { background:#fee2e2; color:#b91c1c; }
+
+  .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+  .empty-state i { font-size:3rem; opacity:.4; }
+
+  .prod-line { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #f1f2f4; }
+  .prod-line img { width:46px;height:46px;object-fit:cover;border-radius:8px;background:#f1f2f4; }
+  .prod-line:last-child { border-bottom:none; }
+
+  .info-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed #eef0f2; font-size:.92rem; }
+  .info-row:last-child { border-bottom:none; }
+  .info-row .k { color:var(--muted); }
+  .info-row .v { font-weight:700; }
+
+  .btn-brand { background:var(--brand); border-color:var(--brand); color:#fff; }
+  .btn-brand:hover { background:var(--brand-dark); border-color:var(--brand-dark); color:#fff; }
+
+  .spin-wrap { padding:60px; text-align:center; color:var(--muted); }
+</style>
+<!-- Phone-first UX layer (loaded last to override) -->
+<link rel="stylesheet" href="mobile-ux.css">
+</head>
+<body>
+
+<!-- ===================== LOGIN GATE (Firebase Auth) ===================== -->
+<div id="loginGate">
+  <div class="card p-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="brand-dot"><i class="bi bi-shield-lock"></i></div>
+      <div>
+        <div class="fw-bold" style="font-size:1.1rem;">تسجيل دخول الإدارة</div>
+        <div class="text-muted" style="font-size:.85rem;">ROBUSTE · إدارة الطلبات</div>
+      </div>
+    </div>
+    <div style="background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:.82rem;line-height:1.6;">
+      <i class="bi bi-flask"></i> <strong>وضع تجريبي (Demo):</strong> اضغط «دخول» مباشرة — لا حاجة لبيانات حقيقية. في النسخة النهائية يتم التحقق عبر Firebase Authentication وتتصل اللوحة بقاعدة بياناتك الحقيقية.
+    </div>
+    <label class="form-label fw-semibold">البريد الإلكتروني</label>
+    <input type="email" id="adminEmail" class="form-control form-control-lg mb-2" dir="ltr" value="demo@robuste.dz" placeholder="admin@example.com" autocomplete="username">
+    <label class="form-label fw-semibold">كلمة المرور</label>
+    <input type="password" id="adminPass" class="form-control form-control-lg" placeholder="••••••••" autocomplete="current-password">
+    <div id="loginError" class="text-danger mt-2" style="font-size:.85rem; display:none;"></div>
+    <button id="loginBtn" class="btn btn-brand btn-lg w-100 mt-3"><i class="bi bi-box-arrow-in-left"></i> دخول</button>
+    <p class="text-muted mt-3 mb-0" style="font-size:.72rem; line-height:1.5;">يتم التحقق عبر Firebase Authentication. فقط الحسابات المصرّح لها يمكنها عرض الطلبات.</p>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app" style="display:none;">
+
+  <nav class="navbar navbar-admin py-3">
+    <div class="container-xl d-flex justify-content-between align-items-center">
+      <span class="logo fs-5"><i class="bi bi-box-seam"></i> ROBUSTE · لوحة الطلبات</span>
+      <div class="d-flex gap-2 align-items-center">
+        <span id="adminWho" class="text-muted d-none d-md-inline" style="font-size:.82rem;" dir="ltr"></span>
+        <button id="refreshBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise"></i> تحديث</button>
+        <button id="logoutBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> خروج</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== DEMO NOTICE BANNER ===================== -->
+  <div role="note" style="background:linear-gradient(90deg,#fff7ed,#ffedd5);border-bottom:1px solid #fed7aa;padding:10px 0;font-size:.86rem;color:#7c2d12;">
+    <div class="container-xl d-flex align-items-center gap-2 flex-wrap">
+      <span style="background:#ea580c;color:#fff;padding:4px 12px;border-radius:999px;font-weight:700;font-size:.78rem;white-space:nowrap;"><i class="bi bi-flask"></i> نسخة تجريبية · DÉMO</span>
+      <span style="line-height:1.6;flex:1;min-width:220px;">
+        البيانات المعروضة هنا <strong>وهمية للعرض فقط</strong>. في النسخة الحقيقية تكون هذه اللوحة متصلة مباشرة بقاعدة بياناتك (Firebase) مع إشعارات فورية للطلبات عبر Telegram والبريد الإلكتروني.
+        <br><span dir="ltr" style="opacity:.85;">Données de démonstration — la version réelle est connectée en direct à votre base de données.</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="container-xl py-4">
+
+    <div class="row g-3 mb-4" id="statsRow">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon" style="background:#eef2ff;color:#4338ca;"><i class="bi bi-receipt"></i></div>
+          <div><div class="label">إجمالي الطلبات</div><div class="value" id="statTotal">—</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon" style="background:#e0f2fe;color:#0369a1;"><i class="bi bi-bell"></i></div>
+          <div><div class="label">طلبات جديدة</div><div class="value" id="statNew">—</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon" style="background:#dcfce7;color:#15803d;"><i class="bi bi-check2-circle"></i></div>
+          <div><div class="label">تم التسليم</div><div class="value" id="statDelivered">—</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon" style="background:#fff7ed;color:#c2410c;"><i class="bi bi-cash-coin"></i></div>
+          <div><div class="label">إجمالي قيمة الطلبات</div><div class="value" id="statRevenue">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Charts (pure SVG/CSS, no external libraries) ===== -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-lg-6">
+        <div class="chart-card">
+          <h6 class="mb-3"><i class="bi bi-bar-chart-line"></i> الطلبات حسب الحالة</h6>
+          <div id="chartStatus"></div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="chart-card">
+          <h6 class="mb-3"><i class="bi bi-graph-up"></i> الطلبات آخر 12 شهر</h6>
+          <div class="daybars" id="chartDays"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar mb-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-lg-4">
+          <label class="form-label mb-1" style="font-size:.82rem;"><i class="bi bi-search"></i> بحث (الاسم / الهاتف / رقم الطلب)</label>
+          <input type="text" id="searchInput" class="form-control" placeholder="ابحث...">
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1" style="font-size:.82rem;">الحالة</label>
+          <select id="statusFilter" class="form-select">
+            <option value="">الكل</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1" style="font-size:.82rem;">من تاريخ</label>
+          <input type="date" id="dateFrom" class="form-control">
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1" style="font-size:.82rem;">إلى تاريخ</label>
+          <input type="date" id="dateTo" class="form-control">
+        </div>
+        <div class="col-6 col-lg-2">
+          <button id="clearFilters" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle"></i> مسح</button>
+        </div>
+      </div>
+      <div class="form-check form-switch mt-3 mb-0">
+        <input class="form-check-input" type="checkbox" id="showArchived">
+        <label class="form-check-label" for="showArchived" style="font-size:.85rem;">إظهار الطلبات المؤرشفة</label>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div id="tableContent">
+        <div class="spin-wrap"><div class="spinner-border text-warning" role="status"></div><div class="mt-2">جاري تحميل الطلبات...</div></div>
+      </div>
+    </div>
+    <div id="resultCount" class="text-muted mt-2" style="font-size:.85rem;"></div>
+
+  </div>
+</div>
+
+<!-- ===================== ORDER DETAILS MODAL ===================== -->
+<div class="modal fade" id="orderModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-receipt-cutoff"></i> تفا��يل الطلب</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  /* =========================================================
+     CONFIG — same Firebase project as the storefront.
+     Login uses Firebase Authentication (Email/Password).
+     ========================================================= */
+  var firebaseConfig = {
+    apiKey: "DEMO_DISABLED",
+    authDomain: "demo.firebaseapp.com",
+    projectId: "demo-project",
+    storageBucket: "demo.appspot.com",
+    messagingSenderId: "000000000000",
+    appId: "1:000000000000:web:demo"
+  };
+
+  /* ===== Status model (Arabic, matching existing data) ===== */
+  var STATUSES = [
+    { key: "جديد",          css: "s-new",       color: "#0ea5e9" },
+    { key: "مؤكد",          css: "s-confirmed", color: "#8b5cf6" },
+    { key: "قيد التحضير", css: "s-preparing", color: "#f59e0b" },
+    { key: "تم التسليم",    css: "s-delivered", color: "#22c55e" },
+    { key: "ملغى",          css: "s-cancelled", color: "#ef4444" }
+  ];
+  var DEFAULT_STATUS = "جديد";
+
+  function statusMeta(raw){
+    var s = (raw == null || String(raw).trim() === "") ? DEFAULT_STATUS : String(raw).trim();
+    for (var i=0;i<STATUSES.length;i++){ if (STATUSES[i].key === s) return STATUSES[i]; }
+    return { key: s, css: "s-new", color: "#0ea5e9" };
+  }
+
+  /* ===== State ===== */
+  var auth = null, db = null;
+  var allOrders = [];
+  var modalInstance = null;
+  var ordersLoaded = false;
+
+  /* ===== Helpers ===== */
+  function $(id){ return document.getElementById(id); }
+  function esc(v){
+    if (v == null) return "";
+    return String(v).replace(/[&<>\"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+  function fmtMoney(n){
+    var num = Number(n);
+    if (!isFinite(num)) num = 0;
+    return num.toLocaleString('ar-DZ') + " د.ج";
+  }
+  function parseDate(ts){
+    if (!ts) return null;
+    try {
+      if (typeof ts === 'string') { var d = new Date(ts); return isNaN(d.getTime()) ? null : d; }
+      if (typeof ts === 'object'){
+        if (typeof ts.toDate === 'function') return ts.toDate();
+        if (typeof ts.seconds === 'number') return new Date(ts.seconds * 1000);
+      }
+    } catch(e){}
+    return null;
+  }
+  function fmtDate(d){
+    if (!d) return "—";
+    try { return d.toLocaleString('ar-DZ', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }); }
+    catch(e){ return d.toISOString(); }
+  }
+  function orderDate(data){ return parseDate(data && data.createdAt) || parseDate(data && data.timestamp); }
+  function customerName(data){ return data.customer || data.customerName || data.fullName || data.name || "—"; }
+  function orderTotal(data){
+    if (data.totalPrice != null) return Number(data.totalPrice) || 0;
+    if (data.total != null) return Number(data.total) || 0;
+    var arr = Array.isArray(data.products) ? data.products : [];
+    var t = 0; for (var i=0;i<arr.length;i++){ t += (Number(arr[i].price)||0) * (Number(arr[i].quantity)||0); }
+    return t;
+  }
+  function isArchived(data){ return data && data.archived === true; }
+  /* Active = not archived. Stats and charts use active orders only. */
+  function activeOrders(){
+    var out = [];
+    for (var i=0;i<allOrders.length;i++){ if (!isArchived(allOrders[i].data)) out.push(allOrders[i]); }
+    return out;
+  }
+  function maxOf(arr){ var m=0; for (var i=0;i<arr.length;i++){ if (arr[i]>m) m=arr[i]; } return m; }
+
+  /* ===== Firebase init (runs immediately) ===== */
+  function initFirebase(){
+    if (typeof firebase === 'undefined' || !firebase.initializeApp){
+      showLoginError("تعذر تحميل Firebase. تحقق من اتصال الإنترنت.");
+      return false;
+    }
+    try {
+      if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      return true;
+    } catch(e){
+      console.error('Firebase init error', e);
+      showLoginError("خطأ في تهيئة Firebase.");
+      return false;
+    }
+  }
+
+  /* ===== Auth ===== */
+  function showLoginError(msg){
+    var el = $("loginError");
+    el.innerHTML = '<i class="bi bi-exclamation-circle"></i> ' + esc(msg);
+    el.style.display = 'block';
+  }
+  function tryLogin(){
+    if (!auth) { if (!initFirebase()) return; }
+    var email = ($("adminEmail").value || "").trim();
+    var pass = $("adminPass").value;
+    if (!email || !pass){ showLoginError("أدخل البريد وكلمة المرور."); return; }
+    $("loginError").style.display = 'none';
+    var btn = $("loginBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> جاري الدخول...';
+    auth.signInWithEmailAndPassword(email, pass)
+      .catch(function(err){
+        console.error('Auth error', err);
+        var map = {
+          'auth/invalid-email': "البريد الإلكتروني غير صالح.",
+          'auth/user-not-found': "لا يوجد حساب بهذا البريد.",
+          'auth/wrong-password': "كلمة المرور غير صحيحة.",
+          'auth/invalid-credential': "بيانات الدخول غير صحيحة.",
+          'auth/too-many-requests': "محاولات كثيرة. حاول لاحقاً."
+        };
+        showLoginError(map[err && err.code] || "تعذر تسجيل الدخول. تحقق من بياناتك.");
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-box-arrow-in-left"></i> دخول';
+      });
+  }
+  function logout(){ if (auth) auth.signOut(); }
+
+  function onAuth(user){
+    if (user){
+      $("loginGate").style.display = 'none';
+      $("app").style.display = 'block';
+      var who = $("adminWho"); if (who) who.textContent = user.email || '';
+      if (!ordersLoaded){ buildStatusFilter(); loadOrders(); }
+    } else {
+      ordersLoaded = false;
+      $("app").style.display = 'none';
+      $("loginGate").style.display = 'flex';
+      var p = $("adminPass"); if (p) p.value = '';
+    }
+  }
+
+  function buildStatusFilter(){
+    var sel = $("statusFilter");
+    if (sel.options.length > 1) return; // already built
+    STATUSES.forEach(function(s){
+      var o = document.createElement('option');
+      o.value = s.key; o.textContent = s.key;
+      sel.appendChild(o);
+    });
+  }
+
+  /* ===== Load orders ===== */
+  function loadOrders(){
+    $("tableContent").innerHTML = '<div class="spin-wrap"><div class="spinner-border text-warning" role="status"></div><div class="mt-2">جاري تحميل الطلبات...</div></div>';
+    db.collection('orders').get()
+      .then(function(snap){
+        ordersLoaded = true;
+        allOrders = [];
+        snap.forEach(function(doc){ allOrders.push({ id: doc.id, data: doc.data() || {} }); });
+        allOrders.sort(function(a,b){
+          var da = orderDate(a.data), dbb = orderDate(b.data);
+          if (da && dbb) return dbb - da;
+          if (da) return -1; if (dbb) return 1; return 0;
+        });
+        renderStats();
+        renderCharts();
+        applyFilters();
+      })
+      .catch(function(err){
+        console.error('Load error', err);
+        var msg = (err && err.code === 'permission-denied')
+          ? "لا توجد صلاحية لقراءة الطلبات. تأكد من نشر قواعد Firestore وأن حسابك مسجّل الدخول."
+          : "تعذر تحميل الطلبات. حاول مجدداً.";
+        showTableError(msg);
+      });
+  }
+
+  function showTableError(msg){
+    $("tableContent").innerHTML = '<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><div class="mt-3 fw-semibold">'+esc(msg)+'</div></div>';
+    $("resultCount").textContent = "";
+  }
+
+  /* ===== Analytics cards (active orders only) ===== */
+  function renderStats(){
+    var active = activeOrders();
+    var total = active.length;
+    var nNew = 0, nDelivered = 0, revenue = 0;
+    active.forEach(function(o){
+      var st = statusMeta(o.data.status).key;
+      if (st === "جديد") nNew++;
+      if (st === "تم التسليم") nDelivered++;
+      if (st !== "ملغى") revenue += orderTotal(o.data);
+    });
+    $("statTotal").textContent = total.toLocaleString('ar-DZ');
+    $("statNew").textContent = nNew.toLocaleString('ar-DZ');
+    $("statDelivered").textContent = nDelivered.toLocaleString('ar-DZ');
+    $("statRevenue").textContent = fmtMoney(revenue);
+  }
+
+  /* ===== Charts (pure SVG/CSS, no libraries) ===== */
+  function renderCharts(){
+    var active = activeOrders();
+
+    // --- Orders by status (horizontal bars) ---
+    var counts = {};
+    STATUSES.forEach(function(s){ counts[s.key] = 0; });
+    active.forEach(function(o){
+      var k = statusMeta(o.data.status).key;
+      if (counts[k] == null) counts[k] = 0;
+      counts[k]++;
+    });
+    var countVals = [];
+    STATUSES.forEach(function(s){ countVals.push(counts[s.key] || 0); });
+    var maxCount = maxOf(countVals); if (maxCount < 1) maxCount = 1;
+    if (!active.length){
+      $("chartStatus").innerHTML = '<div class="chart-empty">لا توجد بيانات بعد.</div>';
+    } else {
+      var bars = STATUSES.map(function(s){
+        var c = counts[s.key] || 0;
+        var pct = Math.round((c / maxCount) * 100);
+        return '<div class="bar-row">'
+          + '<span class="bar-label">'+esc(s.key)+'</span>'
+          + '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+s.color+';"></div></div>'
+          + '<span class="bar-val">'+c.toLocaleString('ar-DZ')+'</span>'
+          + '</div>';
+      }).join('');
+      $("chartStatus").innerHTML = bars;
+    }
+
+    // --- Orders over the last 12 months (vertical bars) ---
+    var MONTHS_AR = ["جانفي","فيفري","مارس","أفريل","ماي","جوان","جويلية","أوت","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+    var months = [];
+    var firstOfThisMonth = new Date(); firstOfThisMonth.setDate(1); firstOfThisMonth.setHours(0,0,0,0);
+    for (var i=11;i>=0;i--){ var mm = new Date(firstOfThisMonth.getFullYear(), firstOfThisMonth.getMonth()-i, 1); months.push({ y: mm.getFullYear(), m: mm.getMonth(), count: 0 }); }
+    active.forEach(function(o){
+      var dt = orderDate(o.data); if (!dt) return;
+      var oy = dt.getFullYear(), om = dt.getMonth();
+      for (var j=0;j<months.length;j++){ if (months[j].y === oy && months[j].m === om){ months[j].count++; break; } }
+    });
+    var monthVals = months.map(function(d){ return d.count; });
+    var maxMonth = maxOf(monthVals); if (maxMonth < 1) maxMonth = 1;
+    var hasMonthData = false; for (var k=0;k<monthVals.length;k++){ if (monthVals[k] > 0){ hasMonthData = true; break; } }
+    if (!hasMonthData){
+      $("chartDays").innerHTML = '<div class="chart-empty" style="width:100%;">لا توجد طلبات في آخر 12 شهر.</div>';
+    } else {
+      var cols = months.map(function(d){
+        var h = Math.round((d.count / maxMonth) * 100);
+        var lbl = MONTHS_AR[d.m] + ' ' + d.y;
+        return '<div class="daybar" title="'+lbl+' — '+d.count+' طلب">'
+          + '<div class="col" style="height:'+h+'%;"></div>'
+          + '<span class="d-label">'+MONTHS_AR[d.m].slice(0,3)+'</span>'
+          + '</div>';
+      }).join('');
+      $("chartDays").innerHTML = cols;
+    }
+  }
+
+  /* ===== Filtering + search ===== */
+  function applyFilters(){
+    var q = ($("searchInput").value || "").trim().toLowerCase();
+    var statusF = $("statusFilter").value;
+    var fromV = $("dateFrom").value;
+    var toV = $("dateTo").value;
+    var showArch = $("showArchived").checked;
+    var from = fromV ? new Date(fromV + "T00:00:00") : null;
+    var to = toV ? new Date(toV + "T23:59:59") : null;
+
+    var base = showArch ? allOrders : activeOrders();
+
+    var rows = base.filter(function(o){
+      var d = o.data;
+      if (statusF && statusMeta(d.status).key !== statusF) return false;
+      var dt = orderDate(d);
+      if (from && (!dt || dt < from)) return false;
+      if (to && (!dt || dt > to)) return false;
+      if (q){
+        var hay = (customerName(d) + " " + (d.phone||"") + " " + o.id).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+
+    renderTable(rows);
+  }
+
+  /* ===== Table render ===== */
+  function renderTable(rows){
+    if (!rows.length){
+      $("tableContent").innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><div class="mt-3">لا توجد طلبات مطابقة.</div></div>';
+      $("resultCount").textContent = "0 طلب";
+      return;
+    }
+    var html = '<table class="orders"><thead><tr>'
+      + '<th>رقم الطلب</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>التاريخ</th><th>الحالة</th>'
+      + '</tr></thead><tbody>';
+    rows.forEach(function(o){
+      var d = o.data;
+      var sm = statusMeta(d.status);
+      var arch = isArchived(d);
+      html += '<tr data-id="'+esc(o.id)+'" class="'+(arch?'archived-row':'')+'">'
+        + '<td><span class="order-id">'+esc(o.id)+'</span>'+(arch?' <span class="arch-tag">مؤرشف</span>':'')+'</td>'
+        + '<td>'+esc(customerName(d))+'</td>'
+        + '<td dir="ltr" style="text-align:right;">'+esc(d.phone||"—")+'</td>'
+        + '<td>'+esc(fmtMoney(orderTotal(d)))+'</td>'
+        + '<td>'+esc(fmtDate(orderDate(d)))+'</td>'
+        + '<td><span class="badge-status '+sm.css+'">'+esc(sm.key)+'</span></td>'
+        + '</tr>';
+    });
+    html += '</tbody></table>';
+    $("tableContent").innerHTML = html;
+    $("resultCount").textContent = rows.length.toLocaleString('ar-DZ') + " طلب";
+
+    var trs = $("tableContent").querySelectorAll('tbody tr');
+    for (var i=0;i<trs.length;i++){
+      trs[i].addEventListener('click', function(){ openOrder(this.getAttribute('data-id')); });
+    }
+  }
+
+  /* ===== Order details modal ===== */
+  function openOrder(id){
+    var rec = null;
+    for (var i=0;i<allOrders.length;i++){ if (allOrders[i].id === id){ rec = allOrders[i]; break; } }
+    if (!rec) return;
+    var d = rec.data;
+    var sm = statusMeta(d.status);
+    var arch = isArchived(d);
+
+    var products = Array.isArray(d.products) ? d.products : [];
+    var prodHtml = '';
+    if (products.length){
+      products.forEach(function(p){
+        var name = p.name || p.title || "منتج";
+        var qty = (p.quantity != null) ? p.quantity : 1;
+        var price = Number(p.price)||0;
+        prodHtml += '<div class="prod-line">'
+          + (p.image ? '<img src="'+esc(p.image)+'" alt="" onerror="this.style.visibility=&#39;hidden&#39;">' : '<div style="width:46px;height:46px;border-radius:8px;background:#f1f2f4;"></div>')
+          + '<div class="flex-grow-1"><div class="fw-semibold">'+esc(name)+'</div>'
+          + '<div class="text-muted" style="font-size:.82rem;">'+fmtMoney(price)+' × '+esc(qty)+'</div></div>'
+          + '<div class="fw-bold">'+fmtMoney(price*(Number(qty)||0))+'</div>'
+          + '</div>';
+      });
+    } else {
+      prodHtml = '<div class="text-muted">لا توجد منتجات مسجلة لهذا الطلب.</div>';
+    }
+
+    var statusBtns = STATUSES.map(function(s){
+      var active = (s.key === sm.key);
+      return '<button class="btn btn-sm '+(active?'btn-brand':'btn-outline-secondary')+' status-set-btn" data-status="'+esc(s.key)+'">'+esc(s.key)+'</button>';
+    }).join(' ');
+
+    var archiveBlock = ''
+      + '<hr>'
+      + '<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">'
+      +   '<span class="text-muted" style="font-size:.82rem;">'
+      +     (arch ? 'هذا الطلب مؤرشف — مخفي من القائمة لكن بياناته محفوظة.' : 'الأرشفة تُخفي الطلب من القائمة دون حذف بياناته.')
+      +   '</span>'
+      +   '<button class="btn btn-sm '+(arch?'btn-outline-success':'btn-outline-danger')+'" id="archiveBtn">'
+      +     (arch ? '<i class="bi bi-arrow-counterclockwise"></i> إلغاء الأرشفة' : '<i class="bi bi-archive"></i> أرشفة الطلب')
+      +   '</button>'
+      + '</div>'
+      + '<div id="archiveMsg" class="mt-2" style="font-size:.85rem;"></div>';
+
+    var body = ''
+      + '<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">'
+      +   '<span class="order-id">#'+esc(id)+(arch?' <span class="arch-tag">مؤرشف</span>':'')+'</span>'
+      +   '<span class="badge-status '+sm.css+'" id="modalCurrentStatus">'+esc(sm.key)+'</span>'
+      + '</div>'
+      + '<h6 class="fw-bold mb-2"><i class="bi bi-person"></i> بيانات العميل</h6>'
+      + '<div class="mb-3">'
+      +   '<div class="info-row"><span class="k">الاسم</span><span class="v">'+esc(customerName(d))+'</span></div>'
+      +   '<div class="info-row"><span class="k">الهاتف</span><span class="v" dir="ltr">'+esc(d.phone||"—")+'</span></div>'
+      +   (d.email ? '<div class="info-row"><span class="k">البريد</span><span class="v" dir="ltr">'+esc(d.email)+'</span></div>' : '')
+      +   '<div class="info-row"><span class="k">الولاية</span><span class="v">'+esc(d.wilaya||"—")+'</span></div>'
+      +   '<div class="info-row"><span class="k">العنوان</span><span class="v">'+esc(d.address||"—")+'</span></div>'
+      +   (d.payment ? '<div class="info-row"><span class="k">الدفع</span><span class="v">'+esc(d.payment)+'</span></div>' : '')
+      +   '<div class="info-row"><span class="k">التاريخ</span><span class="v">'+esc(fmtDate(orderDate(d)))+'</span></div>'
+      + '</div>'
+      + '<h6 class="fw-bold mb-2"><i class="bi bi-bag"></i> المنتجات</h6>'
+      + '<div class="mb-2">'+prodHtml+'</div>'
+      + '<div class="info-row" style="font-size:1.05rem;"><span class="k fw-bold">الإجمالي</span><span class="v">'+fmtMoney(orderTotal(d))+'</span></div>'
+      + '<hr>'
+      + '<h6 class="fw-bold mb-2"><i class="bi bi-arrow-repeat"></i> تغيير الحالة</h6>'
+      + '<div class="d-flex flex-wrap gap-2" id="statusBtns">'+statusBtns+'</div>'
+      + '<div id="statusMsg" class="mt-2" style="font-size:.85rem;"></div>'
+      + archiveBlock;
+
+    $("modalBody").innerHTML = body;
+
+    var btns = $("statusBtns").querySelectorAll('.status-set-btn');
+    for (var i=0;i<btns.length;i++){
+      btns[i].addEventListener('click', function(){
+        updateStatus(id, this.getAttribute('data-status'));
+      });
+    }
+    var aBtn = $("archiveBtn");
+    if (aBtn){ aBtn.addEventListener('click', function(){ toggleArchive(id, !isArchived(d)); }); }
+
+    if (!modalInstance) modalInstance = new bootstrap.Modal($("orderModal"));
+    modalInstance.show();
+  }
+
+  /* ===== Update status in Firestore (only the status field) ===== */
+  function updateStatus(id, newStatus){
+    var msg = $("statusMsg");
+    msg.innerHTML = '<span class="text-muted"><span class="spinner-border spinner-border-sm"></span> جاري الحفظ...</span>';
+    var btns = $("statusBtns").querySelectorAll('.status-set-btn');
+    for (var i=0;i<btns.length;i++) btns[i].disabled = true;
+
+    db.collection('orders').doc(id).update({ status: newStatus })
+      .then(function(){
+        for (var i=0;i<allOrders.length;i++){ if (allOrders[i].id === id){ allOrders[i].data.status = newStatus; break; } }
+        var sm = statusMeta(newStatus);
+        var cur = $("modalCurrentStatus");
+        if (cur){ cur.className = 'badge-status ' + sm.css; cur.textContent = sm.key; }
+        for (var j=0;j<btns.length;j++){
+          var bs = btns[j].getAttribute('data-status');
+          btns[j].className = 'btn btn-sm ' + (bs === newStatus ? 'btn-brand' : 'btn-outline-secondary') + ' status-set-btn';
+          btns[j].disabled = false;
+        }
+        msg.innerHTML = '<span class="text-success"><i class="bi bi-check-circle"></i> تم تحديث الحالة</span>';
+        renderStats();
+        renderCharts();
+        applyFilters();
+      })
+      .catch(function(err){
+        console.error('Update error', err);
+        for (var k=0;k<btns.length;k++) btns[k].disabled = false;
+        var t = (err && err.code === 'permission-denied')
+          ? "لا توجد صلاحية لتحديث الطلب (قواعد Firestore)."
+          : "تعذر حفظ الحالة. حاول مجدداً.";
+        msg.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle"></i> '+esc(t)+'</span>';
+      });
+  }
+
+  /* ===== Archive / unarchive (soft-delete via the archived field) ===== */
+  function toggleArchive(id, makeArchived){
+    var msg = $("archiveMsg");
+    if (msg) msg.innerHTML = '<span class="text-muted"><span class="spinner-border spinner-border-sm"></span> جاري الحفظ...</span>';
+    var aBtn = $("archiveBtn"); if (aBtn) aBtn.disabled = true;
+
+    db.collection('orders').doc(id).update({ archived: makeArchived })
+      .then(function(){
+        for (var i=0;i<allOrders.length;i++){ if (allOrders[i].id === id){ allOrders[i].data.archived = makeArchived; break; } }
+        renderStats();
+        renderCharts();
+        applyFilters();
+        openOrder(id); // refresh modal so the button + tags reflect the new state
+        var m2 = $("archiveMsg");
+        if (m2) m2.innerHTML = '<span class="text-success"><i class="bi bi-check-circle"></i> '+(makeArchived?'تمت الأرشفة':'تم إلغاء الأرشفة')+'</span>';
+      })
+      .catch(function(err){
+        console.error('Archive error', err);
+        if (aBtn) aBtn.disabled = false;
+        var t = (err && err.code === 'permission-denied')
+          ? "لا توجد صلاحية لأرشفة الطلب (قواعد Firestore)."
+          : "تعذر حفظ العملية. حاول مجدداً.";
+        var m3 = $("archiveMsg");
+        if (m3) m3.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle"></i> '+esc(t)+'</span>';
+      });
+  }
+
+  /* ===== Wire up events ===== */
+  document.addEventListener('DOMContentLoaded', function(){
+    initFirebase();
+    if (auth){ auth.onAuthStateChanged(onAuth); }
+
+    $("loginBtn").addEventListener('click', tryLogin);
+    $("adminPass").addEventListener('keydown', function(e){ if (e.key === 'Enter') tryLogin(); });
+    $("adminEmail").addEventListener('keydown', function(e){ if (e.key === 'Enter') $("adminPass").focus(); });
+    $("logoutBtn").addEventListener('click', logout);
+    $("refreshBtn").addEventListener('click', loadOrders);
+    $("searchInput").addEventListener('input', applyFilters);
+    $("statusFilter").addEventListener('change', applyFilters);
+    $("dateFrom").addEventListener('change', applyFilters);
+    $("dateTo").addEventListener('change', applyFilters);
+    $("showArchived").addEventListener('change', applyFilters);
+    $("clearFilters").addEventListener('click', function(){
+      $("searchInput").value = ''; $("statusFilter").value = '';
+      $("dateFrom").value = ''; $("dateTo").value = '';
+      applyFilters();
+    });
+  });
+
+})();
+</script>
+<!-- DEMO showcase layer -->
+<script src="demo-enhance.js"></script>
+<script src="demo-tour.js"></script>
+</body>
+</html>

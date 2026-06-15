@@ -1,0 +1,676 @@
+[
+  {
+    "id": 1,
+    "title": "SECHE CHEVEUX PRO2000",
+    "price": 4200,
+    "old_price": 5500,
+    "images": [
+      "images/SECHE CHEVEUX magenta.jpg",
+      "images/SECHE CHEVEUX rouge.jpg",
+      "images/SECHE CHEVEUX noir.jpg"
+    ],
+    "description_short": "Sèche-cheveux professionnel 2000W avec 3 réglages de température",
+    "description_long": "Le sèche-cheveux professionnel Robuste PRO2000 offre une performance exceptionnelle avec sa puissance de 2000W. Idéal pour un séchage rapide et soigneux, il dispose de 3 réglages de température et 2 vitesses d'air. Conçu pour les professionnels et les particuliers exigeants.",
+    "features": [
+      "Puissance 2000W",
+      "3 réglages de température",
+      "2 vitesses d'air",
+      "Fonction air froid",
+      "Concentrateur de air inclus"
+    ],
+    "stock": 15,
+    "category": "coiffure",
+    "badge": "Best-seller"
+  },
+  {
+    "id": 2,
+    "title": "LISSEUR CHEVEUX SW 207",
+    "price": 4100,
+    "old_price": 5800,
+    "images": [
+      "images/LISSEUR CHEVEUX.jpg",
+      "images/LISSEUR CHEVEUX Robuste.jpg"
+    ],
+    "description_short": "Lisseur céramique avec contrôle précis de la température",
+    "description_long": "Le lisseur SW 207 avec plaques en céramique assure un lissage parfait sans abîmer les cheveux. Contrôle précis de la température de 120°C à 230°C pour s'adapter à tous types de cheveux.",
+    "features": [
+      "Plaques en céramique",
+      "Température réglable 120-230°C",
+      "Chauffage rapide 30 secondes",
+      "Verrouillage de sécurité"
+    ],
+    "stock": 12,
+    "category": "coiffure",
+    "badge": ""
+  },
+  {
+    "id": 3,
+    "title": "LISSEUR CHEVEUX BROSSE LCB200N",
+    "price": 3400,
+    "old_price": 4500,
+    "images": [
+      "images/LISSEUR CHEVEUX BROSSE.jpg"
+    ],
+    "description_short": "Brosse lissante en céramique avec ionisation",
+    "description_long": "La brosse lissante LCB200N combine brushing et lissage en un seul appareil. Technologie ionique pour des cheveux brillants et sans frisottis.",
+    "features": [
+      "Brosse lissante céramique",
+      "Technologie ionique",
+      "3 réglages de température",
+      "Rotation bidirectionnelle"
+    ],
+    "stock": 8,
+    "category": "coiffure",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 4,
+    "title": "FRITEUSE DF 900 W",
+    "price": 5900,
+    "old_price": 7800,
+    "images": [
+      "images/FRITEUSE DF 900 W.png",
+      "images/FRITEUSE DF 900 W 2.png",
+      "images/FRITEUSE DF 900 W 3.jpeg"
+    ],
+    "description_short": "Friteuse électrique 1.5L avec minuterie automatique",
+    "description_long": "Friteuse électrique Robuste d'une capacité de 1.5 litre avec minuterie automatique et contrôle de température. Parfaite pour des frites croustillantes et saines.",
+    "features": [
+      "Capacité 1.5 litre",
+      "Puissance 900W",
+      "Minuterie automatique",
+      "Panier anti-adhésif",
+      "Contrôle de température"
+    ],
+    "stock": 10,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 5,
+    "title": "EPILATEUR SES 3",
+    "price": 3900,
+    "old_price": 5200,
+    "images": [
+      "images/EPILATOIR.png",
+      "images/EPILATOIR robuste.png"
+    ],
+    "description_short": "Épilateur électrique avec 5 accessoires multi-usages",
+    "description_long": "L'épilateur SES 3 offre une épilation précise et efficace avec 5 accessoires pour toutes les zones du corps. Confort optimal et résultats durables.",
+    "features": [
+      "5 accessoires inclus",
+      "Technologie douce",
+      "Tête pivotante",
+      "Fonction massante",
+      "Câble longueur 1.5m"
+    ],
+    "stock": 7,
+    "category": "beauté",
+    "badge": "Top vente"
+  },
+  {
+    "id": 6,
+    "title": "BROSSE NETTOYANTE VISAGE BNV 4",
+    "price": 2400,
+    "old_price": 3300,
+    "images": [
+      "images/BROSSE NETOYANTE VISAGE.png",
+      "images/BROSSE NETOYANTE VISAGE Robuste.png"
+    ],
+    "description_short": "Brosse nettoyante visage 3 vitesses étanche",
+    "description_long": "La brosse nettoyante visage BNV 4 nettoie en profondeur avec ses 3 vitesses et sa conception étanche. Pour une peau propre et éclatante.",
+    "features": [
+      "3 vitesses réglables",
+      "Conception étanche IPX7",
+      "Têtes interchangeables",
+      "Charge USB"
+    ],
+    "stock": 15,
+    "category": "beauté",
+    "badge": ""
+  },
+  {
+    "id": 7,
+    "title": "MINI HACHOIR EN VERRE MH 400",
+    "price": 5900,
+    "old_price": 7500,
+    "images": [
+      "images/mini hachior inox robuste.png"
+    ],
+    "description_short": "Hachoir compact 400W avec bol en verre",
+    "description_long": "Le mini hachoir MH 400 avec bol en verre de 500ml est parfait pour hacher herbes, ail, oignons et préparer des sauces rapidement.",
+    "features": [
+      "Puissance 400W",
+      "Bol en verre 500ml",
+      "Lames en inox",
+      "Fonction pulse",
+      "Nettoyage facile"
+    ],
+    "stock": 9,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 8,
+    "title": "HACHOIR LEGUMES 4 LAMES EN VERRE",
+    "price": 6000,
+    "old_price": 7800,
+    "images": [
+      "images/quatro hachior.jpg"
+    ],
+    "description_short": "Hachoir à légumes 4 lames inox avec bol verre",
+    "description_long": "Hachoir à légumes avec 4 lames en inox interchangeables et bol en verre sécurisé. Parfait pour toutes vos préparations culinaires.",
+    "features": [
+      "4 lames en inox",
+      "Bol en verre 1.2L",
+      "Couvercle de sécurité",
+      "Moteur puissant 350W"
+    ],
+    "stock": 6,
+    "category": "cuisine",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 9,
+    "title": "HACHOIR HN19 350 W",
+    "price": 4300,
+    "old_price": 5600,
+    "images": [
+      "images/hachior plastic Robuste.jpg"
+    ],
+    "description_short": "Hachoir à viande 350W avec bol plastique",
+    "description_long": "Hachoir HN19 spécial viande avec bol en plastique alimentaire de 1.5L. Puissant et pratique pour toutes vos préparations.",
+    "features": [
+      "Puissance 350W",
+      "Bol plastique 1.5L",
+      "Lames en acier inoxydable",
+      "Fonction reverse"
+    ],
+    "stock": 11,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 10,
+    "title": "HACHOIRE LEGUME 400 W HLS 350",
+    "price": 4300,
+    "old_price": 5900,
+    "images": [
+      "images/hachoir 400w.jpg"
+    ],
+    "description_short": "Hachoir à légumes 400W avec récipient en verre",
+    "description_long": "Hachoir à légumes HLS 350 avec moteur 400W et récipient en verre sécurisé. Idéal pour coupes et préparations variées.",
+    "features": [
+      "Moteur 400W",
+      "Récipient en verre",
+      "Multi-fonctions",
+      "Sécurité enfant"
+    ],
+    "stock": 8,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 11,
+    "title": "PETRIN 1000 W PK2",
+    "price": 16900,
+    "old_price": 22000,
+    "images": [
+      "images/pètrin pk2 noir.jpg",
+      "images/pètrin pk2.jpg"
+    ],
+    "description_short": "Pétrin professionnel 1000W capacité 5kg",
+    "description_long": "Pétrin professionnel PK2 d'une puissance de 1000W avec capacité de 5kg de farine. Parfait pour boulangers et pâtissiers.",
+    "features": [
+      "Puissance 1000W",
+      "Capacité 5kg farine",
+      "Bol en inox",
+      "2 vitesses + pulse",
+      "Fonction pétrin et batteur"
+    ],
+    "stock": 4,
+    "category": "cuisine",
+    "badge": "Best-seller"
+  },
+  {
+    "id": 12,
+    "title": "HACHOIR 400 W 2L DAILY",
+    "price": 6600,
+    "old_price": 8200,
+    "images": [
+      "images/hachior daily.jpg"
+    ],
+    "description_short": "Hachoir quotidien 400W avec bol 2 litres",
+    "description_long": "Hachoir Daily 400W avec bol de 2 litres pour un usage quotidien. Polyvalent et efficace pour toutes les préparations.",
+    "features": [
+      "Puissance 400W",
+      "Bol 2 litres",
+      "Lames en inox",
+      "Design compact"
+    ],
+    "stock": 13,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 13,
+    "title": "Fer à repasser Robuste",
+    "price": 4600,
+    "old_price": 5000,
+    "images": [
+      "images/Fer à repasser blue.jpg",
+      "images/Fer à repasser rouge.jpg",
+      "images/Fer à repasser magenta.jpg"
+    ],
+    "description_short": "Fer à repasser vapeur haute performance",
+    "description_long": "Fer à repasser Robuste avec fonction vapeur et puissance variable. Pour un repassage facile et efficace de tous les tissus.",
+    "features": [
+      "Puissance vapeur ajustable",
+      "Semelle anti-adhésive",
+      "Réservoir d'eau 300ml",
+      "Arrêt automatique"
+    ],
+    "stock": 18,
+    "category": "maison",
+    "badge": ""
+  },
+  {
+    "id": 14,
+    "title": "ROBOT 26F",
+    "price": 14200,
+    "old_price": 18000,
+    "images": [
+      "images/multifonction pètrin.jpg",
+      "images/multifonction pètrin 1.jpg"
+    ],
+    "description_short": "Robot culinaire version premium 800W",
+    "description_long": "Robot culinaire 26F version premium avec puissance 800W et multiple accessoires pour toutes les préparations culinaires.",
+    "features": [
+      "Puissance 800W",
+      "Multiple accessoires",
+      "Bol grande capacité",
+      "Fonctions variées"
+    ],
+    "stock": 5,
+    "category": "cuisine",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 15,
+    "title": "CENTRALE VAPEUR SMART 2400W",
+    "price": 12600,
+    "old_price": 15800,
+    "images": [
+      "images/CENTRALE VAPEUR SMART.jpg"
+    ],
+    "description_short": "Centrale vapeur professionnelle 2400W",
+    "description_long": "Centrale vapeur Smart 2400W professionnelle avec système anti-calcaire et pression constante pour un repassage parfait.",
+    "features": [
+      "Puissance 2400W",
+      "Réservoir 1.8L",
+      "Système anti-calcaire",
+      "Pression constante"
+    ],
+    "stock": 7,
+    "category": "maison",
+    "badge": ""
+  },
+  {
+    "id": 16,
+    "title": "ASPIRATEUR SOUFFLEUR A MAIN AM80",
+    "price": 5100,
+    "old_price": 6500,
+    "images": [
+      "images/ASPIRATEUR SOUFFLEUR A MAIN.png",
+      "images/ASPIRATEUR SOUFFLEUR A MAIN 2.png",
+      "images/ASPIRATEUR SOUFFLEUR A MAIN 3.png"
+    ],
+    "description_short": "Aspirateur-souffleur portable 80W",
+    "description_long": "Aspirateur-souffleur à main AM80 portable avec puissance 80W. Idéal pour petits espaces et voiture.",
+    "features": [
+      "Puissance 80W",
+      "Double fonction",
+      "Filtre lavable",
+      "Compact et léger",
+      "Poids 0.5 kg"
+    ],
+    "stock": 14,
+    "category": "jardin",
+    "badge": ""
+  },
+  {
+    "id": 17,
+    "title": "NETTOYEUR DE TACHES 4 EN 1",
+    "price": 23500,
+    "old_price": 26000,
+    "images": [
+      "images/NETTOYEUR DE TACHES 4 EN 1.jpg",
+      "images/NETTOYEUR DE TACHES 4 EN 1 robuste.jpg",
+      "images/NETTOYEUR DE TACHES 4 EN 1_3.jpg"
+    ],
+    "description_short": "Nettoyeur vapeur multifonction 4 en 1",
+    "description_long": "Nettoyeur de taches 4 en 1 utilisant la technologie vapeur pour nettoyer, désinfecter et détacher sans produits chimiques.",
+    "features": [
+      "4 fonctions en 1",
+      "Technologie vapeur",
+      "Réservoir 1.5L",
+      "Accessoires multiples"
+    ],
+    "stock": 3,
+    "category": "maison",
+    "badge": "Exclusivité"
+  },
+  {
+    "id": 19,
+    "title": "CAFETIERE ELECTRIQUE CBL15B",
+    "price": 15300,
+    "old_price": 19200,
+    "images": [
+      "images/cafetière a bra CB.jpg"
+    ],
+    "description_short": "Cafetière électrique programmable 1.5L",
+    "description_long": "Cafetière électrique CBL15B programmable avec capacité 1.5L et fonction keep-warm pour un café toujours chaud.",
+    "features": [
+      "Capacité 1.5L",
+      "Programmable",
+      "Fonction keep-warm",
+      "Filtre permanent"
+    ],
+    "stock": 9,
+    "category": "café",
+    "badge": ""
+  },
+  {
+    "id": 20,
+    "title": "CAFETIERE ELECTRIQUE C850",
+    "price": 14300,
+    "old_price": 17900,
+    "images": [
+      "images/cafetière a bras c850.jpg"
+    ],
+    "description_short": "Cafetière filtre 850W avec arrêt automatique",
+    "description_long": "Cafetière filtre C850 avec puissance 850W et arrêt automatique. Simple d'utilisation et efficace.",
+    "features": [
+      "Puissance 850W",
+      "Arrêt automatique",
+      "Indicateur niveau d'eau",
+      "Carafe en verre"
+    ],
+    "stock": 11,
+    "category": "café",
+    "badge": "Promo"
+  },
+  {
+    "id": 21,
+    "title": "CAFETIERE ELECTRIQUE A BRAS MOKA 850 W",
+    "price": 14300,
+    "old_price": 18200,
+    "images": [
+      "images/cafetière a bras moka.jpg"
+    ],
+    "description_short": "Cafetière à bras italienne style moka",
+    "description_long": "Cafetière à bras style moka pour un café italien authentique. Design élégant et performance optimale.",
+    "features": [
+      "Style moka italien",
+      "Puissance 850W",
+      "Bras amovible",
+      "Finition acier"
+    ],
+    "stock": 6,
+    "category": "café",
+    "badge": ""
+  },
+  {
+    "id": 22,
+    "title": "CAFETIERE ELECTRIQUE A BRAS ROMA 1000 W",
+    "price": 16600,
+    "old_price": 21000,
+    "images": [
+      "images/cafetière roma 1000w.jpg"
+    ],
+    "description_short": "Cafetière professionnelle à bras 1000W",
+    "description_long": "Cafetière à bras Roma professionnelle 1000W pour les amateurs de café exigeants. Performance et design premium.",
+    "features": [
+      "Puissance 1000W",
+      "Design professionnel",
+      "Bras pivotant",
+      "Indicateur de préparation"
+    ],
+    "stock": 4,
+    "category": "café",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 23,
+    "title": "FRITEUSE ELECTRIQUE SANS HUILE 3.2L",
+    "price": 13000,
+    "old_price": 16500,
+    "images": [
+      "images/air fryer 3.2L.jpg"
+    ],
+    "description_short": "Friteuse à air chaud sans huile 3.2L",
+    "description_long": "Friteuse à air chaud sans huile d'une capacité de 3.2L. Cuisine saine et croustillante sans ajout d'huile.",
+    "features": [
+      "Capacité 3.2L",
+      "Cuisson sans huile",
+      "Minuterie numérique",
+      "Contrôle température"
+    ],
+    "stock": 8,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 24,
+    "title": "FRITEUSE ELECTRIQUE SANS HUILE MAX 10L",
+    "price": 24000,
+    "old_price": 26000,
+    "images": [
+      "images/air fryer 10 L.jpg"
+    ],
+    "description_short": "Friteuse à air chaud sans huile 10L",
+    "description_long": "Friteuse à air chaud sans huile grande capacité 10L pour familles nombreuses ou occasions spéciales.",
+    "features": [
+      "Capacité 10L",
+      "Ecran digital",
+      "Programmes automatiques",
+      "Grande capacité"
+    ],
+    "stock": 3,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 29,
+    "title": "FRITEUSE ELECTRIQUE SANS HUILE 5.7 TACTILE",
+    "price": 14000,
+    "old_price": 16000,
+    "images": [
+      "images/air fryer friture max 5.7l.jpg"
+    ],
+    "description_short": "Friteuse à air chaud sans huile 5.7L tactile",
+    "description_long": "Friteuse à air chaud 5.7L avec écran tactile et multiple programmes de cuisson. Moderne et facile d'utilisation.",
+    "features": [
+      "Capacité 5.7L",
+      "Ecran tactile",
+      "8 programmes automatiques",
+      "Design moderne"
+    ],
+    "stock": 7,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 25,
+    "title": "PETRIN PROMAX 8L",
+    "price": 20500,
+    "old_price": 21000,
+    "images": [
+      "images/petrin promax noir.jpg",
+      "images/petrin promax g.jpg"
+    ],
+    "description_short": "Pétrin professionnel 8 litres 1200W",
+    "description_long": "Pétrin professionnel Promax 8L avec puissance 1200W pour boulangeries et pâtisseries professionnelles.",
+    "features": [
+      "Capacité 8L",
+      "Puissance 1200W",
+      "Moteur professionnel",
+      "Fonctions avancées"
+    ],
+    "stock": 2,
+    "category": "cuisine",
+    "badge": ""
+  },
+  {
+    "id": 26,
+    "title": "CAFETIERE A CAPSULES AUTO ITALIA",
+    "price": 18900,
+    "old_price": 24500,
+    "images": [
+      "images/Cafetière capsule.jpg"
+    ],
+    "description_short": "Machine à café automatique à capsules",
+    "description_long": "Machine à café automatique à capsules Auto Italia pour un café barista à domicile. Simple et rapide.",
+    "features": [
+      "Système capsules",
+      "Préparation automatique",
+      "Compacte",
+      "Nettoyage facile"
+    ],
+    "stock": 10,
+    "category": "café",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 27,
+    "title": "PLANCHE MODERNE",
+    "price": 2900,
+    "old_price": 3500,
+    "images": [
+      "images/planche moderne.jpg"
+    ],
+    "description_short": "Planche à découper anti-bactérienne",
+    "description_long": "Planche à découper moderne en matériau anti-bactérien et sans micro-plastiques. Saine et durable.",
+    "features": [
+      "Anti-bactérien",
+      "Sans micro-plastiques",
+      "Facile à nettoyer",
+      "Design moderne"
+    ],
+    "stock": 25,
+    "category": "cuisine",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 28,
+    "title": "PANINEUSE 2000W",
+    "price": 14500,
+    "old_price": 15500,
+    "images": [
+      "images/panineuse.jpg"
+    ],
+    "description_short": "Panini grill 2000W avec plaque de grill",
+    "description_long": "Panini grill 2000W avec plaques de grill anti-adhésives pour des sandwichs grillés parfaits.",
+    "features": [
+      "Puissance 2000W",
+      "Plaques grill",
+      "Contrôle température",
+      "Indicateur de chaleur"
+    ],
+    "stock": 6,
+    "category": "cuisine",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 100,
+    "title": "Defroisseur Vapeur",
+    "price": 6600,
+    "old_price": 7000,
+    "images": [
+      "images/Robuste Defroisseur 1.jpg",
+      "images/Robuste Defroisseur 2.jpg",
+      "images/Robuste Defroisseur.jpg"
+    ],
+    "description_short": "Défroisseur vapeur professionnel pour un repassage rapide et efficace",
+    "description_long": "Le défroisseur vapeur Robuste est l'outil parfait pour éliminer les plis de vos vêtements rapidement et sans effort. Avec sa puissance vapeur optimale et sa conception ergonomique, il vous garantit un repassage parfait en un temps record. Idéal pour les tissus délicats et les vêtements du quotidien.",
+    "features": [
+      "Puissance vapeur ajustable",
+      "Chauffage rapide en 60 secondes",
+      "Réservoir d'eau amovible 300ml",
+      "Sécurité anti-gouttes",
+      "Pratique et léger"
+    ],
+    "stock": 15,
+    "category": "maison",
+    "badge": "Le plus demandé"
+  },
+  {
+    "id": 101,
+    "title": "ASPIRATEUR SOUFFLEUR A MAIN",
+    "price": 5100,
+    "old_price": 5500,
+    "images": [
+      "images/ASPIRATEUR SOUFFLEUR A MAIN 3.png",
+      "images/ASPIRATEUR SOUFFLEUR A MAIN 2.png",
+      "images/ASPIRATEUR SOUFFLEUR A MAIN.png"
+    ],
+    "description_short": "Aspirateur-souffleur portable pratique pour toutes les surfaces",
+    "description_long": "L'aspirateur-souffleur à main Robuste est l'accessoire indispensable pour un nettoyage rapide et efficace. Compact et puissant, il vous accompagne partout pour maintenir votre intérieur impeccable. Parfait pour les petites surfaces, la voiture et les endroits difficiles d'accès.",
+    "features": [
+      "Double fonction aspiration/soufflage",
+      "Moteur puissant 80W",
+      "Filtre lavable et réutilisable",
+      "Cordon d'alimentation 4m",
+      "Poids 0.5 kg"
+    ],
+    "stock": 8,
+    "category": "maison",
+    "badge": "Nouveau"
+  },
+  {
+    "id": 102,
+    "title": "NETTOYEUR DE TACHES 4 EN 1",
+    "price": 23500,
+    "old_price": 25000,
+    "images": [
+      "images/NETTOYEUR DE TACHES 4 EN 1.jpg",
+      "images/NETTOYEUR DE TACHES 4 EN 1 robuste.jpg",
+      "images/NETTOYEUR DE TACHES 4 EN 1_3.jpg"
+    ],
+    "description_short": "Nettoyeur vapeur multifonction pour un nettoyage en profondeur",
+    "description_long": "Le nettoyeur de taches 4 en 1 Robuste révolutionne votre façon de nettoyer. Grâce à sa technologie vapeur haute pression, il élimine 99.9% des bactéries et des allergènes sans produits chimiques. Quatre accessoires spécialisés pour toutes les surfaces de votre maison.",
+    "features": [
+      "4 fonctions en 1: sols, vitres, textiles, surfaces",
+      "Réservoir XL 1.5L",
+      "Pression vapeur 4 bars",
+      "Chauffage en 3 minutes",
+      "Accessoires de rangement inclus"
+    ],
+    "stock": 5,
+    "category": "maison",
+    "badge": "Exclusivité"
+  },
+  {
+    "id": 103,
+    "title": "ROBUSTE PANINEUSE ET GRILL 1000W",
+    "price": 6900,
+    "old_price": 8000,
+    "images": [
+      "images/PANINEUSE ET GRILL 1000W.png",
+      "images/PANINEUSE ET GRILL 1000W 2.png",
+      "images/PANINEUSE ET GRILL 1000W 3.jpeg"
+    ],
+    "description_short": "Panineuse et grill 1000W pour des sandwiches grillés et plus",
+    "description_long": "La panineuse et grill Robuste 1000W vous permet de préparer des sandwiches grillés, paninis et bien plus encore. Surface antiadhésive, chauffe rapide et facile à nettoyer.",
+    "features": [
+      "Puissance 1000W",
+      "Surface antiadhésive",
+      "Voyant lumineux de chauffe",
+      "Poignée isolée",
+      "Nettoyage facile"
+    ],
+    "stock": 10,
+    "category": "cuisine",
+    "badge": "Promotion"
+  }
+]
