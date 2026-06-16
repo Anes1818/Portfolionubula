@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<!-- DEMO BUILD: mock backend, no real API keys/tokens or network calls -->
+<script src="demo-mock.js"></script>
+<link rel="stylesheet" href="demo-tour.css">
+
+<meta charset="UTF-8">
+<!-- Google tag (gtag.js) -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-DEMO000000');
+</script>
+<meta name="description" content="Robuste eulma - أجهزة منزلية عالية الجودة بأسعار تنافسية في الجزائر مع ضمان سنة واحدة وتوصيل سريع">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- أيقونات الموقع -->
+<link rel="shortcut icon" href="https://www.robustedz.store/images/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.robustedz.store/images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.robustedz.store/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.robustedz.store/images/favicon-16x16.png">
+
+<meta name="theme-color" content="#ff6600">
+<title>ROBUSTE eulma - المتجر الرسمي</title>
+<!-- Canonical + SEO (added) -->
+<link rel="canonical" href="https://www.robustedz.store/">
+<meta name="robots" content="index,follow">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ROBUSTE">
+<meta property="og:locale" content="ar_DZ">
+<meta property="og:title" content="ROBUSTE eulma — المتجر الرسمي للأجهزة المنزلية">
+<meta property="og:description" content="أجهزة منزلية عالية الجودة بأسعار تنافسية، ضمان وتوصيل سريع لكل الولايات. الدفع عند الاستلام.">
+<meta property="og:url" content="https://www.robustedz.store/">
+<meta property="og:image" content="https://www.robustedz.store/images/signal-2025-08-21-103443_005.webp">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ROBUSTE eulma — المتجر الرسمي">
+<meta name="twitter:description" content="أجهزة منزلية عالية الجودة بأسعار تنافسية، توصيل سريع. الدفع عند الاستلام.">
+<meta name="twitter:image" content="https://www.robustedz.store/images/signal-2025-08-21-103443_005.webp">
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "ROBUSTE",
+  "image": "https://www.robustedz.store/images/signal-2025-08-21-103443_005.webp",
+  "logo": "https://i.postimg.cc/bY06X2YN/logo-round.png",
+  "url": "https://www.robustedz.store/",
+  "description": "متجر متخصص في الأجهزة المنزلية عالية الجودة بأسعار تنافسية في الجزائر.",
+  "areaServed": "DZ",
+  "paymentAccepted": "Cash on Delivery",
+  "currenciesAccepted": "DZD",
+  "sameAs": [
+    "https://www.facebook.com/share/19QooaXfy8/"
+  ]
+}
+</script>
+
+<!-- Google Fonts (Tajawal) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.dicebear.com">
+<link rel="dns-prefetch" href="https://i.postimg.cc">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap"></noscript>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></noscript>
+
+<!-- EmailJS -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+
+<link rel="stylesheet" href="style.css">
+<!-- Auto-WebP with safe fallback (added) -->
+<script>
+(function(){
+  "use strict";
+  // If a swapped .webp fails to load, revert to the original image (no breakage ever)
+  document.addEventListener('error', function(e){
+    var t = e.target;
+    if (t && t.tagName === 'IMG' && t.getAttribute('data-orig')) {
+      var o = t.getAttribute('data-orig');
+      t.removeAttribute('data-orig');
+      t.src = o;
+    }
+  }, true);
+  function swap(im){
+    if (!im || im.tagName !== 'IMG') return;
+    if (im.getAttribute('data-orig')) return;
+    var s = im.getAttribute('src');
+    if (!s) return;
+    var m = s.match(/^(images\/.+)\.(png|jpe?g)$/i);
+    if (!m) return;
+    im.setAttribute('data-orig', s);
+    im.setAttribute('src', m[1] + '.webp');
+  }
+  function scan(root){
+    try {
+      var imgs = (root || document).getElementsByTagName('img');
+      for (var i = 0; i < imgs.length; i++) swap(imgs[i]);
+    } catch (e) {}
+  }
+  try {
+    var mo = new MutationObserver(function(muts){
+      for (var i = 0; i < muts.length; i++){
+        var nodes = muts[i].addedNodes;
+        for (var j = 0; j < nodes.length; j++){
+          var n = nodes[j];
+          if (!n || n.nodeType !== 1) continue;
+          if (n.tagName === 'IMG') swap(n);
+          else if (n.getElementsByTagName) scan(n);
+        }
+      }
+    });
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+  } catch (e) {}
+  if (document.readyState !== 'loading') scan(document);
+  document.addEventListener('DOMContentLoaded', function(){ scan(document); });
+})();
+</script>
+<!-- Phone-first UX layer (loaded last to override) -->
+<link rel="stylesheet" href="mobile-ux.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top glass-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <img decoding="async" src="https://i.postimg.cc/7P7BK44r/f525e1dd-9f2c-4160-aed1-882a8b28b75c-20250703-131500-0000.png" 
+                 alt="شعار ROBUSTE" width="180" height="50" style="max-height:50px;">
+            <span class="d-none d-lg-inline fw-bold fs-4 ms-2" style="color: #FF6B35;">ROBUSTE eulma</span>
+        </a>
+       
+        <div class="d-flex align-items-center ms-3">
+            <button class="theme-toggle" id="themeToggle" title="الوضع المظلم" aria-label="الوضع المظلم">
+                <i class="bi bi-moon"></i>
+            </button>
+        </div>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="القائمة">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item mx-2"><a class="nav-link active" href="index.html">الرئيسية</a></li>
+                <li class="nav-item"><a class="nav-link" href="#products">المنتجات</a></li>
+                <li class="nav-item"><a class="nav-link" href="#reviews">آراء العملاء</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">اتصل بنا</a></li>
+            </ul>
+        </div>
+        
+    </div>
+</nav>
+
+<div class="status-indicator" id="statusIndicator" style="display: none;">
+    <div class="alert alert-dismissible fade show" role="alert" aria-live="polite">
+        <span id="statusMessage"></span> 
+        <button type="button" class="btn-close" onclick="hideStatus()" aria-label="إغلاق"></button>
+    </div>
+</div>
+
+<!-- القسم الرئيسي Hero -->
+<section class="hero-container position-relative">
+    <div class="hero-image-container">
+        <img width="3780" height="1890" src="https://www.robustedz.store/images/banner.webp" alt="أجهزة منزلية" class="hero-image" fetchpriority="high" decoding="async">
+        <div class="image-overlay"></div>
+    </div>
+    <div class="hero-content container text-center position-absolute top-50 start-50 translate-middle">
+        <h1 class="hero-title">أجهزة منزلية تجعل حياتك أسهل</h1>
+        <p class="hero-subtitle">جودة عالية بأسعار تنافسية لكل منزل جزائري مع خدمة توصيل سريعة وضمان سنة واحدة</p>
+        <div>
+            <a href="#products" class="btn btn-orange btn-lg px-4 me-2"><i class="bi bi-cart"></i> تسوق الآن</a>
+            <a href="#contact" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-headset"></i> اتصل بنا</a>
+        </div>
+    </div>
+</section>
+
+<!-- عرض الشرائح (Slideshow) -->
+<div class="slideshow-container1">
+  <div class="mySlides1 fade1">
+    <img src="https://www.robustedz.store/images/signal-2025-08-21-103443_002.webp" width="1600" height="800" style="width:100%;height:auto" alt="عرض المنتجات" loading="eager">
+  </div>
+  <div class="mySlides1 fade1">
+    <img src="https://www.robustedz.store/images/signal-2025-08-21-103443_003.webp" width="1600" height="800" style="width:100%;height:auto" alt="عروض خاصة" loading="eager">
+  </div>
+  <div class="mySlides1 fade1">
+    <img src="https://www.robustedz.store/images/signal-2025-08-21-103443_004.webp" width="1600" height="800" style="width:100%;height:auto" alt="جودة المنتجات" loading="eager">
+  </div>
+  <div class="mySlides1 fade1">
+    <img src="https://www.robustedz.store/images/signal-2025-08-21-103443_005.webp" width="1600" height="800" style="width:100%;height:auto" alt="ضمان المنتجات" loading="eager">
+  </div>
+  <div class="mySlides1 fade1">
+    <img src="https://www.robustedz.store/images/4_20250820_152310_0003.webp" width="1600" height="800" style="width:100%;height:auto" alt="توصيل سريع" loading="eager">
+  </div>
+  <a class="prev1" onclick="plusSlides1(-1)" role="button" tabindex="0" aria-label="السابق">&#10094;</a>
+  <a class="next1" onclick="plusSlides1(1)" role="button" tabindex="0" aria-label="التالي">&#10095;</a>
+</div>
+  
+<br>
+<div style="text-align:center">
+  <span class="dot1" onclick="currentSlide1(1)" role="button" tabindex="0" aria-label="صورة 1"></span>
+  <span class="dot1" onclick="currentSlide1(2)" role="button" tabindex="0" aria-label="صورة 2"></span>
+  <span class="dot1" onclick="currentSlide1(3)" role="button" tabindex="0" aria-label="صورة 3"></span>
+  <span class="dot1" onclick="currentSlide1(4)" role="button" tabindex="0" aria-label="صورة 4"></span>
+  <span class="dot1" onclick="currentSlide1(5)" role="button" tabindex="0" aria-label="صورة 5"></span>
+</div>
+
+<!-- شريط الثقة والمزايا -->
+<section class="trust-bar">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon"><i class="bi bi-truck"></i></div>
+        <div class="trust-text">
+          <span class="trust-title">توصيل حتى باب البيت</span>
+          <span class="trust-sub">إلى جميع الولايات</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><i class="bi bi-shield-check"></i></div>
+        <div class="trust-text">
+          <span class="trust-title">ضمان عام</span>
+          <span class="trust-sub">جودة مضمونة</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><i class="bi bi-headset"></i></div>
+        <div class="trust-text">
+          <span class="trust-title">خدمة ما بعد الشراء</span>
+          <span class="trust-sub">��عم دائم لك</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><i class="bi bi-cash-coin"></i></div>
+        <div class="trust-text">
+          <span class="trust-title">دفع يد بيد</span>
+          <span class="trust-sub">ادفع عند الاستلام</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- قسم ال��روض الخاصة (أسماء المنتجات ��بقى كما هي) -->
+<section class="offers-section">
+  <div class="container position-relative">
+    <div class="text-center mb-5">
+      <h2 class="offers-title">🔥 عروض حصرية 🔥</h2>
+      <p class="offer-subtitle">استفد من عروضنا الاستثنائية مع تخفيضات تصل إلى 30% على أفضل الأجهزة المنزلية. العرض محدود زمنياً!</p>
+    </div>
+
+    <!-- العد التنازلي -->
+    <div class="offer-timer">
+      <div class="timer-title">⏳ ينتهي العرض خلال :</div>
+      <div class="timer-content">
+        <div class="timer-item">
+          <div class="timer-value" id="days">03</div>
+          <div class="timer-label">أيام</div>
+        </div>
+        <div class="timer-item">
+          <div class="timer-value" id="hours">12</div>
+          <div class="timer-label">ساعات</div>
+        </div>
+        <div class="timer-item">
+          <div class="timer-value" id="minutes">45</div>
+          <div class="timer-label">دقائق</div>
+        </div>
+        <div class="timer-item">
+          <div class="timer-value" id="seconds">30</div>
+          <div class="timer-label">ثواني</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- المنتجات المعروضة (أسماء المنتجات الأصلية بالفرنسية) -->
+    <div class="offer-products" id="offerProducts">
+      <!-- منتج 1 -->
+      <div class="offer-product">
+        <div class="offer-product-discount">-15%</div>
+        <div class="offer-product-badge">الأكثر مبيعاً</div>
+
+        <div id="carousel-offer-1" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-offer-1" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
+            <button type="button" data-bs-target="#carousel-offer-1" data-bs-slide-to="1" aria-label="صورة 2"></button>
+            <button type="button" data-bs-target="#carousel-offer-1" data-bs-slide-to="2" aria-label="صورة 3"></button>
+          </div>
+
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <a href="product.html?pid=100"><img src="https://www.robustedz.store/images/Robuste Defroisseur 1.jpg" class="d-block w-100" alt="Défroisseur Vapeur" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=100"><img src="https://www.robustedz.store/images/Robuste Defroisseur 2.jpg" class="d-block w-100" alt="Défroisseur Vapeur vue de côté" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=100"><img src="https://www.robustedz.store/images/Robuste Defroisseur.jpg" class="d-block w-100" alt="Défroisseur Vapeur en action" loading="lazy" decoding="async"></a>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-1" data-bs-slide="prev" aria-label="السابق">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-1" data-bs-slide="next" aria-label="التالي">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a href="product.html?pid=100" class="offer-product-content-link">
+        <div class="offer-product-content">
+          <h4 class="offer-product-title">Défroisseur Vapeur Professionnel 1800W</h4>
+          <div class="price-container">
+            <div class="offer-product-price">6 600 دج</div>
+            <div class="offer-product-old-price">7 000 دج</div>
+          </div>
+          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
+        </div>
+        </a>
+      </div>
+
+      <!-- منتج 2 -->
+      <div class="offer-product">
+        <div class="offer-product-discount">-20%</div>
+        <div class="offer-product-badge">جديد</div>
+
+        <div id="carousel-offer-2" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-offer-2" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
+            <button type="button" data-bs-target="#carousel-offer-2" data-bs-slide-to="1" aria-label="صورة 2"></button>
+            <button type="button" data-bs-target="#carousel-offer-2" data-bs-slide-to="2" aria-label="صورة 3"></button>
+          </div>
+
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <a href="product.html?pid=101"><img src="https://www.robustedz.store/images/ASPIRATEUR SOUFFLEUR A MAIN.png" class="d-block w-100" alt="Aspirateur Souffleur" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=101"><img src="https://www.robustedz.store/images/ASPIRATEUR SOUFFLEUR A MAIN 2.png" class="d-block w-100" alt="Aspirateur Souffleur accessoires" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=101"><img src="https://www.robustedz.store/images/ASPIRATEUR SOUFFLEUR A MAIN 3.png" class="d-block w-100" alt="Aspirateur Souffleur en action" loading="lazy" decoding="async"></a>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-2" data-bs-slide="prev" aria-label="السابق">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-2" data-bs-slide="next" aria-label="التالي">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a href="product.html?pid=101" class="offer-product-content-link">
+        <div class="offer-product-content">
+          <h4 class="offer-product-title">Aspirateur Souffleur Sans Fil 20V</h4>
+          <div class="price-container">
+            <div class="offer-product-price">5 100 دج</div>
+            <div class="offer-product-old-price">5 500 دج</div>
+          </div>
+          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
+        </div>
+        </a>
+      </div>
+
+      <!-- منتج 3 -->
+      <div class="offer-product">
+        <div class="offer-product-discount">-25%</div>
+        <div class="offer-product-badge">الأعلى مبيعاً</div>
+
+        <div id="carousel-offer-3" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-offer-3" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
+            <button type="button" data-bs-target="#carousel-offer-3" data-bs-slide-to="1" aria-label="صورة 2"></button>
+          </div>
+
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <a href="product.html?pid=102"><img src="https://www.robustedz.store/images/NETTOYEUR DE TACHES 4 EN 1.jpg" class="d-block w-100" alt="Nettoyeur de Taches 4 en 1" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=102"><img src="https://www.robustedz.store/images/NETTOYEUR DE TACHES 4 EN 1 robuste.jpg" class="d-block w-100" alt="Nettoyeur de Taches vue arrière" loading="lazy" decoding="async"></a>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-3" data-bs-slide="prev" aria-label="السابق">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-3" data-bs-slide="next" aria-label="التالي">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a href="product.html?pid=102" class="offer-product-content-link">
+        <div class="offer-product-content">
+          <h4 class="offer-product-title">Nettoyeur de Taches 4 en 1 Professionnel</h4>
+          <div class="price-container">
+            <div class="offer-product-price">23 500 دج</div>
+            <div class="offer-product-old-price">25 000 دج</div>
+          </div>
+          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
+        </div>
+        </a>
+      </div>
+
+      <!-- منتج 4 -->
+      <div class="offer-product">
+        <div class="offer-product-discount">-14%</div>
+        <div class="offer-product-badge">عرض خاص</div>
+
+        <div id="carousel-offer-4" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-offer-4" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
+            <button type="button" data-bs-target="#carousel-offer-4" data-bs-slide-to="1" aria-label="صورة 2"></button>
+            <button type="button" data-bs-target="#carousel-offer-4" data-bs-slide-to="2" aria-label="صورة 3"></button>
+          </div>
+
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <a href="product.html?pid=103"><img src="https://www.robustedz.store/images/PANINEUSE ET GRILL 1000W.png" class="d-block w-100" alt="Panineuse et Grill" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=103"><img src="https://www.robustedz.store/images/PANINEUSE ET GRILL 1000W 2.png" class="d-block w-100" alt="Panineuse et Grill 2" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=103"><img src="https://www.robustedz.store/images/PANINEUSE ET GRILL 1000W 3.jpeg" class="d-block w-100" alt="Panineuse et Grill 3" loading="lazy" decoding="async"></a>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-4" data-bs-slide="prev" aria-label="السابق">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-4" data-bs-slide="next" aria-label="التالي">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a href="product.html?pid=103" class="offer-product-content-link">
+        <div class="offer-product-content">
+          <h4 class="offer-product-title">Panineuse et Grill 1000W</h4>
+          <div class="price-container">
+            <div class="offer-product-price">6 900 دج</div>
+            <div class="offer-product-old-price">8 000 دج</div>
+          </div>
+          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
+        </div>
+        </a>
+      </div>
+
+      <!-- منتج 5 -->
+      <div class="offer-product">
+        <div class="offer-product-discount">-24%</div>
+        <div class="offer-product-badge">عرض خاص</div>
+
+        <div id="carousel-offer-5" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-offer-5" data-bs-slide-to="0" class="active" aria-label="صورة 1"></button>
+            <button type="button" data-bs-target="#carousel-offer-5" data-bs-slide-to="1" aria-label="صورة 2"></button>
+            <button type="button" data-bs-target="#carousel-offer-5" data-bs-slide-to="2" aria-label="صورة 3"></button>
+          </div>
+
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <a href="product.html?pid=4"><img src="https://www.robustedz.store/images/FRITEUSE DF 900 W.png" class="d-block w-100" alt="Friteuse DF 900 W" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=4"><img src="https://www.robustedz.store/images/FRITEUSE DF 900 W 2.png" class="d-block w-100" alt="Friteuse DF 900 W 2" loading="lazy" decoding="async"></a>
+            </div>
+            <div class="carousel-item">
+              <a href="product.html?pid=4"><img src="https://www.robustedz.store/images/FRITEUSE DF 900 W 3.jpeg" class="d-block w-100" alt="Friteuse DF 900 W 3" loading="lazy" decoding="async"></a>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-offer-5" data-bs-slide="prev" aria-label="السابق">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-offer-5" data-bs-slide="next" aria-label="التالي">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a href="product.html?pid=4" class="offer-product-content-link">
+        <div class="offer-product-content">
+          <h4 class="offer-product-title">Friteuse DF 900 W</h4>
+          <div class="price-container">
+            <div class="offer-product-price">5 900 دج</div>
+            <div class="offer-product-old-price">7 800 دج</div>
+          </div>
+          <div class="offer-btn"><i class="bi bi-bolt"></i> اشتر الآن</div>
+        </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- قسم المنتجات (يتم تحميلها بواسطة main.js، أسماء المنتجات الأصلية تبقى كما هي) -->
+<section id="products" class="py-5">
+    <div class="container">
+        <h2 class="section-title">أحدث منتجاتنا</h2>
+        
+        <div class="categories-filter mb-5">
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <button class="btn btn-outline-primary category-btn active" data-category="all" aria-label="عرض الكل">الكل</button>
+                <button class="btn btn-outline-primary category-btn" data-category="coiffure" aria-label="العناية بالشعر">العناية بالشعر</button>
+                <button class="btn btn-outline-primary category-btn" data-category="cuisine" aria-label="أجهزة المطبخ">أجهزة المطبخ</button>
+                <button class="btn btn-outline-primary category-btn" data-category="beauté" aria-label="العناية الشخصية">العناية الشخصية</button>
+                <button class="btn btn-outline-primary category-btn" data-category="maison" aria-label="الأجهزة المنزلية">الأجهزة المنزلية</button>
+                <button class="btn btn-outline-primary category-btn" data-category="jardin" aria-label="الحديقة">الحديقة</button>
+                <button class="btn btn-outline-primary category-btn" data-category="café" aria-label="آلات القهوة">آلات القهوة</button>
+            </div>
+        </div>
+        
+        <div class="row" id="productsContainer"></div>
+    </div>
+</section>
+    
+<!-- قسم آراء العملاء -->
+<section id="reviews" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title">آراء العملاء</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="review-card">
+                    <div class="d-flex">
+                        <img loading="lazy" decoding="async" src="https://api.dicebear.com/7.x/initials/svg?seed=Omar" class="rounded-circle me-3" width="60" height="60" alt="صورة عمر">
+                        <div>
+                            <h5 class="mb-0">عمر</h5>
+                            <div class="text-warning">
+                                <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3">"جودة المنتج ممتازة والتوصيل كان في الموعد، شكراً لفريق ROBUSTE!"</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="review-card">
+                    <div class="d-flex">
+                        <img loading="lazy" decoding="async" src="https://api.dicebear.com/7.x/initials/svg?seed=Rose" class="rounded-circle me-3" width="60" height="60" alt="صورة روز">
+                        <div>
+                            <h5 class="mb-0">روز بلانش</h5>
+                            <div class="text-warning">
+                                <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-half"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3">"أنا سعيدة بعلامة ROBUSTE، أستخدم منتجاتكم منذ سنوات عديدة."</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="review-card">
+                    <div class="d-flex">
+                        <img loading="lazy" decoding="async" src="https://api.dicebear.com/7.x/initials/svg?seed=Mohamed" class="rounded-circle me-3" width="60" height="60" alt="صورة محمد">
+                        <div>
+                            <h5 class="mb-0">محمد</h5>
+                            <div class="text-warning">
+                                <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3">"الدفع عند الاستلام مريح جداً، والمنتج يعمل بكفاءة عالية، أنصح بالتعامل معهم."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- نافذة الطلب (Order Modal) -->
+<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">طلب منتج</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <div class="order-summary mb-4">
+                    <h6 class="mb-3">ملخص الطلب</h6>
+                    <div class="d-flex align-items-center">
+                        <img loading="lazy" decoding="async" id="productImage" class="product-image-thumb me-3" src="" alt="صورة المنتج">
+                        <div>
+                            <h5 id="productNameDisplay" class="mb-1"></h5>
+                            <p id="productPrice" class="mb-0 text-primary fw-bold"></p>
+                        </div>
+                    </div>
+                </div>
+                <form id="orderForm">
+                    <input type="hidden" id="productName">
+                    <input type="hidden" id="productPriceValue">
+                    <input type="hidden" id="productImageUrl">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fullName" class="form-label">الاسم واللقب<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="fullName" required aria-required="true">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">رقم الهاتف<span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="phone" pattern="[0]{1}[5-7]{1}[0-9]{8}" required aria-required="true">
+                            <small class="text-muted">مثال: 0551234566</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">البريد الإلكتروني (اختياري)</label>
+                            <input type="email" class="form-control" id="email">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="wilaya" class="form-label">الولاية<span class="text-danger">*</span></label>
+                            <select class="form-select" id="wilaya" required aria-required="true">
+                                <option value="">اختر ولايتك</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">العنوان</label>
+                        <textarea class="form-control" id="address" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">طريقة الدفع</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="cashOnDelivery" value="الدفع عند الاستلام" checked>
+                                <label class="form-check-label" for="cashOnDelivery">الدفع عند الاستلام</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="onlinePayment" value="الدفع عبر الإنترنت">
+                                <label class="form-check-label" for="onlinePayment">الدفع عبر الإنترنت</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-orange" id="submitOrderBtn" onclick="submitOrder()">تأكيد الطلب</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- قسم الاتصال -->
+<section id="contact" class="py-5">
+    <div class="container">
+        <h2 class="section-title">اتصل بنا</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="contact-card h-100">
+                    <h4 class="mb-4">معلومات الاتصال</h4>
+                    <div class="d-flex mb-3">
+                        <div class="me-3 text-primary">
+                            <i class="bi bi-geo-alt fs-4"></i>
+                        </div>
+                        <div>
+                            <h5>العنوان</h5>
+                            <p class="mb-0">Rue Bourquaa El Manouar, 426 Parcelle, El Eulma, Sétif, Algérie</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3 text-primary">
+                            <i class="bi bi-telephone fs-4"></i>
+                        </div>
+                        <div>
+                            <h5>الهاتف</h5>
+                            <p class="mb-0">0656360457</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3 text-primary">
+                            <i class="bi bi-envelope fs-4"></i>
+                        </div>
+                        <div>
+                            <h5>البريد الإلكتروني</h5>
+                            <p class="mb-0">laidaouih@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-3 text-primary">
+                            <i class="bi bi-clock fs-4"></i>
+                        </div>
+                        <div>
+                            <h5>ساعات العمل</h5>
+                            <p class="mb-0">يومياً من 07:00 إلى 16:00</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5>تابعنا على</h5>
+                        <div class="d-flex mt-3">
+                            <a href="https://www.facebook.com/share/19QooaXfy8/" class="social-icon" aria-label="فيسبوك">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="contact-card h-100">
+                    <h4 class="mb-4">أرسل لنا رسالة</h4>
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label">اسمك<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="contactName" required aria-required="true">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label">بريدك الإلكتروني<span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="contactEmail" required aria-required="true">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactPhone" class="form-label">رقم الهاتف</label>
+                            <input type="tel" class="form-control" id="contactPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactMessage" class="form-label">رسالتك<span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="contactMessage" rows="4" required aria-required="true"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-orange w-100">
+                            <span id="contactSubmitText">إرسال الرسالة</span>
+                            <span id="contactSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="contact-card">
+                    <h4 class="mb-4">موقع المتجر</h4>
+                    <a href="https://maps.app.goo.gl/Cpk1L8fAadgE9pB76" target="_blank" style="display: block; text-decoration: none;" aria-label="فتح الموقع على الخريطة">
+                        <div class="map-container" style="position: relative; width: 100%; height: 300px;">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.123456789012!2d5.7129892!3d36.1524645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12f2d5f1a5a5a5a5%3A0x12f2d5f1a5a5a5a5!2sROBUSTE%20EL%20EULMA!5e0!3m2!1sen!2sdz!4v1621234567890!5m2!1sen!2sdz" 
+                                width="100%" 
+                                height="100%" 
+                                style="border:0; border-radius: 8px; pointer-events: none;" 
+                                allowfullscreen="" 
+                                loading="lazy" decoding="async" 
+                                referrerpolicy="no-referrer-when-downgrade" 
+                                title="موقع متجر ROBUSTE EL EULMA">
+                            </iframe>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- التذييل Footer -->
+<footer class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <h5 class="mb-3">نبذة عن ROBUSTE</h5>
+                <p>متجر متخصص في الأجهزة المنزلية عالية الجودة بأسعار تنافسية. نقدم أفضل المنتجات مع توصيل سريع.</p>
+                <ul class="list-unstyled small mb-0">
+                    <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>العلمة، ولاية سطيف، الجزائر</li>
+                    <li class="mb-2"><i class="bi bi-telephone me-2"></i><span dir="ltr">+213 656 36 04 57</span></li>
+                    <li class="mb-2"><i class="bi bi-envelope me-2"></i>laidaouih@gmail.com</li>
+                </ul>
+                <div class="mt-3">
+                    <a href="https://www.facebook.com/share/19QooaXfy8/" class="social-icon" aria-label="فيسبوك">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 mb-4">
+                <h5 class="mb-3">روابط سريعة</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">الرئيسية</a></li>
+                    <li class="mb-2"><a href="#products" class="text-white text-decoration-none">المنتجات</a></li>
+                    <li class="mb-2"><a href="#reviews" class="text-white text-decoration-none">آراء العملاء</a></li>
+                    <li class="mb-2"><a href="#contact" class="text-white text-decoration-none">اتصل بنا</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 mb-4">
+                <h5 class="mb-3">خدمة العملاء</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="privacy.html" class="text-white text-decoration-none">سياسة الخصوصية</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 mb-4">
+                <h5 class="mb-3">اشترك في صفحتنا</h5>
+                <p>اشترك لتصلك أحدث العروض</p>
+                <div class="mt-3">
+                    <a href="https://www.facebook.com/share/19QooaXfy8/" class="btn btn-orange w-100" target="_blank" aria-label="الاشتراك في فيسبوك">اشترك الآن</a>
+                </div>
+            </div>
+        </div>
+        <hr class="my-4 bg-light">
+        <div class="row">
+            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <p class="mb-0">&copy; 2025 ROBUSTE. جميع الحقوق محفوظة.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-md-end">
+                    <p class="mb-2 mb-md-0 me-md-3">الدفع متاح ببطاقة الذهب</p>
+                    <img loading="lazy" decoding="async" src="https://i.postimg.cc/bY06X2YN/logo-round.png" alt="طرق الدفع" style="width: 30px; height: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- زر واتساب -->
+<a href="https://wa.me/213656360457" class="whatsapp-btn" target="_blank" aria-label="واتساب">
+    <i class="bi bi-whatsapp"></i>
+</a>
+
+<!-- سلة عائمة قابلة للسحب -->
+<div class="floating-cart" id="floatingCart">
+    <div class="cart-icon-container">
+        <button class="cart-btn-drag" id="dragCartBtn">
+            <i class="bi bi-cart3"></i>
+            <span id="cartCountFloat">0</span>
+        </button>
+        <span class="cart-label-float">السلة</span>
+    </div>
+</div>
+
+<!-- Toast للمنبهات -->
+<div id="statusToast" style="position: fixed; top: 90px; right: 20px; z-index: 9999; max-width: 320px;"></div>
+
+<!-- السلة الجانبية -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="cartOffcanvasLabel">سلة التسوق</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="إغلاق"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="cartItems" class="mb-3">
+            <div class="text-center py-5" id="emptyCartMessage">
+                <i class="bi bi-cart-x display-4 d-block mb-4" style="font-size: 4rem; opacity: 0.3;"></i>
+                <h4 class="mb-3">سلة التسوق فارغة</h4>
+                <p class="text-muted mb-4">لم تقم بإضافة أي منتجات إلى السلة بعد</p>
+                <a href="#products" class="btn btn-orange btn-lg px-5 py-2" id="emptyCartBtn">
+                    <i class="bi bi-cart-plus me-2"></i> استكشف المنتجات
+                </a>
+            </div>
+        </div>
+        
+        <div class="cart-summary border-top pt-3">
+            <div class="d-flex justify-content-between mb-2">
+                <span>المجموع:</span>
+                <span id="cartTotal">0 دج</span>
+            </div>
+            <button class="btn btn-orange w-100" onclick="checkout()" id="checkoutBtn" disabled aria-label="إنهاء الطلب">
+                <i class="bi bi-bag-check"></i> إنهاء الطلب
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- النصوص ال��رمجية الخارجية -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+<!-- removed for demo: external service replaced by demo-mock.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="main.js"></script>
+<script defer src="i18n.js"></script>
+<script defer src="analytics.js"></script>
+<script defer src="telegram.js"></script>
+
+<!-- لا توجد أية سكربتات لترجمة أسماء المنتجات أو العلامة التجارية -->
+<!-- DEMO showcase layer -->
+<script src="demo-enhance.js"></script>
+<script src="demo-tour.js"></script>
+</body>
+</html>
