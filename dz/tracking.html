@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>ROBUSTE — تتبّع طلبك</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1b1b1b;--border:#2a2a2a;--accent:#c9a96e;--accent-rgb:201,169,110;--text:#e8e8e4;--dim:#8a8a85;--green:#3fb950;--amber:#d29922}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',system-ui,sans-serif;background:radial-gradient(1100px 500px at 50% -10%,rgba(var(--accent-rgb),.1),transparent),var(--bg);color:var(--text);line-height:1.7;min-height:100vh;-webkit-font-smoothing:antialiased;padding:2rem 1.2rem}
+.mono{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:isolate;display:inline-block}
+button{font-family:inherit;cursor:pointer;border:none}
+.wrap{max-width:600px;margin:0 auto}
+.brand{text-align:center;font-weight:800;letter-spacing:.18em;font-size:1.8rem;margin-bottom:.2rem}
+.brand span{color:var(--accent)}
+.sub{text-align:center;color:var(--dim);margin-bottom:.4rem}
+.demo-note{text-align:center;font-size:.78rem;color:var(--accent);background:rgba(var(--accent-rgb),.08);border:1px solid rgba(var(--accent-rgb),.22);border-radius:10px;padding:.55rem;margin:1.2rem 0}
+.searchbar{display:flex;gap:.6rem;margin-bottom:1.8rem}
+.searchbar input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.95rem;direction:ltr;text-align:left}
+.searchbar input:focus{outline:none;border-color:rgba(var(--accent-rgb),.6)}
+.searchbar button{background:var(--accent);color:#0a0a0a;font-weight:800;padding:0 1.5rem;border-radius:12px;white-space:nowrap}
+.searchbar button:hover{transform:translateY(-2px)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.6rem;opacity:0;transform:translateY(12px);transition:.4s}
+.card.show{opacity:1;transform:none}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border)}
+.head .tn{font-size:.8rem;color:var(--dim)}
+.head .tn b{font-family:'JetBrains Mono',monospace;color:var(--text);display:block;font-size:1.05rem;margin-top:.2rem}
+.statpill{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .9rem;border-radius:999px;font-size:.85rem;font-weight:700;background:rgba(var(--accent-rgb),.14);color:var(--accent)}
+.statpill.done{background:rgba(63,185,80,.16);color:var(--green)}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1rem;margin-bottom:1.6rem}
+.meta .item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.7rem .9rem}
+.meta .k{font-size:.74rem;color:var(--dim)}
+.meta .v{font-weight:700;font-size:.92rem;margin-top:.15rem}
+.eta{background:rgba(var(--accent-rgb),.08);border:1px dashed rgba(var(--accent-rgb),.4);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1.6rem;display:flex;align-items:center;gap:.7rem;font-size:.92rem}
+.eta .big{font-size:1.4rem}
+/* TIMELINE */
+.timeline{position:relative;padding-inline-start:.5rem}
+.step{position:relative;display:flex;gap:1rem;padding-bottom:1.5rem}
+.step:last-child{padding-bottom:0}
+.step .line{position:absolute;inset-inline-start:18px;top:34px;bottom:-4px;width:2px;background:var(--border)}
+.step:last-child .line{display:none}
+.step.done .line{background:var(--green)}
+.dot{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:1.05rem;background:var(--surface2);border:2px solid var(--border);z-index:1}
+.step.done .dot{background:rgba(63,185,80,.15);border-color:var(--green)}
+.step.current .dot{background:rgba(var(--accent-rgb),.16);border-color:var(--accent);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--accent-rgb),.5)}50%{box-shadow:0 0 0 7px rgba(var(--accent-rgb),0)}}
+.step .body{padding-top:.35rem}
+.step .t{font-weight:700;font-size:.96rem}
+.step.pending .t{color:var(--dim)}
+.step .d{font-size:.8rem;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:.15rem}
+.step.current .d{color:var(--accent)}
+.empty{text-align:center;color:var(--dim);padding:1rem}
+.foot{text-align:center;color:var(--dim);font-size:.78rem;margin-top:1.6rem}
+@media(max-width:480px){.meta{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">ROBUSTE<span>.</span></div>
+  <div class="sub">تتبّع حالة طلبك</div>
+  <div class="demo-note">🔍 نسخة تجريبية — اكتب <b>أي رقم</b> واضغط تتبّع. البيانات وهمية وغير مرتبطة بأي خادم.</div>
+  <div class="searchbar">
+    <input id="tn" value="ECO-DZ-482190" placeholder="رقم التتبّع...">
+    <button onclick="go()">تتبّع</button>
+  </div>
+  <div class="card" id="card"></div>
+  <div class="foot">توصيل عبر شركاء التوصيل · EcoTrack · جميع الولايات 58</div>
+</div>
+<script>
+var WILAYAS=['الجزائر','وهران','قسنطينة','عنابة','سطيف','باتنة','البليدة','تلمسان','بجاية','ورقلة','تيزي وزو','مستغانم'];
+var PRODUCTS=['ساعة كاسيو إيديفيس','سماعات بلوتوث TWS','مقلاة هوائية 6L','ساعة ذكية','مكنسة كهربائية','خلاط احترافي','طقم أواني 12 قطعة'];
+var STEPS=[
+ {ic:'📥',t:'تم استلام الطلب'},
+ {ic:'✅',t:'تم تأكيد الطلب'},
+ {ic:'📦',t:'سُلّم لشركة التوصيل'},
+ {ic:'🏬',t:'في مركز الفرز'},
+ {ic:'🚚',t:'خرج للتوصيل'},
+ {ic:'🎉',t:'تم التسليم'}
+];
+var DATELABELS=['الإثنين 08:30','الإثنين 11:05','الإثنين 16:40','الثلاثاء 07:20','الثلاثاء 09:50','الثلاثاء 13:15'];
+function hash(s){var h=5381;for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return h;}
+function go(){
+ var raw=(document.getElementById('tn').value||'').trim();
+ var card=document.getElementById('card');
+ if(!raw){card.className='card';card.innerHTML='<div class="empty">✉️ اكتب رقم التتبّع أوّلاً</div>';setTimeout(function(){card.classList.add('show')},20);return;}
+ var key=raw.toUpperCase();if(!/^ECO-DZ-/.test(key)){key='ECO-DZ-'+key.replace(/[^A-Z0-9]/g,'').slice(-6).padStart(6,'0');}
+ var hv=hash(key);
+ var current=hv%6;
+ var wilaya=WILAYAS[hv%WILAYAS.length];
+ var product=PRODUCTS[(hv>>4)%PRODUCTS.length];
+ var delivered=current===5;
+ var statusTxt=STEPS[current].t;
+ var meta=
+  '<div class="item"><div class="k">المنتج</div><div class="v">'+product+'</div></div>'+
+  '<div class="item"><div class="k">الوجهة</div><div class="v">'+wilaya+'</div></div>'+
+  '<div class="item"><div class="k">شركة التوصيل</div><div class="v">EcoTrack</div></div>'+
+  '<div class="item"><div class="k">الدفع</div><div class="v">عند الاستلام (COD)</div></div>';
+ var eta=delivered
+  ?'<div class="eta"><span class="big">🎉</span><span>تم تسليم طلبك بنجاح. شكراً لثقتك!</span></div>'
+  :'<div class="eta"><span class="big">📅</span><span>التسليم المتوقّع: <b>'+(current>=4?'اليوم':current>=2?'غداً':'خلال 2-3 أيام')+'</b> · '+wilaya+'</span></div>';
+ var tl=STEPS.map(function(s,i){
+  var cls=i<current?'done':i===current?'current':'pending';
+  var d=i<current?DATELABELS[i]:i===current?'الآن':'بانتظار...';
+  return '<div class="step '+cls+'"><div class="line"></div><div class="dot">'+(i<current?'✓':s.ic)+'</div><div class="body"><div class="t">'+s.t+'</div><div class="d">'+d+'</div></div></div>';
+ }).join('');
+ card.className='card';
+ card.innerHTML='<div class="head"><div class="tn">رقم التتبّع<b class="mono">'+key+'</b></div><span class="statpill '+(delivered?'done':'')+'">'+(delivered?'✓ ':'')+statusTxt+'</span></div>'+
+  '<div class="meta">'+meta+'</div>'+eta+'<div class="timeline">'+tl+'</div>';
+ setTimeout(function(){card.classList.add('show')},20);
+}
+document.getElementById('tn').addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+go();
+</script>
+</body>
+</html>

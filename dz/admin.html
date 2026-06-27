@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>ROBUSTE — لوحة التحكم (ديمو)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1b1b1b;--border:#2a2a2a;--accent:#c9a96e;--accent-rgb:201,169,110;--text:#e8e8e4;--dim:#8a8a85;--green:#3fb950;--red:#f85149;--amber:#d29922}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:isolate;display:inline-block}
+button{font-family:inherit;cursor:pointer;border:none}
+/* LOGIN */
+#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,rgba(var(--accent-rgb),.12),transparent),var(--bg);padding:1.5rem}
+.login-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.4rem 2rem;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.login-card .logo{font-size:1.7rem;font-weight:800;letter-spacing:.18em;margin-bottom:.2rem}
+.login-card .logo span{color:var(--accent)}
+.login-card .sub{color:var(--dim);font-size:.9rem;margin-bottom:1.8rem}
+.field{text-align:right;margin-bottom:1rem}
+.field label{display:block;font-size:.82rem;color:var(--dim);margin-bottom:.4rem}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;color:var(--text);font-family:inherit;font-size:.95rem;transition:.2s}
+.field input:focus{outline:none;border-color:rgba(var(--accent-rgb),.6)}
+.login-btn{width:100%;background:var(--accent);color:#0a0a0a;font-weight:800;padding:.9rem;border-radius:999px;font-size:1rem;margin-top:.6rem;transition:.2s}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(var(--accent-rgb),.3)}
+.login-note{margin-top:1.3rem;font-size:.76rem;color:var(--dim);background:rgba(var(--accent-rgb),.07);border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:.7rem}
+/* APP */
+#app{display:none;min-height:100vh}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-inline-start:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:.3rem;position:sticky;top:0;height:100vh}
+.sidebar .brand{font-weight:800;letter-spacing:.16em;font-size:1.3rem;padding:.4rem .8rem 1.4rem}
+.sidebar .brand span{color:var(--accent)}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.75rem .9rem;border-radius:10px;color:var(--dim);font-size:.92rem;font-weight:600;background:none;width:100%;text-align:right;transition:.18s}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(var(--accent-rgb),.12);color:var(--accent)}
+.nav-item .ico{font-size:1.1rem}
+.sidebar .spacer{flex:1}
+.main{padding:1.6rem 2rem;overflow-x:hidden}
+.topbar{display:flex;align-items:center;gap:1rem;margin-bottom:1.6rem;flex-wrap:wrap}
+.topbar h1{font-size:1.45rem;font-weight:800}
+.topbar .search{flex:1;min-width:160px;max-width:340px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.6rem 1.1rem;color:var(--text);font-family:inherit}
+.topbar .search:focus{outline:none;border-color:rgba(var(--accent-rgb),.5)}
+.topbar .user{display:flex;align-items:center;gap:.6rem;font-size:.88rem;color:var(--dim)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#0a0a0a;display:grid;place-items:center;font-weight:800}
+.logout{background:var(--surface);border:1px solid var(--border);color:var(--dim);padding:.5rem .9rem;border-radius:999px;font-size:.82rem}
+.logout:hover{color:var(--red);border-color:var(--red)}
+.demo-banner{background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.25);color:var(--accent);border-radius:12px;padding:.7rem 1rem;font-size:.85rem;margin-bottom:1.4rem;display:flex;align-items:center;gap:.6rem}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.6rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.2rem}
+.stat .label{font-size:.8rem;color:var(--dim);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem}
+.stat .value{font-size:1.6rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+.stat.warn .value{color:var(--amber)}
+.stat .value small{font-size:.8rem;color:var(--dim);font-weight:500}
+/* FILTERS */
+.filters{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.filter{background:var(--surface);border:1px solid var(--border);color:var(--dim);padding:.5rem 1rem;border-radius:999px;font-size:.85rem;font-weight:600;transition:.18s}
+.filter:hover{color:var(--text)}
+.filter.active{background:var(--accent);color:#0a0a0a;border-color:var(--accent)}
+.filter .cnt{font-family:'JetBrains Mono',monospace;opacity:.7;margin-inline-start:.3rem}
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tbl thead th{text-align:right;padding:.9rem 1rem;color:var(--dim);font-size:.78rem;font-weight:700;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl tbody td{padding:.85rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:.15s}
+.tbl tbody tr:hover{background:var(--surface2)}
+.tbl tbody tr.hi{background:rgba(248,81,73,.05)}
+.cust{font-weight:700}
+.muted{color:var(--dim);font-size:.8rem}
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;border-radius:999px;font-size:.74rem;font-weight:700;white-space:nowrap}
+.b-low{background:rgba(63,185,80,.14);color:var(--green)}
+.b-med{background:rgba(210,153,34,.14);color:var(--amber)}
+.b-high{background:rgba(248,81,73,.14);color:var(--red)}
+.s-pending{background:rgba(210,153,34,.14);color:var(--amber)}
+.s-confirmed{background:rgba(63,185,80,.14);color:var(--green)}
+.s-rejected{background:rgba(248,81,73,.14);color:var(--red)}
+.acts{display:flex;gap:.4rem;flex-wrap:wrap}
+.act{padding:.4rem .7rem;border-radius:8px;font-size:.78rem;font-weight:700;border:1px solid var(--border);background:var(--surface2);color:var(--text);transition:.15s}
+.act:hover{transform:translateY(-1px)}
+.act.ok{border-color:rgba(63,185,80,.4);color:var(--green)}
+.act.ok:hover{background:var(--green);color:#0a0a0a}
+.act.no{border-color:rgba(248,81,73,.4);color:var(--red)}
+.act.no:hover{background:var(--red);color:#fff}
+.act.eye:hover{border-color:var(--accent);color:var(--accent)}
+.total{font-family:'JetBrains Mono',monospace;font-weight:700}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:460px;padding:1.8rem;max-height:90vh;overflow:auto}
+.modal h3{font-size:1.25rem;margin-bottom:.2rem}
+.modal .id{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:.85rem;margin-bottom:1.2rem}
+.row{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px dashed var(--border);font-size:.9rem}
+.row .k{color:var(--dim)}
+.row .v{font-weight:600;text-align:left}
+.risk-box{margin-top:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem}
+.risk-box .t{font-size:.82rem;color:var(--dim);margin-bottom:.6rem}
+.risk-box ul{list-style:none;display:flex;flex-direction:column;gap:.4rem}
+.risk-box li{font-size:.84rem;display:flex;gap:.5rem;align-items:flex-start}
+.modal-close{width:100%;margin-top:1.4rem;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.8rem;border-radius:10px;font-weight:700}
+.modal-close:hover{border-color:var(--accent)}
+/* TOAST */
+#toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.8rem 1.4rem;font-size:.88rem;font-weight:600;opacity:0;transition:.3s;z-index:300;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{border-color:rgba(63,185,80,.5)}
+#toast.no{border-color:rgba(248,81,73,.5)}
+.placeholder{display:none;text-align:center;color:var(--dim);padding:4rem 1rem}
+.placeholder .big{font-size:3rem;margin-bottom:1rem}
+.hamb{display:none;background:var(--surface);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;font-size:1.2rem}
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:fixed;inset-inline-start:0;top:0;z-index:50;transform:translateX(100%);transition:.3s;width:240px}
+  .sidebar.open{transform:translateX(0)}
+  .hamb{display:block}
+  .main{padding:1.2rem}
+  .tbl{font-size:.8rem}
+  .tbl thead{display:none}
+  .tbl tbody tr{display:block;padding:.8rem;border-bottom:8px solid var(--bg)}
+  .tbl tbody td{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border:none}
+  .tbl tbody td::before{content:attr(data-l);color:var(--dim);font-size:.78rem;font-weight:700}
+  .acts{justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div id="login">
+  <form class="login-card" onsubmit="doLogin(event)">
+    <div class="logo">ROBUSTE<span>.</span></div>
+    <div class="sub">لوحة تحكم الطلبات</div>
+    <div class="field"><label>اسم المستخدم</label><input id="u" value="admin" autocomplete="username"></div>
+    <div class="field"><label>كلمة السر</label><input id="p" type="password" value="demo" autocomplete="current-password"></div>
+    <button class="login-btn" type="submit">تسجيل الدخول</button>
+    <div class="login-note">🔒 نسخة تجريبية — اضغط دخول مباشرة (أي كلمة سر تعمل). كل البيانات وهمية وغير مرتبطة بأي قاعدة بيانات.</div>
+  </form>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="layout">
+    <aside class="sidebar" id="sb">
+      <div class="brand">ROBUSTE<span>.</span></div>
+      <button class="nav-item active" onclick="nav('orders',this)"><span class="ico">📦</span> الطلبات</button>
+      <button class="nav-item" onclick="nav('products',this)"><span class="ico">🛍️</span> المنتجات</button>
+      <button class="nav-item" onclick="nav('tracking',this)"><span class="ico">🚚</span> التتبّع</button>
+      <button class="nav-item" onclick="nav('stats',this)"><span class="ico">📊</span> الإحصائيات</button>
+      <button class="nav-item" onclick="nav('settings',this)"><span class="ico">⚙️</span> الإعدادات</button>
+      <div class="spacer"></div>
+      <button class="nav-item" onclick="logout()"><span class="ico">🚪</span> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <button class="hamb" onclick="document.getElementById('sb').classList.toggle('open')">☰</button>
+        <h1 id="pageTitle">الطلبات</h1>
+        <input class="search" id="search" placeholder="🔍 بحث بالاسم أو الرقم أو الولاية..." oninput="render()">
+        <div class="user"><span>أهلاً، المدير</span><div class="avatar">A</div></div>
+      </div>
+
+      <div id="view-orders">
+        <div class="demo-banner">✨ <span>هذه نسخة تجريبية حيّة — جرّب زر <b>تأكيد</b> أو <b>رفض</b>، وشوف كيف تتحدّث الأرقام. الطلبات الحمراء مشبوهة (درع الطلبات الوهمية).</span></div>
+        <div class="stats" id="stats"></div>
+        <div class="filters" id="filters"></div>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>الطلب</th><th>الزبون</th><th>الهاتف</th><th>الولاية</th><th>المنتج</th><th>المجموع</th><th>المخاطر</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="placeholder" id="view-other">
+        <div class="big">🚧</div>
+        <h2 id="phTitle">قريباً</h2>
+        <p>هذا القسم غير مفعّل في النسخة التجريبية — قسم الطلبات هو العرض الكامل.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBody"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+var ORDERS=[
+ {id:'RB-2041',date:'اليوم 10:24',name:'سمير حميدي',phone:'0661 23 45 67',wilaya:'الجزائر',product:'ساعة كاسيو إيديفيس',qty:1,total:8900,risk:12,status:'pending',ip:'105.235.131.42',geo:'Alger, DZ'},
+ {id:'RB-2040',date:'اليوم 10:02',name:'ياسمين بلقاسم',phone:'0551 12 23 34',wilaya:'وهران',product:'سماعات بلوتوث TWS',qty:2,total:5800,risk:8,status:'confirmed',ip:'41.96.22.10',geo:'Oran, DZ'},
+ {id:'RB-2039',date:'اليوم 09:41',name:'كريم عثماني',phone:'0770 99 88 77',wilaya:'قسنطينة',product:'مقلاة هوائية 6L',qty:1,total:12500,risk:74,status:'pending',ip:'196.20.55.3',geo:'Paris, FR'},
+ {id:'RB-2038',date:'اليوم 09:15',name:'نسرين زيدان',phone:'0660 44 55 66',wilaya:'سطيف',product:'ساعة ذكية',qty:1,total:6900,risk:21,status:'pending',ip:'105.235.130.8',geo:'Setif, DZ'},
+ {id:'RB-2037',date:'اليوم 08:52',name:'عبد القادر مرابط',phone:'0555 66 77 88',wilaya:'البليدة',product:'مكنسة كهربائية',qty:1,total:15900,risk:9,status:'confirmed',ip:'41.107.12.55',geo:'Blida, DZ'},
+ {id:'RB-2036',date:'أمس 19:30',name:'لمياء حداد',phone:'0772 23 34 45',wilaya:'عنابة',product:'خلاط احترافي',qty:1,total:7400,risk:55,status:'pending',ip:'160.155.9.21',geo:'Annaba, DZ'},
+ {id:'RB-2035',date:'أمس 18:11',name:'رياض بوزيد',phone:'0669 98 87 76',wilaya:'تلمسان',product:'مكواة بخار',qty:1,total:4200,risk:15,status:'rejected',ip:'105.235.128.77',geo:'Tlemcen, DZ'},
+ {id:'RB-2034',date:'أمس 16:48',name:'هدى صابري',phone:'0553 34 45 56',wilaya:'بجاية',product:'طقم أواني 12 قطعة',qty:1,total:9800,risk:30,status:'pending',ip:'41.200.7.14',geo:'Bejaia, DZ'},
+ {id:'RB-2033',date:'أمس 15:20',name:'مهدي قاسمي',phone:'0775 56 67 78',wilaya:'ورقلة',product:'ساعة كاسيو إيديفيس',qty:3,total:26700,risk:82,status:'pending',ip:'102.115.6.9',geo:'Unknown'},
+ {id:'RB-2032',date:'أمس 13:05',name:'وليد شريف',phone:'0668 87 76 65',wilaya:'وهران',product:'سماعات بلوتوث TWS',qty:1,total:2900,risk:11,status:'confirmed',ip:'41.96.24.88',geo:'Oran, DZ'},
+ {id:'RB-2031',date:'أمس 11:30',name:'أمينة لعروسي',phone:'0556 67 78 89',wilaya:'الجزائر',product:'ساعة ذكية',qty:2,total:13800,risk:19,status:'confirmed',ip:'105.235.131.5',geo:'Alger, DZ'},
+ {id:'RB-2030',date:'أمس 10:14',name:'فؤاد بن علي',phone:'0771 19 92 28',wilaya:'باتنة',product:'مقلاة هوائية 6L',qty:1,total:12500,risk:44,status:'pending',ip:'160.155.3.42',geo:'Batna, DZ'},
+ {id:'RB-2029',date:'قبل يومين',name:'سارة مدور',phone:'0663 31 14 47',wilaya:'قسنطينة',product:'مكنسة كهربائية',qty:1,total:15900,risk:7,status:'confirmed',ip:'196.20.50.61',geo:'Constantine, DZ'},
+ {id:'RB-2028',date:'قبل يومين',name:'بلال غريب',phone:'0559 90 01 12',wilaya:'الجزائر',product:'خلاط احترافي',qty:1,total:7400,risk:68,status:'pending',ip:'45.227.9.3',geo:'Unknown'}
+];
+var RISK_REASONS={
+ 'RB-2039':['عنوان IP خارج الجزائر (فرنسا)','الموقع لا يطابق الولاية المختارة','أول طلب من هذا الرقم'],
+ 'RB-2033':['الموقع الجغرافي مجهول (VPN محتمل)','كمية كبيرة (3 قطع) لزبون جديد','3 طلبات بنفس الرقم خلال ساعة'],
+ 'RB-2028':['الموقع الجغرافي مجهول','رقم هاتف مرتبط بطلب ملغي سابقاً'],
+ 'RB-2036':['طلب سابق لم يُستلم','العنوان غير مكتمل'],
+ 'RB-2030':['العنوان غير مكتمل'],
+ 'RB-2034':['أول طلب من هذا الرقم']
+};
+var filter='all';
+var f={ar:function(n){return n.toLocaleString('en-US');}};
+function riskClass(r){return r>=60?'b-high':r>=30?'b-med':'b-low';}
+function riskLabel(r){return r>=60?'مرتفع ⚠':r>=30?'متوسط':'منخفض';}
+function statusClass(s){return 's-'+s;}
+function statusLabel(s){return s==='pending'?'قيد الانتظار':s==='confirmed'?'مؤكّد':'مرفوض';}
+function doLogin(e){e.preventDefault();document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';render();}
+function logout(){document.getElementById('app').style.display='none';document.getElementById('login').style.display='flex';}
+function nav(v,el){document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});if(el)el.classList.add('active');document.getElementById('sb').classList.remove('open');var titles={orders:'الطلبات',products:'المنتجات',tracking:'التتبّع',stats:'الإحصائيات',settings:'الإعدادات'};document.getElementById('pageTitle').textContent=titles[v];if(v==='orders'){document.getElementById('view-orders').style.display='block';document.getElementById('view-other').style.display='none';}else{document.getElementById('view-orders').style.display='none';document.getElementById('view-other').style.display='block';document.getElementById('phTitle').textContent=titles[v];}}
+function renderStats(){
+ var today=ORDERS.filter(function(o){return o.date.indexOf('اليوم')===0;});
+ var pending=ORDERS.filter(function(o){return o.status==='pending';});
+ var confirmed=ORDERS.filter(function(o){return o.status==='confirmed';});
+ var suspicious=ORDERS.filter(function(o){return o.risk>=60&&o.status!=='rejected';});
+ var revenue=confirmed.reduce(function(a,o){return a+o.total;},0);
+ document.getElementById('stats').innerHTML=
+  card('📅 طلبات اليوم',today.length,'')+
+  card('💰 مبيعات مؤكّدة',f.ar(revenue),'<small> دج</small>')+
+  card('⏳ قيد الانتظار',pending.length,'')+
+  card('✅ مؤكّدة',confirmed.length,'')+
+  card('⚠️ مشبوهة',suspicious.length,'',true);
+}
+function card(label,val,suffix,warn){return '<div class="stat'+(warn?' warn':'')+'"><div class="label">'+label+'</div><div class="value">'+val+(suffix||'')+'</div></div>';}
+function renderFilters(){
+ var defs=[['all','الكل'],['pending','قيد الانتظار'],['confirmed','مؤكّدة'],['rejected','مرفوضة'],['suspicious','مشبوهة ⚠']];
+ document.getElementById('filters').innerHTML=defs.map(function(d){
+  var c=d[0]==='all'?ORDERS.length:d[0]==='suspicious'?ORDERS.filter(function(o){return o.risk>=60;}).length:ORDERS.filter(function(o){return o.status===d[0];}).length;
+  return '<button class="filter'+(filter===d[0]?' active':'')+'" onclick="setFilter(\''+d[0]+'\')">'+d[1]+'<span class="cnt">'+c+'</span></button>';
+ }).join('');
+}
+function setFilter(x){filter=x;render();}
+function matchFilter(o){if(filter==='all')return true;if(filter==='suspicious')return o.risk>=60;return o.status===filter;}
+function render(){
+ renderStats();renderFilters();
+ var q=(document.getElementById('search').value||'').trim().toLowerCase();
+ var list=ORDERS.filter(matchFilter).filter(function(o){return !q||(o.name+o.id+o.wilaya+o.phone+o.product).toLowerCase().indexOf(q)>=0;});
+ var rows=document.getElementById('rows');
+ if(!list.length){rows.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--dim);padding:2.5rem">لا توجد طلبات مطابقة</td></tr>';return;}
+ rows.innerHTML=list.map(function(o){
+  var acts='<button class="act eye" data-l="" onclick="detail(\''+o.id+'\')">👁 تفاصيل</button>';
+  if(o.status==='pending'){acts='<button class="act ok" onclick="setStatus(\''+o.id+'\',\'confirmed\')">✓ تأكيد</button><button class="act no" onclick="setStatus(\''+o.id+'\',\'rejected\')">✕ رفض</button>'+acts;}
+  else if(o.status==='confirmed'){acts='<button class="act" onclick="track(\''+o.id+'\')">🚚 تتبّع</button>'+acts;}
+  return '<tr class="'+(o.risk>=60?'hi':'')+'">'+
+   '<td data-l="الطلب"><span class="mono">'+o.id+'</span><div class="muted">'+o.date+'</div></td>'+
+   '<td data-l="الزبون" class="cust">'+o.name+'</td>'+
+   '<td data-l="الهاتف"><span class="mono">'+o.phone+'</span></td>'+
+   '<td data-l="الولاية">'+o.wilaya+'</td>'+
+   '<td data-l="المنتج">'+o.product+'<div class="muted">×'+o.qty+'</div></td>'+
+   '<td data-l="المجموع"><span class="total">'+f.ar(o.total)+' دج</span></td>'+
+   '<td data-l="المخاطر"><span class="badge '+riskClass(o.risk)+'">'+riskLabel(o.risk)+' '+o.risk+'%</span></td>'+
+   '<td data-l="الحالة"><span class="badge '+statusClass(o.status)+'">'+statusLabel(o.status)+'</span></td>'+
+   '<td data-l="إجراءات"><div class="acts">'+acts+'</div></td>'+
+  '</tr>';
+ }).join('');
+}
+function setStatus(id,s){var o=ORDERS.find(function(x){return x.id===id;});if(!o)return;o.status=s;if(s==='confirmed'){o.tracking='ECO-DZ-'+Math.floor(100000+Math.random()*900000);toast('✅ تم تأكيد '+id+' — أُرسل لشركة التوصيل','ok');}else{toast('✕ تم رفض '+id,'no');}render();}
+function track(id){var o=ORDERS.find(function(x){return x.id===id;});toast('🚚 تتبّع '+id+' · رقم الشحنة: '+(o.tracking||'ECO-DZ-482190'),'ok');}
+function detail(id){
+ var o=ORDERS.find(function(x){return x.id===id;});if(!o)return;
+ var reasons=RISK_REASONS[id];
+ var html='<h3>'+o.name+'</h3><div class="id">'+o.id+' · '+o.date+'</div>'+
+  row('الهاتف','<span class="mono">'+o.phone+'</span>')+
+  row('الولاية',o.wilaya)+
+  row('المنتج',o.product+' ×'+o.qty)+
+  row('الدفع','عند الاستلام (COD)')+
+  row('المجموع','<span class="total">'+f.ar(o.total)+' دج</span>')+
+  row('الحالة','<span class="badge '+statusClass(o.status)+'">'+statusLabel(o.status)+'</span>')+
+  row('عنوان IP','<span class="mono">'+o.ip+'</span>')+
+  row('الموقع','<span class="mono">'+o.geo+'</span>')+
+  (o.tracking?row('رقم الشحنة','<span class="mono">'+o.tracking+'</span>'):'')+
+  '<div class="risk-box"><div class="t">🛡️ تقييم المخاطر: <span class="badge '+riskClass(o.risk)+'">'+riskLabel(o.risk)+' '+o.risk+'%</span></div><ul>'+
+  (reasons?reasons.map(function(r){return '<li>'+(o.risk>=60?'🔴':'🟡')+' '+r+'</li>';}).join(''):'<li>🟢 لا توجد مؤشرات خطر — طلب سليم</li>')+'</ul></div>'+
+  '<button class="modal-close" onclick="closeModal()">إغلاق</button>';
+ document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').classList.add('show');
+}
+function row(k,v){return '<div class="row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>';}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+var toastT;
+function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'');clearTimeout(toastT);toastT=setTimeout(function(){t.className='';},3200);}
+</script>
+</body>
+</html>
