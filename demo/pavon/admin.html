@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Orders · Admin · Flowers Pavon</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+body{background:#f7f1ec}
+.adm-wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+.adm-demo{background:#fff3d6;border:1.5px dashed #d9a72e;border-radius:14px;padding:14px 18px;font-size:13.5px;color:#6b5210;line-height:1.6;margin-bottom:24px}
+.adm-demo b{color:#4a3800}
+.adm-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.adm-head h1{font-family:'Fraunces',serif;font-size:28px;margin:0;color:#3a2a30}
+.adm-head .live{font-size:12px;color:#8d7a80}
+.adm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px}
+.stat{background:#fff;border-radius:16px;padding:18px;box-shadow:0 6px 24px rgba(60,30,40,.06)}
+.stat small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8d7a80;margin-bottom:6px}
+.stat b{font-family:'Fraunces',serif;font-size:26px;color:#3a2a30}
+.adm-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(60,30,40,.06);font-size:13.5px}
+.adm-table th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8d7a80;padding:14px 14px;border-bottom:1px solid #f0e5e0;background:#fdfaf8}
+.adm-table td{padding:14px;border-bottom:1px solid #f6ede8;vertical-align:top;color:#4a3a40}
+.adm-table tr:last-child td{border-bottom:0}
+.adm-table .ref{font-weight:700;color:#3a2a30;white-space:nowrap}
+.adm-table .pers{display:inline-block;background:#faf3ee;border:1px solid #eaddd3;border-radius:8px;padding:2px 8px;font-size:12px;color:#7a5a63;margin-top:4px}
+.adm-table select{padding:7px 10px;border-radius:10px;border:1.5px solid #e3d5cd;background:#fff;font-size:12.5px;font-weight:600;color:#3a2a30;cursor:pointer}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.s-new{background:#fde8ee;color:#b23a5c}.s-review{background:#fff3d6;color:#8a6a10}.s-confirmed{background:#e3efff;color:#2b5fa3}.s-tied{background:#efe6ff;color:#6a3fb2}.s-out{background:#e0f4f1;color:#1e7a6d}.s-done{background:#e8f6ec;color:#2e7d43}
+.adm-note{margin-top:20px;font-size:12.5px;color:#9a868c;line-height:1.7}
+@media(max-width:720px){.adm-table thead{display:none}.adm-table tr{display:block;padding:8px 0}.adm-table td{display:block;border-bottom:0;padding:6px 14px}}
+</style>
+</head>
+<body>
+
+<nav id="nav"><div class="wrap bar">
+  <a class="logo" href="index.html"><canvas data-px="rose" width="12" height="12"></canvas><span><span class="t">Flowers <em>Pavon</em></span><small>ADMIN · ORDERS</small></span></a>
+</div></nav>
+
+<div class="adm-wrap">
+
+  <div class="adm-demo">⚠️ <b>DEMO MODE — sample data only.</b> This dashboard is <b>not connected</b> to Stripe or Firebase yet. The orders below are examples. In the live version, every Stripe payment appears here automatically within seconds, and status changes are saved to the cloud and visible to the whole team.</div>
+
+  <div class="adm-head">
+    <h1>Orders</h1>
+    <span class="live">Status changes are saved on this device (demo)</span>
+  </div>
+
+  <div class="adm-stats">
+    <div class="stat"><small>Orders today</small><b>4</b></div>
+    <div class="stat"><small>Revenue today</small><b>$820</b></div>
+    <div class="stat"><small>Needs action</small><b id="needsAction">—</b></div>
+    <div class="stat"><small>Same-day cutoff</small><b>1:00 PM</b></div>
+  </div>
+
+  <table class="adm-table">
+    <thead><tr><th>Order</th><th>Bouquet</th><th>Customer</th><th>Paid</th><th>Status</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <p class="adm-note">🔗 <b>Live version:</b> Stripe → webhook → Firebase (orders stored with customer, personalization &amp; payment ref) → this dashboard, synced in real time. Optional: automatic email/WhatsApp to the customer on every status change.</p>
+
+</div>
+
+<script src="webp.js"></script>
+<script src="pixel.js"></script>
+<script>
+var STATUSES=[["new","🆕 New"],["review","💐 In review"],["confirmed","📞 Confirmed"],["tied","🌸 Being tied"],["out","🚚 Out for delivery"],["done","✅ Delivered"]];
+var ORDERS=[
+ {ref:"PAV-UZT9L142",bq:"Sol y Rosas 🌻 — Classic",pers:"💎 Pearl initial: M · Card: \"Feliz cumpleaños mi amor\"",cust:"Maria G. · Woodbridge, VA · +1 703 ••• 4412",paid:"$160 · 2:31 PM",st:"review"},
+ {ref:"PAV-K83MD201",bq:"Corazón de Sol ❤️🌻 — Classic",pers:"🎀 Ribbon: \"Para Mamá\"",cust:"Jasmin R. · Dale City, VA · +1 571 ••• 8830",paid:"$280 · 12:05 PM",st:"tied"},
+ {ref:"PAV-Q11ZPX77",bq:"Ramo #9 Sunflower 🌻 — Grande",pers:"—",cust:"Kevin T. · Manassas, VA · +1 703 ••• 2219",paid:"$260 · 10:48 AM",st:"out"},
+ {ref:"PAV-B29FHT03",bq:"Encanto Rosado 🌸 — Classic",pers:"Card: \"Get well soon!\"",cust:"Destiny W. · Lake Ridge, VA · +1 703 ••• 9084",paid:"$85 · Yesterday",st:"done"}
+];
+var saved={};try{saved=JSON.parse(localStorage.getItem("pavAdminDemo")||"{}");}catch(e){}
+function pill(st){var l=STATUSES.filter(function(s){return s[0]===st;})[0];return '<span class="pill s-'+st+'">'+(l?l[1]:st)+'</span>';}
+function render(){
+  var tb=document.getElementById("rows");tb.innerHTML="";var needs=0;
+  ORDERS.forEach(function(o){
+    var st=saved[o.ref]||o.st;
+    if(st==="new"||st==="review")needs++;
+    var tr=document.createElement("tr");
+    var opts=STATUSES.map(function(s){return '<option value="'+s[0]+'"'+(s[0]===st?" selected":"")+'>'+s[1]+'</option>';}).join("");
+    tr.innerHTML='<td class="ref">'+o.ref+'</td>'+
+      '<td><b>'+o.bq+'</b><br><span class="pers">'+o.pers+'</span></td>'+
+      '<td>'+o.cust+'</td>'+
+      '<td>'+o.paid+'</td>'+
+      '<td>'+pill(st)+'<br><select data-ref="'+o.ref+'">'+opts+'</select></td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById("needsAction").textContent=needs;
+  tb.querySelectorAll("select").forEach(function(sel){
+    sel.addEventListener("change",function(){
+      saved[sel.getAttribute("data-ref")]=sel.value;
+      try{localStorage.setItem("pavAdminDemo",JSON.stringify(saved));}catch(e){}
+      render();
+    });
+  });
+}
+render();
+</script>
+</body>
+</html>

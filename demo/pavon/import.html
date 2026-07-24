@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Flowers Pavon — Photo Importer</title>
+<style>
+  :root{--sand:#f4ecdd;--cream:#faf5ea;--card:#fffdf6;--ink:#33312a;--rose:#c9556f;--sage:#a9bb97;--line:#e7dcc8;--mut:#9a8f79}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,Segoe UI,Roboto,sans-serif;background:var(--sand);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:26px 20px 80px}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  .logo{font-family:Georgia,serif;font-size:26px;font-weight:700}
+  .logo em{color:var(--rose);font-style:normal}
+  .sub{font-size:12px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+  h1{font-family:Georgia,serif;font-size:clamp(24px,3.4vw,34px);margin:14px 0 4px}
+  .lead{color:#6d6656;max-width:760px;line-height:1.55}
+  .lead b{color:var(--ink)}
+  .steps{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;display:flex;gap:8px;align-items:center}
+  .step b{background:var(--rose);color:#fff;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px}
+  .drop{margin:18px 0;border:2.5px dashed #d8c9a9;border-radius:16px;background:linear-gradient(180deg,#fffdf6,#f9f1e0);padding:26px;text-align:center;cursor:pointer;transition:.15s}
+  .drop.hot{border-color:var(--rose);background:#fdeef1}
+  .drop h3{margin:0 0 4px;font-family:Georgia,serif;font-size:19px}
+  .drop p{margin:0;color:var(--mut);font-size:13px}
+  .drop .big{font-size:30px;margin-bottom:6px}
+  .barrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 4px}
+  .btn{border:0;border-radius:999px;padding:12px 20px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+  .btn-go{background:var(--rose);color:#fff}
+  .btn-go[disabled]{opacity:.4;cursor:not-allowed}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .hint{font-size:12px;color:var(--mut)}
+  h2.sec{font-family:Georgia,serif;font-size:20px;margin:30px 0 4px}
+  h2.sec small{font-family:Inter,sans-serif;font-size:12px;color:var(--mut);font-weight:400;letter-spacing:.04em}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-top:14px}
+  .slot{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  .slot .ph{position:relative;background:linear-gradient(180deg,#f7eddc,#fdf8ec);display:grid;place-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
+  .slot.gal .ph{aspect-ratio:1/1.08}
+  .slot.hero .ph{aspect-ratio:7/10}
+  .slot .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .slot .ph .empty{color:#c3b598;font-size:13px;text-align:center;padding:10px;line-height:1.5}
+  .slot .ph .empty .plus{font-size:30px;display:block;color:#d8c9a9}
+  .slot.hot{outline:3px solid var(--rose);outline-offset:-3px}
+  .slot .meta{padding:10px 12px}
+  .slot .meta .fn{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--rose);font-weight:700}
+  .slot .meta .tt{font-size:13px;font-weight:600;margin-top:2px}
+  .slot .meta .pr{font-size:12px;color:var(--mut)}
+  .slot .tools{display:flex;gap:6px;padding:0 12px 12px}
+  .slot .tools button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--ink)}
+  .slot .tools button.rm{color:#b23a3a}
+  .badge{position:absolute;top:8px;left:8px;background:var(--rose);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.06em}
+  .ok{position:absolute;top:8px;right:8px;background:#2e7d54;color:#fff;font-size:11px;font-weight:700;width:22px;height:22px;border-radius:50%;display:none;place-items:center}
+  .slot.filled .ok{display:grid}
+  footer{margin-top:40px;color:var(--mut);font-size:12px;text-align:center}
+  .note{background:#fff7e8;border:1px solid #efd9a8;border-radius:12px;padding:12px 14px;font-size:13px;color:#6d5a2a;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Flowers <em>Pavon</em></div>
+    <div class="sub">Photo Importer · Importador de fotos</div>
+  </header>
+  <h1>Drop your real bouquet photos — get a ready-to-use package</h1>
+  <p class="lead">Drag your photos onto the big box (or the individual cards). Every photo is <b>auto-cropped</b> to the exact shape the site needs, resized and compressed, and renamed correctly. Then click <b>Download package</b> and unzip it straight into your site folder. <br><span class="hint">ES: Arrastra tus fotos a la caja grande (o a cada tarjeta). Se recortan y renombran solas. Luego descarga el paquete y descomprímelo dentro de la carpeta del sitio.</span></p>
+
+  <div class="steps">
+    <div class="step"><b>1</b> Drop photos</div>
+    <div class="step"><b>2</b> Check the crop</div>
+    <div class="step"><b>3</b> Download package</div>
+    <div class="step"><b>4</b> Unzip into the site folder → done</div>
+  </div>
+
+  <div id="drop" class="drop">
+    <div class="big">🌸</div>
+    <h3>Drop photos here to auto-fill the empty slots</h3>
+    <p>or click to choose files · fills gallery b1–b6 first, then the hero cards, in order</p>
+    <input id="file" type="file" accept="image/*" multiple hidden>
+  </div>
+
+  <div class="barrow">
+    <button id="zip" class="btn btn-go" disabled>⬇ Download package (.zip)</button>
+    <button id="clear" class="btn btn-ghost">Clear all</button>
+    <span class="hint" id="count">0 photos added</span>
+  </div>
+
+  <h2 class="sec">Catalog gallery <small>&nbsp; assets/bouquets/ · 6 photos · square-ish (1:1.08)</small></h2>
+  <div id="galGrid" class="grid"></div>
+
+  <h2 class="sec">Hero polaroids <small>&nbsp; assets/products/ · 4 photos · tall (7:10) · optional</small></h2>
+  <div id="heroGrid" class="grid"></div>
+
+  <div class="note">ℹ️ <b>How to install after download:</b> unzip <code>pavon-photos.zip</code> and drop the <code>assets</code> folder into your site folder, replacing the placeholders. Refresh the page — your real photos appear in the menu and hero. Nothing else to change.</div>
+
+  <textarea id="ziptest" style="display:none"></textarea>
+  <footer>Flowers Pavon · works fully offline in your browser · no upload, no account, your photos never leave your device.</footer>
+</div>
+
+<script>
+'use strict';
+var GAL=[
+  {fn:'b1.jpg',dir:'assets/bouquets',tt:'Ramo #9 Sunflower',pr:'$200',badge:'BEST SELLER'},
+  {fn:'b2.jpg',dir:'assets/bouquets',tt:'Amor Infinito Luxury',pr:'$550',badge:'LUXURY'},
+  {fn:'b3.jpg',dir:'assets/bouquets',tt:'Sunflowers Buchón',pr:'$210'},
+  {fn:'b4.jpg',dir:'assets/bouquets',tt:'Amor en Primavera',pr:'$300',badge:'MOST GIFTED'},
+  {fn:'b5.jpg',dir:'assets/bouquets',tt:'Encanto Rosado',pr:'$160'},
+  {fn:'b6.jpg',dir:'assets/bouquets',tt:'Red Roses Eternal',pr:'$250',badge:'NEW'}
+];
+var HERO=[
+  {fn:'p1.png',dir:'assets/products',tt:'Hero card — right'},
+  {fn:'p2.png',dir:'assets/products',tt:'Hero card — far left'},
+  {fn:'p5.png',dir:'assets/products',tt:'Hero card — left'},
+  {fn:'p6.png',dir:'assets/products',tt:'Hero card — right-mid'}
+];
+var GAL_AR=1/1.08, HERO_AR=7/10;
+var GAL_W=900, HERO_W=760;
+// slot state: {bytes:Uint8Array, url:objectURL}
+var slots=[]; // parallel to GAL.concat(HERO)
+var ALL=GAL.concat(HERO);
+ALL.forEach(function(){slots.push(null);});
+
+function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+
+function buildSlot(idx,def,kind){
+  var ar=kind==='gal'?'1/1.08':'7/10';
+  var s=el('div','slot '+kind);
+  s.dataset.idx=idx;
+  var badge=def.badge?'<span class="badge">'+def.badge+'</span>':'';
+  s.innerHTML=
+    '<div class="ph">'+badge+'<div class="ok">✓</div>'+
+      '<div class="empty"><span class="plus">+</span>drop / click<br>'+def.fn+'</div>'+
+      '<img alt="" style="display:none">'+
+    '</div>'+
+    '<div class="meta"><div class="fn">'+def.dir+'/'+def.fn+'</div>'+
+      '<div class="tt">'+def.tt+'</div>'+(def.pr?'<div class="pr">'+def.pr+'</div>':'<div class="pr">optional</div>')+'</div>'+
+    '<div class="tools"><button class="pick">Choose</button><button class="dl" disabled>Download</button><button class="rm" disabled>Remove</button></div>';
+  var ph=s.querySelector('.ph');
+  var img=s.querySelector('img');
+  var pick=s.querySelector('.pick');
+  var dl=s.querySelector('.dl');
+  var rm=s.querySelector('.rm');
+  function openPick(){pickInto(idx);}
+  ph.addEventListener('click',openPick);
+  pick.addEventListener('click',function(e){e.stopPropagation();openPick();});
+  dl.addEventListener('click',function(e){e.stopPropagation();downloadOne(idx);});
+  rm.addEventListener('click',function(e){e.stopPropagation();clearSlot(idx);});
+  // per-slot drag
+  s.addEventListener('dragover',function(e){e.preventDefault();s.classList.add('hot');});
+  s.addEventListener('dragleave',function(){s.classList.remove('hot');});
+  s.addEventListener('drop',function(e){e.preventDefault();s.classList.remove('hot');var f=e.dataTransfer.files;if(f&&f[0])processInto(idx,f[0]);});
+  return s;
+}
+
+var galGrid=document.getElementById('galGrid');
+var heroGrid=document.getElementById('heroGrid');
+GAL.forEach(function(d,i){galGrid.appendChild(buildSlot(i,d,'gal'));});
+HERO.forEach(function(d,i){heroGrid.appendChild(buildSlot(GAL.length+i,d,'hero'));});
+
+function slotEl(idx){return document.querySelector('.slot[data-idx="'+idx+'"]');}
+function targetAR(idx){return idx<GAL.length?GAL_AR:HERO_AR;}
+function targetW(idx){return idx<GAL.length?GAL_W:HERO_W;}
+function isJpg(idx){return idx<GAL.length;}
+
+// center-crop + resize an ImageBitmap/Image to target aspect, return {bytes,dataUrl}
+function render(imgLike,idx){
+  var ar=targetAR(idx);              // width/height
+  var W=targetW(idx), H=Math.round(W/ar);
+  var sw=imgLike.naturalWidth||imgLike.width, sh=imgLike.naturalHeight||imgLike.height;
+  var srcAR=sw/sh, cx,cy,cw,ch;
+  if(srcAR>ar){ ch=sh; cw=Math.round(sh*ar); cx=Math.round((sw-cw)/2); cy=0; }
+  else { cw=sw; ch=Math.round(sw/ar); cx=0; cy=Math.round((sh-ch)/2); }
+  var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  var ctx=cv.getContext('2d'); ctx.imageSmoothingQuality='high';
+  ctx.drawImage(imgLike,cx,cy,cw,ch,0,0,W,H);
+  var mime=isJpg(idx)?'image/jpeg':'image/png';
+  var q=isJpg(idx)?0.86:undefined;
+  var url=cv.toDataURL(mime,q);
+  return {dataUrl:url,bytes:dataUrlToBytes(url)};
+}
+
+function dataUrlToBytes(u){var b=atob(u.split(',')[1]);var a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+
+function setSlot(idx,res){
+  slots[idx]={bytes:res.bytes,dataUrl:res.dataUrl};
+  var s=slotEl(idx); var img=s.querySelector('img'); var empty=s.querySelector('.empty');
+  img.src=res.dataUrl; img.style.display='block'; empty.style.display='none';
+  s.classList.add('filled');
+  s.querySelector('.dl').disabled=false; s.querySelector('.rm').disabled=false;
+  refresh();
+}
+function clearSlot(idx){
+  slots[idx]=null; var s=slotEl(idx); var img=s.querySelector('img'); var empty=s.querySelector('.empty');
+  img.src=''; img.style.display='none'; empty.style.display='';
+  s.classList.remove('filled');
+  s.querySelector('.dl').disabled=true; s.querySelector('.rm').disabled=true;
+  refresh();
+}
+
+function loadImage(file){
+  return new Promise(function(res,rej){
+    var img=new Image();
+    img.onload=function(){res(img);};
+    img.onerror=function(){rej(new Error('bad image'));};
+    img.src=URL.createObjectURL(file);
+  });
+}
+function processInto(idx,file){
+  loadImage(file).then(function(img){setSlot(idx,render(img,idx));}).catch(function(){alert('Could not read that image. Try a JPG or PNG.');});
+}
+
+var pendingPick=-1;
+var fileInput=document.getElementById('file');
+function pickInto(idx){ pendingPick=idx; fileInput.value=''; fileInput.click(); }
+fileInput.addEventListener('change',function(){
+  var files=Array.prototype.slice.call(fileInput.files||[]);
+  if(!files.length)return;
+  if(pendingPick>=0 && files.length===1){ processInto(pendingPick,files[0]); pendingPick=-1; return; }
+  pendingPick=-1; fillMany(files);
+});
+
+function fillMany(files){
+  var i=0;
+  files.forEach(function(f){
+    while(i<slots.length && slots[i]) i++;
+    if(i>=slots.length) return;
+    var idx=i; i++;
+    processInto(idx,f);
+  });
+}
+
+// big drop zone
+var drop=document.getElementById('drop');
+drop.addEventListener('click',function(){pendingPick=-1;fileInput.value='';fileInput.click();});
+['dragenter','dragover'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('hot');});});
+['dragleave','drop'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.remove('hot');});});
+drop.addEventListener('drop',function(e){var f=Array.prototype.slice.call(e.dataTransfer.files||[]);if(f.length)fillMany(f);});
+
+function refresh(){
+  var n=slots.filter(Boolean).length;
+  document.getElementById('count').textContent=n+' photo'+(n===1?'':'s')+' added';
+  document.getElementById('zip').disabled=n===0;
+}
+document.getElementById('clear').addEventListener('click',function(){for(var i=0;i<slots.length;i++)if(slots[i])clearSlot(i);});
+
+function downloadOne(idx){
+  var d=slots[idx]; if(!d)return;
+  var a=document.createElement('a'); a.href=d.dataUrl; a.download=ALL[idx].fn; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ---------- tiny STORE-only ZIP writer (no deps) ---------- */
+var CRC=(function(){var t=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
+function crc32(buf){var c=0xFFFFFFFF;for(var i=0;i<buf.length;i++)c=CRC[(c^buf[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function strBytes(s){var a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i)&0xFF;return a;}
+function u16(n){return [n&0xFF,(n>>>8)&0xFF];}
+function u32(n){return [n&0xFF,(n>>>8)&0xFF,(n>>>16)&0xFF,(n>>>24)&0xFF];}
+function buildZip(entries){ // entries:[{name,bytes}]
+  var chunks=[], central=[], offset=0;
+  entries.forEach(function(e){
+    var nameB=strBytes(e.name), data=e.bytes, crc=crc32(data);
+    var lh=[].concat(u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(nameB.length),u16(0));
+    var lhB=new Uint8Array(lh);
+    chunks.push(lhB,nameB,data);
+    var ch=[].concat(u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(nameB.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset));
+    central.push(new Uint8Array(ch),nameB);
+    offset+=lhB.length+nameB.length+data.length;
+  });
+  var cstart=offset, csize=0;
+  central.forEach(function(c){csize+=c.length;});
+  var end=new Uint8Array([].concat(u32(0x06054b50),u16(0),u16(0),u16(entries.length),u16(entries.length),u32(csize),u32(cstart),u16(0)));
+  var all=chunks.concat(central,[end]);
+  var total=0; all.forEach(function(c){total+=c.length;});
+  var out=new Uint8Array(total), p=0;
+  all.forEach(function(c){out.set(c,p);p+=c.length;});
+  return out;
+}
+
+function gatherEntries(){
+  var entries=[];
+  slots.forEach(function(d,idx){ if(d) entries.push({name:ALL[idx].dir+'/'+ALL[idx].fn, bytes:d.bytes}); });
+  var readme='Flowers Pavon — photo package\r\n\r\nUnzip and drop the assets/ folder into your site folder,\r\nreplacing the placeholder images. Refresh the site.\r\n';
+  entries.push({name:'README.txt',bytes:strBytes(readme)});
+  return entries;
+}
+document.getElementById('zip').addEventListener('click',function(){
+  var entries=gatherEntries();
+  var bytes=buildZip(entries);
+  var blob=new Blob([bytes],{type:'application/zip'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pavon-photos.zip'; document.body.appendChild(a); a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+});
+
+/* ---------- self test (headless QA): ?selftest=1 ---------- */
+function makeSample(i){
+  var w=1200,h=1400,cv=document.createElement('canvas');cv.width=w;cv.height=h;var c=cv.getContext('2d');
+  var cols=[['#f6c14b','#c9556f'],['#c9556f','#6d2440'],['#e8a13a','#b5471f'],['#eeb7c5','#c9556f'],['#f2b6c6','#8f5670'],['#b23a3a','#4a1414'],['#a9bb97','#3c5934'],['#c89b62','#6d4a1f'],['#eeb7c5','#a9bb97'],['#f6c14b','#3c5934']];
+  var g=c.createLinearGradient(0,0,w,h);var pc=cols[i%cols.length];g.addColorStop(0,pc[0]);g.addColorStop(1,pc[1]);c.fillStyle=g;c.fillRect(0,0,w,h);
+  c.fillStyle='rgba(255,255,255,.85)';c.font='bold 120px Georgia';c.textAlign='center';c.fillText('SAMPLE',w/2,h/2-30);
+  c.font='bold 70px Georgia';c.fillText(ALL[i].fn,w/2,h/2+80);
+  return cv.toDataURL('image/jpeg',0.9);
+}
+if(location.search.indexOf('selftest')>=0){
+  window.addEventListener('load',function(){
+    var done=0;
+    ALL.forEach(function(def,idx){
+      var img=new Image();
+      img.onload=function(){ setSlot(idx,render(img,idx)); done++; if(done===ALL.length){
+        var bytes=buildZip(gatherEntries());
+        var bin=''; for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+        document.getElementById('ziptest').value=btoa(bin);
+        window.__ZIP_READY=true; window.__ZIP_ENTRIES=gatherEntries().length;
+      }};
+      img.src=makeSample(idx);
+    });
+  });
+}
+</script>
+<script src="webp.js"></script>
+</body>
+</html>
