@@ -106,6 +106,10 @@ button{font-family:inherit;cursor:pointer}
 #lang-other:focus{outline:none;border-color:var(--accent)}
 .per-lang{font-size:12px;font-weight:600;color:var(--muted)}
 .field-hint{font-size:12px;color:var(--muted)}
+.hero-mission{margin-top:16px;font-family:var(--serif);font-size:15px;letter-spacing:.05em;color:var(--accent-ink)}
+.promise{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin:0 0 28px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--r);background:var(--soft)}
+.promise span{font-size:13px;color:#5f5a52;font-weight:600;line-height:1.5}
+@media (max-width:720px){.promise{grid-template-columns:1fr}}
 
 /* ===== Care ===== */
 .bill-toggle{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:3px;margin-bottom:20px;background:var(--soft)}
@@ -220,8 +224,9 @@ footer .fsep{margin:0 10px;color:var(--line)}
     <nav class="progress" aria-label="Progress">
       <div class="seg" id="seg-base"><div class="seg-label">1 · Base</div><div class="seg-bar"><i></i></div></div>
       <div class="seg" id="seg-extras"><div class="seg-label">2 · Extras</div><div class="seg-bar"><i></i></div></div>
-      <div class="seg" id="seg-care"><div class="seg-label">3 · Care</div><div class="seg-bar"><i></i></div></div>
-      <div class="seg" id="seg-done"><div class="seg-label">4 · Done</div><div class="seg-bar"><i></i></div></div>
+      <div class="seg" id="seg-brand"><div class="seg-label">3 · Brand</div><div class="seg-bar"><i></i></div></div>
+      <div class="seg" id="seg-care"><div class="seg-label">4 · Care</div><div class="seg-bar"><i></i></div></div>
+      <div class="seg" id="seg-done"><div class="seg-label">5 · Done</div><div class="seg-bar"><i></i></div></div>
     </nav>
   </div>
 </div>
@@ -230,6 +235,7 @@ footer .fsep{margin:0 10px;color:var(--line)}
   <div class="hero-kicker" data-i18n="kicker">Websites for florists</div>
   <h1 data-i18n="heroTitle">Build your website plan in 2 minutes</h1>
   <p data-i18n="heroSub">Pick what your flower shop needs. See the price as you go. No calls, no pressure.</p>
+  <p class="hero-mission">“Every business has a story worth telling — let's tell yours.”</p>
   <a class="hero-arrow" href="#step-base" aria-label="Scroll to start">↓</a>
 </section>
 
@@ -361,9 +367,61 @@ footer .fsep{margin:0 10px;color:var(--line)}
       </div>
     </section>
 
-    <!-- STEP 3 -->
-    <section class="step" id="step-care" data-seg="seg-care">
+    <!-- STEP 3 · BRANDING -->
+    <section class="step" id="step-brand" data-seg="seg-brand">
       <div class="step-kicker">Step 3</div>
+      <h2>Branding</h2>
+      <p class="step-sub">Your website is the home — your brand is the personality. Add what your shop is missing, skip what you already have.</p>
+      <div class="extras">
+
+        <div class="extra" data-extra="logo">
+          <div class="extra-icon">🖋️</div>
+          <div class="extra-body"><h4>Logo design</h4><p>Logo concepts, revision rounds, and final files ready for print, web and social.</p></div>
+          <div class="extra-price">$250</div>
+          <button class="extra-add" type="button">+ Add</button>
+        </div>
+
+        <div class="extra" data-extra="brandid">
+          <div class="extra-icon">🎨</div>
+          <div class="extra-body"><h4>Full brand identity</h4><p>Logo, color palette, font selection and a brand style guide — so everything matches, everywhere. Logo design included.</p></div>
+          <div class="extra-price">$500</div>
+          <button class="extra-add" type="button">+ Add</button>
+        </div>
+
+        <div class="extra" data-extra="naming">
+          <div class="extra-icon">💡</div>
+          <div class="extra-body"><h4>Business name brainstorming</h4><p>Name ideas and brand direction, with the meaning and personality behind each one.</p></div>
+          <div class="extra-price">$150</div>
+          <button class="extra-add" type="button">+ Add</button>
+        </div>
+
+        <div class="extra" data-extra="cards">
+          <div class="extra-icon">📇</div>
+          <div class="extra-body"><h4>Business cards</h4><p>Print-ready business cards designed to match your website.</p></div>
+          <div class="extra-price">$100</div>
+          <button class="extra-add" type="button">+ Add</button>
+        </div>
+
+        <div class="extra" data-extra="menus">
+          <div class="extra-icon">💐</div>
+          <div class="extra-body"><h4>Bouquet menu / price list</h4><p>A beautiful printed menu of your bouquets and prices for the shop counter.</p></div>
+          <div class="extra-price">$150</div>
+          <button class="extra-add" type="button">+ Add</button>
+        </div>
+
+        <div class="extra" data-extra="flyers">
+          <div class="extra-icon">📄</div>
+          <div class="extra-body"><h4>Flyers</h4><p>Seasonal promo flyers — Valentine's, Mother's Day, the holidays — designed in your brand.</p></div>
+          <div class="extra-price">$150</div>
+          <button class="extra-add" type="button">+ Add</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step" id="step-care" data-seg="seg-care">
+      <div class="step-kicker">Step 4</div>
       <h2 data-i18n="s3Title">Care plan</h2>
       <p class="step-sub" data-i18n="s3Sub">Required with every website — we keep it fast, secure and up to date.</p>
       <div class="bill-toggle" role="group" aria-label="Billing period">
@@ -400,15 +458,22 @@ footer .fsep{margin:0 10px;color:var(--line)}
       </div>
     </section>
 
-    <!-- STEP 4 -->
+    <!-- STEP 5 -->
     <section class="step" id="step-done" data-seg="seg-done">
-      <div class="step-kicker">Step 4</div>
+      <div class="step-kicker">Step 5</div>
       <h2 data-i18n="s4Title">Your plan is ready</h2>
       <p class="step-sub" data-i18n="s4Sub">Review your plan, leave your details, and we'll take it from here.</p>
 
       <div class="invoice" id="invoice">
         <h3>PLAN SUMMARY</h3>
         <div id="inv-body"><p class="inv-empty">Pick a base above to see your plan here.</p></div>
+      </div>
+
+      <div class="promise" aria-label="Our promise">
+        <span>🤝 Consultation-first — we only recommend what truly fits your shop</span>
+        <span>🔁 You review everything and request changes before launch</span>
+        <span>💳 50% to start · the rest only when you're happy, before launch</span>
+        <span>🌱 We stay by your side after launch — that's what Care is for</span>
       </div>
 
       <form class="formgrid" id="plan-form" novalidate>
@@ -452,8 +517,8 @@ footer .fsep{margin:0 10px;color:var(--line)}
 </div>
 
 <footer>
-  <span class="fbrand">Built by Nebula Studio</span> — websites for florists
-  <span class="fsep">·</span><a href="/florists">See our florist demo</a>
+  <span class="fbrand">Built by Nebula Sites Studio</span> — every business has a story worth telling
+  <span class="fsep">·</span><a href="flowers/index.html">Back to our florist studio</a>
   <span class="fsep">·</span><a href="mailto:nebulastudiosite@gmail.com">nebulastudiosite@gmail.com</a>
 </footer>
 
@@ -502,6 +567,12 @@ const PRICING = {
     weddings: { name: "Weddings & Events page",       price: 150 },
     events:   { name: "Seasonal event themes",        price: 200 },
     bouquets: { name: "5 more card-payment bouquets", price: 100, onlyBase: "starter" },
+    logo:     { name: "Logo design",                  price: 250 },
+    brandid:  { name: "Full brand identity",          price: 500 },
+    naming:   { name: "Business name brainstorming",  price: 150 },
+    cards:    { name: "Business cards",               price: 100 },
+    menus:    { name: "Bouquet menu / price list",    price: 150 },
+    flyers:   { name: "Flyers",                       price: 150 },
     offers:   { name: "Special Offers section",       price: 0, locked: true },
     custom:   { name: "Custom feature",               price: 0, locked: true }
   },
@@ -668,7 +739,18 @@ document.querySelectorAll(".extra").forEach(row => {
   });
 });
 
-/* ============ STEP 3: CARE ============ */
+/* ============ STEP 3: BRANDING (logo is included in full brand identity — keep only one) ============ */
+function extraOff(k) {
+  if (!state.extras[k]) return;
+  state.extras[k] = false;
+  const r = document.querySelector(`[data-extra="${k}"]`);
+  r.classList.remove("selected");
+  r.querySelector(".extra-add").textContent = "+ Add";
+}
+document.querySelector('[data-extra="brandid"] .extra-add').addEventListener("click", () => { if (state.extras.brandid) extraOff("logo"); renderCart(); });
+document.querySelector('[data-extra="logo"] .extra-add').addEventListener("click", () => { if (state.extras.logo) extraOff("brandid"); renderCart(); });
+
+/* ============ STEP 4: CARE ============ */
 function refreshCareCards() {
   document.querySelectorAll(".care").forEach(c => {
     const k = c.dataset.care, plan = PRICING.care[k];
@@ -699,10 +781,11 @@ billM.addEventListener("click", () => setBilling("monthly"));
 billA.addEventListener("click", () => setBilling("annual"));
 
 /* ============ PROGRESS BAR ============ */
-const visited = { "seg-extras": false, "seg-care": false };
+const visited = { "seg-extras": false, "seg-brand": false, "seg-care": false };
 function updateProgress() {
   document.getElementById("seg-base").classList.toggle("done", !!state.base);
   document.getElementById("seg-extras").classList.toggle("done", visited["seg-extras"]);
+  document.getElementById("seg-brand").classList.toggle("done", visited["seg-brand"]);
   document.getElementById("seg-care").classList.toggle("done", visited["seg-care"]);
   document.getElementById("seg-done").classList.toggle("done", state.sent);
 }
