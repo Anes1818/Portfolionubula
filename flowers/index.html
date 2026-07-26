@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="theme-color" content="#150a10" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Nebula Sites Studio — Websites Made for Flower Shops" />
   <meta property="og:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
@@ -36,7 +36,7 @@
 html { font-size: 16px; scroll-behavior: auto; overflow-x: hidden; }
 body {
   font-family: 'Manrope', system-ui, sans-serif;
-  background: #0a0a0a; color: #e8e8e4;
+  background: #150a10; color: #f2e9ee;
   line-height: 1.6; overflow-x: hidden;
   cursor: none;
   -webkit-font-smoothing: antialiased;
@@ -47,11 +47,11 @@ ul { list-style: none; }
 button { font: inherit; border: none; background: none; cursor: none; }
 
 :root {
-  --bg:#0a0a0a; --bg-raised:#0f0f0f; --surface:#111;
-  --surface-2:#171717; --surface-3:#1e1e1e;
-  --border:rgba(255,255,255,.055); --border-soft:rgba(255,255,255,.035);
-  --text:#e8e8e4; --text-muted:#525250;
-  --text-dim:#2e2e2c;
+  --bg:#150a10; --bg-raised:#1b0e15; --surface:#20121b;
+  --surface-2:#281723; --surface-3:#311c2b;
+  --border:rgba(255,205,225,.09); --border-soft:rgba(255,205,225,.05);
+  --text:#f2e9ee; --text-muted:#7d6472;
+  --text-dim:#412c38;
   --accent:#ec8fae; --accent-dim:rgba(236,143,174,.12);
   --accent-rgb:236,143,174;
   --green:#4caf8a; --blue:#5b8fff;
@@ -223,7 +223,7 @@ button { font: inherit; border: none; background: none; cursor: none; }
   position: fixed; top: 0; left: 50%; transform: translateX(-50%);
   z-index: 7500; pointer-events: none;
   padding: .6rem 1.5rem;
-  background: rgba(10,10,10,.9);
+  background: rgba(21,10,16,.9);
   border: 1px solid rgba(var(--accent-rgb),.25);
   border-radius: 0 0 var(--r-md) var(--r-md);
   font-family: var(--font-mono); font-size: .65rem;
@@ -334,7 +334,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 }
 .btn:hover::after { opacity:1; }
 .btn-primary {
-  background:var(--accent); color:#0a0a0a;
+  background:var(--accent); color:#150a10;
   box-shadow:0 0 32px rgba(var(--accent-rgb),.2);
 }
 .btn-primary:hover { box-shadow:0 8px 40px rgba(var(--accent-rgb),.4); }
@@ -356,7 +356,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   border-bottom:1px solid transparent;
 }
 .nav.scrolled {
-  background:rgba(10,10,10,.85);
+  background:rgba(21,10,16,.85);
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
   border-bottom-color:var(--border); padding:1rem var(--px);
 }
@@ -387,7 +387,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   transition:transform .4s var(--ease-in-out), opacity .3s; transform-origin:center;
 }
 .nav-overlay {
-  position:fixed; inset:0; z-index:500; background:#0a0a0a;
+  position:fixed; inset:0; z-index:500; background:#150a10;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:.5rem; opacity:0; pointer-events:none; transition:opacity .4s;
 }
@@ -655,7 +655,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 .tpl-overlay {
   position:absolute; inset:0; z-index:4;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(10,10,10,.55);
+  background:rgba(21,10,16,.55);
   backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
   opacity:0; transition:opacity .35s;
 }
@@ -1034,10 +1034,10 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       and Mother's Day. Hand-coded around your shop, your style, your seasons.
     </p>
     <div class="hero-actions" id="heroActions">
-      <a href="#showcase" class="btn btn-primary btn-lg">
-        See What's Possible <span class="btn-arrow-icon">&#8599;</span>
+      <a href="../build-your-plan.html" class="btn btn-primary btn-lg">
+        Build Your Plan &mdash; Free <span class="btn-arrow-icon">&#8599;</span>
       </a>
-      <a href="../build-your-plan.html" class="btn btn-ghost btn-lg">Book a Free Consultation</a>
+      <a href="#showcase" class="btn btn-ghost btn-lg">See What's Possible</a>
     </div>
   </div>
   <div class="hero-stats" id="heroStats">
@@ -1364,7 +1364,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     its layout, its animations, its feel —
     can be built for your flower shop.
   </h2>
-  <a href="#contact" class="btn btn-primary btn-lg" data-reveal>Let's Build Yours &nbsp;&#8599;</a>
+  <a href="../build-your-plan.html" class="btn btn-primary btn-lg" data-reveal>Build Your Plan &mdash; Free Consultation &nbsp;&#8599;</a>
 </section>
 
 <!-- 08. CONTACT — Formspree -->
@@ -1398,8 +1398,11 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <!-- 08. FORMSPREE FORM -->
   <!-- ★ Replace YOUR_FORM_ID with your Formspree endpoint ID from formspree.io -->
   <form class="contact-form" id="contactForm"
-        action="https://formspree.io/f/YOUR_FORM_ID"
+        action="https://formsubmit.co/ajax/nebulastudiosite@gmail.com"
         method="POST" novalidate data-reveal>
+    <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
     <div class="form-group">
       <label for="fname">Your Name</label>
       <input type="text" id="fname" name="name" placeholder="Holly Parker" autocomplete="name" required />
@@ -1417,7 +1420,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       <textarea id="fmessage" name="message" rows="4" placeholder="Tell us about your project, your goals, your deadline…" required></textarea>
     </div>
     <!-- Hidden honeypot anti-spam -->
-    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <div class="form-status" id="formStatus"></div>
     <button type="submit" class="btn btn-primary btn-full" id="formBtn">Send Message &nbsp;&#10003;</button>
     <p class="form-note">No spam. No obligations. Just a real conversation.</p>
@@ -1700,19 +1703,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const words = el.textContent.trim().split(/\s+/)
     el.innerHTML = words.map(w => `<span class="wrev-word">${w}&nbsp;</span>`).join('')
     const spans = el.querySelectorAll('.wrev-word')
-    ScrollTrigger.create({
-      trigger: el, start:'top 76%', end:'bottom 34%', scrub:1.6,
-      onUpdate: self => {
-        const p = self.progress, n = spans.length
-        spans.forEach((s,i) => {
-          const lo = i/n, hi = (i+1)/n
-          let op = .06
-          if (p >= hi) op = 1
-          else if (p >= lo) op = .06 + ((p-lo)/(hi-lo)) * .94
-          s.style.opacity = op
-          s.style.color   = op > .45 ? 'var(--text)' : 'var(--text-muted)'
-        })
-      }
+    gsap.set(spans, { opacity:.06, color:'var(--text-muted)' })
+    gsap.to(spans, {
+      opacity:1, color:'var(--text)',
+      duration:.55, stagger:.045, ease:'power1.out',
+      scrollTrigger: { trigger: el, start:'top 78%', once:true }
     })
   }
   initWordReveal(document.getElementById('philText'))
@@ -2011,7 +2006,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const json  = await res.json()
 
         if (res.ok) {
-          formStat.textContent = '✓ Message sent! I\'ll get back to you within 24 hours.'
+          formStat.textContent = '✓ Message sent! We\'ll get back to you within 24 hours.'
           formStat.className   = 'form-status success'
           form.reset()
           gsap.from(formStat, {opacity:0, y:8, duration:.5, ease:'power2.out'})
@@ -2027,7 +2022,7 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(json.error || 'Submission failed')
         }
       } catch(err) {
-        formStat.textContent = '✕ Something went wrong. Please email me directly.'
+        formStat.textContent = '✕ Something went wrong. Please email us directly at nebulastudiosite@gmail.com.'
         formStat.className   = 'form-status error'
       } finally {
         formBtn.innerHTML = originalText
