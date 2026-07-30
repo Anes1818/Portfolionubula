@@ -21,8 +21,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#ffffff; --soft:#faf9f6; --ink:#211f1c; --muted:#847e75; --line:#eae6de;
-  --accent:#a78bfa; --accent-ink:#8a6a35; --accent-soft:#f8f2e7; --accent-dim:rgba(167,139,250,.14);
+  --bg:#ffffff; --soft:#fdf9fa; --ink:#211f1c; --muted:#847e75; --line:#f0e4e8;
+  --accent:#d4718f; --accent-ink:#9c3c5b; --accent-soft:#fdf2f5; --accent-dim:rgba(212,113,143,.14);
+  --accent-rgb:212,113,143;
   --green:#3e7d5b; --green-soft:#e9f2ec;
   --serif:'Cinzel',Georgia,serif; --sans:'Manrope',system-ui,-apple-system,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1); --r:16px; --r-sm:10px;
@@ -54,7 +55,7 @@ button{font-family:inherit;cursor:pointer}
 .hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,5.4vw,3.9rem);line-height:1.14;max-width:820px;letter-spacing:.01em}
 .hero p{margin-top:22px;font-size:18px;color:var(--muted);max-width:520px}
 .hero-arrow{margin-top:56px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--accent-ink);text-decoration:none;font-size:18px;animation:pulse 2.2s var(--ease) infinite}
-@keyframes pulse{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 var(--accent-dim)}50%{transform:translateY(6px);box-shadow:0 0 0 10px rgba(167,139,250,0)}}
+@keyframes pulse{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 var(--accent-dim)}50%{transform:translateY(6px);box-shadow:0 0 0 10px rgba(212,113,143,0)}}
 @media (prefers-reduced-motion:reduce){.hero-arrow{animation:none}html{scroll-behavior:auto}}
 
 /* ===== Layout ===== */
@@ -238,7 +239,7 @@ footer .fsep{margin:0 10px;color:var(--line)}
 
 <div class="topbar">
   <div class="topbar-in">
-    <a class="logo" href="index.html" style="display:inline-flex;align-items:center;gap:.5rem"><img src="assets/logo.png" alt="" style="width:26px;height:26px;border-radius:50%">NEBULA <span>SITES STUDIO</span></a>
+    <a class="logo" href="flowers/index.html" style="display:inline-flex;align-items:center;gap:.5rem"><img src="assets/logo.png" alt="" style="width:26px;height:26px;border-radius:50%">NEBULA <span>SITES STUDIO</span></a>
     <nav class="progress" aria-label="Progress">
       <div class="seg" id="seg-base"><div class="seg-label">1 · Base</div><div class="seg-bar"><i></i></div></div>
       <div class="seg" id="seg-extras"><div class="seg-label">2 · Extras</div><div class="seg-bar"><i></i></div></div>
@@ -253,7 +254,7 @@ footer .fsep{margin:0 10px;color:var(--line)}
   <div class="hero-kicker" data-i18n="kicker">Websites for florists</div>
   <h1 data-i18n="heroTitle">Build your website plan in 2 minutes</h1>
   <p data-i18n="heroSub">Pick what your flower shop needs. See the price as you go. No calls, no pressure.</p>
-  <div class="plan-topline"><a href="pricing.html">See the full price list</a><a href="index.html">Nebula Sites Studio</a><a href="flowers/index.html">For florists</a></div>
+  <div class="plan-topline"><a href="#plans">Compare the plans</a><a href="flowers/index.html">Our florist work</a><a href="demo/pavon/index.html" target="_blank" rel="noopener">See a live demo &#8599;</a></div>
   <p class="hero-mission">“Every business has a story worth telling — let's tell yours.”</p>
   <a class="hero-arrow" href="#step-base" aria-label="Scroll to start">↓</a>
 </section>
@@ -282,7 +283,7 @@ footer .fsep{margin:0 10px;color:var(--line)}
             <li>Contact form, Google Maps, social links</li>
             <li>Domain, hosting, SSL and speed optimization handled by us</li>
             <li>Basic SEO so local buyers can find you</li>
-          </ul><div class="meta">3–4 weeks · 2 free revision rounds · 3 months of Care included · upgrade to a full store later for $1,600</div></div>
+          </ul><div class="meta">Live in 5–10 days · 2 free revision rounds · 3 months of Care included · upgrade to a full store later for $1,600</div></div>
           <button class="base-select" type="button">Select</button>
         </article>
 
@@ -301,7 +302,7 @@ footer .fsep{margin:0 10px;color:var(--line)}
             <li>Shipping address collected automatically</li>
             <li>Discount codes and automatic email receipts</li>
             <li>Stripe account setup and full testing — money goes to your bank, always</li>
-          </ul><div class="meta">4 weeks · 2 free revision rounds · 3 months of Care included · no stock tracking at this level</div></div>
+          </ul><div class="meta">Live in 1–2 weeks · 2 free revision rounds · 3 months of Care included · no stock tracking at this level</div></div>
           <button class="base-select" type="button">Select</button>
         </article>
 
@@ -319,12 +320,106 @@ footer .fsep{margin:0 10px;color:var(--line)}
             <li>Product detail pages included</li>
             <li>Order records and your own admin dashboard</li>
             <li>Automatic inventory, coupons, shipping and tax rules</li>
-          </ul><div class="meta">6–8 weeks · 3 free revision rounds · 3 months of Care+ included · Care+ required for 6 months after launch</div></div>
+          </ul><div class="meta">Live in 2–3 weeks · 3 free revision rounds · 3 months of Care+ included · Care+ required for 6 months after launch</div></div>
           <button class="base-select" type="button">Select</button>
         </article>
 
       </div>
     </section>
+
+<style>
+/* ============ PLAN COMPARISON ============ */
+.cmp-sec{max-width:1080px;margin:0 auto;padding:clamp(2.5rem,5vw,4.5rem) 20px 0;scroll-margin-top:90px}
+.cmp-head{text-align:center;margin-bottom:clamp(1.5rem,3vw,2.5rem)}
+.cmp-kicker{font-family:var(--sans);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:.6rem}
+.cmp-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.4vw,2.2rem);color:var(--ink);margin:0 0 .7rem}
+.cmp-head p{color:var(--muted);font-size:.96rem;line-height:1.65;max-width:620px;margin:0 auto}
+.cmp-wrap{border:1px solid var(--line);border-radius:var(--r);background:var(--bg);box-shadow:var(--shadow);overflow:hidden}
+.cmp{width:100%;border-collapse:collapse;font-size:.9rem}
+.cmp th,.cmp td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+.cmp thead th{background:var(--soft);font-family:var(--sans);font-weight:700;color:var(--ink);font-size:.86rem;position:sticky;top:0;z-index:2}
+.cmp thead th span{display:block;font-weight:500;color:var(--muted);font-size:.76rem;margin-top:.15rem}
+.cmp thead th.is-pop{background:var(--accent-soft);color:var(--accent-ink)}
+.cmp tbody td:first-child{font-weight:600;color:var(--ink);width:38%}
+.cmp tbody td:first-child small{display:block;font-weight:400;color:var(--muted);font-size:.78rem;margin-top:.15rem}
+.cmp tbody tr:hover{background:var(--soft)}
+.cmp tbody tr:last-child td{border-bottom:none}
+.cmp .y{color:var(--green);font-weight:700}
+.cmp .n{color:#c9c2bb}
+.cmp .v{color:var(--ink)}
+.cmp .addon{color:var(--accent-ink);font-size:.82rem;white-space:nowrap}
+.cmp-row-head td{background:var(--soft);font-family:var(--sans);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.cmp-foot{padding:16px 18px;background:var(--soft);border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;line-height:1.6}
+@media(max-width:820px){
+  .cmp-wrap{border:none;background:transparent;box-shadow:none;overflow:visible}
+  .cmp,.cmp tbody,.cmp tr,.cmp td{display:block;width:100%}
+  .cmp thead{display:none}
+  .cmp tbody tr.cmp-row-head{background:transparent;border:none;padding:0;margin:22px 0 8px}
+  .cmp tbody tr.cmp-row-head td{background:transparent;border:none;padding:0 2px;font-size:.68rem}
+  .cmp tbody tr{border:1px solid var(--line);border-radius:var(--r);background:var(--bg);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .cmp tbody tr:hover{background:var(--bg)}
+  .cmp tbody td{border:none;padding:0}
+  .cmp tbody td:first-child{width:100%;font-size:.95rem;margin-bottom:.5rem}
+  .cmp tbody td:not(:first-child){display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 0;border-top:1px solid var(--line);font-size:.88rem}
+  .cmp tbody td:not(:first-child)::before{content:attr(data-h);color:var(--muted);font-size:.78rem;font-weight:600;flex:none}
+  .cmp-foot{border:1px solid var(--line);border-radius:var(--r);margin-top:12px}
+}
+</style>
+
+<section class="cmp-sec" id="plans">
+  <div class="cmp-head">
+    <div class="cmp-kicker">Compare</div>
+    <h2>What is inside each plan</h2>
+    <p>The same table we use internally — no hidden tiers, no “call us for pricing”. Anything marked as an add-on can be added to any plan, at any time, before or after launch.</p>
+  </div>
+  <div class="cmp-wrap">
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Foundation<span>$1,800</span></th>
+          <th class="is-pop">Quick Pay<span>$2,200 · most chosen</span></th>
+          <th>Commerce<span>$3,600</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr class="cmp-row-head"><td colspan="4">The basics</td></tr>
+      <tr><td>Price<small>Launch price for our first 5 clients</small></td><td data-h="Foundation" class="v"><b>$1,800</b></td><td data-h="Quick Pay" class="v"><b>$2,200</b></td><td data-h="Commerce" class="v"><b>$3,600</b></td></tr>
+      <tr><td>Time to launch<small>From the day we have your text and photos</small></td><td data-h="Foundation" class="v">Live in 5–10 days</td><td data-h="Quick Pay" class="v">Live in 1–2 weeks</td><td data-h="Commerce" class="v">Live in 2–3 weeks</td></tr>
+      <tr><td>Custom design, coded from scratch<small>Never a template, never a page-builder</small></td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Pages included</td><td data-h="Foundation" class="v">Up to 5</td><td data-h="Quick Pay" class="v">Up to 5</td><td data-h="Commerce" class="v">Up to 8</td></tr>
+      <tr><td>Products in the catalog</td><td data-h="Foundation" class="v">15</td><td data-h="Quick Pay" class="v">15</td><td data-h="Commerce" class="v">30</td></tr>
+      <tr><td>Product detail pages<small>A full page per bouquet — story, size, care</small></td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Domain, hosting, SSL &amp; speed<small>Bought and managed by us, first year included</small></td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Local SEO &amp; Google setup</td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Mobile-first build<small>Most florist traffic is a phone in one hand</small></td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr class="cmp-row-head"><td colspan="4">Taking orders</td></tr>
+      <tr><td>WhatsApp ordering<small>Every bouquet sends you a pre-filled message</small></td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Contact form, map &amp; socials</td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Card payments</td><td data-h="Foundation" class="n">—</td><td data-h="Quick Pay" class="v">5 Stripe payment links</td><td data-h="Commerce" class="v">Full dynamic checkout</td></tr>
+      <tr><td>Shopping cart</td><td data-h="Foundation" class="n">—</td><td data-h="Quick Pay" class="n">—</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Discount codes</td><td data-h="Foundation" class="n">—</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Automatic stock tracking</td><td data-h="Foundation" class="n">—</td><td data-h="Quick Pay" class="n">—</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Order records &amp; admin dashboard<small>Change photos, prices and text yourself</small></td><td data-h="Foundation" class="addon">Add-on $500</td><td data-h="Quick Pay" class="addon">Add-on $500</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Shipping &amp; tax rules</td><td data-h="Foundation" class="n">—</td><td data-h="Quick Pay" class="n">—</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr class="cmp-row-head"><td colspan="4">Make it yours</td></tr>
+      <tr><td>Seasonal events system<small>Valentine’s, Mother’s Day — the site dresses itself</small></td><td data-h="Foundation" class="addon">Add-on $400</td><td data-h="Quick Pay" class="addon">Add-on $400</td><td data-h="Commerce" class="addon">Add-on $400</td></tr>
+      <tr><td>Weddings experience page<small>A dedicated page for your wedding work</small></td><td data-h="Foundation" class="addon">Add-on $400</td><td data-h="Quick Pay" class="addon">Add-on $400</td><td data-h="Commerce" class="addon">Add-on $400</td></tr>
+      <tr><td>Bouquet builder<small>Customers compose their own bouquet, live price</small></td><td data-h="Foundation" class="addon">Add-on $900</td><td data-h="Quick Pay" class="addon">Add-on $900</td><td data-h="Commerce" class="addon">Add-on $900</td></tr>
+      <tr><td>Booking system<small>Consultations booked into your real free slots</small></td><td data-h="Foundation" class="addon">Add-on $400</td><td data-h="Quick Pay" class="addon">Add-on $400</td><td data-h="Commerce" class="addon">Add-on $400</td></tr>
+      <tr><td>Special offers section</td><td data-h="Foundation" class="n">—</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      <tr><td>Second language</td><td data-h="Foundation" class="addon">Add-on $400</td><td data-h="Quick Pay" class="addon">Add-on $400</td><td data-h="Commerce" class="addon">Add-on $400</td></tr>
+      <tr><td>Logo or full brand identity</td><td data-h="Foundation" class="addon">From $300</td><td data-h="Quick Pay" class="addon">From $300</td><td data-h="Commerce" class="addon">From $300</td></tr>
+      <tr class="cmp-row-head"><td colspan="4">After launch</td></tr>
+      <tr><td>Free revision rounds</td><td data-h="Foundation" class="v">2</td><td data-h="Quick Pay" class="v">2</td><td data-h="Commerce" class="v">3</td></tr>
+      <tr><td>Care included in the price<small>Not a trial — part of what you bought</small></td><td data-h="Foundation" class="v">3 months</td><td data-h="Quick Pay" class="v">3 months</td><td data-h="Commerce" class="v">3 months of Care+</td></tr>
+      <tr><td>Care after that<small>Stop any time with 30 days’ notice</small></td><td data-h="Foundation" class="v">$59/mo</td><td data-h="Quick Pay" class="v">$59/mo</td><td data-h="Commerce" class="v">$129/mo</td></tr>
+      <tr><td>You own 100% of the files</td><td data-h="Foundation" class="y">✓</td><td data-h="Quick Pay" class="y">✓</td><td data-h="Commerce" class="y">✓</td></tr>
+      </tbody>
+    </table>
+    <div class="cmp-foot">Timelines start the day we receive your text and photos, and assume replies within two working days. Prices are one-time — the only recurring cost is Care, which begins in month 4. Every plan can be upgraded later; you only pay the difference plus $1,600 for a full store conversion.</div>
+  </div>
+</section>
 
     <!-- STEP 2 -->
     <section class="step" id="step-extras" data-seg="seg-extras">

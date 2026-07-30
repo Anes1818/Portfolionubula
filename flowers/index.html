@@ -644,6 +644,26 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 .tpl-preview--flower  { background:linear-gradient(135deg,#1a0e10 0%,#2d1519 40%,#1f1012 100%); }
 .tpl-preview--perfume { background:linear-gradient(135deg,#191410 0%,#28200e 40%,#1c180b 100%); }
 .tpl-preview--ecom    { background:linear-gradient(135deg,#0c1220 0%,#111d32 40%,#0f1629 100%); }
+.tpl-preview--wedding { background:radial-gradient(120% 90% at 70% 10%,#2a1c22 0%,#1b1114 55%,#120c0e 100%); }
+.tpl-preview-inner--wedding { display:flex; align-items:flex-end; justify-content:center; position:relative; }
+.tpl-preview-inner--wedding picture { display:block; height:100%; width:100%; }
+.tpl-preview-inner--wedding img {
+  width:100%; height:100%; object-fit:contain; object-position:center bottom;
+  padding:8% 8% 0; filter:drop-shadow(0 30px 60px rgba(0,0,0,.55));
+}
+.tpl-preview-caption {
+  position:absolute; left:0; right:0; bottom:0; padding:1.6rem 1.4rem 1.2rem;
+  background:linear-gradient(to top,rgba(10,7,8,.92) 15%,transparent);
+  display:flex; flex-direction:column; gap:.3rem; text-align:center;
+}
+.tpl-preview-caption span {
+  font-family:var(--font-mono); font-size:.62rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--accent);
+}
+.tpl-preview-caption strong {
+  font-family:var(--font-serif); font-weight:400;
+  font-size:clamp(.95rem,1.5vw,1.15rem); color:var(--text);
+}
 .tpl-preview-inner {
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center; padding:1.75rem;
@@ -1000,7 +1020,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <a href="#templates" role="listitem">Templates</a>
     <a href="#services" role="listitem">Services</a>
     <a href="#process" role="listitem">Process</a>
-    <a href="../pricing.html" role="listitem">Pricing</a>
+    <a href="../build-your-plan.html#plans" role="listitem">Plans</a>
     <a href="#contact" role="listitem">Contact</a>
 
   </div>
@@ -1018,7 +1038,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <a href="#templates" class="nav-overlay-link">Templates</a>
   <a href="#services"  class="nav-overlay-link">Services</a>
   <a href="#process"   class="nav-overlay-link">Process</a>
-  <a href="../pricing.html" class="nav-overlay-link">Pricing</a>
+  <a href="../build-your-plan.html#plans" class="nav-overlay-link">Plans</a>
   <a href="#contact"   class="nav-overlay-link">Contact</a>
   <a href="../build-your-plan.html" class="btn btn-primary nav-overlay-cta">Free Consultation &nbsp;&#8599;</a>
   <span class="nav-overlay-foot">Nebula Sites Studio — every business has a story worth telling</span>
@@ -1080,8 +1100,8 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <div class="ghost-card-url"></div>
       </div>
       <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
-      <div class="ghost-card-title">Portfolio Template</div>
-      <div class="ghost-card-tag">In progress</div>
+      <div class="ghost-card-title">Bouquet Builder</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
     </div>
     <!-- Card 3 (front) -->
     <div class="ghost-card">
@@ -1090,8 +1110,8 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <div class="ghost-card-url"></div>
       </div>
       <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
-      <div class="ghost-card-title">Robuste Store</div>
-      <div class="ghost-card-tag">Live ✦</div>
+      <div class="ghost-card-title">Pavon Weddings</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
     </div>
   </div>
 </section>
@@ -1162,7 +1182,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <li><span>✦</span> We stay by your side — support long after launch</li>
         <li><span>✦</span> You own 100% of the files, forever</li>
       </ul>
-      <p class="about-honest">Our promise: you leave with more than a website — you gain a partner who keeps supporting you long after launch. Robuste is live. The Flowers Pavon florist demo below is fully explorable. Real work, shown honestly.</p>
+      <p class="about-honest">Our promise: you leave with more than a website — you gain a partner who keeps supporting you long after launch. Everything below is real and fully explorable: the Flowers Pavon storefront, the wedding experience and the bouquet builder. Open them, click everything, judge us on the work.</p>
     </div>
   </div>
 </section>
@@ -1281,7 +1301,37 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       </div>
     </article>
 
-    
+    <!-- TEMPLATE 02 —— Wedding Experience -->
+    <article class="tpl-card" data-tpl-color="#e6c9d4">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--wedding">
+        <div class="tpl-preview-inner tpl-preview-inner--wedding">
+          <picture>
+            <source srcset="../demo/pavon/assets/dress.webp" type="image/webp">
+            <img src="../demo/pavon/assets/dress.png" alt="Pavon Weddings experience preview" loading="lazy">
+          </picture>
+          <div class="tpl-preview-caption">
+            <span>Weddings</span>
+            <strong>Every stem, chosen for one day</strong>
+          </div>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/weddings.html" class="btn btn-primary" target="_blank" rel="noopener">View the wedding page &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/weddings.html" target="_blank" rel="noopener">View the wedding page &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Weddings &middot; Dedicated Page</span><span class="tpl-num">02</span></div>
+        <h3 class="tpl-name">Pavon Weddings &mdash; A Dedicated Experience</h3>
+        <p class="tpl-desc">Wedding work does not belong in the same catalog as a $45 bouquet. So we build it its own experience — its own hero, its own pace, its own way of asking for the date. Brides land somewhere that already feels like their day, and you get enquiries with the details you actually need.</p>
+        <ul class="tpl-features">
+          <li>Cinematic wedding hero</li>
+          <li>Package &amp; palette showcase</li>
+          <li>Date-first enquiry flow</li>
+          <li>Built as an add-on to any plan</li>
+        </ul>
+      </div>
+    </article>
 
   </div>
 
@@ -1461,7 +1511,7 @@ window.addEventListener('DOMContentLoaded', function () {
       <a href="#services">Services</a>
       <a href="#process">Process</a>
       <a href="#contact">Contact</a>
-      <a href="../pricing.html">Pricing</a>
+      <a href="../build-your-plan.html#plans">Plans &amp; Prices</a>
       <a href="../build-your-plan.html">Build Your Plan</a>
     </nav>
   </div>
@@ -1478,6 +1528,29 @@ window.addEventListener('DOMContentLoaded', function () {
 ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   gsap.registerPlugin(ScrollTrigger)
+
+  /* Scroll engine hardening — stops the jitter/overlap near the footer.
+     1. ignoreMobileResize: URL-bar show/hide no longer re-measures the page.
+     2. Every pin/scrub trigger is re-measured after fonts + images land,
+        because late-loading media changes page height and leaves stale
+        start/end positions behind (the real cause of the end-of-page jump).
+     3. Resizes are debounced into a single refresh instead of dozens. */
+  ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' })
+
+  let refreshTimer
+  const softRefresh = () => {
+    clearTimeout(refreshTimer)
+    refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 180)
+  }
+  window.addEventListener('load', softRefresh)
+  window.addEventListener('resize', softRefresh)
+  window.addEventListener('orientationchange', softRefresh)
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(softRefresh)
+  document.querySelectorAll('img').forEach(img => {
+    if (!img.complete) img.addEventListener('load', softRefresh, { once:true })
+  })
+  setTimeout(softRefresh, 1200)
+  setTimeout(softRefresh, 3000)
   const isMobile = () => window.innerWidth <= 768
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches
 
@@ -1716,13 +1789,55 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!el) return
     const words = el.textContent.trim().split(/\s+/)
     el.innerHTML = words.map(w => `<span class="wrev-word">${w}&nbsp;</span>`).join('')
-    const spans = el.querySelectorAll('.wrev-word')
-    gsap.set(spans, { opacity:.06, color:'var(--text-muted)' })
-    gsap.to(spans, {
-      opacity:1, color:'var(--text)',
-      duration:.55, stagger:.045, ease:'power1.out',
-      scrollTrigger: { trigger: el, start:'top 78%', once:true }
+    const spans = Array.from(el.querySelectorAll('.wrev-word'))
+    const total = spans.length
+
+    // Reduced motion / mobile: show the full sentence immediately.
+    if (prefersReducedMotion) {
+      gsap.set(spans, { opacity:1, color:'var(--text)' })
+      return
+    }
+
+    gsap.set(spans, { opacity:.08, color:'var(--text-muted)' })
+
+    // Scroll-linked: the sentence finishes reading itself before the
+    // section leaves the middle of the screen, so it is never half-lit.
+    const paint = p => {
+      // p: 0 -> 1 across the reveal window. Each word gets a small window
+      // of its own but every word is fully lit by p = 0.92.
+      const reach = p * 1.18
+      for (let i = 0; i < total; i++) {
+        const startAt = (i / total) * 0.92
+        const o = Math.min(1, Math.max(0.08, (reach - startAt) / 0.16))
+        const s = spans[i]
+        s.style.opacity = o
+        s.style.color = o > .55 ? 'var(--text)' : 'var(--text-muted)'
+      }
+    }
+
+    const finish = () => {
+      for (let i = 0; i < total; i++) {
+        spans[i].style.opacity = 1
+        spans[i].style.color = 'var(--text)'
+      }
+    }
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 88%',
+      end: 'bottom 62%',
+      scrub: .6,
+      invalidateOnRefresh: true,
+      onUpdate: self => paint(self.progress),
+      // Whatever happens — fast scroll, resize, jump link — the sentence
+      // is always left complete once it has been passed.
+      onLeave: finish,
+      onEnterBack: () => paint(1),
+      onLeaveBack: () => paint(0)
     })
+
+    // Safety net: if the element is already above the fold on load.
+    if (el.getBoundingClientRect().top < innerHeight * .55) finish()
   }
   initWordReveal(document.getElementById('philText'))
   initWordReveal(document.getElementById('stmtText'))
@@ -1917,13 +2032,17 @@ document.addEventListener('DOMContentLoaded', () => {
       pinWrap.style.height = (innerHeight + SCROLL_PER_STEP() * steps.length) + 'px'
     }
     setHeight()
-    window.addEventListener('resize', () => { setHeight(); ScrollTrigger.refresh() })
+    window.addEventListener('resize', () => { setHeight(); softRefresh() })
 
     // Pin the sticky div
     ScrollTrigger.create({
       trigger: pinWrap, start: 'top top',
       end: () => `+=${SCROLL_PER_STEP() * steps.length}`,
       pin: sticky, pinSpacing: false,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onRefresh: setHeight,
+      onLeave: () => { gsap.set(track, { x: -totalDist() }) },
       onUpdate: self => {
         const p    = self.progress   // 0 → 1 over entire pin
         // Translate track horizontally
