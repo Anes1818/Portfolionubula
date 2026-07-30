@@ -10,7 +10,7 @@
   var ES={
     annc:'ORDENA ANTES DE LA <b>1PM</b> Y RECIBE EL MISMO DÍA · NORTHERN VIRGINIA',
     tagline:'ARTE FLORAL HECHO A MANO',
-    nav_bouquets:'Ramos', nav_anatomy:'Anatomía', nav_studio:'El Estudio', nav_care:'Cuidado', nav_faq:'Preguntas',
+    nav_bouquets:'Ramos', nav_anatomy:'Anatomía', nav_studio:'El Estudio', nav_wed:'Bodas', nav_care:'Cuidado', nav_faq:'Preguntas',
     nav_shop:'💐 Ver ramos',
     hero_kicker:'♥ Floristería artesanal de Northern Virginia ♥',
     hero_h1:'Cultivadas con amor,<br><em>atadas a mano.</em>',

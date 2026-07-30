@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex,nofollow,noarchive" />
+<style id="nb-gate-css">html{visibility:hidden}</style>
+<script>
+(function(){
+  var KEY='pavon-demo-2026';
+  function show(){document.documentElement.style.visibility='visible';}
+  try{ if(sessionStorage.getItem('nbGate')==='1'){show();return;} }catch(e){}
+  var ok=false;
+  try{ ok = window.prompt('Demo access code') === KEY; }catch(e){}
+  if(ok){ try{sessionStorage.setItem('nbGate','1');}catch(e){} show();
+    document.addEventListener('DOMContentLoaded',show);
+  } else { location.replace('/'); }
+})();
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Wedding Bouquets &amp; Event Flowers — Flowers Pavon · Northern Virginia</title>
+<meta name="description" content="Our wedding collection — bridal bouquets, ramos buchón, toss bouquets and event flowers. Every piece ordered through WhatsApp. Northern Virginia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+/* ===== Weddings sub-page ===== */
+/* bouquet grid */
+.wbq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:960px){.wbq-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.wbq-grid{grid-template-columns:repeat(2,1fr);gap:12px}.wbq-grid .bq .body{padding:12px 12px 14px}.wbq-grid .bq h3{font-size:15px;line-height:1.2}.wbq-grid .bq .recipe{font-size:11.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.wbq-grid .bq .occ-tag{font-size:8.5px}.wbq-grid .bq .price{font-size:15px}.wbq-grid .bq .acts{flex-direction:column;gap:6px}.wbq-grid .bq .acts .btn{width:100%;justify-content:center;min-height:38px;padding:7px 8px;font-size:11px}}
+.ph-fb{position:absolute;inset:0;display:grid;place-items:center;font-size:64px;opacity:.9}
+.bq .ph img{position:relative;z-index:1}
+
+/* extras strip */
+.wextras{margin-top:26px;background:var(--card);border:2.5px solid var(--ink);box-shadow:5px 5px 0 rgba(51,49,42,.14);padding:20px 24px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.wextras .items{display:flex;gap:22px;flex-wrap:wrap;font-size:14.5px;font-weight:600}
+.wextras .items b{color:var(--rose)}
+
+/* ===== weddings hero — the floating dress that lights the page ===== */
+/* overflow-x:hidden on html+body (site.css, ≤640px) breaks position:sticky — clip doesn't */
+html,body{overflow-x:clip}
+.whero{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(130% 95% at 74% 42%,#fffaf7 0%,rgba(255,250,247,0) 60%),linear-gradient(168deg,#fffefc 0%,#fdf6f4 54%,#f8ecee 100%);border-bottom:1px solid rgba(201,85,111,.14)}
+.whero-inner{position:relative;z-index:3;max-width:1260px;margin:0 auto;padding:clamp(64px,8vw,112px) clamp(16px,4vw,46px) clamp(56px,7vw,92px);display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:clamp(16px,4vw,54px);align-items:center;min-height:min(90svh,880px)}
+
+/* --- the light she casts --- */
+.whero-light{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.whero-light .halo{position:absolute;right:8%;top:44%;width:min(78vw,880px);aspect-ratio:1;transform:translate(18%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,246,229,.95) 0%,rgba(255,232,214,.55) 34%,rgba(253,214,204,.24) 55%,rgba(253,214,204,0) 72%);filter:blur(6px);animation:haloBreath 7.5s ease-in-out infinite}
+.whero-light .beam{position:absolute;right:-6%;top:-42%;width:min(96vw,1080px);height:150%;background:conic-gradient(from 190deg at 62% 12%,rgba(255,255,255,0) 0deg,rgba(255,248,232,.62) 18deg,rgba(255,255,255,0) 44deg,rgba(255,255,255,0) 300deg,rgba(255,244,226,.4) 330deg,rgba(255,255,255,0) 360deg);filter:blur(24px);opacity:.75;animation:beamDrift 14s ease-in-out infinite}
+.whero-light .wash{position:absolute;left:-14%;bottom:-34%;width:min(80vw,760px);aspect-ratio:1.2;border-radius:50%;background:radial-gradient(circle,rgba(246,205,214,.38) 0%,rgba(246,205,214,0) 68%);filter:blur(10px)}
+.whero-light .grain{position:absolute;inset:0;opacity:.5;background-image:radial-gradient(rgba(255,255,255,.9) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(70% 60% at 72% 46%,#000 0%,transparent 74%);-webkit-mask-image:radial-gradient(70% 60% at 72% 46%,#000 0%,transparent 74%)}
+@keyframes haloBreath{0%,100%{opacity:.82;transform:translate(18%,-50%) scale(1)}50%{opacity:1;transform:translate(18%,-50%) scale(1.06)}}
+@keyframes beamDrift{0%,100%{opacity:.6;transform:rotate(-1.6deg)}50%{opacity:.9;transform:rotate(1.6deg)}}
+
+/* --- drifting petals --- */
+.whero-petals{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.whero-petals img{position:absolute;top:0;left:0;width:26px;opacity:0;will-change:transform,opacity;user-select:none}
+
+/* --- copy side --- */
+.whero-copy{position:relative;z-index:4;max-width:560px}
+.whero-copy .stamp{display:inline-block;background:rgba(255,253,246,.78);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--rose);font-family:var(--px);font-size:8.5px;letter-spacing:.14em;padding:7px 13px;border:1px solid rgba(201,85,111,.32);border-radius:999px;margin-bottom:16px}
+.whero-copy .kicker{display:block}
+.whero-copy h1{font-family:var(--serif);font-weight:600;line-height:1.05;margin:12px 0 0;font-size:clamp(34px,5vw,62px);letter-spacing:-.01em}
+.whero-copy h1 em{font-style:italic;color:var(--rose)}
+.whero-copy p{color:var(--muted);margin:16px 0 24px;max-width:44ch;font-size:clamp(14px,1.15vw,16.5px);line-height:1.62}
+.whero-cta{display:flex;flex-wrap:wrap;gap:10px}
+.whero-cta .btn{min-height:50px}
+.hero-proof{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:20px;color:#766a6e;font-size:11.5px;font-weight:600}
+.hero-proof span{display:inline-flex;align-items:center;gap:5px}
+.whero-copy>*{animation:heroUp .95s cubic-bezier(.22,.9,.3,1) both}
+.whero-copy .kicker{animation-delay:.06s}
+.whero-copy h1{animation-delay:.14s}
+.whero-copy p{animation-delay:.28s}
+.whero-cta{animation-delay:.4s}
+.hero-proof{animation-delay:.52s}
+@keyframes heroUp{from{opacity:0;translate:0 20px}to{opacity:1;translate:0 0}}
+
+/* --- the floating dress --- */
+.whero-dress{position:relative;z-index:3;justify-self:end;align-self:center;width:100%;display:flex;justify-content:center;align-items:center;transform:translate3d(var(--px,0px),var(--py,0px),0)}
+.dress-img{position:relative;z-index:3;display:block;height:min(78svh,780px);width:auto;max-width:118%;filter:drop-shadow(0 44px 60px rgba(176,126,134,.28)) drop-shadow(0 0 46px rgba(255,236,214,.55));animation:dressFloat 9.5s ease-in-out infinite;opacity:0;transform-origin:50% 92%}
+.dress-img.is-in{animation:dressEnter 1.5s cubic-bezier(.2,.85,.3,1) both,dressFloat 9.5s ease-in-out 1.5s infinite}
+@keyframes dressEnter{from{opacity:0;transform:translateY(38px) scale(.965) rotate(1.6deg)}to{opacity:1;transform:none}}
+@keyframes dressFloat{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-16px) rotate(-.7deg)}66%{transform:translateY(9px) rotate(.6deg)}}
+.dress-floor{position:absolute;left:50%;bottom:2%;width:62%;height:42px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(150,104,112,.3) 0%,rgba(150,104,112,0) 70%);filter:blur(7px);z-index:1;animation:floorPulse 9.5s ease-in-out infinite}
+@keyframes floorPulse{0%,100%{opacity:.75;width:62%}33%{opacity:.5;width:54%}66%{opacity:.85;width:66%}}
+.dress-badge{position:absolute;right:2%;bottom:8%;width:106px;height:106px;z-index:5;filter:drop-shadow(0 12px 24px rgba(51,49,42,.2));animation:badgeIn 1s cubic-bezier(.2,.9,.3,1) .9s both}
+@keyframes badgeIn{from{opacity:0;transform:scale(.55) rotate(-22deg)}to{opacity:1;transform:none}}
+.dress-badge .ring{animation:badgeSpin 16s linear infinite;transform-origin:60px 60px}
+@keyframes badgeSpin{to{transform:rotate(360deg)}}
+.dress-badge text{font-family:var(--px);font-size:9.5px;letter-spacing:.22em;fill:var(--ink)}
+.dress-badge text.mid{font-size:26px}
+.whero-scroll{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:4;font-family:var(--px);font-size:8.5px;letter-spacing:.14em;color:var(--muted);white-space:nowrap;animation:hintPulse 2.6s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* --- match band under the hero --- */
+.wmatch{position:relative;background:linear-gradient(180deg,#fdf6f4,#fffdfb);border-bottom:1px solid rgba(201,85,111,.12)}
+.wmatch .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(16px,3vw,44px);align-items:center;padding-top:clamp(38px,5vw,64px);padding-bottom:clamp(38px,5vw,64px)}
+.wmatch h2{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.2vw,42px);line-height:1.08;margin:10px 0 0}
+.wmatch h2 em{font-style:italic;color:var(--rose)}
+.wmatch p{color:var(--muted);margin:14px 0 20px;max-width:46ch}
+.wmatch .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.wmatch .shots span{aspect-ratio:3/4;border-radius:14px;border:1px solid rgba(201,85,111,.18);background:linear-gradient(160deg,#fff,#fbeef0);display:grid;place-items:center;font-size:26px;box-shadow:0 18px 34px -26px rgba(82,38,52,.55)}
+
+@media(max-width:980px){
+  .whero-inner{grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);gap:14px;min-height:auto;padding-top:clamp(48px,9vw,78px)}
+  .dress-img{height:min(62svh,560px);max-width:130%}
+  .dress-badge{width:74px;height:74px;right:-2%;bottom:6%}
+}
+@media(max-width:720px){
+  .whero-inner{grid-template-columns:minmax(0,1.24fr) minmax(0,.76fr);gap:4px;padding:26px 16px 34px;align-items:center}
+  .whero-copy .stamp{font-size:6.5px;padding:5px 9px;margin-bottom:8px;letter-spacing:.1em}
+  .whero-copy .kicker{font-size:8.5px;letter-spacing:.1em;white-space:nowrap}
+  .whero-copy h1{font-size:clamp(27px,8.2vw,36px);line-height:1.03;margin-top:8px}
+  .whero-copy p{font-size:12.5px;line-height:1.5;margin:10px 0 14px;max-width:none}
+  .whero-cta{flex-direction:column;align-items:stretch;gap:8px}
+  .whero-cta .btn{width:100%;justify-content:center;min-height:44px;padding:9px 10px;font-size:12px;white-space:nowrap}
+  .hero-proof{gap:5px 12px;font-size:9.5px;margin-top:12px}
+  /* phone: she stands in the middle of the stage, the words rest on her light */
+  .whero-inner{grid-template-columns:1fr;position:relative}
+  .whero-dress{position:absolute;inset:0;margin:0;justify-content:center;align-items:center;z-index:1;pointer-events:none}
+  .whero-dress::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,252,249,.9) 0%,rgba(255,252,249,.66) 46%,rgba(255,250,246,.2) 74%,rgba(255,250,246,0) 100%)}
+  .dress-img{height:min(64svh,520px);max-width:none;filter:drop-shadow(0 22px 34px rgba(176,126,134,.24)) drop-shadow(0 0 34px rgba(255,236,214,.55))}
+  .dress-floor{width:46%;height:24px;bottom:6%}
+  .dress-badge{width:52px;height:52px;right:6%;bottom:2%;z-index:5}
+  .whero-copy{position:relative;z-index:4;max-width:none;text-shadow:0 1px 12px rgba(255,252,250,.85)}
+  .whero-light .halo{right:-14%;width:128vw}
+  .whero-scroll{font-size:7px;bottom:8px}
+  .wmatch .wrap{grid-template-columns:1fr;gap:20px}
+}
+@media(max-width:400px){
+  .whero-copy h1{font-size:26px}
+  .dress-img{height:min(58svh,440px)}
+  .dress-badge{width:46px;height:46px;right:5%}
+}
+@media(prefers-reduced-motion:reduce){
+  .whero-copy>*,.dress-img,.dress-img.is-in,.dress-floor,.dress-badge,.dress-badge .ring,.whero-scroll,.whero-light .halo,.whero-light .beam{animation:none!important}
+  .dress-img{opacity:1}
+  .whero-petals{display:none}
+}
+
+/* trust strip, wedding set, size guide (inspired by product-page patterns) */
+.wtrust{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:tb}
+.wtrust .tb{position:relative;overflow:hidden;background:linear-gradient(168deg,#fffdfb,#fdf4f4);border:1px solid rgba(201,85,111,.16);border-radius:20px;padding:26px 20px 24px;text-align:left;box-shadow:0 24px 40px -34px rgba(82,38,52,.6);transition:transform .3s cubic-bezier(.2,.9,.3,1),box-shadow .3s ease,border-color .3s ease}
+.wtrust .tb::before{counter-increment:tb;content:"0" counter(tb);position:absolute;top:14px;right:16px;font-family:var(--px);font-size:9px;letter-spacing:.1em;color:rgba(201,85,111,.42)}
+.wtrust .tb::after{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--rose),rgba(238,183,197,.25));transform:scaleX(.28);transform-origin:left;transition:transform .35s ease}
+.wtrust .tb:hover{transform:translateY(-6px);border-color:rgba(201,85,111,.34);box-shadow:0 30px 48px -32px rgba(82,38,52,.65)}
+.wtrust .tb:hover::after{transform:scaleX(1)}
+.wtrust .tb .ic{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.85);border:1px solid rgba(201,85,111,.16);font-size:22px;margin-bottom:14px;box-shadow:0 10px 20px -14px rgba(82,38,52,.7)}
+.wtrust .tb h4{font-family:var(--serif);font-size:18px;margin:0 0 7px;color:var(--ink);line-height:1.2}
+.wtrust .tb p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
+@media(max-width:860px){.wtrust{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.wtrust{grid-template-columns:repeat(2,1fr);gap:10px}.wtrust .tb{padding:16px 13px 15px;border-radius:16px}.wtrust .tb .ic{width:36px;height:36px;font-size:18px;border-radius:11px;margin-bottom:9px}.wtrust .tb h4{font-size:14.5px}.wtrust .tb p{font-size:11.5px;line-height:1.5}.wtrust .tb::before{top:10px;right:10px;font-size:7.5px}}
+.wset{background:var(--card);border:1px solid rgba(201,85,111,.18);border-radius:22px;padding:34px;display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+@media(max-width:860px){.wset{grid-template-columns:1fr;padding:24px}}
+.wset .it{display:flex;gap:14px;align-items:flex-start;padding:15px 0;border-bottom:1px dashed rgba(201,85,111,.2)}
+.wset .it:last-of-type{border-bottom:0}
+.wset .ck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:rgba(201,85,111,.1);color:var(--rose);font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.wset .it h4{font-family:var(--serif);font-size:17px;margin:0 0 3px;color:var(--ink)}
+.wset .it p{font-size:13px;color:var(--muted);margin:0;line-height:1.5}
+.wset .it .pr{margin-left:auto;font-family:var(--serif);font-size:16px;color:var(--ink);white-space:nowrap;padding-left:10px}
+.wset .sum{text-align:center;border-left:1px dashed rgba(201,85,111,.25);padding-left:34px}
+@media(max-width:860px){.wset .sum{border-left:0;padding-left:0;border-top:1px dashed rgba(201,85,111,.25);padding-top:22px}}
+.wset .sum .was{color:var(--muted);text-decoration:line-through;font-size:15px}
+.wset .sum .now{font-family:var(--serif);font-size:38px;color:var(--rose);margin:2px 0 4px}
+.wset .sum .chip{display:inline-block;font-family:var(--px);font-size:8px;letter-spacing:.1em;color:var(--rose);border:1px solid rgba(201,85,111,.35);border-radius:999px;padding:5px 12px;margin-bottom:16px}
+.wsize{width:100%;border-collapse:collapse;margin-bottom:26px}
+.wsize th{font-family:var(--px);font-size:8px;letter-spacing:.12em;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid rgba(201,85,111,.25)}
+.wsize td{padding:13px 12px;border-bottom:1px dashed rgba(201,85,111,.16);font-size:14px;color:var(--ink);vertical-align:top}
+.wsize td b{font-family:var(--serif)}
+.wsize td small{display:block;color:var(--muted);margin-top:2px}
+.wsize td:last-child{font-family:var(--serif);color:var(--rose);white-space:nowrap}
+.wknow details{background:var(--card);border:1px solid rgba(201,85,111,.14);border-radius:14px;padding:16px 20px;margin-bottom:10px}
+.wknow summary{font-family:var(--serif);font-size:16px;color:var(--ink);cursor:pointer}
+.wknow .a{padding-top:10px;font-size:14px;color:var(--muted);line-height:1.65}
+.guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}
+@media(max-width:860px){.guide-grid{grid-template-columns:1fr}}
+
+/* ideas */
+.ideas{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:960px){.ideas{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.ideas{grid-template-columns:1fr}}
+.idea{background:var(--card);border:2.5px solid var(--ink);box-shadow:5px 5px 0 rgba(51,49,42,.14);padding:20px 18px;display:flex;flex-direction:column;gap:8px}
+.idea .ico{font-size:26px}
+.idea b{font-family:var(--serif);font-size:17px}
+.idea p{margin:0;color:var(--muted);font-size:13px;flex:1}
+.idea a{font-size:12.5px;font-weight:700;color:var(--green);text-decoration:none;margin-top:6px}
+.idea a:hover{color:var(--rose)}
+</style>
+</head>
+<body>
+
+<div id="annc">🚚 <span>ORDER BY <b>1PM</b> FOR SAME-DAY DELIVERY · NORTHERN VIRGINIA</span></div>
+
+<nav id="nav"><div class="wrap bar">
+  <a class="logo" href="index.html"><canvas data-px="rose" width="12" height="12"></canvas><span><span class="t">Flowers <em>Pavon</em></span><small>HANDCRAFTED FLORAL ARTISTRY</small></span></a>
+  <div class="links">
+    <a href="index.html#catalog">Bouquets</a>
+    <a href="index.html#anatomy">Anatomy</a>
+    <a href="builder.html">The Studio</a>
+    <a href="weddings.html" style="color:var(--rose)">Weddings</a>
+    <a href="index.html#care">Flower Care</a>
+    <a href="index.html#faq">FAQ</a>
+  </div>
+  <div class="nav-right">
+    <a class="btn btn-rose" href="index.html#catalog">💐 Shop bouquets</a>
+  </div>
+</div></nav>
+
+<section class="whero" id="whero" aria-label="Weddings — bridal flowers">
+  <div class="whero-light" aria-hidden="true"><span class="beam"></span><span class="halo"></span><span class="wash"></span><span class="grain"></span></div>
+  <div class="whero-petals" id="wheroPetals" aria-hidden="true"></div>
+
+  <div class="whero-inner">
+    <div class="whero-copy">
+      <span class="stamp">PAVON · WEDDINGS</span>
+      <span class="kicker">♥ WEDDINGS &amp; EVENTS ♥</span>
+      <h1 id="pageTitle">The wedding collection, <em>tied by hand.</em></h1>
+      <p>Every bouquet below is made to order for your day — tell us your date and your colors on WhatsApp, and we'll shape any of them around you.</p>
+      <div class="whero-cta">
+        <a class="btn btn-rose" data-wa="Hi Flowers Pavon! I'm planning a wedding and I'd like a free flowers consultation." href="#">💍 Plan my wedding flowers</a>
+        <a class="btn btn-ghost" href="#bouquets">See the bouquets ↓</a>
+      </div>
+      <div class="hero-proof" aria-label="Wedding service highlights"><span>✓ Free consultation</span><span>✓ Made for your date</span><span>✓ Northern Virginia</span><span>✓ Planned on WhatsApp</span></div>
+    </div>
+
+    <div class="whero-dress" id="wheroDress">
+      <img class="dress-img" id="dressImg" src="assets/dress.webp" alt="Flowing ivory and blush wedding dress" onerror="this.onerror=null;this.src='assets/dress.png'">
+      <div class="dress-floor" aria-hidden="true"></div>
+      <svg class="dress-badge" id="dressBadge" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="58" fill="rgba(255,253,246,.92)" stroke="#c9556f" stroke-width="1.2"/>
+        <circle cx="60" cy="60" r="35" fill="none" stroke="#c9556f" stroke-width="1" stroke-dasharray="2 4"/>
+        <g class="ring">
+          <path id="bqc" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" fill="none"/>
+          <text><textPath href="#bqc">HANDCRAFTED · FOR YOUR DAY · PAVON ·</textPath></text>
+        </g>
+        <text class="mid" x="60" y="69" text-anchor="middle">💐</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="whero-scroll" aria-hidden="true">✿ SCROLL — SEE THE BOUQUETS ✿</div>
+</section>
+
+<section class="wmatch" id="match" aria-label="Match your dress">
+  <div class="wrap">
+    <div class="rv">
+      <span class="kicker">♥ FOR THE DRESS YOU CHOSE ♥</span>
+      <h2>You found the dress. <em>We'll match the flowers.</em></h2>
+      <p>Ivory, blush or bold — send us a photo of your dress on WhatsApp and we'll design a bouquet that looks born next to it.</p>
+      <a class="btn btn-rose" data-wa="Hi Flowers Pavon! Here's my wedding dress — can you design a bouquet to match it?" href="#">💐 Match my dress</a>
+    </div>
+    <div class="shots rv" aria-hidden="true"><span>🤍</span><span>🌸</span><span>🌹</span></div>
+  </div>
+</section>
+
+<section class="sec" id="promise" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="wtrust">
+      <div class="tb rv"><span class="ic">🌹</span><h4>Real, cut fresh</h4><p>Live blooms bought for your date — never silk, never foam, never out of a box.</p></div>
+      <div class="tb rv"><span class="ic">✂️</span><h4>One of a kind</h4><p>Designed around your dress, your colors and your height — no two brides carry the same bouquet.</p></div>
+      <div class="tb rv"><span class="ic">🚚</span><h4>Delivered styled</h4><p>We arrive on your wedding morning with everything arranged and ready to hold.</p></div>
+      <div class="tb rv"><span class="ic">💬</span><h4>Planned on WhatsApp</h4><p>Tell us your date and send your inspo — unlimited tweaks until it feels like yours.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="bouquets">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">✿ THE BOUQUETS ✿</span>
+      <h2>Wedding bouquets we make.</h2>
+      <p>Starting prices — the final quote depends on your flowers, size and season. Order or ask about any of them in one tap.</p>
+    </div>
+    <div class="wbq-grid">
+
+      <div class="bq rv"><span class="badge b-rose">BRIDAL</span><div class="ph"><span class="ph-fb">💐</span><img src="assets/weddings/novia-clasica.webp" alt="La Novia Clásica ivory and blush bridal bouquet" loading="lazy" onerror="this.style.display='none'"></div><div class="body"><span class="occ-tag">✦ Wedding Collection</span><h3>La Novia Clásica</h3><p class="recipe"><b>Inside:</b> ivory roses with soft blush accents and trailing ribbon — the timeless bridal bouquet that suits every dress.</p><div class="row"><span class="price"><small>from</small> <span class="amt" data-n="180">$180</span></span></div><div class="acts"><a class="btn btn-wa" data-wa="Hi Flowers Pavon! I'd like La Novia Clásica bridal bouquet (from $180) for my wedding." href="#">Order</a><a class="btn btn-ghost" data-wa="Hi Flowers Pavon! Can we customize La Novia Clásica to my wedding colors?" href="#">Customize</a></div></div></div>
+
+      <div class="bq rv"><div class="ph"><span class="ph-fb">🤍</span><img src="assets/weddings/nube-de-novia.webp" alt="Nube de Novia white roses and baby's breath" loading="lazy" onerror="this.style.display='none'"></div><div class="body"><span class="occ-tag">✦ Wedding Collection</span><h3>Nube de Novia</h3><p class="recipe"><b>Inside:</b> white roses floating in clouds of baby's breath — airy, romantic, and unbeatable in photos.</p><div class="row"><span class="price"><small>from</small> <span class="amt" data-n="150">$150</span></span></div><div class="acts"><a class="btn btn-wa" data-wa="Hi Flowers Pavon! I'd like the Nube de Novia bouquet (from $150) for my wedding." href="#">Order</a><a class="btn btn-ghost" data-wa="Hi Flowers Pavon! Can we customize the Nube de Novia for my wedding?" href="#">Customize</a></div></div></div>
+
+      <div class="bq rv"><span class="badge">SIGNATURE</span><div class="ph"><span class="ph-fb">❤️</span><img src="assets/weddings/buchon-de-boda.webp" alt="Buchón de Boda grand red rose bridal buchón" loading="lazy" onerror="this.style.display='none'"></div><div class="body"><span class="occ-tag">✦ Wedding Collection</span><h3>Buchón de Boda</h3><p class="recipe"><b>Inside:</b> our signature ramo buchón in deep red — a sculpted dome of premium roses for brides who want drama.</p><div class="row"><span class="price"><small>from</small> <span class="amt" data-n="250">$250</span></span></div><div class="acts"><a class="btn btn-wa" data-wa="Hi Flowers Pavon! I'd like the Buchón de Boda (from $250) for my wedding." href="#">Order</a><a class="btn btn-ghost" data-wa="Hi Flowers Pavon! Can we customize the Buchón de Boda colors for my wedding?" href="#">Customize</a></div></div></div>
+
+      <div class="bq rv"><div class="ph"><span class="ph-fb">💜</span><img src="assets/weddings/lavanda-romance.webp" alt="Lavanda Romance lavender rose bridal bouquet" loading="lazy" onerror="this.style.display='none'"></div><div class="body"><span class="occ-tag">✦ Wedding Collection</span><h3>Lavanda Romance</h3><p class="recipe"><b>Inside:</b> lavender roses with silver-green foliage — soft color for brides who want something gently different.</p><div class="row"><span class="price"><small>from</small> <span class="amt" data-n="160">$160</span></span></div><div class="acts"><a class="btn btn-wa" data-wa="Hi Flowers Pavon! I'd like the Lavanda Romance bouquet (from $160) for my wedding." href="#">Order</a><a class="btn btn-ghost" data-wa="Hi Flowers Pavon! Can we customize the Lavanda Romance for my wedding?" href="#">Customize</a></div></div></div>
+
+      <div class="bq rv"><span class="badge b-sage">BOHO</span><div class="ph"><span class="ph-fb">🌾</span><img src="assets/weddings/boho-silvestre.webp" alt="Boho Silvestre wildflower and dried grass bouquet" loading="lazy" onerror="this.style.display='none'"></div><div class="body"><span class="occ-tag">✦ Wedding Collection</span><h3>Boho Silvestre</h3><p class="recipe"><b>Inside:</b> wildflowers, dried grasses and terracotta tones, loosely hand-tied — made for garden and outdoor weddings.</p><div class="row"><span class="price"><small>from</small> <span class="amt" data-n="140">$140</span></span></div><div class="acts"><a class="btn btn-wa" data-wa="Hi Flowers Pavon! I'd like the Boho Silvestre bouquet (from $140) for my wedding." href="#">Order</a><a class="btn btn-ghost" data-wa="Hi Flowers Pavon! Can we customize the Boho Silvestre for my wedding?" href="#">Customize</a></div></div></div>
+
+      <div class="bq rv"><div class="ph"><span class="ph-fb">🌸</span><img src="assets/weddings/ramo-de-lanzar.webp" alt="Ramo de Lanzar mini toss bouquet" loading="lazy" onerror="this.style.display='none'"></div><div class="body"><span class="occ-tag">✦ Wedding Collection</span><h3>Ramo de Lanzar</h3><p class="recipe"><b>Inside:</b> a mini twin of your bridal bouquet, made to fly — so you keep yours and someone lucky catches theirs.</p><div class="row"><span class="price"><small>from</small> <span class="amt" data-n="45">$45</span></span></div><div class="acts"><a class="btn btn-wa" data-wa="Hi Flowers Pavon! I'd like a Ramo de Lanzar toss bouquet (from $45) for my wedding." href="#">Order</a><a class="btn btn-ghost" data-wa="Hi Flowers Pavon! Can the toss bouquet match my bridal bouquet?" href="#">Match mine</a></div></div></div>
+
+    </div>
+
+    <div class="wextras rv">
+      <div class="items"><span>🌷 Bridesmaids' bouquets <b>from $60</b></span><span>🌹 Boutonnières <b>from $15</b></span><span>👐 Corsages <b>from $20</b></span></div>
+      <a class="btn btn-wa" data-wa="Hi Flowers Pavon! I need bouquets for my bridal party — bridesmaids, boutonnières and corsages." href="#">Ask for the bridal party</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="set" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">✿ BLOOMED TOGETHER ✿</span>
+      <h2>One set, everyone matching.</h2>
+      <p>Your bouquet sets the palette — the set carries it across the whole wedding party, in one order.</p>
+    </div>
+    <div class="wset rv">
+      <div>
+        <div class="it"><span class="ck">✓</span><div><h4>La Novia Clásica — bridal bouquet</h4><p>Ivory roses with blush accents and trailing ribbon, sized to you.</p></div><span class="pr">$180</span></div>
+        <div class="it"><span class="ck">✓</span><div><h4>Las Damas — 4 bridesmaid bouquets</h4><p>Smaller twins of yours, so the photos read as one palette.</p></div><span class="pr">$240</span></div>
+        <div class="it"><span class="ck">✓</span><div><h4>Los Boutonnieres — set of 6</h4><p>For him and his people — pinned from the same blooms as your bouquet.</p></div><span class="pr">$90</span></div>
+      </div>
+      <div class="sum">
+        <div class="was">$510</div>
+        <div class="now">$459</div>
+        <span class="chip">YOU SAVE $51</span><br>
+        <a class="btn btn-rose" data-wa="Hi Flowers Pavon! I'd like the full wedding set — bridal bouquet + 4 bridesmaids + 6 boutonnieres ($459)." href="#">💍 Book the whole set</a>
+        <p style="font-size:12.5px;color:var(--muted);margin:12px 0 0">Different flowers or party size? The set reshapes around you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="guide" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">✿ GOOD TO KNOW ✿</span>
+      <h2>Sizes, timing &amp; care.</h2>
+      <p>The answers brides ask us for on WhatsApp — so you can plan with zero guesswork.</p>
+    </div>
+    <div class="guide-grid">
+      <div class="rv">
+        <table class="wsize">
+          <tr><th>SIZE</th><th>FEELS LIKE</th><th>FROM</th></tr>
+          <tr><td><b>Petite</b> · 8–9"<small>held close to the body</small></td><td>Intimate — courthouse days, slip dresses, elopements</td><td>$140</td></tr>
+          <tr><td><b>Classic</b> · 10–11"<small>what most brides carry</small></td><td>Timeless — A-lines, ballgowns, church aisles</td><td>$180</td></tr>
+          <tr><td><b>Statement</b> · 12"+<small>cascades &amp; buchón drama</small></td><td>Unmissable — grand venues and bold photos</td><td>$250</td></tr>
+        </table>
+      </div>
+      <div class="wknow rv">
+        <details><summary>When do my flowers arrive?</summary><div class="a">We build your bouquet the day before and deliver it styled on your wedding morning — so every bloom opens at its peak in your photos, not three days early in a shipping box.</div></details>
+        <details><summary>Will I see it before the day?</summary><div class="a">Yes — you get a photo of your actual bouquet on WhatsApp the day before, and one round of changes is always free.</div></details>
+        <details><summary>How do they stay fresh all day?</summary><div class="a">Every stem travels in water until the last minute, and we hand you a simple card: cool room, out of direct sun, a light mist — your flowers will outlast the dance floor.</div></details>
+        <details><summary>What about allergies?</summary><div class="a">Tell us — we design low-pollen bouquets with roses, hydrangea and eucalyptus that are gentle on noses and still completely real.</div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ideas" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">✿ BEYOND THE BOUQUET ✿</span>
+      <h2>Everything we can do for your day.</h2>
+      <p>All of it arranged over WhatsApp — tell us the venue and the date, we bring the flowers.</p>
+    </div>
+    <div class="ideas">
+      <div class="idea rv"><span class="ico">🌿</span><b>Ceremony arch</b><p>A floral arch or asymmetric corner for your vows — the backdrop of every photo.</p><a data-wa="Hi Flowers Pavon! I'd like a ceremony arch for my wedding — can we talk?" href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">🌸</span><b>Petal aisle</b><p>Fresh rose petals lining your walk — solid lanes, borders or scattered.</p><a data-wa="Hi Flowers Pavon! I'd like a petal aisle for my ceremony." href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">🕯️</span><b>Centerpieces</b><p>Low and lush or tall and dramatic — designed per table, delivered set up.</p><a data-wa="Hi Flowers Pavon! I need wedding centerpieces — can we talk numbers and style?" href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">🌹</span><b>Boutonnières &amp; corsages</b><p>For grooms, parents and the party — echoing the bridal bouquet recipe.</p><a data-wa="Hi Flowers Pavon! I need boutonnières and corsages for my wedding party." href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">🚗</span><b>Wedding car</b><p>Ribbon and fresh flower styling for the getaway car — hood, doors and all.</p><a data-wa="Hi Flowers Pavon! I'd like wedding car flower decoration." href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">🍰</span><b>Cake flowers</b><p>Food-safe fresh blooms for the cake, matched to your palette and topper.</p><a data-wa="Hi Flowers Pavon! I'd like fresh flowers for my wedding cake." href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">💒</span><b>Welcome sign</b><p>A floral corner or garland on your welcome sign — first impression, done.</p><a data-wa="Hi Flowers Pavon! I'd like flowers for my wedding welcome sign." href="#">Ask on WhatsApp →</a></div>
+      <div class="idea rv"><span class="ico">✨</span><b>Send-off petals</b><p>Petal cones for guests and a styled exit — the last photo of the night.</p><a data-wa="Hi Flowers Pavon! I'd like send-off petals for my wedding exit." href="#">Ask on WhatsApp →</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div><div class="foot-logo">Flowers <em>Pavon</em></div><p>Northern Virginia's handcrafted florist. Ramos buchón, arrangements &amp; preserved roses, delivered today.</p></div>
+    <div><h4>SHOP</h4><a href="index.html#catalog">Bouquet menu</a><a href="builder.html">Bouquet Studio</a><a href="index.html#faq">Delivery &amp; FAQ</a></div>
+    <div><h4>SERVICES</h4><a href="weddings.html">Weddings &amp; events</a><a href="#" data-wa="Hi Flowers Pavon! I'm interested in the subscription.">Subscriptions</a><a href="index.html#care">Flower care</a></div>
+    <div><h4>VISIT</h4><a href="#">Northern Virginia</a><a href="#">Mon–Sat · 9am–6pm</a><a href="https://instagram.com/flowerspavon" target="_blank" rel="noopener">@flowerspavon</a></div>
+  </div>
+</footer>
+
+<script src="webp.js"></script>
+<script src="pixel.js"></script>
+<script>
+(function(){
+  if(!('IntersectionObserver' in window)){document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+})();
+</script>
+<script>
+/* --- weddings hero: floating dress, ambient light, drifting petals --- */
+(function(){
+  var hero=document.getElementById('whero'),
+      dress=document.getElementById('wheroDress'),
+      img=document.getElementById('dressImg'),
+      box=document.getElementById('wheroPetals');
+  if(!hero||!dress||!img) return;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* she arrives */
+  function enter(){ img.classList.add('is-in'); }
+  if(reduce){ img.style.opacity=1; }
+  else if(img.complete){ requestAnimationFrame(enter); }
+  else { img.addEventListener('load',enter); img.addEventListener('error',enter); }
+
+  if(reduce||!box) return;
+
+  /* drifting petals across the light */
+  var mob=window.matchMedia?matchMedia('(max-width: 720px)').matches:false;
+  var N=mob?9:16, petals=[], W=hero.offsetWidth, H=hero.offsetHeight;
+  for(var i=0;i<N;i++){
+    var el=document.createElement('img');
+    el.src='assets/petals/p'+(1+Math.floor(Math.random()*8))+'.webp';
+    el.alt=''; el.loading='lazy';
+    var sc=(mob?16:20)+Math.random()*(mob?12:18);
+    el.style.width=sc.toFixed(0)+'px';
+    box.appendChild(el);
+    petals.push({el:el,x:Math.random()*100,y:Math.random()*120-20,v:6+Math.random()*10,
+      amp:8+Math.random()*22,freq:.25+Math.random()*.5,ph:Math.random()*6.28,
+      r0:Math.random()*360,rv:Math.random()*40-20,o:.5+Math.random()*.45});
+  }
+
+  /* light parallax: the dress leans toward the pointer */
+  var tx=0,ty=0,cx=0,cy=0;
+  if(!mob){
+    hero.addEventListener('pointermove',function(e){
+      var r=hero.getBoundingClientRect();
+      tx=((e.clientX-r.left)/r.width-.5)*-26;
+      ty=((e.clientY-r.top)/r.height-.5)*-16;
+    },{passive:true});
+    hero.addEventListener('pointerleave',function(){ tx=0;ty=0; },{passive:true});
+  }
+
+  var sy=0;
+  window.addEventListener('scroll',function(){ sy=window.pageYOffset||0; },{passive:true});
+  window.addEventListener('resize',function(){ W=hero.offsetWidth; H=hero.offsetHeight; },{passive:true});
+
+  var last=performance.now(), t=0, running=true;
+  var io=new IntersectionObserver(function(en){ running=en[0].isIntersecting; },{threshold:0});
+  io.observe(hero);
+
+  function frame(now){
+    var dt=Math.min(.05,(now-last)/1000); last=now; t+=dt;
+    if(running){
+      cx+=(tx-cx)*.06; cy+=(ty-cy)*.06;
+      var drift=Math.min(60,sy*.06);
+      dress.style.setProperty('--px',cx.toFixed(2)+'px');
+      dress.style.setProperty('--py',(cy-drift).toFixed(2)+'px');
+      for(var i=0;i<petals.length;i++){
+        var p=petals[i];
+        p.y+=p.v*dt;
+        if(p.y>118){ p.y=-14; p.x=Math.random()*100; }
+        var x=(p.x/100)*W+Math.sin(t*p.freq*6.28+p.ph)*p.amp;
+        var y=(p.y/100)*H;
+        p.el.style.opacity=p.o.toFixed(2);
+        p.el.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0) rotate('+(p.r0+t*p.rv).toFixed(1)+'deg)';
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@4/lib/anime.iife.min.js"></script>
+<script>
+(function(){
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(!window.anime || !anime.animate) return;
+  var animate=anime.animate, stagger=anime.stagger, svgu=anime.svg, tlf=anime.createTimeline, utils=anime.utils;
+
+  /* --- split headlines into letters --- */
+  function split(el){
+    if(!el) return;
+    (function walk(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(c){
+        if(c.nodeType===3){
+          var frag=document.createDocumentFragment();
+          c.textContent.split('').forEach(function(ch){
+            if(ch===' '){frag.appendChild(document.createTextNode(' '));return}
+            var s=document.createElement('span');s.className='ch';s.style.display='inline-block';s.textContent=ch;frag.appendChild(s);
+          });
+          node.replaceChild(frag,c);
+        } else if(c.nodeType===1){walk(c)}
+      });
+    })(el);
+  }
+  split(document.getElementById('pageTitle'));
+  utils.set('#pageTitle .ch',{opacity:0,translateY:'0.55em'});
+  animate('#pageTitle .ch',{opacity:1,translateY:0,delay:stagger(24,{start:120}),duration:600,ease:'out(3)'});
+
+  /* --- bouquet cards stagger + price count-up --- */
+  var grid=document.querySelector('.wbq-grid');
+  if(grid){
+    utils.set('.wbq-grid .bq',{opacity:0,translateY:26});
+    var gp=false;
+    var gio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!gp){gp=true;
+      animate('.wbq-grid .bq',{opacity:1,translateY:0,delay:stagger(90),duration:650,ease:'outCubic'});
+      document.querySelectorAll('.amt').forEach(function(el,i){
+        var n=parseInt(el.getAttribute('data-n'),10)||0;var o={v:0};
+        animate(o,{v:n,duration:1300,delay:250+i*110,ease:'outExpo',onUpdate:function(){el.textContent='$'+Math.round(o.v)}});
+      });
+      gio.disconnect();}})},{threshold:.12});
+    gio.observe(grid);
+  }
+  var ideas=document.querySelector('.ideas');
+  if(ideas){
+    utils.set('.ideas .idea',{opacity:0,translateY:22});
+    var ip=false;
+    var iio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!ip){ip=true;
+      animate('.ideas .idea',{opacity:1,translateY:0,delay:stagger(70),duration:600,ease:'outCubic'});iio.disconnect();}})},{threshold:.12});
+    iio.observe(ideas);
+  }
+
+  /* --- button springs --- */
+  document.querySelectorAll('.btn').forEach(function(b){
+    b.addEventListener('mouseenter',function(){animate(b,{scale:1.05,duration:420,ease:'outElastic(1, .6)'})});
+    b.addEventListener('mouseleave',function(){animate(b,{scale:1,duration:320,ease:'out(3)'})});
+  });
+})();
+</script>
+<script src="topbar.js" defer></script>
+</body>
+</html>

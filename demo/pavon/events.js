@@ -107,20 +107,25 @@ else if(mode!=='off'){ EVENTS.forEach(function(e){ if(e.id===mode) activeEv=e; }
 
 /* ---- styles ---- */
 var css=''+
-'#evRibbon{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 16px;background:#2b261c;color:#f5eeda;padding:9px 14px;font-family:var(--px,monospace);font-size:9px;letter-spacing:.06em;line-height:1.6;position:relative;z-index:98}'+
-'#evRibbon .ico{font-size:14px;line-height:1;animation:evPulse 3.2s ease-in-out infinite;display:inline-block}'+
+'#evRibbon{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px 14px;min-height:42px;background:#2b261c;color:#f5eeda;padding:8px 18px;font-family:var(--px,monospace);font-size:10.5px;letter-spacing:.055em;line-height:1.4;position:relative;z-index:98;box-shadow:inset 0 -1px rgba(255,255,255,.09)}'+
+'#evRibbon .ico{font-size:16px;line-height:1;animation:evPulse 3.2s ease-in-out infinite;display:inline-block}'+
 '@keyframes evPulse{0%,100%{transform:scale(1)}6%{transform:scale(1.25)}12%{transform:scale(1)}}'+
 '#evRibbon b{font-weight:400;color:#fff}'+
 '#evRibbon .cd{color:#ffd9a8;white-space:nowrap}'+
 '#evRibbon a.cta{color:#fff;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}'+
-'#evRibbon .pick{display:inline-flex;align-items:center;gap:6px}'+
-'#evRibbon select{background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:7px;font-family:var(--px,monospace);font-size:8px;padding:4px 5px;cursor:pointer;max-width:180px}'+
+'#evRibbon .pick{display:inline-flex;align-items:center;gap:7px;padding-left:12px;border-left:1px solid rgba(255,255,255,.24)}'+
+'#evRibbon select{background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:8px;font-family:var(--px,monospace);font-size:9px;padding:5px 7px;cursor:pointer;max-width:190px}'+
 '#evRibbon select option{background:#2b261c;color:#fff}'+
 '.fbtn.ev-glow{outline:3px solid var(--rose);outline-offset:2px}'+
-'@media(max-width:720px){#evRibbon{font-size:8px;padding:8px 10px;gap:4px 10px}}'+
-'#evBow{position:fixed;top:0;left:0;width:200px;height:auto;z-index:120;cursor:pointer;filter:drop-shadow(4px 6px 10px rgba(0,0,0,.3));transform:translate(-25%,-24%)}'+
-'@media(max-width:720px){#evBow{width:128px}#evRibbon{padding-left:104px}#annc{padding-left:104px}}'+
-'@media(min-width:721px){#nav .bar{padding-left:158px}#evRibbon{padding-left:158px}#annc{padding-left:158px}}';
+'#evTopStack{position:sticky;top:0;z-index:150;transition:box-shadow .28s ease}'+'#evTopStack.is-stuck{box-shadow:0 12px 30px -20px rgba(40,25,20,.55)}'+'#evTopStack #nav{position:static;top:auto;z-index:auto;background:rgba(250,245,234,.97)}'+
+'@media(max-width:720px){#evRibbon{min-height:48px;font-size:8.5px;padding:7px 10px;gap:4px 8px;line-height:1.35}#evRibbon .ico{font-size:14px}#evRibbon .pick{width:100%;justify-content:center;padding-left:0;border-left:0}#evRibbon select{font-size:8px;padding:4px 6px}}'+
+'#evBow{position:fixed;top:0;left:0;width:200px;height:auto;z-index:210;cursor:pointer;filter:drop-shadow(4px 6px 10px rgba(0,0,0,.3));transform:translate(-25%,-24%)}'+
+'@media(max-width:720px){body[data-event] #evBow{width:124px}body[data-event] #evRibbon{padding-left:108px}body[data-event] #annc{padding-left:108px}body[data-event] #nav .bar{padding-left:112px}}'+
+'@media(min-width:721px){body[data-event] #nav .bar{padding-left:176px}body[data-event] #evRibbon{padding-left:172px}body[data-event] #annc{padding-left:172px}}'+
+'#evFall{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:119;contain:strict}'+
+'.ev-fall{position:absolute;top:-12vh;left:var(--x);width:var(--s);height:var(--s);opacity:var(--o);background-image:url("assets/event-sprites.webp");background-repeat:no-repeat;background-size:300% 200%;background-position:var(--sx) var(--sy);filter:drop-shadow(0 3px 3px rgba(40,30,30,.14));animation:evFall var(--d) linear var(--delay) 1 both;will-change:transform}'+
+'@keyframes evFall{0%{transform:translate3d(0,-12vh,0) rotate(0deg)}50%{transform:translate3d(var(--drift),52vh,0) rotate(190deg)}100%{transform:translate3d(var(--drift-end),112vh,0) rotate(380deg)}}'+
+'@media(prefers-reduced-motion:reduce){.ev-fall{display:none!important}#evRibbon .ico{animation:none}}';
 var st_=document.createElement('style'); st_.textContent=css; document.head.appendChild(st_);
 
 /* ---- inject always-on top ribbon ---- */
@@ -130,12 +135,52 @@ bar.innerHTML='<span class="ico" id="evIco">🎁</span><span id="evTxt"></span><
 (DEMO?'<span class="pick"><span id="evPickLbl"></span><select id="evSel" aria-label="Change event"></select></span>':'');
 document.body.insertBefore(bar, document.body.firstChild);
 
-/* ---- corner bow: gift-wrap ribbon hugging the top-left page corner ----
-   Swaps per event (assets/bow-<id>.png), bow-normal.png on regular days. */
-var bow=document.createElement('img'); bow.id='evBow'; bow.alt='';
-bow.src='assets/bow-'+(activeEv?activeEv.id:'normal')+'.png';
-bow.addEventListener('click',function(){ var c=q('#catalog'); if(c)c.scrollIntoView({behavior:'smooth'}); });
-document.body.appendChild(bow);
+/* Only the same-day delivery notice and the main nav stay pinned.
+   The event strip scrolls away with the page. */
+var topStack=q('#evTopStack');
+if(!topStack){ topStack=document.createElement('div'); topStack.id='evTopStack'; document.body.insertBefore(topStack,bar); }
+if(bar.parentNode!==document.body||bar.nextSibling!==topStack){ document.body.insertBefore(bar,topStack); }
+var annc=q('#annc'); if(annc) topStack.appendChild(annc);
+var navEl=q('#nav'); if(navEl) topStack.appendChild(navEl);
+
+/* ---- event-only corner bow ----
+   Normal mode stays clean. The decorative bow appears only with a theme. */
+if(activeEv){
+  var bow=document.createElement('img'); bow.id='evBow'; bow.alt='';
+  bow.src='assets/bow-'+activeEv.id+'.png';
+  bow.addEventListener('click',function(){ var c=q('#catalog'); if(c)c.scrollIntoView({behavior:'smooth'}); });
+  document.body.appendChild(bow);
+}
+
+/* ---- event atmosphere: light, event-specific falling details ---- */
+var FALLING={
+  valentine:['0%','0%'],
+  womensday:['50%','0%'],
+  mothersday:['100%','0%'],
+  fathersday:['0%','100%'],
+  thanksgiving:['50%','100%'],
+  christmas:['100%','100%']
+};
+function addFalling(e){
+  var clip=FALLING[e.id]||['0%','0%'];
+  var layer=document.createElement('div'); layer.id='evFall'; layer.setAttribute('aria-hidden','true');
+  var count=window.innerWidth<720?9:16;
+  for(var i=0;i<count;i++){
+    var p=document.createElement('span'); p.className='ev-fall ev-'+e.id;
+    p.style.setProperty('--sx',clip[0]); p.style.setProperty('--sy',clip[1]);
+    p.style.setProperty('--x',(Math.random()*100).toFixed(2)+'vw');
+    p.style.setProperty('--s',(24+Math.random()*22).toFixed(1)+'px');
+    p.style.setProperty('--o',(0.92+Math.random()*0.08).toFixed(2));
+    p.style.setProperty('--d',(9+Math.random()*7).toFixed(1)+'s');
+    p.style.setProperty('--delay',(Math.random()*3.5).toFixed(2)+'s');
+    var drift=-45+Math.random()*90;
+    p.style.setProperty('--drift',drift.toFixed(0)+'px');
+    p.style.setProperty('--drift-end',(drift*-.45).toFixed(0)+'px');
+    layer.appendChild(p);
+  }
+  document.body.appendChild(layer);
+  setTimeout(function(){ if(layer&&layer.parentNode){ layer.parentNode.removeChild(layer); } },22000);
+}
 
 /* ---- demo dropdown: pick an event directly ---- */
 if(DEMO){
@@ -172,7 +217,7 @@ function transformCatalog(e){
   var fb=document.querySelector('.fbtn[data-f="'+e.filter+'"]');
   if(fb){ fb.click(); document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('ev-glow');}); fb.classList.add('ev-glow'); }
 }
-if(activeEv){ applyTheme(activeEv); }
+if(activeEv){ applyTheme(activeEv); addFalling(activeEv); }
 
 /* ---- render loop (countdown + language sync) ---- */
 var lastLang=null;

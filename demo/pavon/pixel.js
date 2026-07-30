@@ -144,13 +144,13 @@ document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
 
 /* ---- occasion filter ---- */
 function applyFilter(f){
-  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.toggle('on',b.dataset.f===f);});
+  document.querySelectorAll('.fbtn').forEach(function(b){if(b.classList.contains('fbtn-jump'))return;b.classList.toggle('on',b.dataset.f===f);});
   document.querySelectorAll('.bq').forEach(function(b){
     var show=f==='all'||(b.dataset.occ||'').split(' ').indexOf(f)>=0;
     b.classList.toggle('hide',!show);
   });
 }
-document.querySelectorAll('.fbtn').forEach(function(b){b.addEventListener('click',function(){applyFilter(b.dataset.f);});});
+document.querySelectorAll('.fbtn').forEach(function(b){if(b.classList.contains('fbtn-jump'))return;b.addEventListener('click',function(){applyFilter(b.dataset.f);});});
 document.querySelectorAll('.chip[data-go]').forEach(function(ch){ch.addEventListener('click',function(){
   applyFilter(ch.dataset.go);
   document.getElementById('catalog').scrollIntoView({behavior:'smooth'});
