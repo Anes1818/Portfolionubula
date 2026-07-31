@@ -529,11 +529,20 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   padding:var(--sp) var(--px); display:flex; justify-content:center;
   border-bottom:1px solid var(--border); position:relative; z-index:1;
 }
-.philosophy-inner { max-width:920px; }
+.philosophy-inner { max-width:920px; width:100%; }
 .philosophy-quote {
   font-family:var(--font-serif);
-  font-size:clamp(1.7rem,3.8vw,3.2rem);
-  font-weight:600; line-height:1.3; letter-spacing:-.01em;
+  font-size:clamp(1.35rem,2.9vw,2.7rem);
+  font-weight:600; line-height:1.4; letter-spacing:-.01em;
+  color:var(--text);
+  /* Always fully visible, never clipped, never wider than the screen. */
+  opacity:1 !important; max-width:100%;
+  overflow-wrap:break-word; word-break:normal; hyphens:none;
+  text-wrap:pretty;
+}
+@media (max-width:768px) {
+  .philosophy { padding-left:var(--px); padding-right:var(--px); }
+  .philosophy-quote { font-size:clamp(1.2rem,5.4vw,1.7rem); line-height:1.5; }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -644,26 +653,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 .tpl-preview--flower  { background:linear-gradient(135deg,#1a0e10 0%,#2d1519 40%,#1f1012 100%); }
 .tpl-preview--perfume { background:linear-gradient(135deg,#191410 0%,#28200e 40%,#1c180b 100%); }
 .tpl-preview--ecom    { background:linear-gradient(135deg,#0c1220 0%,#111d32 40%,#0f1629 100%); }
-.tpl-preview--wedding { background:radial-gradient(120% 90% at 70% 10%,#2a1c22 0%,#1b1114 55%,#120c0e 100%); }
-.tpl-preview-inner--wedding { display:flex; align-items:flex-end; justify-content:center; position:relative; }
-.tpl-preview-inner--wedding picture { display:block; height:100%; width:100%; }
-.tpl-preview-inner--wedding img {
-  width:100%; height:100%; object-fit:contain; object-position:center bottom;
-  padding:8% 8% 0; filter:drop-shadow(0 30px 60px rgba(0,0,0,.55));
-}
-.tpl-preview-caption {
-  position:absolute; left:0; right:0; bottom:0; padding:1.6rem 1.4rem 1.2rem;
-  background:linear-gradient(to top,rgba(10,7,8,.92) 15%,transparent);
-  display:flex; flex-direction:column; gap:.3rem; text-align:center;
-}
-.tpl-preview-caption span {
-  font-family:var(--font-mono); font-size:.62rem; letter-spacing:.22em;
-  text-transform:uppercase; color:var(--accent);
-}
-.tpl-preview-caption strong {
-  font-family:var(--font-serif); font-weight:400;
-  font-size:clamp(.95rem,1.5vw,1.15rem); color:var(--text);
-}
+.tpl-preview--wedding { background:linear-gradient(135deg,#231419 0%,#2d181f 45%,#1a1013 100%); }
 .tpl-preview-inner {
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center; padding:1.75rem;
@@ -958,7 +948,14 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   .contact { grid-template-columns:1fr; gap:3.5rem; }
 }
 @media (max-width:768px) {
-  .nav-links,.nav-right>.btn { display:none; }
+  .nav-links { display:none; }
+  /* The consultation button is the whole point of the page — it stays. */
+  .nav-right { gap:.55rem; }
+  .nav-right>.btn { display:inline-flex; padding:.62rem 1rem; font-size:.7rem; letter-spacing:.04em; }
+  .nav-logo { font-size:1.1rem; }
+  .nav-logo img { width:30px !important; height:30px !important; }
+  .nav { padding:.9rem 1rem; }
+  .nav.scrolled { padding:.75rem 1rem; }
   .nav-toggle { display:flex; }
   .hero-body { padding-top:calc(4rem + 70px); padding-bottom:7rem; }
   .hero-stats { right:var(--px); gap:1.75rem; }
@@ -1140,11 +1137,11 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <section class="philosophy z1" aria-labelledby="philHeading">
   <div class="philosophy-inner">
     <p class="section-eyebrow" aria-hidden="true">Philosophy</p>
-    <h2 class="philosophy-quote wrev" id="philText">
-      A bouquet is never just flowers — it's a feeling.
-      Your website should work the same way: we build florist sites that make
-      people feel something before they ever smell the roses.
-    </h2>
+    <p class="philosophy-quote">
+      A bouquet is never just flowers — it's a feeling. Your website should work the
+      same way: we build florist sites that make people feel something before they
+      ever smell the roses.
+    </p>
   </div>
 </section>
 
@@ -1305,15 +1302,11 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <article class="tpl-card" data-tpl-color="#e6c9d4">
       <div class="tpl-shine"></div>
       <div class="tpl-preview tpl-preview--wedding">
-        <div class="tpl-preview-inner tpl-preview-inner--wedding">
+        <div class="tpl-preview-inner">
           <picture>
-            <source srcset="../demo/pavon/assets/dress.webp" type="image/webp">
-            <img src="../demo/pavon/assets/dress.png" alt="Pavon Weddings experience preview" loading="lazy">
+            <source srcset="../assets/weddings-shot.webp" type="image/webp">
+            <img src="../assets/weddings-shot.jpg" alt="Pavon Weddings page preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
           </picture>
-          <div class="tpl-preview-caption">
-            <span>Weddings</span>
-            <strong>Every stem, chosen for one day</strong>
-          </div>
         </div>
         <div class="tpl-overlay">
           <a href="../demo/pavon/weddings.html" class="btn btn-primary" target="_blank" rel="noopener">View the wedding page &nbsp;&#8599;</a>
