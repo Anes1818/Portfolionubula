@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nebula Sites Studio pricing. Custom websites from $1,800, online stores from $3,600, and the Nebula Care Plan from $59 a month. Real prices, published openly." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Pricing &mdash; Nebula Sites Studio" />
+  <meta property="og:description" content="Custom websites from $1,800. Online stores from $3,600. Care Plan from $59 a month. No templates, no hidden fees." />
+  <title>Pricing &mdash; Nebula Sites Studio</title>
+  <link rel="canonical" href="https://nebulastudio.site/pricing.html" />
+  <meta property="og:url" content="https://nebulastudio.site/pricing.html" />
+  <meta property="og:site_name" content="Nebula Sites Studio" />
+  <meta property="og:image" content="https://nebulastudio.site/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Pricing — Nebula Sites Studio" />
+  <meta name="twitter:description" content="Nebula Sites Studio pricing. Custom websites from $1,800, online stores from $3,600, and the Nebula Care Plan from $59 a month. Real prices, published openly." />
+  <meta name="twitter:image" content="https://nebulastudio.site/assets/og.png" />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+
+/* ==========================================================================
+   STUDIO ENHANCED — All 9 Enhancements Active
+   01 Scroll-progress bar
+   02 Magnetic buttons
+   03 3-D feat-card tilt
+   04 3-D template-card tilt
+   05 Live iframe preview
+   06 WebGL bloom overlay
+   07 Horizontal pinned process
+   08 Formspree form
+   09 Cookie returning-visitor variant
+========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: auto; overflow-x: hidden; }
+body {
+  font-family: 'Manrope', system-ui, sans-serif;
+  background: #0a0a0a; color: #e8e8e4;
+  line-height: 1.6; overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; width: 100%; }
+ul { list-style: none; }
+button { font: inherit; border: none; background: none; cursor: none; }
+
+:root {
+  --bg:#0a0a0a; --bg-raised:#0f0f0f; --surface:#111;
+  --surface-2:#171717; --surface-3:#1e1e1e;
+  --border:rgba(255,255,255,.055); --border-soft:rgba(255,255,255,.035);
+  --text:#e8e8e4; --text-muted:#525250;
+  --text-dim:#2e2e2c;
+  --accent:#a78bfa; --accent-dim:rgba(167,139,250,.12);
+  --accent-rgb:167,139,250;
+  --green:#4caf8a; --blue:#5b8fff;
+  --font-serif:'Cinzel',Georgia,serif;
+  --font-sans:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --r-xs:4px; --r-sm:8px; --r-md:16px; --r-lg:28px; --r-xl:40px;
+  --sp:clamp(5rem,10vw,9rem); --px:clamp(1.25rem,5vw,3.5rem);
+  --maxw:1280px;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out:cubic-bezier(0.76,0,0.24,1);
+  --ease-back:cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ═══════════════════════════════════════════════════
+   GHOST PROJECT CARDS — Hero right side
+═══════════════════════════════════════════════════ */
+.hero-ghost-cards {
+  position: absolute;
+  right: clamp(2rem, 8vw, 7rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(220px, 28vw, 340px);
+  height: 340px;
+  pointer-events: none;
+  z-index: 2;
+}
+.ghost-card {
+  position: absolute;
+  width: 100%;
+  border: 1px solid rgba(167,139,250,.25);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  transition: opacity .4s;
+}
+.ghost-card:nth-child(1) {
+  top: 0; left: 0;
+  opacity: .18;
+  transform: rotate(-6deg) translateY(0px);
+  animation: ghostFloat1 6s ease-in-out infinite;
+}
+.ghost-card:nth-child(2) {
+  top: 20px; left: 10px;
+  opacity: .35;
+  transform: rotate(-2deg) translateY(0px);
+  animation: ghostFloat2 6s ease-in-out infinite;
+}
+.ghost-card:nth-child(3) {
+  top: 42px; left: 20px;
+  opacity: .72;
+  transform: rotate(1.5deg) translateY(0px);
+  animation: ghostFloat3 6s ease-in-out infinite;
+}
+.ghost-card-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .3rem;
+}
+.ghost-card-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(167,139,250,.4);
+}
+.ghost-card-url {
+  flex: 1;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(167,139,250,.1);
+  border: 1px solid rgba(167,139,250,.15);
+}
+.ghost-card-img {
+  width: 100%;
+  height: 80px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(167,139,250,.07) 0%, rgba(255,255,255,.04) 100%);
+  border: 1px solid rgba(167,139,250,.1);
+  margin-bottom: .4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ghost-card-img-line {
+  width: 40%;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(167,139,250,.2);
+}
+.ghost-card-title {
+  font-family: var(--font-serif);
+  font-size: .85rem;
+  font-weight: 700;
+  color: rgba(232,232,228,.6);
+  letter-spacing: .03em;
+}
+.ghost-card-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(167,139,250,.5);
+  border: 1px solid rgba(167,139,250,.2);
+  border-radius: 4px;
+  padding: .15rem .5rem;
+  width: fit-content;
+}
+@keyframes ghostFloat1 {
+  0%,100% { transform: rotate(-6deg) translateY(0px); }
+  50%      { transform: rotate(-6deg) translateY(-14px); }
+}
+@keyframes ghostFloat2 {
+  0%,100% { transform: rotate(-2deg) translateY(0px); }
+  50%      { transform: rotate(-2deg) translateY(-10px); }
+}
+@keyframes ghostFloat3 {
+  0%,100% { transform: rotate(1.5deg) translateY(0px); }
+  50%      { transform: rotate(1.5deg) translateY(-7px); }
+}
+@media (max-width: 768px) {
+  .hero-ghost-cards { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════
+   01. SCROLL PROGRESS BAR
+═══════════════════════════════════════════════════ */
+#scroll-progress {
+  position: fixed; top: 0; left: 0;
+  height: 2px; width: 0%;
+  background: linear-gradient(to right, var(--accent), rgba(var(--accent-rgb),.3));
+  z-index: 9000;
+  pointer-events: none;
+  transition: opacity .4s;
+  transform-origin: left center;
+}
+#scroll-progress::after {
+  content: '';
+  position: absolute; right: 0; top: -3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb),.8);
+}
+
+/* ═══════════════════════════════════════════════════
+   VEIL
+═══════════════════════════════════════════════════ */
+#veil {
+  position: fixed; inset: 0;
+  background: var(--bg); z-index: 8000;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+#veil-logo {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem,4vw,2.5rem);
+  font-weight: 700; letter-spacing: .1em;
+  color: var(--accent); opacity: 0;
+}
+
+/* Returning visitor banner */
+#rv-banner {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 7500; pointer-events: none;
+  padding: .6rem 1.5rem;
+  background: rgba(10,10,10,.9);
+  border: 1px solid rgba(var(--accent-rgb),.25);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  font-family: var(--font-mono); font-size: .65rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0; top: -40px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+
+/* ═══════════════════════════════════════════════════
+   AMBIENT CANVAS
+═══════════════════════════════════════════════════ */
+#ambientCanvas {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right,black 0%,black 10%,transparent 20%,transparent 80%,black 90%,black 100%);
+  mask-image: linear-gradient(to right,black 0%,black 10%,transparent 20%,transparent 80%,black 90%,black 100%);
+  opacity: .5;
+}
+@media (max-width:768px) {
+  #ambientCanvas {
+    -webkit-mask-image: linear-gradient(to bottom,black 0%,rgba(0,0,0,.4) 50%,transparent 85%);
+    mask-image: linear-gradient(to bottom,black 0%,rgba(0,0,0,.4) 50%,transparent 85%);
+    opacity: .3;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════════ */
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--accent); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%) scale(1);
+  transition: transform .2s var(--ease-out), background .2s;
+}
+#cursor-ring {
+  position: fixed; width: 38px; height: 38px;
+  border: 1px solid rgba(var(--accent-rgb),.35); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .4s var(--ease-out), height .4s var(--ease-out);
+}
+body.cursor-hover #cursor { transform: translate(-50%,-50%) scale(2.5); }
+body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(var(--accent-rgb),.15); }
+@media (hover:none),(max-width:768px) {
+  #cursor,#cursor-ring { display:none!important; }
+  body,a,button { cursor:auto; } a,button { cursor:pointer; }
+}
+
+/* ═══════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════���═══════════════ */
+.z1 { position:relative; z-index:1; }
+[data-reveal] { opacity:0; transform:translateY(32px); }
+.tag {
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); padding:.35rem .85rem;
+  border:1px solid rgba(var(--accent-rgb),.25);
+  border-radius:100px; background:var(--accent-dim);
+}
+.tag::before {
+  content:''; width:5px; height:5px; border-radius:50%;
+  background:var(--green); animation:tagPulse 2.5s ease infinite;
+}
+@keyframes tagPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+.section-eyebrow {
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); display:flex; align-items:center; gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.section-eyebrow::before { content:''; width:2rem; height:1px; background:var(--accent); flex-shrink:0; }
+.section-title {
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,4rem);
+  font-weight:700; letter-spacing:-.01em; line-height:1.08;
+}
+.section-desc { font-size:clamp(.9rem,1.5vw,1.05rem); color:var(--text-muted); line-height:1.8; max-width:48ch; }
+.wrev .wrev-word { display:inline; opacity:.06; will-change:opacity; }
+.clip-reveal { position:relative; color:var(--text-dim); --clip:100%; }
+.clip-reveal::before {
+  content:attr(data-text); position:absolute; inset:0;
+  color:var(--text); clip-path:inset(0 0 var(--clip) 0); will-change:clip-path;
+}
+
+/* ═══════════════════════════════════════════════════
+   02. MAGNETIC BUTTONS — JS handles transform, CSS handles transition
+═══════════════════════════════════════════════════ */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.6rem; padding:.95rem 2rem;
+  font-family:var(--font-sans); font-size:.875rem;
+  font-weight:700; letter-spacing:.02em;
+  border-radius:100px; white-space:nowrap;
+  position:relative; overflow:hidden;
+  /* magnetic uses gsap transform — we only transition box-shadow */
+  transition: box-shadow .35s var(--ease-out);
+  cursor:none; will-change:transform;
+}
+.btn::after {
+  content:''; position:absolute; inset:0;
+  background:rgba(255,255,255,.08); opacity:0;
+  border-radius:inherit; transition:opacity .25s;
+}
+.btn:hover::after { opacity:1; }
+.btn-primary {
+  background:var(--accent); color:#0a0a0a;
+  box-shadow:0 0 32px rgba(var(--accent-rgb),.2);
+}
+.btn-primary:hover { box-shadow:0 8px 40px rgba(var(--accent-rgb),.4); }
+.btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+.btn-ghost:hover { border-color:rgba(255,255,255,.2); }
+.btn-lg { padding:1.15rem 2.5rem; font-size:.95rem; }
+.btn-full { width:100%; justify-content:center; }
+.btn-arrow-icon { display:inline-block; transition:transform .3s var(--ease-out); }
+.btn:hover .btn-arrow-icon { transform:translate(3px,-3px); }
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:600;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.35rem var(--px);
+  transition:background .5s, border-color .5s, padding .4s;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled {
+  background:rgba(10,10,10,.85);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  border-bottom-color:var(--border); padding:1rem var(--px);
+}
+.nav-logo {
+  font-family:var(--font-serif); font-size:1.35rem; font-weight:800;
+  letter-spacing:.06em; color:var(--text); position:relative; z-index:700;
+}
+.nav-logo span { color:var(--accent); }
+.nav-links { display:flex; gap:2.5rem; }
+.nav-links a {
+  font-size:.82rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--text-muted); transition:color .25s; position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-3px; left:0;
+  width:0; height:1px; background:var(--accent);
+  transition:width .35s var(--ease-out);
+}
+.nav-links a:hover { color:var(--text); }
+.nav-links a:hover::after { width:100%; }
+.nav-right { display:flex; align-items:center; gap:1.5rem; }
+.nav-toggle {
+  display:none; flex-direction:column; gap:5px;
+  padding:10px; cursor:none; position:relative; z-index:700;
+}
+.nav-toggle span {
+  display:block; width:24px; height:1.5px; background:var(--text);
+  transition:transform .4s var(--ease-in-out), opacity .3s; transform-origin:center;
+}
+.nav-overlay {
+  position:fixed; inset:0; z-index:500; background:#0a0a0a;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.5rem; opacity:0; pointer-events:none; transition:opacity .4s;
+}
+.nav-overlay.open { opacity:1; pointer-events:all; }
+.nav-overlay-link {
+  font-family:var(--font-serif);
+  font-size:clamp(2.5rem,10vw,4.5rem);
+  font-weight:700; letter-spacing:-.01em;
+  color:var(--text-muted); transition:color .25s; padding:.35rem 0;
+}
+.nav-overlay-link:hover { color:var(--text); }
+.nav-overlay-cta { margin-top:2rem; }
+.nav-overlay-foot {
+  position:absolute; bottom:2.5rem;
+  font-family:var(--font-mono); font-size:.65rem;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════ */
+.hero {
+  position:relative; min-height:100svh;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+/* 06. BLOOM — second canvas overlay */
+.hero-canvas,
+.hero-bloom {
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+}
+.hero-bloom {
+  z-index:1;
+  mix-blend-mode:screen;
+  opacity:.38;
+  filter:blur(22px) brightness(2.2) saturate(1.4);
+}
+.hero-orb {
+  position:absolute; border-radius:50%;
+  pointer-events:none; z-index:1; will-change:transform;
+}
+.hero-orb--a {
+  width:clamp(280px,30vw,520px); height:clamp(280px,30vw,520px);
+  top:-5%; right:-10%;
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.08) 0%,transparent 68%);
+  filter:blur(50px);
+}
+.hero-orb--b {
+  width:clamp(180px,20vw,360px); height:clamp(180px,20vw,360px);
+  bottom:15%; left:-8%;
+  background:radial-gradient(circle,rgba(91,143,255,.05) 0%,transparent 70%);
+  filter:blur(60px);
+}
+.hero-orb--c {
+  width:1px; height:clamp(140px,22vh,260px);
+  top:18%; right:18%;
+  background:linear-gradient(to bottom,transparent,rgba(var(--accent-rgb),.3),transparent);
+}
+.hero-body {
+  position:relative; z-index:2; flex:1;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:calc(5rem + 80px) var(--px) 5rem; max-width:1100px;
+}
+.hero-eyebrow { margin-bottom:2.5rem; opacity:0; transform:translateY(12px); }
+.hero-headline {
+  font-family:var(--font-serif);
+  font-size:clamp(3.8rem,10vw,9rem);
+  font-weight:800; letter-spacing:-.025em; line-height:.92; margin-bottom:2.5rem;
+}
+.hero-line { display:block; overflow:hidden; }
+.hero-line-inner { display:block; opacity:0; transform:translateY(110%); }
+.hero-line--gold .hero-line-inner { color:var(--accent); }
+.hero-sub {
+  font-size:clamp(.95rem,1.6vw,1.15rem); color:var(--text-muted);
+  line-height:1.8; max-width:500px; margin-bottom:3rem;
+  opacity:0; transform:translateY(16px);
+}
+.hero-actions { display:flex; flex-wrap:wrap; gap:1rem; opacity:0; transform:translateY(16px); }
+.hero-stats {
+  position:absolute; bottom:clamp(2rem,5vw,4rem); right:var(--px);
+  display:flex; gap:2.5rem; opacity:0; transform:translateY(16px); z-index:2;
+}
+.hero-stat-num {
+  font-family:var(--font-serif); font-size:clamp(1.6rem,3vw,2.5rem);
+  font-weight:700; color:var(--text); line-height:1;
+}
+.hero-stat-num span { color:var(--accent); }
+.hero-stat-label {
+  font-family:var(--font-mono); font-size:.62rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin-top:.4rem;
+}
+.hero-scroll-hint {
+  position:absolute; bottom:clamp(2rem,5vw,4rem); left:var(--px);
+  display:flex; align-items:center; gap:.75rem; z-index:2; opacity:0;
+}
+.hero-scroll-hint span {
+  font-family:var(--font-mono); font-size:.62rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--text-muted);
+}
+.hero-scroll-line {
+  width:3rem; height:1px;
+  background:linear-gradient(to right,var(--text-muted),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%,100%{opacity:.6;transform:scaleX(1)} 50%{opacity:.2;transform:scaleX(.5)} }
+
+/* ═══════════════════════════════════════════════════
+   MARQUEE
+═══════════════════════════════════════════════════ */
+.marquee-band {
+  position:relative; z-index:2; overflow:hidden;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.015); padding:.9rem 0;
+}
+.marquee-track { display:flex; white-space:nowrap; animation:marquee 28s linear infinite; }
+.marquee-item {
+  display:inline-flex; align-items:center; gap:1.5rem;
+  font-family:var(--font-mono); font-size:.68rem;
+  font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-muted); padding-right:2.5rem;
+}
+.marquee-dot { color:var(--accent); font-size:.8rem; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ═══════════════════════════════════════════════════
+   PHILOSOPHY
+═══════════════════════════════════════════════════ */
+.philosophy {
+  padding:var(--sp) var(--px); display:flex; justify-content:center;
+  border-bottom:1px solid var(--border); position:relative; z-index:1;
+}
+.philosophy-inner { max-width:920px; }
+.philosophy-quote {
+  font-family:var(--font-serif);
+  font-size:clamp(1.7rem,3.8vw,3.2rem);
+  font-weight:600; line-height:1.3; letter-spacing:-.01em;
+}
+
+/* ═══════════════════════════════════════════════════
+   SHOWCASE
+═══════════════════════════════════════════════════ */
+.showcase {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  overflow:hidden; position:relative; z-index:1;
+}
+.showcase-header { max-width:680px; margin-bottom:clamp(3rem,7vw,6rem); }
+.showcase-heading {
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,5.5vw,5rem);
+  font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:1.25rem;
+}
+.showcase-heading em { font-style:italic; color:var(--accent); }
+.tracks { display:flex; flex-direction:column; overflow:hidden; margin-bottom:clamp(3.5rem,8vw,6.5rem); }
+.track {
+  border-top:1px solid var(--border); padding:.9rem 0; overflow:hidden;
+}
+.track:last-child { border-bottom:1px solid var(--border); }
+.track-inner {
+  display:flex; gap:3rem; align-items:center; will-change:transform;
+  transform:translateX(35%);
+}
+.track[data-dir="l"] .track-inner { transform:translateX(-35%); }
+.track-inner span {
+  font-family:var(--font-serif);
+  font-size:clamp(1.25rem,2.8vw,2.2rem);
+  font-weight:600; letter-spacing:.015em;
+  color:var(--text-muted); white-space:nowrap; transition:color .35s;
+}
+.track-inner span.sep { color:var(--text-dim); font-size:1rem; }
+.track-inner span:not(.sep):hover { color:var(--text); }
+
+/* ═══════════════════════════════════════════════════
+   03. FEAT CARDS — 3-D tilt via CSS perspective + JS transform
+═══════════════════════════════════════════════════ */
+.feat-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden;
+  perspective:900px;
+}
+.feat-card {
+  background:var(--surface); padding:2.5rem 2rem;
+  opacity:0; transform:translateY(22px) rotateX(0) rotateY(0);
+  transition:background .35s, transform .12s linear, box-shadow .35s;
+  position:relative; overflow:hidden;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.feat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(to right,transparent,rgba(var(--accent-rgb),.4),transparent);
+  opacity:0; transition:opacity .35s;
+}
+.feat-card:hover { background:var(--surface-2); }
+.feat-card:hover::before { opacity:1; }
+.feat-card-icon { font-size:1.5rem; color:var(--accent); margin-bottom:1.4rem; display:block; }
+.feat-card h3 { font-size:1rem; font-weight:700; letter-spacing:-.025em; margin-bottom:.6rem; }
+.feat-card p { font-size:.84rem; color:var(--text-muted); line-height:1.7; }
+/* Shine layer for 3-D tilt */
+.feat-card-shine {
+  position:absolute; inset:0; border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0%, transparent 65%);
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.feat-card:hover .feat-card-shine { opacity:1; }
+
+/* ═══════════════════════════════════════════════════
+   TEMPLATES GALLERY
+═══════════════════════════════════════════════════ */
+.templates {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  position:relative; z-index:1;
+}
+.templates-header {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  flex-wrap:wrap; gap:1.5rem; margin-bottom:clamp(3rem,7vw,5.5rem);
+}
+.templates-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));
+  gap:1.75rem;
+  perspective:1200px; /* for 04. 3D tilt context */
+}
+
+/* ═══════════════════════════════════════════════════
+   04. TEMPLATE CARD 3-D TILT + 05. LIVE IFRAME PREVIEW
+═══════════════════════════════════════════════════ */
+.tpl-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); overflow:hidden;
+  opacity:0; transform:translateY(40px) rotateX(0) rotateY(0);
+  transition:border-color .35s, box-shadow .35s, transform .12s linear;
+  transform-style:preserve-3d; will-change:transform;
+  position:relative;
+}
+.tpl-card:hover {
+  border-color:rgba(var(--accent-rgb),.25);
+  box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(var(--accent-rgb),.08);
+}
+/* 05. iframe preview wrapper */
+.tpl-preview {
+  position:relative; height:280px; overflow:hidden;
+}
+.tpl-preview--flower  { background:linear-gradient(135deg,#1a0e10 0%,#2d1519 40%,#1f1012 100%); }
+.tpl-preview--perfume { background:linear-gradient(135deg,#191410 0%,#28200e 40%,#1c180b 100%); }
+.tpl-preview--ecom    { background:linear-gradient(135deg,#0c1220 0%,#111d32 40%,#0f1629 100%); }
+.tpl-preview-inner {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center; padding:1.75rem;
+}
+/* iframe live preview */
+.tpl-iframe-wrap {
+  position:absolute; inset:0; z-index:3;
+  opacity:0; transition:opacity .5s var(--ease-out);
+  pointer-events:none;
+}
+.tpl-card:hover .tpl-iframe-wrap { opacity:1; pointer-events:all; }
+.tpl-iframe-wrap iframe {
+  width:400%; height:400%;
+  transform:scale(.25); transform-origin:top left;
+  border:none; pointer-events:none;
+  border-radius:0;
+}
+/* overlay with CTA */
+.tpl-overlay {
+  position:absolute; inset:0; z-index:4;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(10,10,10,.55);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  opacity:0; transition:opacity .35s;
+}
+.tpl-card:hover .tpl-overlay { opacity:1; }
+.tpl-mobile-cta {
+  display:none; text-align:center; padding:.75rem 1.5rem 0;
+  font-family:var(--font-mono); font-size:.72rem;
+  font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); text-decoration:underline; text-underline-offset:4px;
+}
+.tpl-body { padding:2rem; }
+.tpl-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.tpl-tag {
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+}
+.tpl-num { font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted); font-weight:600; }
+.tpl-name { font-family:var(--font-serif); font-size:1.3rem; font-weight:700; letter-spacing:-.015em; margin-bottom:.65rem; }
+.tpl-desc { font-size:.855rem; color:var(--text-muted); line-height:1.7; margin-bottom:1.35rem; }
+.tpl-features { display:flex; flex-direction:column; gap:.4rem; }
+.tpl-features li { font-size:.8rem; color:var(--text-muted); padding-left:1.1rem; position:relative; }
+.tpl-features li::before { content:'—'; position:absolute; left:0; color:var(--accent); font-size:.7rem; }
+/* Shine layer on tpl cards */
+.tpl-shine {
+  position:absolute; inset:0; border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%,rgba(var(--accent-rgb),.04) 0%,transparent 65%);
+  opacity:0; pointer-events:none; transition:opacity .2s; z-index:5;
+}
+.tpl-card:hover .tpl-shine { opacity:1; }
+
+/* Mock browser */
+.mock {
+  width:100%; max-width:290px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px; overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+.mock-bar {
+  height:28px; padding:0 10px;
+  background:rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex; align-items:center; gap:5px;
+}
+.mock-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.12); }
+.mock-body { padding:1rem; display:flex; flex-direction:column; gap:.5rem; }
+.mock-hero-line { height:8px; border-radius:4px; background:rgba(255,255,255,.1); }
+.mock-accent-bar { height:3px; width:40%; border-radius:2px; opacity:.9; }
+.mock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; padding:.25rem 0 .5rem; }
+.mock-product { height:48px; border-radius:6px; background:rgba(255,255,255,.06); }
+
+/* ═══════════════════════════════════════════════════
+   SERVICES
+═══════════════════════════════════════════════════ */
+.services {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  display:grid; grid-template-columns:1fr 1.7fr;
+  gap:clamp(3rem,8vw,7rem); align-items:start;
+  position:relative; z-index:1;
+}
+.services-left { position:sticky; top:9rem; }
+.services-list { display:flex; flex-direction:column; }
+.svc-item {
+  display:grid; grid-template-columns:3.5rem 1fr 2.5rem;
+  gap:1.5rem; align-items:start; padding:2.25rem 0;
+  border-bottom:1px solid var(--border);
+  opacity:0; transform:translateX(-20px); transition:background .3s;
+}
+.svc-item:first-child { border-top:1px solid var(--border); }
+.svc-num { font-family:var(--font-mono); font-size:.68rem; font-weight:700; color:var(--text-dim); padding-top:.25rem; letter-spacing:.1em; }
+.svc-body h3 { font-size:1.1rem; font-weight:800; letter-spacing:-.035em; margin-bottom:.5rem; transition:color .25s; }
+.svc-body p { font-size:.855rem; color:var(--text-muted); line-height:1.65; }
+.svc-arrow { font-size:1.3rem; color:var(--text-dim); transform:rotate(-35deg); transition:transform .35s var(--ease-out),color .35s; padding-top:.15rem; }
+.svc-item:hover .svc-body h3 { color:var(--accent); }
+.svc-item:hover .svc-arrow { color:var(--accent); transform:rotate(0deg); }
+
+/* ═══════════════════════════════════════════════════
+   07. HORIZONTAL PINNED PROCESS
+═══════════════════════════════════════════════════ */
+.process {
+  position:relative; z-index:1;
+  border-bottom:1px solid var(--border);
+}
+/* Pin wrapper — height is set via JS based on step count */
+.process-pin-wrap {
+  position:relative;
+  /* height injected by JS: calc(100vh * N) */
+}
+/* Sticky stage */
+.process-sticky {
+  position:sticky; top:0;
+  width:100%; height:100svh;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+/* Header stays at top */
+.process-header {
+  padding:var(--px) var(--px) 2rem;
+  flex-shrink:0; max-width:680px;
+}
+.process-header .section-eyebrow { margin-top: clamp(4rem,6vw,5rem); }
+/* Horizontal track */
+.process-track-wrap {
+  flex:1; overflow:hidden;
+  display:flex; align-items:center;
+  padding:0 var(--px);
+}
+.process-track {
+  display:flex; gap:clamp(2.5rem,5vw,4.5rem);
+  align-items:flex-start; will-change:transform;
+  padding-right:var(--px);
+}
+.step {
+  flex:0 0 clamp(260px,35vw,420px);
+  padding:2rem 2.5rem 2rem 0;
+  opacity:0; transform:translateX(40px);
+  position:relative; border-top:2px solid var(--border);
+}
+.step-progress-line {
+  position:absolute; top:-2px; left:0;
+  height:2px; width:0;
+  background:linear-gradient(to right,var(--accent),rgba(var(--accent-rgb),.3));
+  transition:width 1s var(--ease-out); z-index:1;
+}
+.step.active .step-progress-line { width:100%; }
+.step-num {
+  font-family:var(--font-mono); font-size:.68rem; font-weight:700;
+  letter-spacing:.14em; color:var(--accent); margin-bottom:1.75rem;
+  display:flex; align-items:center; gap:.6rem;
+}
+.step-num-circle {
+  width:28px; height:28px; border-radius:50%;
+  border:1px solid rgba(var(--accent-rgb),.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.65rem; background:var(--accent-dim);
+}
+.step h3 {
+  font-family:var(--font-serif); font-size:1.3rem; font-weight:700;
+  letter-spacing:-.015em; margin-bottom:.75rem;
+}
+.step p { font-size:.855rem; color:var(--text-muted); line-height:1.7; }
+/* Progress indicator dots */
+.process-dots {
+  display:flex; gap:.6rem; align-items:center;
+  padding:0 var(--px) 2rem; flex-shrink:0;
+}
+.process-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--text-dim);
+  transition:background .4s, transform .4s var(--ease-back);
+}
+.process-dot.active { background:var(--accent); transform:scale(1.5); }
+
+/* ─── Mobile: vertical fallback ─── */
+@media (max-width:768px) {
+  .process-pin-wrap { height:auto !important; }
+  .process-sticky { position:relative; height:auto; display:block; }
+  .process-header .section-eyebrow { margin-top:0; }
+  .process-track-wrap { overflow:visible; display:block; padding:0 var(--px); }
+  .process-track { flex-direction:column; gap:0; transform:none !important; }
+  .step { flex:none; width:100%; padding:2rem 0; opacity:1 !important; transform:none !important; border-top:1px solid var(--border); border-left:none; }
+  .step-progress-line { display:none; }
+  .process-dots { display:none; }
+  .process-header { padding-top:calc(var(--sp) * .5); }
+  .process { padding-bottom:var(--sp); }
+}
+
+/* ═══════════════════════════════════════════════════
+   STATEMENT
+════���══════════════════════════════════════════════ */
+.statement {
+  padding:var(--sp) var(--px);
+  display:flex; flex-direction:column; align-items:center; gap:3rem;
+  text-align:center; border-bottom:1px solid var(--border);
+  background:var(--bg-raised); position:relative; z-index:1; overflow:hidden;
+}
+.statement-quote {
+  font-family:var(--font-serif);
+  font-size:clamp(1.6rem,3.8vw,3rem);
+  font-weight:600; line-height:1.3; max-width:900px;
+}
+
+/* ═══════════════════════════════════════════════════
+   08. CONTACT — Formspree-ready
+═══════════════════════════════════════════════════ */
+.contact {
+  padding:var(--sp) var(--px);
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:clamp(3rem,8vw,7rem); border-bottom:1px solid var(--border);
+  align-items:start; position:relative; z-index:1;
+}
+.contact-headline {
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,4rem);
+  font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:1.25rem;
+}
+.contact-headline span { color:var(--accent); font-style:italic; }
+.contact-desc { font-size:.95rem; color:var(--text-muted); line-height:1.8; margin-bottom:2.5rem; max-width:40ch; }
+.contact-channels { display:flex; flex-direction:column; gap:.85rem; }
+.contact-ch {
+  display:flex; align-items:center; gap:1.1rem;
+  padding:1.1rem 1.35rem; border-radius:var(--r-md);
+  border:1px solid var(--border); background:var(--surface);
+  transition:border-color .3s, background .3s, transform .3s var(--ease-out);
+}
+.contact-ch:hover { border-color:rgba(var(--accent-rgb),.3); background:var(--surface-2); transform:translateX(4px); }
+.contact-ch-icon {
+  width:2.35rem; height:2.35rem; border-radius:50%;
+  background:var(--accent-dim); display:flex; align-items:center;
+  justify-content:center; color:var(--accent); font-size:1rem; flex-shrink:0;
+}
+.contact-ch-label { font-family:var(--font-mono); font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.15rem; }
+.contact-ch-val { font-size:.92rem; font-weight:700; color:var(--text); }
+.contact-socials { display:flex; gap:1rem; margin-top:1.5rem; flex-wrap:wrap; }
+.contact-social {
+  font-family:var(--font-mono); font-size:.7rem; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted);
+  display:inline-flex; align-items:center; gap:.4rem; transition:color .25s;
+}
+.contact-social:hover { color:var(--accent); }
+.contact-form { display:flex; flex-direction:column; gap:1.25rem; }
+.form-group { display:flex; flex-direction:column; gap:.5rem; }
+.form-group label {
+  font-family:var(--font-mono); font-size:.65rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted);
+}
+.form-group input,.form-group textarea,.form-group select {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:var(--font-sans); font-size:1rem;
+  padding:1rem 1.15rem; outline:none; resize:none;
+  transition:border-color .25s, background .25s;
+}
+.form-group input::placeholder,.form-group textarea::placeholder { color:var(--text-dim); }
+.form-group input:focus,.form-group textarea:focus {
+  border-color:rgba(var(--accent-rgb),.5); background:var(--surface-2);
+}
+/* Form state feedback */
+.form-status {
+  padding:.9rem 1.15rem; border-radius:var(--r-sm);
+  font-size:.855rem; font-weight:600; display:none;
+  border:1px solid;
+}
+.form-status.success { color:#4caf8a; background:rgba(76,175,138,.08); border-color:rgba(76,175,138,.25); display:block; }
+.form-status.error   { color:#ff6b6b; background:rgba(255,107,107,.08); border-color:rgba(255,107,107,.25); display:block; }
+.form-note { font-size:.75rem; color:var(--text-muted); text-align:center; margin-top:-.25rem; }
+
+/* ═════════════════════════════════��═════════════════
+   FOOTER
+═════════════════════════════════���═════════════════ */
+.footer { padding:2.5rem var(--px); position:relative; z-index:1; }
+.footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; flex-wrap:wrap; gap:1.5rem; }
+.footer-logo { font-family:var(--font-serif); font-size:1.2rem; font-weight:800; letter-spacing:.06em; }
+.footer-logo span { color:var(--accent); }
+.footer-nav { display:flex; gap:2rem; flex-wrap:wrap; }
+.footer-nav a { font-size:.8rem; font-weight:600; letter-spacing:.04em; color:var(--text-muted); text-transform:uppercase; transition:color .25s; }
+.footer-nav a:hover { color:var(--text); }
+.footer-bottom {
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:.75rem;
+  font-family:var(--font-mono); font-size:.65rem; letter-spacing:.1em; color:var(--text-dim);
+  border-top:1px solid var(--border); padding-top:1.5rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+@media (max-width:1024px) {
+  .services { grid-template-columns:1fr; gap:3rem; }
+  .services-left { position:static; }
+  .contact { grid-template-columns:1fr; gap:3.5rem; }
+}
+@media (max-width:768px) {
+  .nav-links,.nav-right>.btn { display:none; }
+  .nav-toggle { display:flex; }
+  .hero-body { padding-top:calc(4rem + 70px); padding-bottom:7rem; }
+  .hero-stats { right:var(--px); gap:1.75rem; }
+  .hero-orb--c { display:none; }
+  .feat-grid { grid-template-columns:1fr; }
+  .tpl-card:hover { transform:none !important; }
+  .tpl-overlay { opacity:0; }
+  .tpl-mobile-cta { display:block; }
+  .svc-item { grid-template-columns:3rem 1fr; }
+  .svc-arrow { display:none; }
+  .hero-actions { flex-direction:column; }
+  .hero-actions .btn { width:100%; }
+  .footer-top { flex-direction:column; align-items:flex-start; }
+  .footer-bottom { flex-direction:column; }
+}
+@media (max-width:480px) {
+  .hero-headline { font-size:clamp(3rem,13vw,4.5rem); }
+  .hero-stats { position:static; flex-direction:row; justify-content:space-between; gap:1rem; margin-top:2.75rem; padding:0 var(--px); }
+  .hero-scroll-hint { display:none; }
+  :root { --sp:clamp(4rem,10vw,6rem); }
+}
+@media (hover:none) {
+  .btn:active { transform:scale(.97); }
+  .btn:hover { transform:none; }
+}
+@supports (padding:max(0px)) {
+  .nav { padding-left:max(var(--px),env(safe-area-inset-left)); padding-right:max(var(--px),env(safe-area-inset-right)); }
+  .footer { padding-bottom:max(2.5rem,env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
+
+
+/* ---------- PRICING PAGE ---------- */
+.pr-wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--px)}
+.pr-hero{padding:clamp(9rem,16vw,13rem) 0 clamp(3rem,6vw,5rem);text-align:center;position:relative;overflow:hidden}
+.pr-hero::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:min(900px,120vw);height:620px;background:radial-gradient(ellipse at center,rgba(var(--accent-rgb),.16),transparent 68%);filter:blur(30px);pointer-events:none}
+.pr-badge{display:inline-flex;align-items:center;gap:.55rem;padding:.5rem 1.1rem;border:1px solid rgba(var(--accent-rgb),.34);border-radius:999px;background:rgba(var(--accent-rgb),.08);color:var(--accent);font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;position:relative;z-index:2}
+.pr-badge i{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);font-style:normal;animation:prPulse 2.4s ease-in-out infinite}
+.pr-compare td:not(:first-child),.pr-compare th:not(:first-child){text-align:center}
+.pr-compare td.y{color:var(--text)}
+.pr-compare td.n{color:var(--text-dim);opacity:.5}
+.pr-compare tbody tr:hover{background:rgba(var(--accent-rgb),.04)}
+@keyframes prPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+.pr-hero h1{font-family:var(--font-serif);font-weight:700;font-size:clamp(2.5rem,7vw,4.6rem);line-height:1.04;margin:1.6rem 0 0;letter-spacing:-.02em;position:relative;z-index:2}
+.pr-hero h1 em{font-style:italic;color:var(--accent)}
+.pr-lead{max-width:56ch;margin:1.5rem auto 0;color:var(--text-muted);font-size:clamp(1rem,1.6vw,1.15rem);line-height:1.75;position:relative;z-index:2}
+.pr-hero-actions{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;margin-top:2.4rem;position:relative;z-index:2}
+
+.pr-sec{padding:clamp(4rem,8vw,7rem) 0;position:relative}
+.pr-eyebrow{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:1rem}
+.pr-h2{font-family:var(--font-serif);font-weight:600;font-size:clamp(1.8rem,4vw,2.9rem);line-height:1.12;letter-spacing:-.015em;margin:0}
+.pr-sub{color:var(--text-muted);max-width:62ch;margin:1.1rem 0 0;line-height:1.75;font-size:.98rem}
+.pr-head{margin-bottom:clamp(2.4rem,5vw,3.6rem)}
+
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.4rem;align-items:stretch}
+.pr-card{position:relative;display:flex;flex-direction:column;background:linear-gradient(170deg,var(--surface-2),var(--surface));border:1px solid var(--border);border-radius:var(--r-lg);padding:2.2rem 1.9rem;transition:border-color .45s var(--ease-out),transform .45s var(--ease-out)}
+.pr-card:hover{border-color:rgba(var(--accent-rgb),.3);transform:translateY(-4px)}
+.pr-card.is-feature{border-color:rgba(var(--accent-rgb),.4);background:linear-gradient(170deg,rgba(var(--accent-rgb),.09),var(--surface))}
+.pr-tag{position:absolute;top:-12px;left:1.9rem;padding:.35rem .85rem;border-radius:999px;background:var(--accent);color:#0a0a0a;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.pr-card h3{font-family:var(--font-serif);font-size:1.5rem;font-weight:600;margin:.2rem 0 .35rem}
+.pr-card .pr-for{color:var(--text-muted);font-size:.85rem;line-height:1.6;min-height:2.7em}
+.pr-price{display:flex;align-items:baseline;gap:.5rem;margin:1.5rem 0 .3rem}
+.pr-price b{font-family:var(--font-serif);font-size:clamp(2rem,4vw,2.7rem);font-weight:700;letter-spacing:-.02em}
+.pr-price s{color:var(--text-dim);font-size:1rem;text-decoration-thickness:1px}
+.pr-price-note{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted)}
+.pr-list{list-style:none;padding:0;margin:1.7rem 0 0;display:flex;flex-direction:column;gap:.72rem;flex:1}
+.pr-list li{display:flex;gap:.7rem;font-size:.9rem;line-height:1.55;color:#cfcfca}
+.pr-list li svg{flex:none;margin-top:.28rem}
+.pr-list li.off{color:var(--text-dim)}
+.pr-card .btn{margin-top:1.9rem}
+.pr-divider{height:1px;background:var(--border);margin:1.5rem 0}
+
+.pr-signature{margin-top:1.4rem;border:1px solid rgba(var(--accent-rgb),.25);border-radius:var(--r-lg);padding:clamp(1.8rem,4vw,2.8rem);background:radial-gradient(120% 160% at 0% 0%,rgba(var(--accent-rgb),.11),transparent 60%),var(--surface);display:grid;grid-template-columns:1fr auto;gap:1.6rem;align-items:center}
+.pr-signature h3{font-family:var(--font-serif);font-size:clamp(1.3rem,2.6vw,1.8rem);margin:0 0 .6rem}
+.pr-signature p{color:var(--text-muted);margin:0;max-width:62ch;line-height:1.7;font-size:.94rem}
+.pr-signature .num{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;color:var(--accent);white-space:nowrap}
+@media(max-width:760px){.pr-signature{grid-template-columns:1fr}}
+
+.pr-table{width:100%;border-collapse:collapse;font-size:.92rem}
+.pr-table th{text-align:left;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);font-weight:500;padding:0 0 .9rem}
+.pr-table th:not(:first-child),.pr-table td:not(:first-child){text-align:right;white-space:nowrap}
+.pr-table td{padding:.85rem 0;border-top:1px solid var(--border-soft);color:#cfcfca}
+.pr-table td:first-child{padding-right:1rem}
+.pr-table td b{color:var(--text)}
+.pr-table .was{color:var(--text-dim);text-decoration:line-through;font-size:.85rem}
+.pr-tablewrap{border:1px solid var(--border);border-radius:var(--r-md);padding:clamp(1.3rem,3vw,2rem);background:var(--surface);overflow-x:auto}
+
+.pr-value{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;margin-top:2rem}
+.pr-vitem{border:1px solid var(--border);border-radius:var(--r-md);padding:1.5rem;background:var(--surface);position:relative;transition:border-color .4s var(--ease-out)}
+.pr-vitem:hover{border-color:rgba(var(--accent-rgb),.28)}
+.pr-vitem span{font-family:var(--font-mono);font-size:.68rem;color:var(--accent);letter-spacing:.1em}
+.pr-vitem h4{font-size:.98rem;margin:.7rem 0 .5rem;font-weight:600}
+.pr-vitem p{margin:0;color:var(--text-muted);font-size:.86rem;line-height:1.65}
+
+.pr-quote{margin-top:2.2rem;border-left:2px solid var(--accent);padding:.3rem 0 .3rem 1.4rem;font-family:var(--font-serif);font-size:clamp(1.05rem,2.2vw,1.35rem);font-style:italic;line-height:1.6;color:#dedeD8;max-width:70ch}
+
+.pr-steps{counter-reset:pr;display:grid;gap:1rem}
+.pr-step{display:grid;grid-template-columns:auto 1fr;gap:1.2rem;align-items:start;border-top:1px solid var(--border-soft);padding-top:1.2rem}
+.pr-step b{font-family:var(--font-mono);color:var(--accent);font-size:.78rem;padding-top:.15rem}
+.pr-step h4{margin:0 0 .35rem;font-size:1rem;font-weight:600}
+.pr-step p{margin:0;color:var(--text-muted);font-size:.88rem;line-height:1.65}
+
+.pr-faq details{border-top:1px solid var(--border-soft);padding:1.15rem 0}
+.pr-faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1.5rem;align-items:center;font-size:1rem;font-weight:500}
+.pr-faq summary::-webkit-details-marker{display:none}
+.pr-faq summary::after{content:'+';color:var(--accent);font-size:1.4rem;line-height:1;transition:transform .3s var(--ease-out)}
+.pr-faq details[open] summary::after{transform:rotate(45deg)}
+.pr-faq p{color:var(--text-muted);font-size:.9rem;line-height:1.75;margin:.9rem 0 0;max-width:74ch}
+
+.pr-cta{text-align:center;border:1px solid rgba(var(--accent-rgb),.25);border-radius:var(--r-lg);padding:clamp(2.6rem,6vw,4.5rem) clamp(1.4rem,4vw,3rem);background:radial-gradient(120% 150% at 50% 0%,rgba(var(--accent-rgb),.13),transparent 62%),var(--surface);margin-bottom:clamp(4rem,8vw,6rem)}
+.pr-cta h2{font-family:var(--font-serif);font-size:clamp(1.7rem,4vw,2.7rem);margin:0 0 1rem;font-weight:600}
+.pr-cta p{color:var(--text-muted);max-width:52ch;margin:0 auto 2rem;line-height:1.75}
+.pr-fine{color:var(--text-dim);font-size:.78rem;line-height:1.7;max-width:74ch;margin:1.6rem auto 0;text-align:center}
+@media(max-width:600px){.pr-card{padding:1.8rem 1.4rem}}
+
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo" aria-label="Nebula Sites Studio home" style="display:inline-flex;align-items:center;gap:.6rem"><img src="assets/logo.png" alt="" style="width:36px;height:36px;border-radius:50%;box-shadow:0 0 18px rgba(150,110,255,.4)">Nebula<span>.</span></a>
+  <div class="nav-links" role="list">
+    <a href="index.html#about" role="listitem">About</a>
+    <a href="index.html#showcase" role="listitem">Work</a>
+    <a href="pricing.html" role="listitem" style="color:var(--accent)">Pricing</a>
+    <a href="build-your-plan.html" role="listitem">Build Your Plan</a>
+    <a href="flowers/index.html" role="listitem">For Florists</a>
+    <a href="index.html#contact" role="listitem">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a href="build-your-plan.html" class="btn btn-ghost">Build Your Plan</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navOverlay">
+      <span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true">
+  <a href="index.html#about" class="nav-overlay-link">About</a>
+  <a href="index.html#showcase" class="nav-overlay-link">Work</a>
+  <a href="pricing.html" class="nav-overlay-link">Pricing</a>
+  <a href="build-your-plan.html" class="nav-overlay-link">Build Your Plan</a>
+  <a href="flowers/index.html" class="nav-overlay-link">For Florists</a>
+  <a href="index.html#contact" class="nav-overlay-link">Contact</a>
+  <a href="build-your-plan.html" class="btn btn-primary nav-overlay-cta">Build Your Plan &nbsp;&#8599;</a>
+  <span class="nav-overlay-foot">Nebula Sites Studio — every business has a story worth telling</span>
+</div>
+
+<section class="pr-hero">
+  <div class="pr-wrap">
+    <span class="pr-badge"><i></i>Launch pricing &mdash; first 5 clients</span>
+    <h1>Real prices.<br>Written <em>before</em> we talk.</h1>
+    <p class="pr-lead">We are a consultation-first studio, not a template shop. Every site is built from scratch. These are our launch rates &mdash; introductory prices for our first five clients, in exchange for a testimonial and permission to feature the work.</p>
+    <div class="pr-hero-actions">
+      <a href="build-your-plan.html" class="btn btn-primary btn-lg">Build your plan &nbsp;<span class="btn-arrow-icon">&#8599;</span></a>
+      <a href="#care" class="btn btn-ghost btn-lg">See the Care Plan</a>
+    </div>
+  </div>
+</section>
+
+<section class="pr-sec" id="packages">
+  <div class="pr-wrap">
+    <div class="pr-head">
+      <span class="pr-eyebrow">01 &mdash; Websites</span>
+      <h2 class="pr-h2">Three ways to start</h2>
+      <p class="pr-sub">Every package includes a custom design built from scratch, full mobile and tablet layouts, basic SEO, SSL, speed optimization, and the domain and hosting handled entirely by us. No templates, ever.</p>
+    </div>
+    <div class="pr-grid">
+
+      <article class="pr-card">
+        <h3>Foundation</h3>
+        <p class="pr-for">For a shop that takes orders on WhatsApp and needs a real presence online.</p>
+        <div class="pr-price"><b>$1,800</b><s>$3,200</s></div>
+        <span class="pr-price-note">One-time &middot; live in 5&ndash;10 days</span>
+        <ul class="pr-list">
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Custom design, built from scratch</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Up to 5 pages</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>15 products in the catalog</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>WhatsApp ordering with the order pre-written</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Contact form, Google Maps, social links</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Domain, hosting and SSL handled by us</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Basic SEO and speed optimization</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>2 revision rounds</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>3 months of Care included</span></li>
+          <li class="off"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="#2e2e2c" stroke-width="1.6" stroke-linecap="round"/></svg><span>Online card payments</span></li>
+          <li class="off"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="#2e2e2c" stroke-width="1.6" stroke-linecap="round"/></svg><span>Shopping cart and dashboard</span></li>
+        </ul>
+        <a href="build-your-plan.html" class="btn btn-ghost btn-full">Start here</a>
+      </article>
+
+      <article class="pr-card is-feature">
+        <span class="pr-tag">Most chosen</span>
+        <h3>Foundation + Quick Pay</h3>
+        <p class="pr-for">Everything above, plus real online payments for your best sellers &mdash; without a full store.</p>
+        <div class="pr-price"><b>$2,200</b><s>$3,800</s></div>
+        <span class="pr-price-note">One-time &middot; live in 1&ndash;2 weeks</span>
+        <ul class="pr-list">
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Everything in Foundation</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>5 Stripe payment links for your best sellers</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Pay now button on product cards</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shipping address collected automatically</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Discount codes through Stripe</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Automatic email receipts</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Stripe account setup and full testing</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>3 months of Care included</span></li>
+          <li class="off"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="#2e2e2c" stroke-width="1.6" stroke-linecap="round"/></svg><span>Automatic stock tracking</span></li>
+          <li class="off"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="#2e2e2c" stroke-width="1.6" stroke-linecap="round"/></svg><span>Multi-item shopping cart</span></li>
+        </ul>
+        <a href="build-your-plan.html" class="btn btn-primary btn-full">Start here</a>
+      </article>
+
+      <article class="pr-card">
+        <h3>Commerce</h3>
+        <p class="pr-for">A complete online store: cart, checkout, orders, inventory and your own dashboard.</p>
+        <div class="pr-price"><b>$3,600</b><s>$6,000</s></div>
+        <span class="pr-price-note">Typically $4,200 &middot; live in 2&ndash;3 weeks</span>
+        <ul class="pr-list">
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Everything in Quick Pay</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Up to 8 pages and 30 products</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Full shopping cart and dynamic checkout</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Product detail pages included</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Order records and your own admin dashboard</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Automatic inventory</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Coupons, shipping and tax rules</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>3 revision rounds</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>3 months of Care+ included</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.4l3.2 3.2L12 3.8" stroke="#a78bfa" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Care+ required for 6 months after launch</span></li>
+        </ul>
+        <a href="build-your-plan.html" class="btn btn-ghost btn-full">Start here</a>
+      </article>
+    </div>
+
+
+    <div class="pr-head" style="margin-top:clamp(3.5rem,7vw,5rem)">
+      <h2 class="pr-h2" style="font-size:clamp(1.4rem,3vw,2rem)">What is in each package</h2>
+      <p class="pr-sub">The same craft in all three. The difference is how the money reaches you.</p>
+    </div>
+    <div class="pr-tablewrap">
+      <table class="pr-table pr-compare">
+        <thead><tr><th>Feature</th><th>Foundation</th><th>Quick Pay</th><th>Commerce</th></tr></thead>
+        <tbody>
+          <tr><td>Launch price</td><td><b>$1,800</b></td><td><b>$2,200</b></td><td><b>$3,600+</b></td></tr>
+          <tr><td>Custom design pages</td><td>5</td><td>5</td><td>8</td></tr>
+          <tr><td>Products included</td><td>15</td><td>15</td><td>30</td></tr>
+          <tr><td><b>Product detail pages</b></td><td class="y">Included</td><td class="y">Included</td><td class="y">Included</td></tr>
+          <tr><td>Designed from scratch, never a template</td><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr>
+          <tr><td>Mobile, tablet and desktop</td><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr>
+          <tr><td>WhatsApp ordering with pre-filled message</td><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr>
+          <tr><td>Contact form, Maps and social links</td><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr>
+          <tr><td>SEO setup, SSL, speed &amp; image optimization</td><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr>
+          <tr><td>Domain, hosting &amp; SSL bought and run by us</td><td class="y">1st year</td><td class="y">1st year</td><td class="y">1st year</td></tr>
+          <tr><td><b>Special Offers section</b></td><td>WhatsApp order</td><td>Pay-now link</td><td class="y">Instant checkout</td></tr>
+          <tr><td>Stripe payment links (5 best sellers)</td><td class="n">&mdash;</td><td class="y">&#10003;</td><td class="n">&mdash;</td></tr>
+          <tr><td>Full shopping cart</td><td class="n">&mdash;</td><td class="n">&mdash;</td><td class="y">&#10003;</td></tr>
+          <tr><td>Dynamic checkout, any quantity</td><td class="n">&mdash;</td><td class="n">&mdash;</td><td class="y">&#10003;</td></tr>
+          <tr><td>Order records + admin dashboard</td><td>Add-on $500</td><td>Add-on $500</td><td class="y">&#10003;</td></tr>
+          <tr><td>Automatic inventory</td><td class="n">&mdash;</td><td class="n">&mdash;</td><td class="y">&#10003;</td></tr>
+          <tr><td>Coupons &amp; discounts</td><td class="n">&mdash;</td><td>Via Stripe</td><td class="y">&#10003;</td></tr>
+          <tr><td>Shipping &amp; tax rules</td><td class="n">&mdash;</td><td>Basic</td><td class="y">Full</td></tr>
+          <tr><td>Email newsletter</td><td class="n">&mdash;</td><td class="n">&mdash;</td><td>Add-on $200</td></tr>
+          <tr><td>Revision rounds</td><td>2</td><td>2</td><td>3</td></tr>
+          <tr><td><b>Nebula Care included</b></td><td>3 months</td><td>3 months</td><td>3 months Care+</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pr-signature">
+      <div>
+        <h3>Signature Experience</h3>
+        <p>For businesses that want an experience, not a website. Interactive features, custom tools, product builders, games, advanced motion, a customer journey nobody else has. Quoted on complexity and development time.</p>
+      </div>
+      <div class="num">from $8,000</div>
+    </div>
+
+    <p class="pr-fine">Prices assume the client provides text and images within 14 days of signing, images at 1200px minimum. Payment: 50/50 under $3,000 &middot; 40/30/30 at $3,000 and above. Deposit is non-refundable and reserves your build slot.</p>
+  </div>
+</section>
+
+<section class="pr-sec" id="products">
+  <div class="pr-wrap">
+    <div class="pr-head">
+      <span class="pr-eyebrow">02 &mdash; Product pages</span>
+      <h2 class="pr-h2">Fifteen doors into your shop</h2>
+      <p class="pr-sub">Every bouquet gets its own page: gallery, description, price, sizes, a WhatsApp button that fills in the product name automatically, related products, and its own Google listing. Instead of one door into your shop, you get fifteen. <b>This is included in every package for your first 15 products</b> &mdash; you only pay once your catalog grows past that.</p>
+    </div>
+    <div class="pr-tablewrap">
+      <table class="pr-table">
+        <thead><tr><th>Item</th><th>Launch</th><th>Standard</th></tr></thead>
+        <tbody>
+          <tr><td><b>Product page template + your first 15 products</b></td><td><b>Included in every package</b></td><td>Included</td></tr>
+          <tr><td>Each additional product</td><td>$20</td><td class="was">$30</td></tr>
+          <tr><td>Pack of 10 additional products</td><td>$150</td><td class="was">$220</td></tr>
+          <tr><td>We write the descriptions for you</td><td>$25 / product</td><td class="was">$35</td></tr>
+          <tr><td>Professional image preparation</td><td>$8 / product</td><td class="was">$12</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="pr-quote">&ldquo;When someone in Northern Virginia searches <em>sunflower bouquet</em>, your page is what shows up.&rdquo;</p>
+  </div>
+</section>
+
+<section class="pr-sec" id="enhancements">
+  <div class="pr-wrap">
+    <div class="pr-head">
+      <span class="pr-eyebrow">03 &mdash; Enhancements</span>
+      <h2 class="pr-h2">Add only what earns its place</h2>
+      <p class="pr-sub">Fixed prices, defined scope, no surprises. Add them at signing or later &mdash; the price is the same either way.</p>
+    </div>
+    <div class="pr-tablewrap">
+      <table class="pr-table">
+        <thead><tr><th>Enhancement</th><th>Launch</th><th>Standard</th></tr></thead>
+        <tbody>
+          <tr><td><b>Bouquet Builder</b> &mdash; customers design their own bouquet live</td><td><b>$900</b></td><td class="was">$1,400</td></tr>
+          <tr><td><b>Seasonal Events System</b> &mdash; the site redresses itself for Valentine&rsquo;s, Mother&rsquo;s Day, Christmas</td><td><b>$400</b></td><td class="was">$700</td></tr>
+          <tr><td><b>Stripe Payment Links</b> &mdash; 5 best sellers, paid online</td><td>$400</td><td class="was">$550</td></tr>
+          <tr><td>Additional payment links (5 more)</td><td>$150</td><td class="was">$220</td></tr>
+          <tr><td><b>Feature page</b> &mdash; a full custom page such as Weddings</td><td>$400</td><td class="was">$600</td></tr>
+          <tr><td>Simple page (About, FAQ, Care Guide)</td><td>$150</td><td class="was">$250</td></tr>
+          <tr><td>Additional language, up to 2,500 words</td><td>$400</td><td class="was">$700</td></tr>
+          <tr><td>Admin dashboard for Foundation</td><td>$500</td><td class="was">$800</td></tr>
+          <tr><td>Booking system</td><td>$400</td><td class="was">$600</td></tr>
+          <tr><td>Customer accounts</td><td>$600</td><td class="was">$900</td></tr>
+          <tr><td><b>WhatsApp broadcast list</b> &mdash; send seasonal offers to your buyers where they already answer you</td><td>$150</td><td class="was">$250</td></tr>
+          <tr><td>Email newsletter <em>(Commerce only)</em></td><td>$200</td><td class="was">$300</td></tr>
+          <tr><td><b>Upgrade Quick Pay to full Commerce later</b></td><td><b>$1,600</b></td><td class="was">$2,200</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pr-head" style="margin-top:clamp(3rem,6vw,4.5rem)">
+      <h2 class="pr-h2" style="font-size:clamp(1.4rem,3vw,2rem)">Bouquet Builder library</h2>
+      <p class="pr-sub">The builder ships with 10 flowers, 5 wrapping papers and 5 ribbons. Expand it whenever your shelves change &mdash; every item includes photography prep, background removal, setup and testing.</p>
+    </div>
+    <div class="pr-tablewrap">
+      <table class="pr-table">
+        <thead><tr><th>Library item</th><th>Price</th></tr></thead>
+        <tbody>
+          <tr><td>Extra flower</td><td>$10</td></tr>
+          <tr><td>Extra wrapping paper</td><td>$6</td></tr>
+          <tr><td>Extra ribbon style</td><td>$6</td></tr>
+          <tr><td>Decorative extra (teddy, chocolate, balloon, charm)</td><td>$10</td></tr>
+          <tr><td><b>Pack of 10 flowers</b></td><td><b>$85</b></td></tr>
+          <tr><td><b>Full expansion pack</b> &mdash; 10 flowers, 5 papers, 5 ribbons</td><td><b>$180</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pr-head" style="margin-top:clamp(3rem,6vw,4.5rem)">
+      <h2 class="pr-h2" style="font-size:clamp(1.4rem,3vw,2rem)">Branding</h2>
+      <p class="pr-sub">Available on their own, or bundled with a website project.</p>
+      <p class="pr-sub" style="margin-top:.9rem"><b>Have a logo and colors?</b> Send them and we design the whole site around them &mdash; your identity, from the first screen. <b>Don’t have any?</b> We build it in our own studio palette with a clean temporary wordmark, so your site launches looking finished instead of waiting months for a logo. You can add the real one whenever you are ready, and we apply it across the site for you.</p>
+    </div>
+    <div class="pr-tablewrap">
+      <table class="pr-table">
+        <thead><tr><th>Service</th><th>Launch</th><th>Standard</th></tr></thead>
+        <tbody>
+          <tr><td>Logo design</td><td>$300</td><td class="was">$500</td></tr>
+          <tr><td>Brand identity &mdash; logo, palette, fonts, style guide</td><td>$600</td><td class="was">$1,000</td></tr>
+          <tr><td>Business cards</td><td>$120</td><td class="was">$180</td></tr>
+          <tr><td>Menu / price list design &mdash; your bouquets and prices on one designed sheet for the counter</td><td>$150</td><td class="was">$220</td></tr>
+          <tr><td>Flyer design &mdash; one printable A5/A4 sheet for an offer or a season, print-ready and sized for Instagram too</td><td>$150</td><td class="was">$220</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="pr-sec" id="care">
+  <div class="pr-wrap">
+    <div class="pr-head">
+      <span class="pr-eyebrow">04 &mdash; After launch</span>
+      <h2 class="pr-h2">The Nebula Care Plan</h2>
+      <p class="pr-sub">Launching a site is not the end of the job. <b style="color:var(--text)">Every project includes the first 3 months of Care inside the price</b> &mdash; not as a free trial, but as part of what you bought. Billing continues from month 4, and you can stop any time with 30 days&rsquo; notice.</p>
+    </div>
+
+    <div class="pr-value">
+      <div class="pr-vitem"><span>01</span><h4>Your site stays alive</h4><p>Domain renewed, hosting paid, SSL valid. You will never wake up to a dead site because a renewal email was missed.</p></div>
+      <div class="pr-vitem"><span>02</span><h4>A backup every week</h4><p>If anything breaks, your site is back within the hour. Without backups, one failure means building it again from zero.</p></div>
+      <div class="pr-vitem"><span>03</span><h4>Free updates every month</h4><p>A price, a photo, a sold-out bouquet, Mother&rsquo;s Day copy. Send a WhatsApp message and it is done. Without a plan: $120 an hour.</p></div>
+      <div class="pr-vitem"><span>04</span><h4>New products added for you</h4><p>Up to 5 bouquets a month. Your shop changes every season and your site should change with it.</p></div>
+      <div class="pr-vitem"><span>05</span><h4>Any bug fixed at no charge</h4><p>A broken button, a missing image, a form that stopped sending. Our responsibility, not yours.</p></div>
+      <div class="pr-vitem"><span>06</span><h4>Security monitoring</h4><p>We see the problem before your customers do, and fix it before it costs you an order.</p></div>
+      <div class="pr-vitem"><span>07</span><h4>Speed monitoring</h4><p>A slow site loses 53% of mobile visitors. We keep yours fast as it grows.</p></div>
+      <div class="pr-vitem"><span>08</span><h4>You are not alone</h4><p>You have a developer who answers you &mdash; not a hosting company with support tickets and a reply in three days.</p></div>
+    </div>
+
+    <div class="pr-tablewrap" style="margin-top:2rem">
+      <table class="pr-table">
+        <thead><tr><th>&nbsp;</th><th>Care</th><th>Care+</th><th>Partner</th></tr></thead>
+        <tbody>
+          <tr><td><b>Monthly</b></td><td><b>$59</b></td><td><b>$129</b></td><td><b>$249</b></td></tr>
+          <tr><td><b>Yearly, paid upfront</b></td><td>$468 <span style="color:var(--accent)">($39/mo)</span></td><td>$1,032 <span style="color:var(--accent)">($86/mo)</span></td><td>$1,990</td></tr>
+          <tr><td>Update time each month</td><td>45 min</td><td>3 hours</td><td>8 hours</td></tr>
+          <tr><td>Response time</td><td>48 hrs</td><td>24 hrs</td><td>Same day</td></tr>
+          <tr><td>Domain, hosting &amp; SSL covered</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Backups</td><td>Monthly</td><td>Weekly</td><td>Daily</td></tr>
+          <tr><td>Products added</td><td>5 / mo</td><td>20 / mo</td><td>Unlimited</td></tr>
+          <tr><td>Builder library expansion</td><td>&mdash;</td><td>2 items / mo</td><td>5 items / mo</td></tr>
+          <tr><td>Performance report</td><td>&mdash;</td><td>Quarterly</td><td>Monthly</td></tr>
+          <tr><td>Strategy call</td><td>&mdash;</td><td>Quarterly</td><td>Monthly</td></tr>
+          <tr><td>Discount on future work</td><td>&mdash;</td><td>5%</td><td>10%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="pr-quote">&ldquo;We built you an asset worth $5,000. The Care Plan costs less than one bouquet a month, and it guarantees that asset never dies.&rdquo;</p>
+    <p class="pr-fine">Unused time does not roll over. Online stores stay on Care+ for a minimum of 6 months after launch. If the plan ends, domain and hosting management is $90 a year, or we transfer the domain to your own account free of charge &mdash; <b style="color:var(--text-muted)">the domain is yours, always.</b></p>
+  </div>
+</section>
+
+<section class="pr-sec" id="process">
+  <div class="pr-wrap">
+    <div class="pr-head">
+      <span class="pr-eyebrow">05 &mdash; How it works</span>
+      <h2 class="pr-h2">From first call to launch</h2>
+    </div>
+    <div class="pr-steps">
+      <div class="pr-step"><b>01</b><div><h4>Free 30-minute call</h4><p>We learn your business and tell you honestly whether we are the right studio for it.</p></div></div>
+      <div class="pr-step"><b>02</b><div><h4>Discovery session</h4><p>Goals, customers, competitors, style direction. $150, credited back in full when you sign.</p></div></div>
+      <div class="pr-step"><b>03</b><div><h4>Proposal</h4><p>Scope, price and timeline in writing. Valid for 14 days.</p></div></div>
+      <div class="pr-step"><b>04</b><div><h4>Contract and deposit</h4><p>Your build slot is booked and the calendar closes around it.</p></div></div>
+      <div class="pr-step"><b>05</b><div><h4>Content</h4><p>You send text and images within 14 days. Images 1200px or larger. If you would rather we wrote it: $25 per product, $150 per page.</p></div></div>
+      <div class="pr-step"><b>06</b><div><h4>Design</h4><p>You approve the direction before a single line of code is written.</p></div></div>
+      <div class="pr-step"><b>07</b><div><h4>Development</h4><p>Built from scratch, with progress updates you can actually see.</p></div></div>
+      <div class="pr-step"><b>08</b><div><h4>Review</h4><p>2 to 3 revision rounds included, each one a single consolidated list of changes.</p></div></div>
+      <div class="pr-step"><b>09</b><div><h4>Launch</h4><p>Final payment, then we go live, hand over everything, and walk you through it.</p></div></div>
+      <div class="pr-step"><b>10</b><div><h4>Care begins</h4><p>Your 3 included months start on launch day.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pr-sec pr-faq" id="faq">
+  <div class="pr-wrap">
+    <div class="pr-head">
+      <span class="pr-eyebrow">06 &mdash; Questions</span>
+      <h2 class="pr-h2">Asked before every project</h2>
+    </div>
+    <details open><summary>Do I have to buy a domain and hosting myself?</summary><p>No. We buy the domain, set up hosting and SSL, and keep everything renewed while you are on a Care Plan. The contract states plainly that the domain belongs to you and can be transferred to your own account at any time, free of charge. We do not hold anything hostage.</p></details>
+    <details><summary>Why is the first month not free?</summary><p>Because free teaches everyone that support is worth nothing, and months one to three are exactly when the work is heaviest. Instead we include three full months inside the project price and show you what they are worth. You get more, and it is honest.</p></details>
+    <details><summary>What is a revision round?</summary><p>One consolidated list of feedback during the review stage. A revision improves something we already agreed on. Something new that was never discussed is a scope change and is quoted separately. Extra rounds are $150.</p></details>
+    <details><summary>What happens if I am slow sending content?</summary><p>Your project pauses after 14 days and your slot is released to another client. Restarting costs $250. This is not a penalty, it is the only way a small studio can keep its promises to everyone else.</p></details>
+    <details><summary>Who receives the money from online sales?</summary><p>You do, directly. The Stripe account is always in your name and payouts go to your bank. We never touch our clients&rsquo; revenue. Stripe&rsquo;s processing fee of 2.9% + $0.30 per transaction, sales tax, and chargebacks are yours to manage &mdash; we set the system up so it is straightforward.</p></details>
+    <details><summary>Can I start small and grow later?</summary><p>Yes, and most shops should. Start with Foundation and payment links, then upgrade to a full store for $1,600 when your orders justify it. We would rather build you the right thing twice than the wrong thing once.</p></details>
+    <details><summary>Do you use AI to build these sites?</summary><p>We use the best tools available to work faster and at higher quality. You are paying for the design, the decisions and the result &mdash; not for hours spent typing.</p></details>
+    <details><summary>Will these prices last?</summary><p>No. Launch pricing applies to our first five clients. After that we move to standard rates, which are shown crossed out beside every price on this page.</p></details>
+  </div>
+</section>
+
+<section class="pr-sec">
+  <div class="pr-wrap">
+    <div class="pr-cta">
+      <h2>Build your plan in two minutes</h2>
+      <p>Pick your package, add what you need, and see your real price before you ever speak to us. No email required to look.</p>
+      <a href="build-your-plan.html" class="btn btn-primary btn-lg">Build your plan &nbsp;<span class="btn-arrow-icon">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" role="contentinfo">
+  <div class="footer-top">
+    <span class="footer-logo" style="display:inline-flex;align-items:center;gap:.6rem"><img src="assets/logo.png" alt="" style="width:40px;height:40px;border-radius:50%">Nebula Sites Studio</span>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="index.html#about">About</a>
+      <a href="index.html#showcase">Work</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="build-your-plan.html">Build Your Plan</a>
+      <a href="flowers/index.html">For Florists</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Nebula Sites Studio &mdash; Virginia, USA. All rights reserved.</span>
+    <span>Prices shown are launch rates for our first five clients.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var nav=document.getElementById('nav'),ov=document.getElementById('navOverlay'),tg=document.getElementById('navToggle'),open=false;
+  function set(o){open=o;ov.classList.toggle('is-open',o);document.body.style.overflow=o?'hidden':'';tg.setAttribute('aria-expanded',o?'true':'false');
+    var s=tg.querySelectorAll('span');
+    s[0].style.transform=o?'translateY(3px) rotate(45deg)':'';
+    s[1].style.transform=o?'translateY(-3px) rotate(-45deg)':'';}
+  tg.addEventListener('click',function(){set(!open)});
+  ov.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){set(false)})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open)set(false)});
+  var last=0;
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY||0;
+    nav.classList.toggle('is-scrolled',y>40);
+    last=y;
+  },{passive:true});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.pr-card,.pr-vitem,.pr-step,.pr-tablewrap,.pr-signature').forEach(function(el){
+    el.style.opacity='0';el.style.transform='translateY(22px)';
+    el.style.transition='opacity .7s cubic-bezier(0.16,1,0.3,1),transform .7s cubic-bezier(0.16,1,0.3,1)';
+    io.observe(el);
+  });
+  var st=document.createElement('style');
+  st.textContent='.is-in{opacity:1 !important;transform:none !important}';
+  document.head.appendChild(st);
+})();
+</script>
+
+</body>
+</html>

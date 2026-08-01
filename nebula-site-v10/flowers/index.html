@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <meta name="theme-color" content="#150a10" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nebula Sites Studio — Websites Made for Flower Shops" />
+  <meta property="og:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <title>Nebula Sites Studio — Websites Made for Flower Shops</title>
+  <link rel="canonical" href="https://nebulastudio.site/flowers/" />
+  <meta property="og:url" content="https://nebulastudio.site/flowers/" />
+  <meta property="og:site_name" content="Nebula Sites Studio" />
+  <meta property="og:image" content="https://nebulastudio.site/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nebula Sites Studio — Websites for Florists" />
+  <meta name="twitter:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <meta name="twitter:image" content="https://nebulastudio.site/assets/og.png" />
+  <link rel="icon" type="image/png" href="../assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+
+<style>
+/* ==========================================================================
+   STUDIO ENHANCED — All 9 Enhancements Active
+   01 Scroll-progress bar
+   02 Magnetic buttons
+   03 3-D feat-card tilt
+   04 3-D template-card tilt
+   05 Live iframe preview
+   06 WebGL bloom overlay
+   07 Horizontal pinned process
+   08 Formspree form
+   09 Cookie returning-visitor variant
+========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: auto; overflow-x: hidden; }
+body {
+  font-family: 'Manrope', system-ui, sans-serif;
+  background: #150a10; color: #f2e9ee;
+  line-height: 1.6; overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; width: 100%; }
+ul { list-style: none; }
+button { font: inherit; border: none; background: none; cursor: none; }
+
+:root {
+  --bg:#150a10; --bg-raised:#1b0e15; --surface:#20121b;
+  --surface-2:#281723; --surface-3:#311c2b;
+  --border:rgba(255,205,225,.09); --border-soft:rgba(255,205,225,.05);
+  --text:#f2e9ee; --text-muted:#7d6472;
+  --text-dim:#412c38;
+  --accent:#ec8fae; --accent-dim:rgba(236,143,174,.12);
+  --accent-rgb:236,143,174;
+  --green:#4caf8a; --blue:#5b8fff;
+  --font-serif:'Cinzel',Georgia,serif;
+  --font-sans:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --r-xs:4px; --r-sm:8px; --r-md:16px; --r-lg:28px; --r-xl:40px;
+  --sp:clamp(5rem,10vw,9rem); --px:clamp(1.25rem,5vw,3.5rem);
+  --maxw:1280px;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out:cubic-bezier(0.76,0,0.24,1);
+  --ease-back:cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ═══════════════════════════════════════════════════
+   GHOST PROJECT CARDS — Hero right side
+═══════════════════════════════════════════════════ */
+.hero-ghost-cards {
+  position: absolute;
+  right: clamp(2rem, 8vw, 7rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(220px, 28vw, 340px);
+  height: 340px;
+  pointer-events: none;
+  z-index: 2;
+}
+.ghost-card {
+  position: absolute;
+  width: 100%;
+  border: 1px solid rgba(236,143,174,.25);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  transition: opacity .4s;
+}
+.ghost-card:nth-child(1) {
+  top: 0; left: 0;
+  opacity: .18;
+  transform: rotate(-6deg) translateY(0px);
+  animation: ghostFloat1 6s ease-in-out infinite;
+}
+.ghost-card:nth-child(2) {
+  top: 20px; left: 10px;
+  opacity: .35;
+  transform: rotate(-2deg) translateY(0px);
+  animation: ghostFloat2 6s ease-in-out infinite;
+}
+.ghost-card:nth-child(3) {
+  top: 42px; left: 20px;
+  opacity: .72;
+  transform: rotate(1.5deg) translateY(0px);
+  animation: ghostFloat3 6s ease-in-out infinite;
+}
+.ghost-card-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .3rem;
+}
+.ghost-card-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(236,143,174,.4);
+}
+.ghost-card-url {
+  flex: 1;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(236,143,174,.1);
+  border: 1px solid rgba(236,143,174,.15);
+}
+.ghost-card-img {
+  width: 100%;
+  height: 80px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(236,143,174,.07) 0%, rgba(255,255,255,.04) 100%);
+  border: 1px solid rgba(236,143,174,.1);
+  margin-bottom: .4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ghost-card-img-line {
+  width: 40%;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(236,143,174,.2);
+}
+.ghost-card-title {
+  font-family: var(--font-serif);
+  font-size: .85rem;
+  font-weight: 700;
+  color: rgba(232,232,228,.6);
+  letter-spacing: .03em;
+}
+.ghost-card-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(236,143,174,.5);
+  border: 1px solid rgba(236,143,174,.2);
+  border-radius: 4px;
+  padding: .15rem .5rem;
+  width: fit-content;
+}
+@keyframes ghostFloat1 {
+  0%,100% { transform: rotate(-6deg) translateY(0px); }
+  50%      { transform: rotate(-6deg) translateY(-14px); }
+}
+@keyframes ghostFloat2 {
+  0%,100% { transform: rotate(-2deg) translateY(0px); }
+  50%      { transform: rotate(-2deg) translateY(-10px); }
+}
+@keyframes ghostFloat3 {
+  0%,100% { transform: rotate(1.5deg) translateY(0px); }
+  50%      { transform: rotate(1.5deg) translateY(-7px); }
+}
+@media (max-width: 768px) {
+  .hero-ghost-cards { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════
+   01. SCROLL PROGRESS BAR
+═══════════════════════════════════════════════════ */
+#scroll-progress {
+  position: fixed; top: 0; left: 0;
+  height: 2px; width: 0%;
+  background: linear-gradient(to right, var(--accent), rgba(var(--accent-rgb),.3));
+  z-index: 9000;
+  pointer-events: none;
+  transition: opacity .4s;
+  transform-origin: left center;
+}
+#scroll-progress::after {
+  content: '';
+  position: absolute; right: 0; top: -3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb),.8);
+}
+
+/* ═══════════════════════════════════════════════════
+   VEIL
+═══════════════════════════════════════════════════ */
+#veil {
+  position: fixed; inset: 0;
+  background: var(--bg); z-index: 8000;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+#veil-logo {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem,4vw,2.5rem);
+  font-weight: 700; letter-spacing: .1em;
+  color: var(--accent); opacity: 0;
+}
+
+/* Returning visitor banner */
+#rv-banner {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 7500; pointer-events: none;
+  padding: .6rem 1.5rem;
+  background: rgba(21,10,16,.9);
+  border: 1px solid rgba(var(--accent-rgb),.25);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  font-family: var(--font-mono); font-size: .65rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0; top: -40px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+
+/* ═══════════════════════════════════════════════════
+   AMBIENT CANVAS
+═══════════════════════════════════════════════════ */
+#ambientCanvas {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right,black 0%,black 10%,transparent 20%,transparent 80%,black 90%,black 100%);
+  mask-image: linear-gradient(to right,black 0%,black 10%,transparent 20%,transparent 80%,black 90%,black 100%);
+  opacity: .5;
+}
+@media (max-width:768px) {
+  #ambientCanvas {
+    -webkit-mask-image: linear-gradient(to bottom,black 0%,rgba(0,0,0,.4) 50%,transparent 85%);
+    mask-image: linear-gradient(to bottom,black 0%,rgba(0,0,0,.4) 50%,transparent 85%);
+    opacity: .3;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════════ */
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--accent); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%) scale(1);
+  transition: transform .2s var(--ease-out), background .2s;
+}
+#cursor-ring {
+  position: fixed; width: 38px; height: 38px;
+  border: 1px solid rgba(var(--accent-rgb),.35); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .4s var(--ease-out), height .4s var(--ease-out);
+}
+body.cursor-hover #cursor { transform: translate(-50%,-50%) scale(2.5); }
+body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(var(--accent-rgb),.15); }
+@media (hover:none),(max-width:768px) {
+  #cursor,#cursor-ring { display:none!important; }
+  body,a,button { cursor:auto; } a,button { cursor:pointer; }
+}
+
+/* ═══════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════���═══════════════ */
+.z1 { position:relative; z-index:1; }
+[data-reveal] { opacity:0; transform:translateY(32px); }
+.tag {
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); padding:.35rem .85rem;
+  border:1px solid rgba(var(--accent-rgb),.25);
+  border-radius:100px; background:var(--accent-dim);
+}
+.tag::before {
+  content:''; width:5px; height:5px; border-radius:50%;
+  background:var(--green); animation:tagPulse 2.5s ease infinite;
+}
+@keyframes tagPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+.section-eyebrow {
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); display:flex; align-items:center; gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.section-eyebrow::before { content:''; width:2rem; height:1px; background:var(--accent); flex-shrink:0; }
+.section-title {
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,4rem);
+  font-weight:700; letter-spacing:-.01em; line-height:1.08;
+}
+.section-desc { font-size:clamp(.9rem,1.5vw,1.05rem); color:var(--text-muted); line-height:1.8; max-width:48ch; }
+.wrev .wrev-word { display:inline; opacity:.06; will-change:opacity; }
+.clip-reveal { position:relative; color:var(--text-dim); --clip:100%; }
+.clip-reveal::before {
+  content:attr(data-text); position:absolute; inset:0;
+  color:var(--text); clip-path:inset(0 0 var(--clip) 0); will-change:clip-path;
+}
+
+/* ═══════════════════════════════════════════════════
+   02. MAGNETIC BUTTONS — JS handles transform, CSS handles transition
+═══════════════════════════════════════════════════ */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.6rem; padding:.95rem 2rem;
+  font-family:var(--font-sans); font-size:.875rem;
+  font-weight:700; letter-spacing:.02em;
+  border-radius:100px; white-space:nowrap;
+  position:relative; overflow:hidden;
+  /* magnetic uses gsap transform — we only transition box-shadow */
+  transition: box-shadow .35s var(--ease-out);
+  cursor:none; will-change:transform;
+}
+.btn::after {
+  content:''; position:absolute; inset:0;
+  background:rgba(255,255,255,.08); opacity:0;
+  border-radius:inherit; transition:opacity .25s;
+}
+.btn:hover::after { opacity:1; }
+.btn-primary {
+  background:var(--accent); color:#150a10;
+  box-shadow:0 0 32px rgba(var(--accent-rgb),.2);
+}
+.btn-primary:hover { box-shadow:0 8px 40px rgba(var(--accent-rgb),.4); }
+.btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+.btn-ghost:hover { border-color:rgba(255,255,255,.2); }
+.btn-lg { padding:1.15rem 2.5rem; font-size:.95rem; }
+.btn-full { width:100%; justify-content:center; }
+.btn-arrow-icon { display:inline-block; transition:transform .3s var(--ease-out); }
+.btn:hover .btn-arrow-icon { transform:translate(3px,-3px); }
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:600;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.35rem var(--px);
+  transition:background .5s, border-color .5s, padding .4s;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled {
+  background:rgba(21,10,16,.85);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  border-bottom-color:var(--border); padding:1rem var(--px);
+}
+.nav-logo {
+  font-family:var(--font-serif); font-size:1.35rem; font-weight:800;
+  letter-spacing:.06em; color:var(--text); position:relative; z-index:700;
+}
+.nav-logo span { color:var(--accent); }
+.nav-links { display:flex; gap:2.5rem; }
+.nav-links a {
+  font-size:.82rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--text-muted); transition:color .25s; position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-3px; left:0;
+  width:0; height:1px; background:var(--accent);
+  transition:width .35s var(--ease-out);
+}
+.nav-links a:hover { color:var(--text); }
+.nav-links a:hover::after { width:100%; }
+.nav-right { display:flex; align-items:center; gap:1.5rem; }
+.nav-toggle {
+  display:none; flex-direction:column; gap:5px;
+  padding:10px; cursor:none; position:relative; z-index:700;
+}
+.nav-toggle span {
+  display:block; width:24px; height:1.5px; background:var(--text);
+  transition:transform .4s var(--ease-in-out), opacity .3s; transform-origin:center;
+}
+.nav-overlay {
+  position:fixed; inset:0; z-index:500; background:#150a10;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.5rem; opacity:0; pointer-events:none; transition:opacity .4s;
+}
+.nav-overlay.open { opacity:1; pointer-events:all; }
+.nav-overlay-link {
+  font-family:var(--font-serif);
+  font-size:clamp(2.5rem,10vw,4.5rem);
+  font-weight:700; letter-spacing:-.01em;
+  color:var(--text-muted); transition:color .25s; padding:.35rem 0;
+}
+.nav-overlay-link:hover { color:var(--text); }
+.nav-overlay-cta { margin-top:2rem; }
+.nav-overlay-foot {
+  position:absolute; bottom:2.5rem;
+  font-family:var(--font-mono); font-size:.65rem;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════ */
+.hero {
+  position:relative; min-height:100svh;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+/* 06. BLOOM — second canvas overlay */
+.hero-canvas,
+.hero-bloom {
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+}
+.hero-bloom {
+  z-index:1;
+  mix-blend-mode:screen;
+  opacity:.38;
+  filter:blur(22px) brightness(2.2) saturate(1.4);
+}
+.hero-orb {
+  position:absolute; border-radius:50%;
+  pointer-events:none; z-index:1; will-change:transform;
+}
+.hero-orb--a {
+  width:clamp(280px,30vw,520px); height:clamp(280px,30vw,520px);
+  top:-5%; right:-10%;
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.08) 0%,transparent 68%);
+  filter:blur(50px);
+}
+.hero-orb--b {
+  width:clamp(180px,20vw,360px); height:clamp(180px,20vw,360px);
+  bottom:15%; left:-8%;
+  background:radial-gradient(circle,rgba(91,143,255,.05) 0%,transparent 70%);
+  filter:blur(60px);
+}
+.hero-orb--c {
+  width:1px; height:clamp(140px,22vh,260px);
+  top:18%; right:18%;
+  background:linear-gradient(to bottom,transparent,rgba(var(--accent-rgb),.3),transparent);
+}
+.hero-body {
+  position:relative; z-index:2; flex:1;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:calc(5rem + 80px) var(--px) 5rem; max-width:1100px;
+}
+.hero-eyebrow { margin-bottom:2.5rem; opacity:0; transform:translateY(12px); }
+.hero-headline {
+  font-family:var(--font-serif);
+  font-size:clamp(3.8rem,10vw,9rem);
+  font-weight:800; letter-spacing:-.025em; line-height:.92; margin-bottom:2.5rem;
+}
+.hero-line { display:block; overflow:hidden; }
+.hero-line-inner { display:block; opacity:0; transform:translateY(110%); }
+.hero-line--gold .hero-line-inner { color:var(--accent); }
+.hero-sub {
+  font-size:clamp(.95rem,1.6vw,1.15rem); color:var(--text-muted);
+  line-height:1.8; max-width:500px; margin-bottom:3rem;
+  opacity:0; transform:translateY(16px);
+}
+.hero-actions { display:flex; flex-wrap:wrap; gap:1rem; opacity:0; transform:translateY(16px); }
+.hero-stats {
+  position:absolute; bottom:clamp(2rem,5vw,4rem); right:var(--px);
+  display:flex; gap:2.5rem; opacity:0; transform:translateY(16px); z-index:2;
+}
+.hero-stat-num {
+  font-family:var(--font-serif); font-size:clamp(1.6rem,3vw,2.5rem);
+  font-weight:700; color:var(--text); line-height:1;
+}
+.hero-stat-num span { color:var(--accent); }
+.hero-stat-label {
+  font-family:var(--font-mono); font-size:.62rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin-top:.4rem;
+}
+.hero-scroll-hint {
+  position:absolute; bottom:clamp(2rem,5vw,4rem); left:var(--px);
+  display:flex; align-items:center; gap:.75rem; z-index:2; opacity:0;
+}
+.hero-scroll-hint span {
+  font-family:var(--font-mono); font-size:.62rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--text-muted);
+}
+.hero-scroll-line {
+  width:3rem; height:1px;
+  background:linear-gradient(to right,var(--text-muted),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%,100%{opacity:.6;transform:scaleX(1)} 50%{opacity:.2;transform:scaleX(.5)} }
+
+/* ═══════════════════════════════════════════════════
+   MARQUEE
+═══════════════════════════════════════════════════ */
+.marquee-band {
+  position:relative; z-index:2; overflow:hidden;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.015); padding:.9rem 0;
+}
+.marquee-track { display:flex; white-space:nowrap; animation:marquee 28s linear infinite; }
+.marquee-item {
+  display:inline-flex; align-items:center; gap:1.5rem;
+  font-family:var(--font-mono); font-size:.68rem;
+  font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-muted); padding-right:2.5rem;
+}
+.marquee-dot { color:var(--accent); font-size:.8rem; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ═══════════════════════════════════════════════════
+   PHILOSOPHY
+═══════════════════════════════════════════════════ */
+.philosophy {
+  padding:var(--sp) var(--px); display:flex; justify-content:center;
+  border-bottom:1px solid var(--border); position:relative; z-index:1;
+}
+.philosophy-inner { max-width:920px; width:100%; }
+.philosophy-quote {
+  font-family:var(--font-serif);
+  font-size:clamp(1.35rem,2.9vw,2.7rem);
+  font-weight:600; line-height:1.4; letter-spacing:-.01em;
+  color:var(--text);
+  /* Always fully visible, never clipped, never wider than the screen. */
+  opacity:1 !important; max-width:100%;
+  overflow-wrap:break-word; word-break:normal; hyphens:none;
+  text-wrap:pretty;
+}
+@media (max-width:768px) {
+  .philosophy { padding-left:var(--px); padding-right:var(--px); }
+  .philosophy-quote { font-size:clamp(1.2rem,5.4vw,1.7rem); line-height:1.5; }
+}
+
+/* ═══════════════════════════════════════════════════
+   SHOWCASE
+═══════════════════════════════════════════════════ */
+.showcase {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  overflow:hidden; position:relative; z-index:1;
+}
+.showcase-header { max-width:680px; margin-bottom:clamp(3rem,7vw,6rem); }
+.showcase-heading {
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,5.5vw,5rem);
+  font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:1.25rem;
+}
+.showcase-heading em { font-style:italic; color:var(--accent); }
+.tracks { display:flex; flex-direction:column; overflow:hidden; margin-bottom:clamp(3.5rem,8vw,6.5rem); }
+.track {
+  border-top:1px solid var(--border); padding:.9rem 0; overflow:hidden;
+}
+.track:last-child { border-bottom:1px solid var(--border); }
+.track-inner {
+  display:flex; gap:3rem; align-items:center; will-change:transform;
+  transform:translateX(35%);
+}
+.track[data-dir="l"] .track-inner { transform:translateX(-35%); }
+.track-inner span {
+  font-family:var(--font-serif);
+  font-size:clamp(1.25rem,2.8vw,2.2rem);
+  font-weight:600; letter-spacing:.015em;
+  color:var(--text-muted); white-space:nowrap; transition:color .35s;
+}
+.track-inner span.sep { color:var(--text-dim); font-size:1rem; }
+.track-inner span:not(.sep):hover { color:var(--text); }
+
+/* ═══════════════════════════════════════════════════
+   03. FEAT CARDS — 3-D tilt via CSS perspective + JS transform
+═══════════════════════════════════════════════════ */
+.feat-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden;
+  perspective:900px;
+}
+.feat-card {
+  background:var(--surface); padding:2.5rem 2rem;
+  opacity:0; transform:translateY(22px) rotateX(0) rotateY(0);
+  transition:background .35s, transform .12s linear, box-shadow .35s;
+  position:relative; overflow:hidden;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.feat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(to right,transparent,rgba(var(--accent-rgb),.4),transparent);
+  opacity:0; transition:opacity .35s;
+}
+.feat-card:hover { background:var(--surface-2); }
+.feat-card:hover::before { opacity:1; }
+.feat-card-icon { font-size:1.5rem; color:var(--accent); margin-bottom:1.4rem; display:block; }
+.feat-card h3 { font-size:1rem; font-weight:700; letter-spacing:-.025em; margin-bottom:.6rem; }
+.feat-card p { font-size:.84rem; color:var(--text-muted); line-height:1.7; }
+/* Shine layer for 3-D tilt */
+.feat-card-shine {
+  position:absolute; inset:0; border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0%, transparent 65%);
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.feat-card:hover .feat-card-shine { opacity:1; }
+
+/* ═══════════════════════════════════════════════════
+   TEMPLATES GALLERY
+═══════════════════════════════════════════════════ */
+.templates {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  position:relative; z-index:1;
+}
+.templates-header {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  flex-wrap:wrap; gap:1.5rem; margin-bottom:clamp(3rem,7vw,5.5rem);
+}
+.templates-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));
+  gap:1.75rem;
+  perspective:1200px; /* for 04. 3D tilt context */
+}
+
+/* ═══════════════════════════════════════════════════
+   04. TEMPLATE CARD 3-D TILT + 05. LIVE IFRAME PREVIEW
+═══════════════════════════════════════════════════ */
+.tpl-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); overflow:hidden;
+  opacity:0; transform:translateY(40px) rotateX(0) rotateY(0);
+  transition:border-color .35s, box-shadow .35s, transform .12s linear;
+  transform-style:preserve-3d; will-change:transform;
+  position:relative;
+}
+.tpl-card:hover {
+  border-color:rgba(var(--accent-rgb),.25);
+  box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(var(--accent-rgb),.08);
+}
+/* 05. iframe preview wrapper */
+.tpl-preview {
+  position:relative; height:280px; overflow:hidden;
+}
+.tpl-preview--flower  { background:linear-gradient(135deg,#1a0e10 0%,#2d1519 40%,#1f1012 100%); }
+.tpl-preview--perfume { background:linear-gradient(135deg,#191410 0%,#28200e 40%,#1c180b 100%); }
+.tpl-preview--ecom    { background:linear-gradient(135deg,#0c1220 0%,#111d32 40%,#0f1629 100%); }
+.tpl-preview--wedding { background:linear-gradient(135deg,#231419 0%,#2d181f 45%,#1a1013 100%); }
+.tpl-preview-inner {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center; padding:1.75rem;
+}
+/* iframe live preview */
+.tpl-iframe-wrap {
+  position:absolute; inset:0; z-index:3;
+  opacity:0; transition:opacity .5s var(--ease-out);
+  pointer-events:none;
+}
+.tpl-card:hover .tpl-iframe-wrap { opacity:1; pointer-events:all; }
+.tpl-iframe-wrap iframe {
+  width:400%; height:400%;
+  transform:scale(.25); transform-origin:top left;
+  border:none; pointer-events:none;
+  border-radius:0;
+}
+/* overlay with CTA */
+.tpl-overlay {
+  position:absolute; inset:0; z-index:4;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(21,10,16,.55);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  opacity:0; transition:opacity .35s;
+}
+.tpl-card:hover .tpl-overlay { opacity:1; }
+.tpl-mobile-cta {
+  display:none; text-align:center; padding:.75rem 1.5rem 0;
+  font-family:var(--font-mono); font-size:.72rem;
+  font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); text-decoration:underline; text-underline-offset:4px;
+}
+.tpl-body { padding:2rem; }
+.tpl-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.tpl-tag {
+  font-family:var(--font-mono); font-size:.65rem;
+  font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+}
+.tpl-num { font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted); font-weight:600; }
+.tpl-name { font-family:var(--font-serif); font-size:1.3rem; font-weight:700; letter-spacing:-.015em; margin-bottom:.65rem; }
+.tpl-desc { font-size:.855rem; color:var(--text-muted); line-height:1.7; margin-bottom:1.35rem; }
+.tpl-features { display:flex; flex-direction:column; gap:.4rem; }
+.tpl-features li { font-size:.8rem; color:var(--text-muted); padding-left:1.1rem; position:relative; }
+.tpl-features li::before { content:'—'; position:absolute; left:0; color:var(--accent); font-size:.7rem; }
+/* Shine layer on tpl cards */
+.tpl-shine {
+  position:absolute; inset:0; border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%,rgba(var(--accent-rgb),.04) 0%,transparent 65%);
+  opacity:0; pointer-events:none; transition:opacity .2s; z-index:5;
+}
+.tpl-card:hover .tpl-shine { opacity:1; }
+
+/* Mock browser */
+.mock {
+  width:100%; max-width:290px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px; overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+.mock-bar {
+  height:28px; padding:0 10px;
+  background:rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex; align-items:center; gap:5px;
+}
+.mock-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.12); }
+.mock-body { padding:1rem; display:flex; flex-direction:column; gap:.5rem; }
+.mock-hero-line { height:8px; border-radius:4px; background:rgba(255,255,255,.1); }
+.mock-accent-bar { height:3px; width:40%; border-radius:2px; opacity:.9; }
+.mock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; padding:.25rem 0 .5rem; }
+.mock-product { height:48px; border-radius:6px; background:rgba(255,255,255,.06); }
+
+/* ═══════════════════════════════════════════════════
+   SERVICES
+═══════════════════════════════════════════════════ */
+.services {
+  padding:var(--sp) var(--px); border-bottom:1px solid var(--border);
+  display:grid; grid-template-columns:1fr 1.7fr;
+  gap:clamp(3rem,8vw,7rem); align-items:start;
+  position:relative; z-index:1;
+}
+.services-left { position:sticky; top:9rem; }
+.services-list { display:flex; flex-direction:column; }
+.svc-item {
+  display:grid; grid-template-columns:3.5rem 1fr 2.5rem;
+  gap:1.5rem; align-items:start; padding:2.25rem 0;
+  border-bottom:1px solid var(--border);
+  opacity:0; transform:translateX(-20px); transition:background .3s;
+}
+.svc-item:first-child { border-top:1px solid var(--border); }
+.svc-num { font-family:var(--font-mono); font-size:.68rem; font-weight:700; color:var(--text-dim); padding-top:.25rem; letter-spacing:.1em; }
+.svc-body h3 { font-size:1.1rem; font-weight:800; letter-spacing:-.035em; margin-bottom:.5rem; transition:color .25s; }
+.svc-body p { font-size:.855rem; color:var(--text-muted); line-height:1.65; }
+.svc-arrow { font-size:1.3rem; color:var(--text-dim); transform:rotate(-35deg); transition:transform .35s var(--ease-out),color .35s; padding-top:.15rem; }
+.svc-item:hover .svc-body h3 { color:var(--accent); }
+.svc-item:hover .svc-arrow { color:var(--accent); transform:rotate(0deg); }
+
+/* ═══════════════════════════════════════════════════
+   07. HORIZONTAL PINNED PROCESS
+═══════════════════════════════════════════════════ */
+.process {
+  position:relative; z-index:1;
+  border-bottom:1px solid var(--border);
+}
+/* Pin wrapper — height is set via JS based on step count */
+.process-pin-wrap {
+  position:relative;
+  /* height injected by JS: calc(100vh * N) */
+}
+/* Sticky stage */
+.process-sticky {
+  position:sticky; top:0;
+  width:100%; height:100svh;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+/* Header stays at top */
+.process-header {
+  padding:var(--px) var(--px) 2rem;
+  flex-shrink:0; max-width:680px;
+}
+.process-header .section-eyebrow { margin-top: clamp(4rem,6vw,5rem); }
+/* Horizontal track */
+.process-track-wrap {
+  flex:1; overflow:hidden;
+  display:flex; align-items:center;
+  padding:0 var(--px);
+}
+.process-track {
+  display:flex; gap:clamp(2.5rem,5vw,4.5rem);
+  align-items:flex-start; will-change:transform;
+  padding-right:var(--px);
+}
+.step {
+  flex:0 0 clamp(260px,35vw,420px);
+  padding:2rem 2.5rem 2rem 0;
+  opacity:0; transform:translateX(40px);
+  position:relative; border-top:2px solid var(--border);
+}
+.step-progress-line {
+  position:absolute; top:-2px; left:0;
+  height:2px; width:0;
+  background:linear-gradient(to right,var(--accent),rgba(var(--accent-rgb),.3));
+  transition:width 1s var(--ease-out); z-index:1;
+}
+.step.active .step-progress-line { width:100%; }
+.step-num {
+  font-family:var(--font-mono); font-size:.68rem; font-weight:700;
+  letter-spacing:.14em; color:var(--accent); margin-bottom:1.75rem;
+  display:flex; align-items:center; gap:.6rem;
+}
+.step-num-circle {
+  width:28px; height:28px; border-radius:50%;
+  border:1px solid rgba(var(--accent-rgb),.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.65rem; background:var(--accent-dim);
+}
+.step h3 {
+  font-family:var(--font-serif); font-size:1.3rem; font-weight:700;
+  letter-spacing:-.015em; margin-bottom:.75rem;
+}
+.step p { font-size:.855rem; color:var(--text-muted); line-height:1.7; }
+/* Progress indicator dots */
+.process-dots {
+  display:flex; gap:.6rem; align-items:center;
+  padding:0 var(--px) 2rem; flex-shrink:0;
+}
+.process-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--text-dim);
+  transition:background .4s, transform .4s var(--ease-back);
+}
+.process-dot.active { background:var(--accent); transform:scale(1.5); }
+
+/* ─── Mobile: vertical fallback ─── */
+@media (max-width:768px) {
+  .process-pin-wrap { height:auto !important; }
+  .process-sticky { position:relative; height:auto; display:block; }
+  .process-header .section-eyebrow { margin-top:0; }
+  .process-track-wrap { overflow:visible; display:block; padding:0 var(--px); }
+  .process-track { flex-direction:column; gap:0; transform:none !important; }
+  .step { flex:none; width:100%; padding:2rem 0; opacity:1 !important; transform:none !important; border-top:1px solid var(--border); border-left:none; }
+  .step-progress-line { display:none; }
+  .process-dots { display:none; }
+  .process-header { padding-top:calc(var(--sp) * .5); }
+  .process { padding-bottom:var(--sp); }
+}
+
+/* ═══════════════════════════════════════════════════
+   STATEMENT
+════���══════════════════════════════════════════════ */
+.statement {
+  padding:var(--sp) var(--px);
+  display:flex; flex-direction:column; align-items:center; gap:3rem;
+  text-align:center; border-bottom:1px solid var(--border);
+  background:var(--bg-raised); position:relative; z-index:1; overflow:hidden;
+}
+.statement-quote {
+  font-family:var(--font-serif);
+  font-size:clamp(1.6rem,3.8vw,3rem);
+  font-weight:600; line-height:1.3; max-width:900px;
+}
+
+/* ═══════════════════════════════════════════════════
+   08. CONTACT — Formspree-ready
+═══════════════════════════════════════════════════ */
+.contact {
+  padding:var(--sp) var(--px);
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:clamp(3rem,8vw,7rem); border-bottom:1px solid var(--border);
+  align-items:start; position:relative; z-index:1;
+}
+.contact-headline {
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,4rem);
+  font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:1.25rem;
+}
+.contact-headline span { color:var(--accent); font-style:italic; }
+.contact-desc { font-size:.95rem; color:var(--text-muted); line-height:1.8; margin-bottom:2.5rem; max-width:40ch; }
+.contact-channels { display:flex; flex-direction:column; gap:.85rem; }
+.contact-ch {
+  display:flex; align-items:center; gap:1.1rem;
+  padding:1.1rem 1.35rem; border-radius:var(--r-md);
+  border:1px solid var(--border); background:var(--surface);
+  transition:border-color .3s, background .3s, transform .3s var(--ease-out);
+}
+.contact-ch:hover { border-color:rgba(var(--accent-rgb),.3); background:var(--surface-2); transform:translateX(4px); }
+.contact-ch-icon {
+  width:2.35rem; height:2.35rem; border-radius:50%;
+  background:var(--accent-dim); display:flex; align-items:center;
+  justify-content:center; color:var(--accent); font-size:1rem; flex-shrink:0;
+}
+.contact-ch-label { font-family:var(--font-mono); font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.15rem; }
+.contact-ch-val { font-size:.92rem; font-weight:700; color:var(--text); }
+.contact-socials { display:flex; gap:1rem; margin-top:1.5rem; flex-wrap:wrap; }
+.contact-social {
+  font-family:var(--font-mono); font-size:.7rem; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted);
+  display:inline-flex; align-items:center; gap:.4rem; transition:color .25s;
+}
+.contact-social:hover { color:var(--accent); }
+.contact-form { display:flex; flex-direction:column; gap:1.25rem; }
+.form-group { display:flex; flex-direction:column; gap:.5rem; }
+.form-group label {
+  font-family:var(--font-mono); font-size:.65rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted);
+}
+.form-group input,.form-group textarea,.form-group select {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:var(--font-sans); font-size:1rem;
+  padding:1rem 1.15rem; outline:none; resize:none;
+  transition:border-color .25s, background .25s;
+}
+.form-group input::placeholder,.form-group textarea::placeholder { color:var(--text-dim); }
+.form-group input:focus,.form-group textarea:focus {
+  border-color:rgba(var(--accent-rgb),.5); background:var(--surface-2);
+}
+/* Form state feedback */
+.form-status {
+  padding:.9rem 1.15rem; border-radius:var(--r-sm);
+  font-size:.855rem; font-weight:600; display:none;
+  border:1px solid;
+}
+.form-status.success { color:#4caf8a; background:rgba(76,175,138,.08); border-color:rgba(76,175,138,.25); display:block; }
+.form-status.error   { color:#ff6b6b; background:rgba(255,107,107,.08); border-color:rgba(255,107,107,.25); display:block; }
+.form-note { font-size:.75rem; color:var(--text-muted); text-align:center; margin-top:-.25rem; }
+
+/* ═════════════════════════════════��═════════════════
+   FOOTER
+═════════════════════════════════���═════════════════ */
+.footer { padding:2.5rem var(--px); position:relative; z-index:1; }
+.footer-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; flex-wrap:wrap; gap:1.5rem; }
+.footer-logo { font-family:var(--font-serif); font-size:1.2rem; font-weight:800; letter-spacing:.06em; }
+.footer-logo span { color:var(--accent); }
+.footer-nav { display:flex; gap:2rem; flex-wrap:wrap; }
+.footer-nav a { font-size:.8rem; font-weight:600; letter-spacing:.04em; color:var(--text-muted); text-transform:uppercase; transition:color .25s; }
+.footer-nav a:hover { color:var(--text); }
+.footer-bottom {
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:.75rem;
+  font-family:var(--font-mono); font-size:.65rem; letter-spacing:.1em; color:var(--text-dim);
+  border-top:1px solid var(--border); padding-top:1.5rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+@media (max-width:1024px) {
+  .services { grid-template-columns:1fr; gap:3rem; }
+  .services-left { position:static; }
+  .contact { grid-template-columns:1fr; gap:3.5rem; }
+}
+@media (max-width:768px) {
+  .nav-links { display:none; }
+  /* The consultation button is the whole point of the page — it stays. */
+  .nav-right { gap:.55rem; }
+  .nav-right>.btn { display:inline-flex; padding:.62rem 1rem; font-size:.7rem; letter-spacing:.04em; }
+  .nav-logo { font-size:1.1rem; }
+  .nav-logo img { width:30px !important; height:30px !important; }
+  .nav { padding:.9rem 1rem; }
+  .nav.scrolled { padding:.75rem 1rem; }
+  .nav-toggle { display:flex; }
+  .hero-body { padding-top:calc(4rem + 70px); padding-bottom:7rem; }
+  .hero-stats { right:var(--px); gap:1.75rem; }
+  .hero-orb--c { display:none; }
+  .feat-grid { grid-template-columns:1fr; }
+  .tpl-card:hover { transform:none !important; }
+  .tpl-overlay { opacity:0; }
+  .tpl-mobile-cta { display:block; }
+  .svc-item { grid-template-columns:3rem 1fr; }
+  .svc-arrow { display:none; }
+  .hero-actions { flex-direction:column; }
+  .hero-actions .btn { width:100%; }
+  .footer-top { flex-direction:column; align-items:flex-start; }
+  .footer-bottom { flex-direction:column; }
+}
+@media (max-width:480px) {
+  .hero-headline { font-size:clamp(3rem,13vw,4.5rem); }
+  .hero-stats { position:static; flex-direction:row; justify-content:space-between; gap:1rem; margin-top:2.75rem; padding:0 var(--px); }
+  .hero-scroll-hint { display:none; }
+  :root { --sp:clamp(4rem,10vw,6rem); }
+}
+@media (hover:none) {
+  .btn:active { transform:scale(.97); }
+  .btn:hover { transform:none; }
+}
+@supports (padding:max(0px)) {
+  .nav { padding-left:max(var(--px),env(safe-area-inset-left)); padding-right:max(var(--px),env(safe-area-inset-right)); }
+  .footer { padding-bottom:max(2.5rem,env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
+</style>
+</head>
+<body>
+
+<!-- 01. SCROLL PROGRESS BAR -->
+<div id="scroll-progress"></div>
+
+<!-- 09. RETURNING VISITOR BANNER (shown via JS) -->
+<div id="rv-banner">Welcome back ✦ Ready to take the next step?</div>
+
+<!-- VEIL -->
+<div id="veil"><span id="veil-logo">Nebula.</span></div>
+
+<!-- AMBIENT CANVAS -->
+<canvas id="ambientCanvas"></canvas>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <a href="#" class="nav-logo" aria-label="Nebula Sites Studio home" style="display:inline-flex;align-items:center;gap:.6rem"><img src="../assets/logo.png" alt="" style="width:36px;height:36px;border-radius:50%;box-shadow:0 0 18px rgba(150,110,255,.4)">Nebula<span>.</span></a>
+  <div class="nav-links" role="list">
+    <a href="#about" role="listitem">About</a>
+    <a href="#showcase" role="listitem">Work</a>
+    <a href="#templates" role="listitem">Demos</a>
+    <a href="#services" role="listitem">Services</a>
+    <a href="#process" role="listitem">Process</a>
+    <a href="../build-your-plan.html#plans" role="listitem">Plans</a>
+    <a href="#contact" role="listitem">Contact</a>
+
+  </div>
+  <div class="nav-right">
+    <a href="../build-your-plan.html" class="btn btn-ghost" aria-label="Book a free consultation">Free Consultation</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navOverlay">
+      <span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true">
+  <a href="#about"     class="nav-overlay-link">About</a>
+  <a href="#showcase"  class="nav-overlay-link">Work</a>
+  <a href="#templates" class="nav-overlay-link">Demos</a>
+  <a href="#services"  class="nav-overlay-link">Services</a>
+  <a href="#process"   class="nav-overlay-link">Process</a>
+  <a href="../build-your-plan.html#plans" class="nav-overlay-link">Plans</a>
+  <a href="#contact"   class="nav-overlay-link">Contact</a>
+  <a href="../build-your-plan.html" class="btn btn-primary nav-overlay-cta">Free Consultation &nbsp;&#8599;</a>
+  <span class="nav-overlay-foot">Nebula Sites Studio — every business has a story worth telling</span>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero" aria-label="Hero">
+  <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <!-- 06. Bloom second canvas (injected by JS) -->
+  <div class="hero-orb hero-orb--a" id="orbA" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb--b" id="orbB" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb--c" id="orbC" aria-hidden="true"></div>
+  <div class="hero-body">
+    <div class="hero-eyebrow" id="heroEyebrow">
+      <span class="tag" id="heroTag">Nebula Sites Studio &nbsp;✦&nbsp; Florist Website Specialists &nbsp;✦&nbsp; Virginia, USA</span>
+    </div>
+    <h1 class="hero-headline" id="heroHeadline">
+      <span class="hero-line"><span class="hero-line-inner" id="hl1">Your flowers deserve</span></span>
+      <span class="hero-line"><span class="hero-line-inner" id="hl2">a website as lovely</span></span>
+      <span class="hero-line hero-line--gold"><span class="hero-line-inner" id="hl3">as they are.</span></span>
+    </h1>
+    <p class="hero-sub" id="heroSub">
+      We build websites for flower shops — occasion-based catalogs, bouquet builders
+      your customers can play with, and seasonal themes that switch on for Valentine's
+      and Mother's Day. Hand-coded around your shop, your style, your seasons.
+    </p>
+    <div class="hero-actions" id="heroActions">
+      <a href="../build-your-plan.html" class="btn btn-primary btn-lg">
+        Build Your Plan &mdash; Free <span class="btn-arrow-icon">&#8599;</span>
+      </a>
+      <a href="#templates" class="btn btn-ghost btn-lg">See The Live Demos</a>
+    </div>
+  </div>
+  <div class="hero-stats" id="heroStats">
+    <div><div class="hero-stat-num">100<span>%</span></div><div class="hero-stat-label">Hand-coded, no builders</div></div>
+    <div><div class="hero-stat-num">1<span>:</span>1</div><div class="hero-stat-label">You talk to the makers directly</div></div>
+    <div><div class="hero-stat-num">24<span>h</span></div><div class="hero-stat-label">Typical reply time</div></div>
+  </div>
+  <div class="hero-scroll-hint" id="heroScroll" aria-hidden="true">
+    <span>Scroll</span><div class="hero-scroll-line"></div>
+  </div>
+
+  <!-- Ghost project cards -->
+  <div class="hero-ghost-cards" aria-hidden="true">
+    <!-- Card 1 (back) -->
+    <div class="ghost-card">
+      <div class="ghost-card-bar">
+        <span class="ghost-card-dot"></span><span class="ghost-card-dot"></span><span class="ghost-card-dot"></span>
+        <div class="ghost-card-url"></div>
+      </div>
+      <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
+      <div class="ghost-card-title">Flowers Pavon</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
+    </div>
+    <!-- Card 2 (middle) -->
+    <div class="ghost-card">
+      <div class="ghost-card-bar">
+        <span class="ghost-card-dot"></span><span class="ghost-card-dot"></span><span class="ghost-card-dot"></span>
+        <div class="ghost-card-url"></div>
+      </div>
+      <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
+      <div class="ghost-card-title">Bouquet Builder</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
+    </div>
+    <!-- Card 3 (front) -->
+    <div class="ghost-card">
+      <div class="ghost-card-bar">
+        <span class="ghost-card-dot"></span><span class="ghost-card-dot"></span><span class="ghost-card-dot"></span>
+        <div class="ghost-card-url"></div>
+      </div>
+      <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
+      <div class="ghost-card-title">Pavon Weddings</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">Bouquet Catalogs <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Builders <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Wedding Florals <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Seasonal Countdowns <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Same-Day Ordering <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Occasion Shopping <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Catalogs <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Builders <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Wedding Florals <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Seasonal Countdowns <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Same-Day Ordering <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Occasion Shopping <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
+  </div>
+</div>
+
+<!-- TEMPLATES -->
+<section class="templates z1" id="templates" aria-labelledby="tplHeading">
+  <div class="templates-header">
+    <div>
+      <p class="section-eyebrow">Templates &amp; Demos</p>
+      <h2 class="section-title clip-reveal" id="tplHeading">A florist experience you can explore</h2>
+    </div>
+    <p class="section-desc">Before we tell you anything about us, look at the work. Both of these are live and fully clickable — open them, break them, and imagine your shop's name on them.</p>
+  </div>
+  <div class="templates-grid">
+
+    <!-- TEMPLATE 01 —— Flower Shop -->
+    <article class="tpl-card" data-tpl-color="#d4a5a5">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--flower">
+        <!-- 05. Live iframe preview injected by JS -->
+        <div class="tpl-preview-inner">
+          <picture>
+            <source srcset="../assets/pavon-shot.webp" type="image/webp">
+            <img src="../assets/pavon-shot.jpg" alt="Flowers Pavon live demo preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </picture>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/index.html" class="btn btn-primary" target="_blank" rel="noopener">View Live Demo &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Live Demo</span><span class="tpl-num">01</span></div>
+        <h3 class="tpl-name">Flowers Pavon &mdash; Florist Experience</h3>
+        <p class="tpl-desc">A complete florist experience you can explore right now: bilingual storefront, occasion-based catalog, seasonal event themes with countdowns, and a bouquet builder your customers can play with.</p>
+        <ul class="tpl-features">
+          <li>Bilingual EN&thinsp;/&thinsp;ES storefront</li>
+          <li>Custom bouquet builder</li>
+          <li>Seasonal event engine &amp; countdowns</li>
+          <li>WhatsApp &amp; card ordering flows</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- TEMPLATE 02 —— Wedding Experience -->
+    <article class="tpl-card" data-tpl-color="#e6c9d4">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--wedding">
+        <div class="tpl-preview-inner">
+          <picture>
+            <source srcset="../assets/weddings-shot.webp" type="image/webp">
+            <img src="../assets/weddings-shot.jpg" alt="Pavon Weddings page preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </picture>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/weddings.html" class="btn btn-primary" target="_blank" rel="noopener">View the wedding page &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/weddings.html" target="_blank" rel="noopener">View the wedding page &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Weddings &middot; Dedicated Page</span><span class="tpl-num">02</span></div>
+        <h3 class="tpl-name">Pavon Weddings &mdash; A Dedicated Experience</h3>
+        <p class="tpl-desc">Wedding work does not belong in the same catalog as a $45 bouquet. So we build it its own experience — its own hero, its own pace, its own way of asking for the date. Brides land somewhere that already feels like their day, and you get enquiries with the details you actually need.</p>
+        <ul class="tpl-features">
+          <li>Cinematic wedding hero</li>
+          <li>Package &amp; palette showcase</li>
+          <li>Date-first enquiry flow</li>
+          <li>Built as an add-on to any plan</li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- HOW WE BUILD IDEAS -->
+  <style>
+    .idea-banner{margin-top:clamp(2.5rem,5vw,4rem);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
+    .idea-banner picture{display:block;height:100%}
+    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
+    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
+    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
+  </style>
+  <div class="idea-banner">
+    <picture>
+      <source srcset="../assets/builder-shot.webp" type="image/webp">
+      <img src="../assets/builder-shot.jpg" alt="The Flowers Pavon bouquet builder" loading="lazy">
+    </picture>
+    <div class="idea-copy">
+      <p class="section-eyebrow">How We Build Ideas</p>
+      <h3 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your idea becomes an experience</h3>
+      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">For Flowers Pavon we asked one question: what if choosing flowers felt like a game? So we built a bouquet builder — pick your stems, wrap and ribbon, and watch the bouquet come to life with a live price. That's how we treat every idea: we don't just describe it, we turn it into something your customers can play with.</p>
+      <a href="../demo/pavon/builder.html" target="_blank" rel="noopener" class="btn btn-ghost">Try the builder &nbsp;&#8599;</a>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy z1" aria-labelledby="philHeading">
+  <div class="philosophy-inner">
+    <p class="section-eyebrow" aria-hidden="true">Philosophy</p>
+    <p class="philosophy-quote">
+      A bouquet is never just flowers — it's a feeling. Your website should work the
+      same way: we build florist sites that make people feel something before they
+      ever smell the roses.
+    </p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about z1" id="about" aria-labelledby="aboutHeading">
+  <style>
+    .about{padding:var(--sp) var(--px);max-width:var(--maxw);margin:0 auto;}
+    .about-inner{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2rem,5vw,5.5rem);align-items:center;}
+    .about-portrait{display:flex;flex-direction:column;align-items:center;}
+    .about-avatar{width:clamp(150px,18vw,230px);height:clamp(150px,18vw,230px);border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,var(--surface-3),var(--surface) 72%);border:1px solid var(--border);font-family:var(--font-serif);font-size:clamp(3.2rem,6vw,5.5rem);color:var(--accent);box-shadow:0 35px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);}
+    .about-portrait-note{margin-top:1.1rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;}
+    .about em{color:var(--accent);font-style:normal;}
+    .about-lead{font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--text);margin:1.4rem 0 1rem;line-height:1.55;}
+    .about-text{color:var(--text-muted);font-size:clamp(.95rem,1.3vw,1.05rem);line-height:1.7;margin-bottom:1.6rem;}
+    .about-points{display:grid;gap:.7rem;margin-bottom:1.6rem;}
+    .about-points li{display:flex;gap:.7rem;align-items:flex-start;color:var(--text);font-size:.97rem;}
+    .about-points li span{color:var(--accent);flex:none;}
+    .about-honest{font-family:var(--font-mono);font-size:.82rem;line-height:1.6;color:var(--text-muted);border-left:2px solid var(--accent);padding-left:1rem;}
+    @media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:2.5rem;}.about-portrait{order:-1;}}
+  </style>
+  <div class="about-inner">
+    <div class="about-portrait">
+      <div class="about-avatar" style="overflow:hidden;padding:0"><img src="../assets/logo.png" alt="Nebula Sites Studio logo" style="width:100%;height:100%;object-fit:cover"></div>
+      <p class="about-portrait-note">Nebula Sites Studio ✦ Virginia, USA</p>
+    </div>
+    <div class="about-content">
+      <p class="section-eyebrow">Who We Are</p>
+      <h2 class="section-title" id="aboutHeading">A <em>boutique</em> studio — not a faceless agency</h2>
+      <p class="about-lead">Nebula Sites Studio is a boutique web studio based in Virginia, USA, specialized in websites for flower shops. Every build is hand-coded from scratch — no page-builders, no recycled templates — and a dedicated project lead stays with you from the first conversation to launch, so you always feel heard.</p>
+      <p class="about-text">Every project starts with listening. Before colors, features, or designs, we want to understand your story, your customers, and what you hope to achieve. Then we build together — your ideas and feedback shape the process from the first conversation until you're proud of what we created. Because to us, we aren't just building websites. We're building relationships.</p>
+      <ul class="about-points">
+        <li><span>✦</span> People before projects — we always listen first</li>
+        <li><span>✦</span> We create, never copy — every build starts from zero</li>
+        <li><span>✦</span> We build together — your feedback shapes every step</li>
+        <li><span>✦</span> We stay by your side — support long after launch</li>
+        <li><span>✦</span> You own 100% of the files, forever</li>
+      </ul>
+      <p class="about-honest">Our promise: you leave with more than a website — you gain a partner who keeps supporting you long after launch. Everything below is real and fully explorable: the Flowers Pavon storefront, the wedding experience and the bouquet builder. Open them, click everything, judge us on the work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section class="showcase z1" id="showcase" aria-labelledby="showcaseHeading">
+  <div class="showcase-header">
+    <p class="section-eyebrow">Showcase</p>
+    <h2 class="showcase-heading" id="showcaseHeading">Everything is <em>customizable</em></h2>
+    <p class="section-desc">
+      Every color, layout, font and feature can be shaped around your shop —
+      your wrapping style, your signature bouquets, your seasons, your neighborhood.
+    </p>
+  </div>
+  <div class="tracks" id="showcaseTracks">
+    <div class="track" data-dir="r">
+      <div class="track-inner">
+        <span>Flower Shops</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florals</span><span class="sep">&middot;</span>
+        <span>Valentine's Day</span><span class="sep">&middot;</span>
+        <span>Mother's Day</span><span class="sep">&middot;</span>
+        <span>Sympathy Florals</span><span class="sep">&middot;</span>
+        <span>Flower Shops</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florals</span><span class="sep">&middot;</span>
+      </div>
+    </div>
+    <div class="track" data-dir="l">
+      <div class="track-inner">
+        <span>Colors</span><span class="sep">&middot;</span>
+        <span>Layouts</span><span class="sep">&middot;</span>
+        <span>Typography</span><span class="sep">&middot;</span>
+        <span>Branding</span><span class="sep">&middot;</span>
+        <span>Bouquets</span><span class="sep">&middot;</span>
+        <span>Functionality</span><span class="sep">&middot;</span>
+        <span>Colors</span><span class="sep">&middot;</span>
+        <span>Layouts</span><span class="sep">&middot;</span>
+        <span>Typography</span><span class="sep">&middot;</span>
+      </div>
+    </div>
+    <div class="track" data-dir="r">
+      <div class="track-inner">
+        <span>Local Flower Shops</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florists</span><span class="sep">&middot;</span>
+        <span>Garden Centers</span><span class="sep">&middot;</span>
+        <span>Flower Studios</span><span class="sep">&middot;</span>
+        <span>Local Flower Shops</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florists</span><span class="sep">&middot;</span>
+      </div>
+    </div>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&loz;</span>
+      <h3>Petal-Perfect Identity</h3>
+      <p>Colors, fonts and imagery matched to your shop — your wrapping paper, your ribbon, your signature style.</p>
+    </div>
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&#9635;</span>
+      <h3>Occasion-First Shopping</h3>
+      <p>Birthdays, anniversaries, sympathy, "just because" — customers shop the way they actually think about flowers.</p>
+    </div>
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&#9889;</span>
+      <h3>Florist Features</h3>
+      <p>Bouquet builders, delivery zones, event countdowns, care guides — built for how florists really sell.</p>
+    </div>
+    <div class="feat-card"><div class="feat-card-shine"></div>
+      <span class="feat-card-icon" aria-hidden="true">&#8599;</span>
+      <h3>Found Nearby</h3>
+      <p>Speed, mobile and local SEO — so "florist near me" searches end at your door.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services z1" id="services" aria-labelledby="svcHeading">
+  <div class="services-left">
+    <p class="section-eyebrow">What We Build</p>
+    <h2 class="section-title clip-reveal" id="svcHeading" style="margin-bottom:1.5rem">Everything a flower shop needs online</h2>
+    <p class="section-desc">From storefront to back office — built around how florists actually work, sell and deliver.</p>
+  </div>
+  <div class="services-list">
+    <div class="svc-item"><div class="svc-num">01</div><div class="svc-body"><h3>Florist Storefronts</h3><p>Occasion-based catalogs, seasonal collections and best-sellers — a storefront that sells bouquets 24&thinsp;/&thinsp;7, even while you sleep.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">02</div><div class="svc-body"><h3>Bouquet Builders</h3><p>Let customers compose their own bouquet — stems, wrap, ribbon and note — with a live price. Choosing flowers becomes a game.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">03</div><div class="svc-body"><h3>Seasonal Event Engines</h3><p>Valentine's and Mother's Day themes with countdowns that switch on automatically — your site dresses up for every season by itself.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">04</div><div class="svc-body"><h3>Ordering &amp; Delivery</h3><p>Card and WhatsApp ordering, delivery zones, same-day cutoffs — order flows built around how flowers actually move.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">05</div><div class="svc-body"><h3>Admin &amp; Order Management</h3><p>A private dashboard to manage bouquets, prices, photos and orders — no developer needed for everyday changes.</p></div><div class="svc-arrow">&#8599;</div></div>
+  </div>
+</section>
+
+<!-- 07. HORIZONTAL PINNED PROCESS -->
+<section class="process z1" id="process" aria-labelledby="processHeading">
+  <div class="process-pin-wrap" id="processPinWrap">
+    <div class="process-sticky" id="processSticky">
+      <div class="process-header">
+        <p class="section-eyebrow">How It Works</p>
+        <h2 class="section-title" id="processHeading">From idea to live — a clear path</h2>
+      </div>
+      <div class="process-track-wrap">
+        <div class="process-track" id="processTrack">
+          <div class="step" data-step="0">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">01</span></div>
+            <h3>Idea</h3>
+            <p>We talk about your business, your goals, your customers, and the problems you want to solve. We listen more than we speak.</p>
+          </div>
+          <div class="step" data-step="1">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">02</span></div>
+            <h3>Design</h3>
+            <p>We craft a visual direction — layouts, colors, and flows — that feels unmistakably like your brand. You approve before we build.</p>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">03</span></div>
+            <h3>Development</h3>
+            <p>Clean, fast, intentional code. Every interaction is purposeful. Every page loads instantly. Built to last, not to patch.</p>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-progress-line"></div>
+            <div class="step-num"><span class="step-num-circle">04</span></div>
+            <h3>Launch</h3>
+            <p>Your website goes live. You own every file. We make sure it runs, ranks, and converts from day one.</p>
+          </div>
+        </div>
+      </div>
+      <div class="process-dots" id="processDots">
+        <div class="process-dot active" data-dot="0"></div>
+        <div class="process-dot" data-dot="1"></div>
+        <div class="process-dot" data-dot="2"></div>
+        <div class="process-dot" data-dot="3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="statement z1" aria-label="Closing statement">
+  <h2 class="statement-quote wrev" id="stmtText">
+    The website you're looking at right now —
+    its layout, its animations, its feel —
+    can be built for your flower shop.
+  </h2>
+  <a href="../build-your-plan.html" class="btn btn-primary btn-lg" data-reveal>Build Your Plan &mdash; Free Consultation &nbsp;&#8599;</a>
+</section>
+
+<!-- 08. CONTACT — Formspree -->
+<section class="contact z1" id="contact" aria-labelledby="contactHeading">
+  <div class="contact-left" data-reveal>
+    <p class="section-eyebrow">Get In Touch</p>
+    <h2 class="contact-headline" id="contactHeading">Ready to grow something <span>beautiful?</span></h2>
+    <p class="contact-desc">Tell us about your shop. We'll show you exactly what your florist website could be — we reply within 24 hours.</p>
+    <div class="contact-channels">
+      <a href="mailto:nebulastudiosite@gmail.com" class="contact-ch">
+        <span class="contact-ch-icon" aria-hidden="true">&#9993;</span>
+        <div class="contact-ch-info">
+          <div class="contact-ch-label">Email</div>
+          <div class="contact-ch-val">nebulastudiosite@gmail.com</div>
+        </div>
+      </a>
+      <a href="https://www.instagram.com/nebulaa_studio" class="contact-ch" target="_blank" rel="noopener noreferrer">
+        <span class="contact-ch-icon" aria-hidden="true">&#9673;</span>
+        <div class="contact-ch-info">
+          <div class="contact-ch-label">Instagram</div>
+          <div class="contact-ch-val">@nebulaa_studio</div>
+        </div>
+      </a>
+    </div>
+    <div class="contact-socials">
+      <a href="../build-your-plan.html" class="contact-social">Build your plan — free consultation &#8599;</a>
+      <span class="contact-social" style="pointer-events:none">&#128205; Virginia, USA — serving businesses across the US</span>
+    </div>
+  </div>
+
+  <!-- 08. FORMSPREE FORM -->
+  <!-- ★ Replace YOUR_FORM_ID with your Formspree endpoint ID from formspree.io -->
+  <form class="contact-form" id="contactForm"
+        action="https://formsubmit.co/ajax/nebulastudiosite@gmail.com"
+        method="POST" novalidate data-reveal>
+    <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <div class="form-group">
+      <label for="fname">Your Name</label>
+      <input type="text" id="fname" name="name" placeholder="Holly Parker" autocomplete="name" required />
+    </div>
+    <div class="form-group">
+      <label for="fbusiness">Business Type</label>
+      <input type="text" id="fbusiness" name="business" placeholder="Flower shop, clothing brand, restaurant…" />
+    </div>
+    <div class="form-group">
+      <label for="fbudget">Budget Range</label>
+      <input type="text" id="fbudget" name="budget" placeholder="e.g. $1,500–$3,000" />
+    </div>
+    <div class="form-group">
+      <label for="fmessage">What do you need?</label>
+      <textarea id="fmessage" name="message" rows="4" placeholder="Tell us about your project, your goals, your deadline…" required></textarea>
+    </div>
+    <!-- Hidden honeypot anti-spam -->
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <div class="form-status" id="formStatus"></div>
+    <button type="submit" class="btn btn-primary btn-full" id="formBtn">Send Message &nbsp;&#10003;</button>
+    <p class="form-note">No spam. No obligations. Just a real conversation.</p>
+  </form>
+</section>
+
+<!-- Graceful fallback: if the animation library fails to load (CDN blocked/offline),
+     force all reveal-animated elements visible so the site never shows a blank page. -->
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  if (typeof gsap === 'undefined') {
+    var s = document.createElement('style');
+    s.textContent = '[data-reveal],.tpl-card,.hero-line-inner,.wrev,.clip-reveal,.section-eyebrow,.section-title,.section-desc,#heroSub,#heroActions,#heroStats,#heroEyebrow,#heroScroll,.feat-card,.step,.svc-item,.about-inner,.contact-left,.contact-form,.philosophy-quote,.statement-quote{opacity:1!important;transform:none!important;clip-path:none!important;visibility:visible!important}body{cursor:auto!important}#veil,#cursor-dot,#cursor-ring{display:none!important}';
+    document.head.appendChild(s);
+  }
+});
+</script>
+
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-top">
+    <span class="footer-logo" style="display:inline-flex;align-items:center;gap:.6rem"><img src="../assets/logo.png" alt="" style="width:40px;height:40px;border-radius:50%">Nebula Sites Studio</span>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="#about">About</a>
+      <a href="#showcase">Work</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+      <a href="../build-your-plan.html#plans">Plans &amp; Prices</a>
+      <a href="../build-your-plan.html">Build Your Plan</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Nebula Sites Studio &mdash; Virginia, USA. All rights reserved.</span>
+    <span>Built with intention — every pixel, every interaction.</span>
+  </div>
+</footer>
+
+
+<script>
+/* ==========================================================================
+   STUDIO ENHANCED — All 9 Enhancements
+========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  gsap.registerPlugin(ScrollTrigger)
+
+  /* Scroll engine hardening — stops the jitter/overlap near the footer.
+     1. ignoreMobileResize: URL-bar show/hide no longer re-measures the page.
+     2. Every pin/scrub trigger is re-measured after fonts + images land,
+        because late-loading media changes page height and leaves stale
+        start/end positions behind (the real cause of the end-of-page jump).
+     3. Resizes are debounced into a single refresh instead of dozens. */
+  ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' })
+
+  let refreshTimer
+  const softRefresh = () => {
+    clearTimeout(refreshTimer)
+    refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 180)
+  }
+  window.addEventListener('load', softRefresh)
+  window.addEventListener('resize', softRefresh)
+  window.addEventListener('orientationchange', softRefresh)
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(softRefresh)
+  document.querySelectorAll('img').forEach(img => {
+    if (!img.complete) img.addEventListener('load', softRefresh, { once:true })
+  })
+  setTimeout(softRefresh, 1200)
+  setTimeout(softRefresh, 3000)
+  const isMobile = () => window.innerWidth <= 768
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches
+
+  /* ═══════════════════════════════════════════════════���══
+     LENIS
+  ══════════════════════════════════════════════════════ */
+  let lenis
+  try {
+    lenis = new Lenis({
+      duration: 1.25,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    })
+    ;(function rf(t) { lenis.raf(t); ScrollTrigger.update(); requestAnimationFrame(rf) })(0)
+    lenis.on('scroll', ScrollTrigger.update)
+  } catch(e) {}
+
+  /* ═════════════════��════════════════════════════════════
+     01. SCROLL PROGRESS BAR
+  ════════════════════���═════════════════════════════════ */
+  const progressBar = document.getElementById('scroll-progress')
+  function updateProgress() {
+    const total = document.documentElement.scrollHeight - innerHeight
+    const pct   = Math.min((scrollY / total) * 100, 100)
+    progressBar.style.width = pct + '%'
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true })
+  if (lenis) lenis.on('scroll', updateProgress)
+
+  /* ══════════════════════════════════════════════════════
+     09. COOKIE — RETURNING VISITOR VARIANT
+  ══════════════════════════════════════════════════════ */
+  ;(function cookieVariant() {
+    const KEY = 'studio_visit'
+    const isReturning = document.cookie.split(';').some(c => c.trim().startsWith(KEY + '='))
+    // Set cookie for 30 days
+    const exp = new Date(Date.now() + 30 * 864e5).toUTCString()
+    document.cookie = `${KEY}=1; expires=${exp}; path=/; SameSite=Lax`
+
+    if (isReturning) {
+      // Modify hero tag
+      const tag = document.getElementById('heroTag')
+      if (tag) { tag.innerHTML = '&#9670;&nbsp; Welcome back, good to see you'; }
+      // Modify hero sub
+      const sub = document.getElementById('heroSub')
+      if (sub) sub.textContent = "Good to have you back. Let's build something beautiful for your flower shop — whenever you're ready."
+      // Show returning visitor banner
+      const banner = document.getElementById('rv-banner')
+      if (banner) {
+        setTimeout(() => {
+          gsap.to(banner, { top: 0, opacity: 1, duration: .7, ease: 'power3.out' })
+          setTimeout(() => gsap.to(banner, { opacity: 0, top: -40, duration: .5, ease: 'power2.in' }), 4000)
+        }, 2600)
+      }
+    }
+  })()
+
+  /* ═══════════════════════════════════���══════════════════
+     AMBIENT PARTICLES
+  ══════════════════════════════════════════��══════════�� */
+  ;(function particles() {
+    const canvas = document.getElementById('ambientCanvas')
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let W = canvas.width = innerWidth
+    let H = canvas.height = innerHeight
+    let mob = W <= 768
+    const PAL = [[236,143,174],[236,143,174],[232,232,228],[91,143,255],[232,232,228]]
+    const COUNT = 55
+    function mp(atBottom) {
+      const col = PAL[Math.floor(Math.random() * PAL.length)]
+      const roll = Math.random()
+      const r = roll < .07 ? 1.7 : roll < .25 ? 1.1 : 0.55
+      return {
+        x: Math.random() * W, y: atBottom ? H + Math.random() * 120 : Math.random() * H,
+        vy: -(0.04 + Math.random() * .12), vx: (Math.random() - .5) * .055,
+        r, col, phase: Math.random() * Math.PI * 2, freq: .003 + Math.random() * .004,
+        alpha: 0, peak: (r > 1.4 ? .2 : r > .9 ? .13 : .07) * (mob ? .5 : 1)
+      }
+    }
+    let pts = Array.from({length: COUNT}, () => mp(false)), fr = 0
+    ;(function tick() {
+      requestAnimationFrame(tick); fr++
+      ctx.clearRect(0, 0, W, H)
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i]
+        p.y += p.vy; p.x += p.vx + Math.sin(fr * p.freq + p.phase) * .18
+        if (p.alpha < p.peak) p.alpha = Math.min(p.peak, p.alpha + .0018)
+        if (p.y < -10) { pts[i] = mp(true); continue }
+        if (p.x < -6) p.x = W + 6; if (p.x > W + 6) p.x = -6
+        const [r,g,b] = p.col
+        if (p.r > 1.2) {
+          const g2 = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*8)
+          g2.addColorStop(0, `rgba(${r},${g},${b},${(p.alpha*.5).toFixed(3)})`)
+          g2.addColorStop(.45,`rgba(${r},${g},${b},${(p.alpha*.07).toFixed(3)})`)
+          g2.addColorStop(1,  `rgba(${r},${g},${b},0)`)
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*8,0,Math.PI*2); ctx.fillStyle=g2; ctx.fill()
+        }
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+        ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha.toFixed(3)})`; ctx.fill()
+      }
+    })()
+    window.addEventListener('resize', () => {
+      W = canvas.width = innerWidth; H = canvas.height = innerHeight; mob = W <= 768
+      pts.forEach(p => p.peak = (p.r > 1.4 ? .2 : p.r > .9 ? .13 : .07) * (mob ? .5 : 1))
+    })
+  })()
+
+  /* ══════════════════════════════════════════════════════
+     CURSOR
+  ══════════════════════════════════════════════════════ */
+  const cursorDot  = document.getElementById('cursor')
+  const cursorRing = document.getElementById('cursor-ring')
+  let mx = 0, my = 0, rx = 0, ry = 0
+  if (cursorDot && window.matchMedia('(pointer:fine)').matches) {
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY
+      gsap.set(cursorDot, {x: mx, y: my})
+    })
+    ;(function rf() { rx += (mx-rx)*.11; ry += (my-ry)*.11; gsap.set(cursorRing, {x:rx,y:ry}); requestAnimationFrame(rf) })()
+    document.querySelectorAll('a, button, .feat-card, .tpl-card').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'))
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'))
+    })
+  } else {
+    if (cursorDot)  cursorDot.style.display  = 'none'
+    if (cursorRing) cursorRing.style.display = 'none'
+  }
+
+  /* ════════════════���═════════════════════════════════════
+     THREE.JS HERO + 06. BLOOM OVERLAY
+  ══════════════════════════════════════════════════════ */
+  const heroCanvas  = document.getElementById('heroCanvas')
+  const heroSection = document.getElementById('hero')
+  let bloomCanvas = null
+
+  if (heroCanvas && typeof THREE !== 'undefined') {
+    const vsrc = `
+      varying vec2 vUv;
+      void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+    `
+    const fsrc = `
+      uniform float uProgress; uniform vec2 uResolution; uniform vec3 uColor; uniform float uSpread;
+      varying vec2 vUv;
+      float hash(vec2 p) { vec3 p3=vec3(p.xy,1.0); return fract(sin(dot(p3,vec3(37.1,61.7,12.4)))*3758.5453); }
+      float noise(vec2 p) { vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y); }
+      float fbm(vec2 p) { float v=0.0; v+=noise(p*1.0)*.5; v+=noise(p*2.1)*.25; v+=noise(p*4.3)*.125; return v; }
+      void main() {
+        float aspect = uResolution.x / uResolution.y;
+        vec2 centered = (vUv - 0.5) * vec2(aspect,1.0);
+        float edge = vUv.y - uProgress * 1.25;
+        float n = fbm(centered * 15.0);
+        float d = edge + n * uSpread;
+        float px = 1.0 / uResolution.y;
+        float alpha = 1.0 - smoothstep(-px, px, d);
+        gl_FragColor = vec4(uColor, alpha * 0.14);
+      }
+    `
+    const scene = new THREE.Scene()
+    const camera = new THREE.OrthographicCamera(-1,1,1,-1,0,1)
+    const renderer = new THREE.WebGLRenderer({canvas: heroCanvas, alpha: true, antialias: false})
+    const material = new THREE.ShaderMaterial({
+      vertexShader: vsrc, fragmentShader: fsrc,
+      uniforms: {
+        uProgress:   {value: 0},
+        uResolution: {value: new THREE.Vector2(heroSection.offsetWidth, heroSection.offsetHeight)},
+        uColor:      {value: new THREE.Vector3(201/255, 169/255, 110/255)},
+        uSpread:     {value: 0.42},
+      },
+      transparent: true,
+    })
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), material))
+
+    function resizeGL() {
+      const w = heroSection.offsetWidth, h = heroSection.offsetHeight
+      renderer.setSize(w, h)
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+      material.uniforms.uResolution.value.set(w, h)
+      if (bloomCanvas) { bloomCanvas.width = w; bloomCanvas.height = h }
+    }
+    resizeGL()
+    window.addEventListener('resize', resizeGL)
+
+    /* 06. BLOOM — dual-canvas technique */
+    bloomCanvas = document.createElement('canvas')
+    bloomCanvas.className = 'hero-bloom'
+    bloomCanvas.setAttribute('aria-hidden', 'true')
+    heroSection.insertBefore(bloomCanvas, heroSection.firstChild)
+    const bloomCtx = bloomCanvas.getContext('2d')
+    bloomCanvas.width  = heroSection.offsetWidth
+    bloomCanvas.height = heroSection.offsetHeight
+
+    let prog = 0
+    ;(function glLoop() {
+      material.uniforms.uProgress.value = prog
+      renderer.render(scene, camera)
+      // Copy WebGL output to bloom canvas — CSS filter does the glow
+      try { bloomCtx.clearRect(0,0,bloomCanvas.width,bloomCanvas.height); bloomCtx.drawImage(heroCanvas, 0, 0) } catch(e){}
+      requestAnimationFrame(glLoop)
+    })()
+
+    const onScroll = () => {
+      prog = Math.min(scrollY / Math.max(heroSection.offsetHeight - innerHeight, 1), 1.1)
+    }
+    if (lenis) lenis.on('scroll', ({scroll}) => { prog = Math.min(scroll / Math.max(heroSection.offsetHeight - innerHeight, 1), 1.1) })
+    else window.addEventListener('scroll', onScroll)
+  }
+
+  /* ══════════════════════════���═══════════════════════════
+     VEIL + HERO ENTRANCE
+  ══════════════════════════════════════════════════════ */
+  const veil     = document.getElementById('veil')
+  const veilLogo = document.getElementById('veil-logo')
+  gsap.timeline()
+    .to(veilLogo, {opacity:1, duration:.5, ease:'power2.out'})
+    .to(veilLogo, {opacity:0, duration:.4, ease:'power2.in'}, 1.1)
+    .to(veil,     {opacity:0, duration:.7, ease:'power2.out', onComplete:()=>veil.remove()}, 1.4)
+
+  const heroTL = gsap.timeline({delay:1.8, defaults:{ease:'power3.out'}})
+  heroTL
+    .to('#heroEyebrow',       {opacity:1, y:0, duration:.9})
+    .to('.hero-line-inner',   {opacity:1, y:0, duration:1.1, stagger:.15}, .25)
+    .to('#heroSub',           {opacity:1, y:0, duration:.9}, .6)
+    .to('#heroActions',       {opacity:1, y:0, duration:.8}, .75)
+    .to('#heroStats',         {opacity:1, y:0, duration:.8}, .85)
+    .to('#heroScroll',        {opacity:1, duration:.6}, 1.1)
+
+  gsap.to('#heroHeadline', { y:-60, ease:'none', scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1.2} })
+  gsap.to('#orbA', { y:-200, ease:'none', scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true} })
+  gsap.to('#orbB', { y:-320, ease:'none', scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true} })
+
+  /* ════════════════════════════════════��═════════════════
+     WORD REVEAL
+  ══════════════════════════════════════════════════════ */
+  function initWordReveal(el) {
+    if (!el) return
+    const words = el.textContent.trim().split(/\s+/)
+    el.innerHTML = words.map(w => `<span class="wrev-word">${w}&nbsp;</span>`).join('')
+    const spans = Array.from(el.querySelectorAll('.wrev-word'))
+    const total = spans.length
+
+    // Reduced motion / mobile: show the full sentence immediately.
+    if (prefersReducedMotion) {
+      gsap.set(spans, { opacity:1, color:'var(--text)' })
+      return
+    }
+
+    gsap.set(spans, { opacity:.08, color:'var(--text-muted)' })
+
+    // Scroll-linked: the sentence finishes reading itself before the
+    // section leaves the middle of the screen, so it is never half-lit.
+    const paint = p => {
+      // p: 0 -> 1 across the reveal window. Each word gets a small window
+      // of its own but every word is fully lit by p = 0.92.
+      const reach = p * 1.18
+      for (let i = 0; i < total; i++) {
+        const startAt = (i / total) * 0.92
+        const o = Math.min(1, Math.max(0.08, (reach - startAt) / 0.16))
+        const s = spans[i]
+        s.style.opacity = o
+        s.style.color = o > .55 ? 'var(--text)' : 'var(--text-muted)'
+      }
+    }
+
+    const finish = () => {
+      for (let i = 0; i < total; i++) {
+        spans[i].style.opacity = 1
+        spans[i].style.color = 'var(--text)'
+      }
+    }
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 88%',
+      end: 'bottom 62%',
+      scrub: .6,
+      invalidateOnRefresh: true,
+      onUpdate: self => paint(self.progress),
+      // Whatever happens — fast scroll, resize, jump link — the sentence
+      // is always left complete once it has been passed.
+      onLeave: finish,
+      onEnterBack: () => paint(1),
+      onLeaveBack: () => paint(0)
+    })
+
+    // Safety net: if the element is already above the fold on load.
+    if (el.getBoundingClientRect().top < innerHeight * .55) finish()
+  }
+  initWordReveal(document.getElementById('philText'))
+  initWordReveal(document.getElementById('stmtText'))
+
+  /* ══════════════════════════════════════════════════════
+     CLIP-PATH HEADINGS
+  ══════════════════════════════════════════════════════ */
+  document.querySelectorAll('.clip-reveal').forEach(el => {
+    el.setAttribute('data-text', el.textContent.trim())
+    ScrollTrigger.create({
+      trigger:el, start:'top 75%', end:'bottom 42%', scrub:1.4,
+      onUpdate: self => el.style.setProperty('--clip', `${Math.max(0, 100 - self.progress*100)}%`)
+    })
+  })
+
+  /* ══════════════════════════════════════════════════════
+     SHOWCASE TRACKS
+  ══════════════════════════════════════════════════════ */
+  ScrollTrigger.create({
+    trigger:'#showcaseTracks', start:'top 92%', end:'top 10%', scrub:1.8,
+    onUpdate: self => {
+      const p = self.progress
+      document.querySelectorAll('.track[data-dir="r"] .track-inner').forEach(el => gsap.set(el, {x:`${35-p*35}%`}))
+      document.querySelectorAll('.track[data-dir="l"] .track-inner').forEach(el => gsap.set(el, {x:`${-35+p*35}%`}))
+    }
+  })
+
+  /* ════════════��═════════════════════════════════════════
+     DATA-REVEAL
+  ══════════════════════════════════════════════════════ */
+  document.querySelectorAll('[data-reveal]').forEach((el,i) => {
+    ScrollTrigger.create({
+      trigger:el, start:'top 88%', once:true,
+      onEnter: () => gsap.to(el, {opacity:1, y:0, duration:.75, ease:'power3.out', delay:(i%5)*.1})
+    })
+  })
+
+  /* ══════════════════════════════════════════════════════
+     03. FEAT CARD 3-D TILT
+  ══════════════════════════════════════════════════════ */
+  document.querySelectorAll('.feat-card').forEach((card, i) => {
+    // Reveal
+    ScrollTrigger.create({
+      trigger:card, start:'top 88%', once:true,
+      onEnter:()=>gsap.to(card, {opacity:1, y:0, duration:.65, ease:'power2.out', delay:i*.1})
+    })
+    if (prefersReducedMotion || isMobile()) return
+    const shine = card.querySelector('.feat-card-shine')
+    card.addEventListener('mousemove', e => {
+      const r   = card.getBoundingClientRect()
+      const x   = (e.clientX - r.left) / r.width  - .5  // -0.5 to 0.5
+      const y   = (e.clientY - r.top)  / r.height - .5
+      const rx  = -y * 14  // degrees
+      const ry  =  x * 14
+      gsap.to(card, {
+        rotateX: rx, rotateY: ry,
+        transformPerspective: 700,
+        scale: 1.03,
+        duration: .25, ease: 'power2.out', overwrite: 'auto'
+      })
+      if (shine) {
+        shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(255,255,255,.10) 0%, transparent 65%)`
+      }
+    })
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {rotateX:0, rotateY:0, scale:1, duration:.6, ease:'elastic.out(1,.4)', overwrite:'auto'})
+      if (shine) shine.style.background = ''
+    })
+  })
+
+  /* ═══════════════���══════════════════════════════════════
+     04. TEMPLATE CARD 3-D TILT + 05. LIVE IFRAME PREVIEW
+  ══════════════════════════════════════════════════════ */
+
+  /* 05 — Build inline srcdoc for each card */
+  function buildIframeSrc(accentColor, label, bgGradient) {
+    return `<!DOCTYPE html><html><head><style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      body{background:${bgGradient};font-family:system-ui;color:#e8e8e4;min-height:100vh;overflow:hidden}
+      .nav{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;border-bottom:1px solid rgba(255,255,255,.08)}
+      .logo{font-size:1.1rem;font-weight:800;letter-spacing:.1em;color:${accentColor}}
+      .nav-cta{background:${accentColor};color:#0a0a0a;font-size:.75rem;font-weight:700;letter-spacing:.06em;padding:.45rem 1.1rem;border-radius:100px}
+      .hero{padding:3rem 2rem 2rem;}
+      .eyebrow{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:${accentColor};margin-bottom:1rem;}
+      .h1{font-size:2.2rem;font-weight:800;line-height:1.05;margin-bottom:.9rem;}
+      .h1 em{color:${accentColor};font-style:normal;}
+      .sub{font-size:.85rem;color:rgba(232,232,228,.5);line-height:1.6;margin-bottom:1.5rem;}
+      .cta{display:inline-block;background:${accentColor};color:#0a0a0a;font-weight:700;font-size:.8rem;padding:.65rem 1.5rem;border-radius:100px;}
+      .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;padding:0 2rem;margin-top:1.5rem;}
+      .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;height:100px;}
+      .card-line{height:7px;border-radius:4px;background:rgba(255,255,255,.1);margin-bottom:.5rem;}
+      .card-acc{height:3px;width:50%;border-radius:2px;background:${accentColor};}
+    </style></head><body>
+      <div class="nav"><span class="logo">${label}</span><span class="nav-cta">Get Started</span></div>
+      <div class="hero">
+        <div class="eyebrow">Premium Experience</div>
+        <div class="h1">Built for your<br><em>${label}</em></div>
+        <div class="sub">Every section, every color, every feature<br>customized for your brand and your customers.</div>
+        <span class="cta">Explore Demo &rarr;</span>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="card-line"></div><div class="card-acc"></div></div>
+        <div class="card"><div class="card-line" style="width:70%"></div><div class="card-acc"></div></div>
+        <div class="card"><div class="card-line" style="width:55%"></div><div class="card-acc"></div></div>
+      </div>
+    </body></html>`
+  }
+
+  const tplData = [
+    null, /* Flowers Pavon — real screenshot */
+  ]
+
+  document.querySelectorAll('.tpl-card').forEach((card, i) => {
+    // Reveal
+    ScrollTrigger.create({
+      trigger:card, start:'top 88%', once:true,
+      onEnter:()=>gsap.to(card, {opacity:1, y:0, duration:.85, ease:'power3.out', delay:i*.14})
+    })
+
+    // 05. Inject iframe srcdoc
+    const data = tplData[i]
+    if (data) {
+      const preview = card.querySelector('.tpl-preview')
+      const iframeWrap = document.createElement('div')
+      iframeWrap.className = 'tpl-iframe-wrap'
+      const iframe = document.createElement('iframe')
+      iframe.setAttribute('sandbox', 'allow-same-origin')
+      iframe.setAttribute('loading', 'lazy')
+      iframe.setAttribute('title', `${data.label} template preview`)
+      iframe.srcdoc = buildIframeSrc(data.color, data.label, data.bg)
+      iframeWrap.appendChild(iframe)
+      preview.insertBefore(iframeWrap, preview.querySelector('.tpl-overlay'))
+    }
+
+    // 04. 3-D tilt
+    if (prefersReducedMotion || isMobile()) return
+    const shine = card.querySelector('.tpl-shine')
+    card.addEventListener('mousemove', e => {
+      const r  = card.getBoundingClientRect()
+      const x  = (e.clientX - r.left) / r.width  - .5
+      const y  = (e.clientY - r.top)  / r.height - .5
+      gsap.to(card, {
+        rotateX: -y * 10, rotateY: x * 10,
+        transformPerspective: 900, scale: 1.02,
+        duration: .25, ease: 'power2.out', overwrite:'auto'
+      })
+      if (shine) shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(${data ? data.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(',') : '236,143,174'},.06) 0%, transparent 60%)`
+    })
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {rotateX:0, rotateY:0, scale:1, duration:.7, ease:'elastic.out(1,.35)', overwrite:'auto'})
+      if (shine) shine.style.background = ''
+    })
+  })
+
+  /* ══════════════════════════════════════════════════════
+     SERVICES REVEAL
+  ═════════════════════════════════════════════��════════ */
+  document.querySelectorAll('.svc-item').forEach((item,i) => {
+    ScrollTrigger.create({
+      trigger:item, start:'top 88%', once:true,
+      onEnter:()=>gsap.to(item, {opacity:1, x:0, duration:.7, ease:'power2.out', delay:i*.09})
+    })
+  })
+
+  /* ══════════════════════════════════════════════════════
+     07. HORIZONTAL PINNED PROCESS
+  ════════��═════════════════════════════════════════════ */
+  ;(function initProcess() {
+    const pinWrap = document.getElementById('processPinWrap')
+    const track   = document.getElementById('processTrack')
+    const sticky  = document.getElementById('processSticky')
+    const steps   = Array.from(track.querySelectorAll('.step'))
+    const dots    = Array.from(document.querySelectorAll('.process-dot'))
+
+    if (isMobile()) {
+      // Mobile: vertical, no pin, just reveal
+      steps.forEach(step => {
+        step.style.opacity = 1; step.style.transform = 'none'
+        step.classList.add('active')
+      })
+      return
+    }
+
+    // Calculate horizontal scroll distance
+    const STEP_W = () => steps[0].offsetWidth + parseFloat(getComputedStyle(track).gap)
+    const totalDist = () => STEP_W() * (steps.length - 1)
+
+    // Set pin wrapper height = viewport height + scroll distance per step * count
+    // so 1 full viewport of scroll per step + initial viewport
+    const SCROLL_PER_STEP = () => innerHeight * 1.1
+    const setHeight = () => {
+      pinWrap.style.height = (innerHeight + SCROLL_PER_STEP() * steps.length) + 'px'
+    }
+    setHeight()
+    window.addEventListener('resize', () => { setHeight(); softRefresh() })
+
+    // Pin the sticky div
+    ScrollTrigger.create({
+      trigger: pinWrap, start: 'top top',
+      end: () => `+=${SCROLL_PER_STEP() * steps.length}`,
+      pin: sticky, pinSpacing: false,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onRefresh: setHeight,
+      onLeave: () => { gsap.set(track, { x: -totalDist() }) },
+      onUpdate: self => {
+        const p    = self.progress   // 0 → 1 over entire pin
+        // Translate track horizontally
+        const dist = totalDist()
+        gsap.set(track, { x: -dist * Math.min(p * (steps.length / (steps.length - .9)), 1) })
+
+        // Determine active step index
+        const rawIdx  = p * steps.length
+        const stepIdx = Math.min(Math.floor(rawIdx), steps.length - 1)
+        const stepFrac = rawIdx - stepIdx  // 0→1 within current step
+
+        steps.forEach((step, i) => {
+          const inRange  = i <= stepIdx
+          const isCurrent = i === stepIdx
+          gsap.to(step, {
+            opacity: inRange ? 1 : .2,
+            x: 0,
+            duration: .4, ease: 'power2.out', overwrite: 'auto'
+          })
+          // Animate the step's top progress line
+          const line = step.querySelector('.step-progress-line')
+          if (line) {
+            if (i < stepIdx)       line.style.width = '100%'
+            else if (isCurrent)    line.style.width = (stepFrac * 100) + '%'
+            else                   line.style.width = '0%'
+          }
+        })
+
+        // Update dots
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === stepIdx)
+        })
+      }
+    })
+  })()
+
+  /* ══════════════════════════════════════════════════════
+     02. MAGNETIC BUTTONS
+  ══════════════════════════════════════════════════════ */
+  if (!prefersReducedMotion && !isMobile()) {
+    document.querySelectorAll('.btn').forEach(btn => {
+      const STRENGTH = 0.38
+      btn.addEventListener('mousemove', e => {
+        const r    = btn.getBoundingClientRect()
+        const cx   = r.left + r.width / 2
+        const cy   = r.top  + r.height / 2
+        const dx   = (e.clientX - cx) * STRENGTH
+        const dy   = (e.clientY - cy) * STRENGTH
+        gsap.to(btn, {
+          x: dx, y: dy,
+          duration: .35, ease: 'power2.out', overwrite: 'auto'
+        })
+      })
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x:0, y:0, duration:.7, ease:'elastic.out(1,.4)', overwrite:'auto' })
+      })
+    })
+  }
+
+  /* ══════════════════════════════════════════════════════
+     08. FORMSPREE ASYNC SUBMIT
+  ══════════════════════════════════════════════════════ */
+  const form      = document.getElementById('contactForm')
+  const formBtn   = document.getElementById('formBtn')
+  const formStat  = document.getElementById('formStatus')
+
+  if (form) {
+    form.addEventListener('submit', async e => {
+      e.preventDefault()
+      formStat.className  = 'form-status'
+      formStat.style.display = 'none'
+
+      const name = form.name.value.trim()
+      const msg  = form.message.value.trim()
+      if (!name || !msg) {
+        gsap.to(formBtn, {x:-8, duration:.07, yoyo:true, repeat:5, ease:'power1.inOut'})
+        formStat.textContent = 'Please fill in your name and message.'
+        formStat.className   = 'form-status error'
+        return
+      }
+
+      const originalText = formBtn.innerHTML
+      formBtn.innerHTML   = 'Sending…'
+      formBtn.disabled    = true
+      gsap.to(formBtn, {opacity:.7, duration:.25})
+
+      try {
+        const data  = new FormData(form)
+        const res   = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        })
+        const json  = await res.json()
+
+        if (res.ok) {
+          formStat.textContent = '✓ Message sent! We\'ll get back to you within 24 hours.'
+          formStat.className   = 'form-status success'
+          form.reset()
+          gsap.from(formStat, {opacity:0, y:8, duration:.5, ease:'power2.out'})
+          // WhatsApp follow-up hint
+          setTimeout(() => {
+            const whatsappHint = document.createElement('p')
+            whatsappHint.style.cssText = 'font-size:.78rem;color:var(--text-muted);margin-top:.5rem;'
+            whatsappHint.innerHTML = 'You can also reach us directly on <a href="https://wa.me/00000000000" style="color:var(--accent)" target="_blank">WhatsApp ↗</a> for a faster reply.'
+            formStat.after(whatsappHint)
+            setTimeout(()=>whatsappHint.remove(), 8000)
+          }, 1200)
+        } else {
+          throw new Error(json.error || 'Submission failed')
+        }
+      } catch(err) {
+        formStat.textContent = '✕ Something went wrong. Please email us directly at nebulastudiosite@gmail.com.'
+        formStat.className   = 'form-status error'
+      } finally {
+        formBtn.innerHTML = originalText
+        formBtn.disabled  = false
+        gsap.to(formBtn, {opacity:1, duration:.25})
+      }
+    })
+  }
+
+  /* ══════════════════════════════════════════════════════
+     NAVIGATION
+  ══════════════════════════════════════════════════════ */
+  const nav        = document.getElementById('nav')
+  const navToggle  = document.getElementById('navToggle')
+  const navOverlay = document.getElementById('navOverlay')
+  let menuOpen = false
+
+  ScrollTrigger.create({
+    start:'top -50',
+    onEnter:    ()=>nav.classList.add('scrolled'),
+    onLeaveBack:()=>nav.classList.remove('scrolled'),
+  })
+
+  function openMenu() {
+    menuOpen = true; navOverlay.classList.add('open')
+    navToggle.setAttribute('aria-expanded','true')
+    document.body.style.overflow = 'hidden'
+    const [s1,s2] = navToggle.querySelectorAll('span')
+    gsap.to(s1,{rotation:45,y:6.5,duration:.4,ease:'power2.inOut'})
+    gsap.to(s2,{rotation:-45,y:-6.5,duration:.4,ease:'power2.inOut'})
+  }
+  function closeMenu() {
+    menuOpen = false; navOverlay.classList.remove('open')
+    navToggle.setAttribute('aria-expanded','false')
+    document.body.style.overflow = ''
+    const [s1,s2] = navToggle.querySelectorAll('span')
+    gsap.to(s1,{rotation:0,y:0,duration:.4,ease:'power2.inOut'})
+    gsap.to(s2,{rotation:0,y:0,duration:.4,ease:'power2.inOut'})
+  }
+  navToggle.addEventListener('click', ()=>menuOpen?closeMenu():openMenu())
+  document.addEventListener('keydown', e=>{if(e.key==='Escape'&&menuOpen)closeMenu()})
+  navOverlay.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu))
+
+  // Smooth anchor
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const t = document.querySelector(a.getAttribute('href'))
+      if (!t) return
+      e.preventDefault()
+      if (lenis) lenis.scrollTo(t, {offset:-(nav.offsetHeight+20)})
+      else window.scrollTo({top:t.getBoundingClientRect().top+scrollY-(nav.offsetHeight+20),behavior:'smooth'})
+    })
+  })
+
+}) // end DOMContentLoaded
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>Page not found &mdash; Nebula Sites Studio</title>
+<link rel="icon" type="image/png" href="/assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Manrope:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:#0a0a0a;color:#e8e8e4;font-family:'Manrope',system-ui,sans-serif;
+  text-align:center;padding:2rem;overflow:hidden;position:relative}
+body::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 40%,rgba(167,139,250,.16),transparent 60%);pointer-events:none}
+.wrap{position:relative;max-width:540px}
+.code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.28em;
+  text-transform:uppercase;color:#a78bfa;margin-bottom:1.6rem}
+h1{font-family:'Cinzel',serif;font-size:clamp(2.4rem,7vw,3.6rem);font-weight:700;line-height:1.1;margin-bottom:1.1rem}
+h1 span{color:#a78bfa}
+p{color:#8a8a86;font-size:1.02rem;line-height:1.7;margin-bottom:2.2rem}
+.row{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+a.btn{display:inline-block;padding:.85rem 1.7rem;border-radius:100px;text-decoration:none;
+  font-size:.92rem;font-weight:600;transition:transform .25s ease,box-shadow .25s ease}
+a.p{background:#a78bfa;color:#0a0a0a}
+a.p:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(167,139,250,.34)}
+a.s{border:1px solid rgba(232,232,228,.22);color:#e8e8e4}
+a.s:hover{border-color:#a78bfa;color:#a78bfa}
+.logo{width:52px;height:52px;border-radius:50%;margin:0 auto 1.8rem;display:block;
+  box-shadow:0 0 26px rgba(167,139,250,.36)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <img class="logo" src="/assets/logo.png" alt="Nebula Sites Studio" />
+    <div class="code">Error 404</div>
+    <h1>This page drifted<br><span>off the map.</span></h1>
+    <p>The link is broken or the page has moved. Everything else is still exactly where you left it.</p>
+    <div class="row">
+      <a class="btn p" href="/">Back to the studio</a>
+      <a class="btn s" href="/pricing.html">See pricing</a>
+    </div>
+  </div>
+</body>
+</html>
