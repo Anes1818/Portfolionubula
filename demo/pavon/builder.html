@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="Design your own hand-tied bouquet in 4 playful steps — arrange stems, wrap it, tie the ribbon, add a note, and order on WhatsApp.">
+<title>Build Your Bouquet — Flowers Pavon</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="step-1">
+<header class="bheader">
+  <a class="brand" href="index.html"><span><b>← Flowers Pavon</b><small>BUILD YOUR OWN BOUQUET</small></span></a>
+  <ol class="stepper" id="stepper" aria-label="Steps">
+    <li data-n="1" class="on"><i>1</i><span>Flowers</span></li>
+    <li data-n="2"><i>2</i><span>Wrap</span></li>
+    <li data-n="3"><i>3</i><span>Ribbon</span></li>
+    <li data-n="4"><i>4</i><span>Note</span></li>
+  </ol>
+  <div class="pricepill" title="Your bouquet total"><small>Total</small><b id="amt">$0</b></div>
+</header>
+
+<div class="bwrap">
+  <div class="stagecard">
+    <div id="stage">
+      <div id="ground"></div>
+      <div id="wrapBack"></div>
+      <div id="flowerLayer"></div>
+      <div class="hint" id="hint">Pick a preset or tap + to add flowers — then drag each bloom into place</div>
+      <div id="wrapFront"></div>
+      <img id="ribbon" src="" alt="" aria-hidden="true">
+      <div id="noteCard"><span>💌</span><p id="noteCardTxt"></p></div>
+      <button id="snapBtn" title="Save my bouquet as an image" onclick="saveImg()">📸</button>
+    </div>
+    <p class="stagebar" id="stagebar"></p>
+  </div>
+
+  <div class="panel">
+    <div class="steptitle">
+      <h2 id="stepTitle">Create your bouquet</h2>
+      <p class="sub" id="stepSub">Every stem is priced on the card — build it exactly how you feel.</p>
+    </div>
+
+    <section class="step-panel" data-step="1">
+      <div class="label">Quick start</div>
+      <div class="presets">
+        <button onclick="preset('romantic')">❤️ Romantic</button>
+        <button onclick="preset('bright')">☀️ Bright Mix</button>
+        <button onclick="preset('white')">🤍 Pure White</button>
+      </div>
+      <div class="label" style="margin-top:16px">Size</div>
+      <div class="sizes" id="sizes"></div>
+      <div class="label" style="margin-top:16px">Pick your stems</div>
+      <div id="rows"></div>
+      <div class="actions">
+        <button class="btn btn-ghost btn-sm" onclick="tidyUp()">✨ Tidy up</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearAll()">Clear all</button>
+      </div>
+    </section>
+
+    <section class="step-panel" data-step="2">
+      <div class="label">Choose your paper</div>
+      <div id="wrapstyles" class="wrapstyles"></div>
+      <p class="tipnote" id="wrapTip">🧻 The paper gathers your stems and trims the long ones neatly — your blooms stay untouched. Want to rearrange? Press Back.</p>
+    </section>
+
+    <section class="step-panel" data-step="3">
+      <div class="label">Tie the ribbon</div>
+      <div id="ribbons" class="ribbons"></div>
+      <p class="tipnote">🎀 Included with every bouquet. One little bow changes everything.</p>
+    </section>
+
+    <section class="step-panel" data-step="4">
+      <div class="label">Gift note <span class="ap">printed card · optional</span></div>
+      <div class="notepick" id="notePick">
+        <button type="button" id="noteOff" onclick="setNoteOn(false)">No card<span>free</span></button>
+        <button type="button" id="noteOnBtn" onclick="setNoteOn(true)">💌 Printed card<span>+$5</span></button>
+      </div>
+      <div id="noteWrap" style="display:none">
+        <textarea id="cardMsg" maxlength="140" placeholder="Write your message… e.g. “Happy birthday! You deserve every one of these.”" oninput="onNote()"></textarea>
+        <p class="charcount"><span id="charCt">0</span>/140</p>
+      </div>
+      <div class="summary" id="summary"></div>
+      <a class="btn btn-whatsapp order disabled" id="order" target="_blank" rel="noopener">Order on WhatsApp 💬</a>
+      <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="saveImg()">📸 Save &amp; share my bouquet</button>
+      <p class="hintnote">No online payment needed — confirm bouquet &amp; delivery on WhatsApp. Pay on delivery or by card.</p>
+    </section>
+
+    <div class="navrow">
+      <button class="btn btn-ghost" id="backBtn" onclick="setStep(step-1)">← Back</button>
+      <button class="btn btn-accent" id="nextBtn" onclick="setStep(step+1)">Wrap it →</button>
+    </div>
+    <div id="toast"></div>
+  </div>
+</div>
+<footer>Flowers Pavon · Northern Virginia · Drop real stem photos into assets/build/</footer>
+
+<script>
+const SHOP={name:"Flowers Pavon",whatsapp:"17039534542",site:"flowerspavon.com",tagline:"Handcrafted floral artistry"};
+const IMG_BASE='assets/build/';
+function assetUrl(file){return IMG_BASE+encodeURIComponent(file);}
+
+const CATALOG=[
+  {id:'alstroemeria',      label:'Alstroemeria',     group:'Other',      file:'alstroemeria.png',      price:3,   h:287, bx:0.5},
+  {id:'babys_breath',      label:"Baby's Breath",    group:'Other',      file:'babys_breath.png',      price:2,   h:321, bx:0.51},
+  {id:'sunflower',         label:'Sunflower',        group:'Other',      file:'sunflower.png',         price:4,   h:260, bx:.56},
+  {id:'eucalyptus',        label:'Eucalyptus',       group:'Other',      file:'eucalyptus.png',        price:2,   h:320, bx:0.5},
+  {id:'lily',              label:'Oriental Lily',    group:'Other',      file:'lily.png',              price:5,   h:282, bx:0.5},
+  {id:'ranunculus',        label:'Ranunculus',       group:'Other',      file:'ranunculus.png',        price:5,   h:282, bx:0.5},
+  {id:'gerbera_daisy',     label:'Gerbera Daisy',    group:'Other',      file:'gerbera_daisy.png',     price:4,   h:282, bx:0.5},
+  {id:'limonium',          label:'Limonium',         group:'Other',      file:'limonium.png',          price:2,   h:285, bx:0.5},
+  {id:'rose_pink',         label:'Pink Rose',        group:'Roses',      file:'rose_pink.png',         price:4,   h:289, bx:0.5},
+  {id:'rose_red',          label:'Red Rose',         group:'Roses',      file:'rose_red.png',          price:4,   h:289, bx:0.49},
+  {id:'rose_orange',       label:'Orange Rose',      group:'Roses',      file:'rose_orange.png',       price:4,   h:285, bx:.54},
+  {id:'rose_violet',       label:'Violet Rose',      group:'Roses',      file:'rose_violet.png',       price:4,   h:322, bx:0.54},
+  {id:'rose_yellow',       label:'Yellow Rose',      group:'Roses',      file:'rose_yellow.png',       price:4,   h:289, bx:0.5},
+  {id:'rose_white',        label:'White Rose',       group:'Roses',      file:'rose_white.png',        price:4,   h:289, bx:0.5},
+  {id:'tulip_pink',        label:'Pink Tulip',       group:'Tulips',     file:'tulip_pink.png',        price:3,   h:322, bx:0.39},
+  {id:'tulip_red',         label:'Red Tulip',        group:'Tulips',     file:'tulip_red.png',         price:3,   h:322, bx:0.39},
+  {id:'tulip_orange',      label:'Orange Tulip',     group:'Tulips',     file:'tulip_orange.png',      price:3,   h:240, bx:.58},
+  {id:'tulip_violet',      label:'Violet Tulip',     group:'Tulips',     file:'tulip_violet.png',      price:3,   h:322, bx:0.39},
+  {id:'tulip_yellow',      label:'Yellow Tulip',     group:'Tulips',     file:'tulip_yellow.png',      price:3,   h:322, bx:0.39},
+  {id:'tulip_white',       label:'White Tulip',      group:'Tulips',     file:'tulip_white.png',       price:3,   h:322, bx:0.39},
+  {id:'carnation_pink',    label:'Pink Carnation',   group:'Carnations', file:'carnation_pink.png',    price:2.5, h:322, bx:0.54},
+  {id:'carnation_red',     label:'Red Carnation',    group:'Carnations', file:'carnation_red.png',     price:2.5, h:322, bx:0.54},
+  {id:'carnation_orange',  label:'Orange Carnation', group:'Carnations', file:'carnation_orange.png',  price:2.5, h:295, bx:.53},
+  {id:'carnation_violet',  label:'Violet Carnation', group:'Carnations', file:'carnation_violet.png',  price:2.5, h:321, bx:0.54},
+  {id:'carnation_yellow',  label:'Yellow Carnation', group:'Carnations', file:'carnation_yellow.png',  price:2.5, h:322, bx:0.54},
+  {id:'carnation_white',   label:'White Carnation',  group:'Carnations', file:'carnation_white.png',   price:2.5, h:322, bx:0.54},
+];
+const GROUP_ORDER=['Roses','Tulips','Carnations','Other'];
+const BYID={}; CATALOG.forEach(c=>BYID[c.id]=c);
+const SIZES={Petite:{scale:.86,mult:1},Classic:{scale:1.0,mult:1.5},Lavish:{scale:1.12,mult:2}};
+const PRESETS={
+  romantic:['rose_pink','rose_pink','rose_pink','rose_pink','eucalyptus','babys_breath'],
+  bright:['tulip_orange','tulip_yellow','sunflower','gerbera_daisy','rose_red','eucalyptus'],
+  white:['rose_white','rose_white','tulip_white','tulip_white','limonium','babys_breath']
+};
+const STAGE={W:460,H:640}; const PIVOT={x:230,y:432}; const BASE=12; const NOTE_PRICE=5;
+
+// ---- Florist slot engine: fillers airy outside, line flowers for structure, focal blooms front & center
+const ROLE_BY_TYPE={
+  eucalyptus:'filler', babys_breath:'filler', limonium:'filler',
+  alstroemeria:'line', lily:'line',
+  tulip_pink:'line', tulip_red:'line', tulip_orange:'line', tulip_violet:'line', tulip_yellow:'line', tulip_white:'line',
+  sunflower:'focal', ranunculus:'focal', gerbera_daisy:'focal',
+  rose_pink:'focal', rose_red:'focal', rose_orange:'focal', rose_violet:'focal', rose_yellow:'focal', rose_white:'focal',
+  carnation_pink:'focal', carnation_red:'focal', carnation_orange:'focal', carnation_violet:'focal', carnation_yellow:'focal', carnation_white:'focal'
+};
+const RING_DEFS=[
+  {key:'back',   count:9, angleMin:-60, angleMax:60, len:1.16, lenVar:.05, scaleMul:.80, depth:1},
+  {key:'mid',    count:9, angleMin:-46, angleMax:46, len:1.02, lenVar:.05, scaleMul:.92, depth:.62},
+  {key:'front',  count:7, angleMin:-30, angleMax:30, len:.88,  lenVar:.05, scaleMul:1.04, depth:.30},
+  {key:'center', count:4, angleMin:-14, angleMax:14, len:.74,  lenVar:.04, scaleMul:1.14, depth:0}
+];
+const ROLE_PREFERENCE={filler:['back','mid'],line:['mid','back','front'],focal:['front','center','mid']};
+function buildSlots(){
+  const slots=[];
+  RING_DEFS.forEach(ring=>{
+    const ringSlots=[];
+    for(let i=0;i<ring.count;i++){
+      const t=ring.count>1?i/(ring.count-1):.5;
+      const angle=ring.angleMin+(ring.angleMax-ring.angleMin)*t+Math.sin((i+1)*12.9898+ring.angleMin)*3;
+      const len=ring.len+Math.sin((i+2)*7.233)*ring.lenVar;
+      ringSlots.push({ring:ring.key,angle,len,scale:ring.scaleMul,depth:ring.depth,occupied:null});
+    }
+    ringSlots.sort((a,b)=>Math.abs(a.angle)-Math.abs(b.angle));
+    slots.push(...ringSlots);
+  });
+  return slots;
+}
+let SLOTS=buildSlots();
+function freeSlot(role){
+  const prefs=ROLE_PREFERENCE[role]||['front','mid','back','center'];
+  for(const key of prefs){const s=SLOTS.find(sl=>sl.ring===key&&!sl.occupied);if(s)return s;}
+  const any=SLOTS.find(sl=>!sl.occupied); if(any) return any;
+  const idx=SLOTS.length;
+  const slot={ring:'center',angle:Math.sin(idx*5.37)*16,len:.68+Math.sin(idx*3.14)*.06,scale:1.12,depth:0,occupied:null};
+  SLOTS.push(slot); return slot;
+}
+function resetSlots(){SLOTS.forEach(s=>s.occupied=null);}
+
+// ---- Wrap templates. top/h/w = stage %, lift/gather shape the stems inside the paper,
+// maxA = the paper physically holds every stem, tie = where the ribbon sits (fraction of paper height)
+const WRAP_STYLES=[
+  {id:'kraft',   label:'Kraft Paper', back:'wrap_kraft_back.png',   front:'wrap_kraft_front.png',   top:4,   h:82.5, w:60, lift:1.18, gather:.55, maxA:26, tie:.72, rim:.36},
+  {id:'burlap',  label:'Burlap',      back:'wrap_burlap_back.png',  front:'wrap_burlap_front.png',  top:4,   h:82.5, w:60, lift:1.36, gather:.52, maxA:22, tie:.7, rim:.36},
+  {id:'journal', label:'Journal',     back:'wrap_journal_back.png', front:'wrap_journal_front.png', top:4,   h:82.5, w:60, lift:1.26, gather:.50, maxA:24, tie:.7, rim:.358},
+];
+// ---- Measured silhouettes of each wrap (from the real PNG alpha, per row):
+// [y-fraction of paper height, left edge, right edge] as fractions of paper width.
+// The stem clip follows these edges exactly, so nothing can poke out of the paper sides.
+const WRAP_SIL={
+  kraft:  [[.36,.088,.912],[.42,.122,.878],[.48,.16,.842],[.54,.199,.806],[.6,.243,.771],[.66,.304,.703],[.72,.396,.626],[.78,.362,.636],[.84,.365,.636],[.9,.376,.628],[.96,.45,.55]],
+  burlap: [[.36,.082,.915],[.42,.104,.885],[.48,.147,.847],[.54,.188,.811],[.6,.231,.774],[.66,.299,.706],[.72,.388,.603],[.78,.356,.638],[.84,.358,.642],[.9,.375,.629],[.96,.375,.629]],
+  journal:[[.36,.086,.918],[.42,.108,.888],[.48,.149,.847],[.54,.19,.817],[.6,.236,.782],[.66,.296,.708],[.72,.389,.601],[.78,.365,.636],[.84,.36,.644],[.9,.375,.629],[.96,.375,.629]]
+};
+const RIBBONS=[
+  {id:'none',    label:'None',     file:null,                  c:null,      d:null},
+  {id:'blush',   label:'Blush',    file:'ribbon_blush.png',    c:'#e58bb0', d:'#c9679a'},
+  {id:'burgundy',label:'Burgundy', file:'ribbon_burgundy.png', c:'#8e2f48', d:'#6e2138'},
+  {id:'sage',    label:'Sage',     file:'ribbon_sage.png',     c:'#93a884', d:'#758a67'},
+];
+
+const STEP_META=[
+  {title:'Create your bouquet', sub:'Every stem is priced on the card — build it exactly how you feel.', bar:'🌸 Drag any bloom to arrange it · double-tap a bloom to remove it', next:'Wrap it →'},
+  {title:'Choose the wrap',     sub:'Your bouquet is gathered — pick the paper that matches the mood.', bar:'🧻 Blooms are locked while wrapped — press Back to rearrange', next:'Add ribbon →'},
+  {title:'Tie the ribbon',      sub:'The finishing touch. Pick a color that says it for you.',          bar:'🎀 Almost there — one bow to go', next:'Gift note →'},
+  {title:'Add a gift note',     sub:'Say it with words too. We print it on a little card.',             bar:'💌 Ready! Order it — or save the picture and share it', next:''},
+];
+
+const state={stems:[],size:'Classic',wrapStyle:'kraft',ribbon:'blush',note:'',noteOn:false};
+let step=1, uid=0, petalsDone=false;
+const missingFiles=new Set();
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function pct(n,total){return (n/total*100)+'%';}
+function countOf(id){return state.stems.filter(s=>s.id===id).length;}
+function curWrap(){return WRAP_STYLES.find(w=>w.id===state.wrapStyle)||WRAP_STYLES[0];}
+function curRibbon(){return RIBBONS.find(r=>r.id===state.ribbon)||RIBBONS[0];}
+function total(){let s=0;state.stems.forEach(st=>s+=BYID[st.id].price);return Math.round(BASE+s*SIZES[state.size].mult)+(state.noteOn?NOTE_PRICE:0);}
+
+function makeStem(id){
+  const role=ROLE_BY_TYPE[id]||'focal';
+  const slot=freeSlot(role);
+  const flip=state.stems.filter(s=>s.id===id).length%2===1;
+  const stem={id,uid:++uid,manual:false,fresh:true,slot,angle:slot.angle,len:slot.len,flip,
+    jA:Math.random()*5-2.5,jL:Math.random()*.06-.03};
+  slot.occupied=stem;
+  return stem;
+}
+
+function render(){
+  const stage=document.getElementById('stage'); const layer=document.getElementById('flowerLayer');
+  const sz=SIZES[state.size]; const wrapped=step>=2; const ws=wrapped?curWrap():null;
+  stage.classList.toggle('wrapped',wrapped);
+  stage.classList.toggle('locked',step>1);
+  let tE=0,hE=0,wEg=0;
+  if(wrapped){
+    // Scale the template to the bouquet: stem count, chosen size AND the size of the flowers picked
+    const n=state.stems.length;
+    const avgH=n?state.stems.reduce((a,s)=>a+BYID[s.id].h,0)/n:300;
+    const sizeF=Math.max(.85,Math.min(1.12,avgH/300));
+    let wsc=sz.scale*Math.min(1.08,.72+n*.03)*sizeF;
+    wsc=Math.max(.7,Math.min(wsc,(ws.top+ws.h-0.5)/ws.h)); // keep the paper fully on stage
+    // A big bouquet needs a wider paper — every stem past 6 widens the template
+    const wideF=Math.min(1.32,1+Math.max(0,n-6)*.045);
+    hE=ws.h*wsc; const wE=Math.min(88,ws.w*wsc*wideF); tE=(ws.top+ws.h)-hE; wEg=wE;
+    [document.getElementById('wrapBack'),document.getElementById('wrapFront')].forEach(el=>{
+      el.style.top=tE+'%';el.style.height=hE+'%';el.style.width=wE+'%';
+    });
+    // Stems longer than the template are trimmed at the paper's edge — never the blooms.
+    // The clip follows the MEASURED silhouette of this exact paper, row by row:
+    // full width above the rim (blooms crest naturally), then hugs the paper's true edges.
+    const yR=(tE+hE*ws.rim).toFixed(1), x0=50-wE/2, inset=.022;
+    const sil=WRAP_SIL[ws.id].filter(p=>p[0]>=ws.rim-.001);
+    let pts='-3% -3%,103% -3%,103% '+yR+'%';
+    sil.forEach(p=>{pts+=','+(x0+(p[2]-inset)*wE).toFixed(1)+'% '+(tE+p[0]*hE).toFixed(1)+'%';});
+    for(let i=sil.length-1;i>=0;i--){const p=sil[i];pts+=','+(x0+(p[1]+inset)*wE).toFixed(1)+'% '+(tE+p[0]*hE).toFixed(1)+'%';}
+    pts+=',-3% '+yR+'%';
+    layer.style.clipPath='polygon('+pts+')';
+  } else {
+    layer.style.clipPath='none';
+  }
+  layer.querySelectorAll('.flower').forEach(e=>e.remove());
+  document.getElementById('hint').style.display=(state.stems.length||step>1)?'none':'block';
+  let z=100;
+  // ---- De-occlusion pass (unwrapped preview only): every bloom must peek out.
+  // Front-most heads stay put; a hidden head is nudged sideways + slightly up
+  // until it clears the head in front of it. Wrapped rendering is untouched.
+  if(!ws){
+    const R=Math.PI/180, items=[];
+    SLOTS.forEach(slot=>{
+      const st=slot.occupied; if(!st) return;
+      st.deA=0; st.deL=0;
+      const c=BYID[st.id];
+      const angle=st.manual?st.angle:(slot.angle+(st.jA||0));
+      const len=st.manual?st.len:(slot.len+(st.jL||0));
+      const depth=st.manual?Math.min(1,Math.abs(angle)/60):slot.depth;
+      const hpx=c.h*sz.scale*slot.scale*len*(1-0.08*depth);
+      items.push({st,angle,len,hpx,depth,r:hpx*0.155,d:hpx*0.87,fixed:!!st.manual});
+    });
+    items.sort((a,b)=>a.depth-b.depth);
+    for(let pass=0;pass<3;pass++){
+      for(let i=1;i<items.length;i++){
+        const b=items[i]; if(b.fixed) continue;
+        for(let j=0;j<i;j++){
+          const a=items[j];
+          const aa=(a.angle+a.st.deA)*R, ab=(b.angle+b.st.deA)*R;
+          const ax=Math.sin(aa)*a.d, ay=-Math.cos(aa)*a.d;
+          const bd=b.d*(1+b.st.deL/Math.max(.3,b.len));
+          const dx=Math.sin(ab)*bd-ax, dy=-Math.cos(ab)*bd-ay;
+          const dist=Math.hypot(dx,dy), need=(a.r+b.r)*0.62;
+          if(dist<need){
+            const push=need-dist;
+            const sgn=dx>2?1:dx<-2?-1:(b.angle>=a.angle?1:-1);
+            b.st.deA+=sgn*(push*0.8/b.d)*57.3;
+            b.st.deL+=push*0.35/(b.hpx/b.len);
+          }
+        }
+        b.st.deA=Math.max(-18,Math.min(18,b.st.deA));
+        b.st.deL=Math.max(0,Math.min(.14,b.st.deL));
+      }
+    }
+  }
+  const drawOrder=[...SLOTS].sort((a,b)=>b.depth-a.depth||Math.abs(b.angle)-Math.abs(a.angle));
+  drawOrder.forEach(slot=>{
+    const st=slot.occupied; if(!st) return;
+    const c=BYID[st.id];
+    let angle,len;
+    if(st.manual){
+      // hand-placed stems keep their pose, but the paper gathers & straightens them correctly
+      angle=ws?st.angle*Math.min(1,ws.gather+.45):st.angle;
+      len=st.len;
+    } else {
+      angle=(slot.angle+(st.jA||0))*(ws?ws.gather:1)+(ws?0:(st.deA||0));
+      len=(slot.len+(st.jL||0))*(ws?ws.lift*(ROLE_BY_TYPE[st.id]==='line'?0.94:1):1)+(ws?0:(st.deL||0));
+    }
+    // sanity clamps — no stem can ever end up sideways or absurdly long
+    angle=Math.max(-64,Math.min(64,angle));
+    len=Math.max(.55,Math.min(ws?1.45:1.3,len));
+    if(ws){angle=Math.max(-ws.maxA,Math.min(ws.maxA,angle));len=Math.min(1.42,len);}
+    const depth=st.manual?Math.min(1,Math.abs(angle)/60):slot.depth;
+    if(ws){
+      // Tilt every bloom automatically so its head enters the bouquet opening:
+      // the head may never swing wider than the paper's rim, whatever its stem length
+      const hpx=c.h*sz.scale*slot.scale*len*(1-0.08*depth);
+      const allow=wEg/100*STAGE.W*0.40;
+      const mG=Math.asin(Math.min(1,allow/Math.max(1,hpx*0.88)))*180/Math.PI;
+      angle=Math.max(-mG,Math.min(mG,angle));
+    }
+    const img=document.createElement('img');
+    img.className='flower'+(st.fresh?' pop':''); img.src=assetUrl(c.file); img.alt=c.label;
+    img.dataset.idx=state.stems.indexOf(st); st.fresh=false;
+    img.title=step===1?c.label+' — drag to arrange · double-click to remove':c.label;
+    img.addEventListener('dblclick',function(){if(step===1)removeStem(st);});
+    img.onerror=function(){this.classList.add('missing');};
+    img.style.height=pct(c.h*sz.scale*slot.scale*len*(1-0.08*depth),STAGE.H);
+    img.style.left='50%'; img.style.top=pct(PIVOT.y,STAGE.H);
+    const bxe=(st.flip?1-(c.bx!=null?c.bx:.5):(c.bx!=null?c.bx:.5))*100;
+    img.style.transformOrigin=bxe+'% 100%';
+    img.style.transform='translate('+(-bxe).toFixed(1)+'%,-100%) rotate('+angle.toFixed(1)+'deg)'+(st.flip?' scaleX(-1)':'');
+    img.style.zIndex=z++;
+    img.style.filter='drop-shadow(0 6px 6px rgba(60,20,40,.16)) brightness('+(1-0.12*depth).toFixed(2)+') saturate('+(1-0.08*depth).toFixed(2)+')';
+    img.addEventListener('pointerdown',startDrag);
+    layer.appendChild(img);
+  });
+  // ribbon
+  const rb=document.getElementById('ribbon'); const rib=curRibbon();
+  if(step>=3&&rib.c&&state.stems.length&&ws){
+    rb.style.display='block';
+    rb.style.top=(tE+hE*ws.tie)+'%';
+    rb.style.width=(34*Math.max(.8,hE/ws.h))+'%';
+    rb.src=assetUrl(rib.file);rb.alt=rib.label+' ribbon bow';
+  } else rb.style.display='none';
+  // gift note card on stage
+  const nc=document.getElementById('noteCard');
+  if(step===4&&state.noteOn&&state.note.trim()){
+    nc.style.display='block';
+    document.getElementById('noteCardTxt').textContent=state.note.trim();
+  } else nc.style.display='none';
+  // header + counters
+  document.getElementById('amt').textContent='$'+total();
+  document.querySelectorAll('[data-ct]').forEach(e=>{e.textContent=countOf(e.dataset.ct);});
+  // step-4 summary + order link
+  if(step===4) renderSummary();
+}
+
+function renderSummary(){
+  const lines=CATALOG.filter(c=>countOf(c.id)>0).map(c=>countOf(c.id)+'× '+c.label);
+  const rib=curRibbon();
+  const rows=[
+    ['💐 '+state.stems.length+' stems · '+state.size, '$'+(total()-(state.noteOn?NOTE_PRICE:0))],
+    ['🧻 '+curWrap().label+' wrap','Included'],
+    ['🎀 '+(rib.c?rib.label+' ribbon':'No ribbon'),rib.c?'Included':'—'],
+    ['💌 Printed gift card',state.noteOn?'+$'+NOTE_PRICE:'—'],
+  ];
+  document.getElementById('summary').innerHTML=rows.map(r=>'<div><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('')+
+    '<div class="sumtotal"><span>Total</span><b>$'+total()+'</b></div>';
+  const ord=document.getElementById('order');
+  if(state.stems.length){
+    ord.classList.remove('disabled');
+    let msg="Hi "+SHOP.name+"! My custom "+state.size+" bouquet: "+lines.join(', ')+'. Wrap: '+curWrap().label+'.';
+    if(rib.c)msg+=' Ribbon: '+rib.label+'.';
+    if(state.noteOn)msg+=' Printed gift card (+$'+NOTE_PRICE+')'+(state.note.trim()?': "'+state.note.trim()+'"':'')+'.';
+    msg+=' Total ~$'+total()+'. Is it available for delivery?';
+    ord.href='https://wa.me/'+SHOP.whatsapp+'?text='+encodeURIComponent(window.__pavonWA?window.__pavonWA(msg):msg);
+  } else {ord.classList.add('disabled');ord.removeAttribute('href');}
+}
+
+function setStep(n){
+  n=Math.max(1,Math.min(4,n));
+  if(n>1&&!state.stems.length){toast('Add at least one flower first 🌸');return;}
+  step=n;
+  document.body.className='step-'+n;
+  const m=STEP_META[n-1];
+  document.getElementById('stepTitle').textContent=m.title;
+  document.getElementById('stepSub').textContent=m.sub;
+  document.getElementById('stagebar').textContent=m.bar;
+  document.getElementById('nextBtn').textContent=m.next;
+  document.querySelectorAll('#stepper li').forEach(li=>{
+    const ln=+li.dataset.n;
+    li.classList.toggle('on',ln===n);
+    li.classList.toggle('done',ln<n);
+  });
+  if(n===4&&!petalsDone&&!reduceMotion){petalsDone=true;petals();}
+  render();
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function petals(){
+  const glyphs=['🌸','🌷','💮','🌼','🩷'];
+  for(let i=0;i<16;i++){
+    const p=document.createElement('span');p.className='petal';
+    p.textContent=glyphs[i%glyphs.length];
+    p.style.left=(4+Math.random()*92)+'vw';
+    p.style.animationDuration=(2.4+Math.random()*1.4)+'s';
+    p.style.animationDelay=(Math.random()*.9)+'s';
+    p.style.fontSize=(16+Math.random()*14)+'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),4800);
+  }
+}
+
+function add(id){state.stems.push(makeStem(id));render();}
+function removeOne(id){
+  for(let i=state.stems.length-1;i>=0;i--){
+    if(state.stems[i].id===id){const st=state.stems[i];if(st.slot)st.slot.occupied=null;state.stems.splice(i,1);break;}
+  }
+  render();
+}
+function removeStem(st){if(st.slot)st.slot.occupied=null;const i=state.stems.indexOf(st);if(i>-1)state.stems.splice(i,1);render();}
+function chg(id,d){d>0?add(id):removeOne(id);}
+function clearAll(){resetSlots();state.stems=[];render();}
+function tidyUp(){state.stems.forEach(s=>s.manual=false);render();}
+function setSize(s){state.size=s;document.querySelectorAll('#sizes button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));render();}
+function setWrapStyle(id){
+  state.wrapStyle=id;
+  const ws=curWrap();
+  document.getElementById('wrapBack').style.backgroundImage='url('+assetUrl(ws.back)+')';
+  document.getElementById('wrapFront').style.backgroundImage='url('+assetUrl(ws.front)+')';
+  document.querySelectorAll('#wrapstyles button').forEach(b=>b.classList.toggle('on',b.dataset.w===id));
+  render();
+}
+function setRibbon(id){
+  state.ribbon=id;
+  document.querySelectorAll('#ribbons button').forEach(b=>b.classList.toggle('on',b.dataset.r===id));
+  render();
+}
+function onNote(){
+  const v=document.getElementById('cardMsg').value;
+  state.note=v;document.getElementById('charCt').textContent=v.length;
+  render();
+}
+function setNoteOn(v){
+  state.noteOn=v;
+  document.getElementById('noteWrap').style.display=v?'block':'none';
+  document.getElementById('noteOff').classList.toggle('on',!v);
+  document.getElementById('noteOnBtn').classList.toggle('on',v);
+  if(!v){state.note='';document.getElementById('cardMsg').value='';document.getElementById('charCt').textContent='0';}
+  if(v&&step===4)document.getElementById('cardMsg').focus();
+  render();
+}
+function preset(name){
+  resetSlots();state.stems=[];
+  PRESETS[name].forEach(id=>state.stems.push(makeStem(id)));
+  render();
+}
+// ===== v11: branded share card — turn the bouquet you built into a shareable picture =====
+function saveImg(){
+  if(typeof html2canvas==='undefined'){alert('Connect to the internet once to enable saving your bouquet as an image. Everything else works offline.');return;}
+  toast('Creating your bouquet picture\u2026 \uD83D\uDCF8');
+  html2canvas(document.getElementById('stage'),{backgroundColor:'#fff6f8',scale:2,logging:false,useCORS:true}).then(function(cv){
+    const card=buildShareCard(cv);
+    card.toBlob(function(blob){
+      if(!blob){alert('Could not create the image right now.');return;}
+      if(window.__shareUrl)URL.revokeObjectURL(window.__shareUrl);
+      window.__shareBlob=blob;window.__shareUrl=URL.createObjectURL(blob);
+      openShare(window.__shareUrl);
+    },'image/png');
+  }).catch(function(){alert('Could not create the image right now.');});
+}
+// Describe the exact bouquet the customer built (works for classic + ramo buch\u00f3n)
+function shareInfo(){
+  const rib=curRibbon();
+  if(state.template&&state.template!=='classic'){
+    const shape=state.template==='heart'?'Heart':'Round';
+    return {title:shape+' Ramo Buch\u00f3n',
+      lines:['Wall '+BYID[state.bu.wall].label+' \u00b7 fill '+BYID[state.bu.fill].label,
+             'Center '+BYID[state.bu.center].label+' \u00b7 '+curWrap().label+' wrap'+(rib.c?' \u00b7 '+rib.label+' bow':'')],
+      total:total()};
+  }
+  const parts=CATALOG.filter(c=>countOf(c.id)>0).map(c=>countOf(c.id)+'\u00d7 '+c.label);
+  return {title:state.size+' hand-tied bouquet',
+    lines:[parts.join(' \u00b7 ')||'A bouquet made with love',
+           curWrap().label+' wrap'+(rib.c?' \u00b7 '+rib.label+' ribbon':'')],
+    total:total()};
+}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function fitText(x,str,max){if(x.measureText(str).width<=max)return str;while(str.length>4&&x.measureText(str+'\u2026').width>max)str=str.slice(0,-1);return str+'\u2026';}
+function buildShareCard(stageCv){
+  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#fff8f9');bg.addColorStop(1,'#f7e6ec');x.fillStyle=bg;x.fillRect(0,0,W,H);
+  const vg=x.createRadialGradient(W/2,H*0.32,120,W/2,H*0.32,W*0.82);vg.addColorStop(0,'rgba(255,255,255,.55)');vg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=vg;x.fillRect(0,0,W,H);
+  x.textAlign='center';x.textBaseline='alphabetic';
+  x.fillStyle='#c9557f';x.font='600 30px Georgia,serif';x.fillText('\u2740',W/2,92);
+  x.fillStyle='#29222c';x.font='700 62px Georgia,serif';x.fillText(SHOP.name,W/2,150);
+  x.fillStyle='#8b7f89';x.font='700 22px -apple-system,Segoe UI,Roboto,sans-serif';x.fillText((SHOP.tagline||'Handcrafted floral artistry').toUpperCase(),W/2,192);
+  x.strokeStyle='#e6c6d4';x.lineWidth=2;x.beginPath();x.moveTo(W/2-150,218);x.lineTo(W/2+150,218);x.stroke();
+  const cardX=90,cardY=250,cardW=W-180,cardH=740;
+  x.save();x.shadowColor='rgba(120,40,70,.22)';x.shadowBlur=40;x.shadowOffsetY=18;x.fillStyle='#ffffff';rr(x,cardX,cardY,cardW,cardH,34);x.fill();x.restore();
+  const pad=26,availW=cardW-pad*2,availH=cardH-pad*2,sc=Math.min(availW/stageCv.width,availH/stageCv.height),iw=stageCv.width*sc,ih=stageCv.height*sc,ix=cardX+(cardW-iw)/2,iy=cardY+(cardH-ih)/2;
+  x.save();rr(x,cardX+10,cardY+10,cardW-20,cardH-20,26);x.clip();x.drawImage(stageCv,ix,iy,iw,ih);x.restore();
+  const tag=SHOP.site||'flowerspavon.com';
+  x.font='700 26px -apple-system,Segoe UI,Roboto,sans-serif';const tw=x.measureText('\uD83C\uDF38 '+tag).width+40;
+  x.save();x.fillStyle='rgba(41,34,44,.82)';rr(x,cardX+cardW-tw-26,cardY+cardH-72,tw,46,23);x.fill();x.fillStyle='#fff';x.textAlign='left';x.fillText('\uD83C\uDF38 '+tag,cardX+cardW-tw-26+18,cardY+cardH-41);x.restore();
+  const info=shareInfo();x.textAlign='center';
+  x.fillStyle='#29222c';x.font='600 44px Georgia,serif';x.fillText(fitText(x,info.title,W-160),W/2,1074);
+  x.fillStyle='#8b7f89';x.font='400 25px -apple-system,Segoe UI,Roboto,sans-serif';let ly=1120;info.lines.forEach(function(ln){x.fillText(fitText(x,ln,W-200),W/2,ly);ly+=38;});
+  const pl='Total  $'+info.total;x.font='800 40px -apple-system,Segoe UI,Roboto,sans-serif';const pw=x.measureText(pl).width+80;
+  x.fillStyle='#d6336c';rr(x,W/2-pw/2,ly+6,pw,66,33);x.fill();x.fillStyle='#fff';x.fillText(pl,W/2,ly+50);
+  x.fillStyle='#a92a58';x.font='700 24px -apple-system,Segoe UI,Roboto,sans-serif';x.fillText('Build your own at '+tag+'  \u00b7  Northern Virginia',W/2,H-44);
+  return cv;
+}
+// share/download modal
+(function(){
+  const m=document.createElement('div');m.id='shareModal';m.className='sharemodal';m.setAttribute('aria-hidden','true');
+  m.innerHTML='<div class="sharebox" role="dialog" aria-modal="true"><button class="shareclose" type="button" aria-label="Close" onclick="closeShare()">\u2715</button><h3>Your bouquet \uD83D\uDC90</h3><p class="sharesub">Save the picture or share it with your people.</p><div class="shareprev"><img id="shareImg" alt="Your bouquet picture"></div><div class="sharebtns"><button class="btn btn-accent" type="button" onclick="downloadShare()">\u2B07 Download</button><button class="btn btn-whatsapp" type="button" onclick="shareShare()">\uD83D\uDCE4 Share</button></div><p class="sharehint" id="shareHint"></p></div>';
+  document.body.appendChild(m);
+  m.addEventListener('click',function(e){if(e.target===m)closeShare();});
+  window.addEventListener('keydown',function(e){if(e.key==='Escape')closeShare();});
+})();
+function openShare(url){const m=document.getElementById('shareModal');document.getElementById('shareImg').src=url;document.getElementById('shareHint').textContent=navigator.share?'':'Tip: download it, then attach it to any message, post or email.';m.classList.add('open');m.setAttribute('aria-hidden','false');}
+function closeShare(){const m=document.getElementById('shareModal');if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true');}}
+function downloadShare(){if(!window.__shareUrl)return;const a=document.createElement('a');a.download=SHOP.name.replace(/\s+/g,'-').toLowerCase()+'-bouquet.png';a.href=window.__shareUrl;a.click();toast('Saved to your device \uD83D\uDCE5');}
+async function shareShare(){
+  if(!window.__shareBlob){return;}
+  const info=shareInfo();const text='My '+info.title+' from '+SHOP.name+' \u2014 '+(SHOP.site||'')+' \uD83C\uDF38';
+  try{
+    const file=new File([window.__shareBlob],'my-bouquet.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:SHOP.name+' bouquet',text:text});return;}
+    if(navigator.share){await navigator.share({title:SHOP.name+' bouquet',text:text});return;}
+  }catch(e){if(e&&e.name==='AbortError')return;}
+  downloadShare();
+  const h=document.getElementById('shareHint');if(h)h.textContent='Sharing isn\u2019t available in this browser \u2014 downloaded instead so you can send it anywhere.';
+}
+
+// ---- drag (step 1 only)
+let dragIdx=null,dragEl=null;
+function startDrag(e){
+  if(step!==1)return;
+  dragIdx=parseInt(e.currentTarget.dataset.idx,10);dragEl=e.currentTarget;
+  dragEl.classList.add('drag');dragEl.style.zIndex=500;
+  e.currentTarget.setPointerCapture(e.pointerId);e.preventDefault();
+}
+function moveDrag(e){
+  if(dragIdx===null)return;
+  const stage=document.getElementById('stage');const r=stage.getBoundingClientRect();
+  const pxv=r.left+(PIVOT.x/STAGE.W)*r.width;
+  const pyv=r.top+(PIVOT.y/STAGE.H)*r.height;
+  const dx=e.clientX-pxv;const dy=pyv-e.clientY;
+  let ang=Math.atan2(dx,Math.max(dy,1))*180/Math.PI;
+  ang=Math.max(-64,Math.min(64,ang));
+  const st=state.stems[dragIdx];const c=BYID[st.id];
+  const baseHpx=(c.h*SIZES[state.size].scale*st.slot.scale/STAGE.H)*r.height;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  let len=dist/baseHpx;len=Math.max(.6,Math.min(1.3,len));
+  st.angle=ang;st.len=len;st.manual=true;
+  dragEl.style.height=pct(c.h*SIZES[state.size].scale*st.slot.scale*len,STAGE.H);
+  const bxe=(st.flip?1-(c.bx!=null?c.bx:.5):(c.bx!=null?c.bx:.5))*100;
+  dragEl.style.transform='translate('+(-bxe).toFixed(1)+'%,-100%) rotate('+ang.toFixed(1)+'deg)'+(st.flip?' scaleX(-1)':'');
+}
+function endDrag(){if(dragIdx===null)return;if(dragEl){dragEl.classList.remove('drag');}dragIdx=null;dragEl=null;render();}
+window.addEventListener('pointermove',moveDrag,{passive:false});
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',endDrag);
+
+function checkAsset(c,rowEl){
+  const img=new Image();
+  img.onerror=function(){missingFiles.add(c.file);rowEl.classList.add('missing');};
+  img.src=assetUrl(c.file);
+}
+
+function openFlowerGroup(group,button){
+  const oldTop=button.getBoundingClientRect().top;
+  document.querySelectorAll('#rows .flowergroup').forEach(box=>{box.hidden=box.dataset.group!==group;});
+  document.querySelectorAll('#rows .grouphead').forEach(btn=>{
+    const on=btn.dataset.group===group;
+    btn.classList.toggle('on',on);btn.setAttribute('aria-expanded',on?'true':'false');
+  });
+  requestAnimationFrame(()=>{
+    if(window.innerWidth<=760){
+      const shift=button.getBoundingClientRect().top-oldTop;
+      if(Math.abs(shift)>1)window.scrollBy(0,shift);
+    }
+  });
+}
+
+function init(){
+  const rows=document.getElementById('rows');
+  GROUP_ORDER.forEach((group,groupIndex)=>{
+    const items=CATALOG.filter(c=>c.group===group);
+    if(!items.length)return;
+    const h=document.createElement('button');
+    h.type='button';h.className='grouphead'+(groupIndex===0?' on':'');h.dataset.group=group;
+    h.setAttribute('aria-expanded',groupIndex===0?'true':'false');
+    h.innerHTML='<span>'+group+'</span><small>'+items.length+' available</small><i aria-hidden="true">⌄</i>';
+    h.onclick=function(){openFlowerGroup(group,h);};rows.appendChild(h);
+    const box=document.createElement('div');box.className='flowergroup';box.dataset.group=group;box.hidden=groupIndex!==0;rows.appendChild(box);
+    items.forEach(c=>{
+      const r=document.createElement('div');r.className='row';
+      r.innerHTML='<div class="thumb" style="background-image:url('+assetUrl(c.file)+')"></div>'+
+        '<div class="fmeta"><div class="fname">'+c.label+'</div><div class="fprice">$'+c.price+' / stem</div></div>'+
+        '<div class="step"><button aria-label="Remove one" onclick="chg(\''+c.id+'\',-1)">−</button>'+
+        '<span class="ct" data-ct="'+c.id+'">0</span>'+
+        '<button aria-label="Add one" onclick="chg(\''+c.id+'\',1)">+</button></div>';
+      box.appendChild(r);
+      checkAsset(c,r);
+    });
+  });
+  const wsr=document.getElementById('wrapstyles');
+  WRAP_STYLES.forEach(w=>{
+    const b=document.createElement('button');b.dataset.w=w.id;b.title=w.label;
+    b.style.backgroundImage='url('+assetUrl(w.back)+')';
+    b.onclick=function(){setWrapStyle(w.id);};
+    const s=document.createElement('span');s.textContent=w.label;b.appendChild(s);
+    wsr.appendChild(b);
+  });
+  const rbr=document.getElementById('ribbons');
+  RIBBONS.forEach(rb=>{
+    const b=document.createElement('button');b.dataset.r=rb.id;b.title=rb.label;
+    if(rb.file){b.classList.add('realbow');b.style.setProperty('--bow','url('+assetUrl(rb.file)+')');}else{b.classList.add('nodot');}
+    b.onclick=function(){setRibbon(rb.id);};
+    const s=document.createElement('span');s.textContent=rb.label;b.appendChild(s);
+    rbr.appendChild(b);
+  });
+  const sizes=document.getElementById('sizes');
+  Object.keys(SIZES).forEach(s=>{const b=document.createElement('button');b.dataset.s=s;b.textContent=s;b.onclick=()=>setSize(s);if(s===state.size)b.classList.add('on');sizes.appendChild(b);});
+  setWrapStyle(state.wrapStyle);setRibbon(state.ribbon);setNoteOn(state.noteOn);
+  document.getElementById('stepper').addEventListener('click',e=>{
+    const li=e.target.closest('li');if(!li)return;
+    const n=+li.dataset.n;
+    if(n<step)setStep(n);
+  });
+  const q=new URLSearchParams(location.search);
+  const hq=new URLSearchParams((location.hash||'').replace(/^#/,''));
+  const _p=hq.get('preset')||q.get('preset');
+  preset(_p&&PRESETS[_p]?_p:'romantic');
+  const DEBUG_STEP=0;
+  const s=parseInt(hq.get('step')||q.get('step')||DEBUG_STEP,10);
+  setStep(s>=1&&s<=4?s:1);
+}
+init();
+window.addEventListener('resize',()=>render());
+// keep the built-bouquet preview pinned just below the sticky header on phones
+function syncStick(){const h=document.querySelector('.bheader');if(h)document.documentElement.style.setProperty('--stickTop',Math.max(0,h.offsetHeight-1)+'px');}
+syncStick();window.addEventListener('resize',syncStick);window.addEventListener('load',syncStick);
+</script>
+<script>
+/* ===== v8: Ramo Buchon template engine (classic | round | heart) ===== */
+(function(){
+const ROSES=['rose_red','rose_pink','rose_white','rose_yellow','rose_violet','rose_orange'];
+const CENTERS=['sunflower','gerbera_daisy','ranunculus','lily','rose_white','rose_red','rose_yellow','rose_pink','rose_violet','rose_orange'];
+const HEADF={sunflower:.155,lily:.15,gerbera_daisy:.14,ranunculus:.135,alstroemeria:.14};
+const SHAPES={round:{label:'Round',labor:10},heart:{label:'Heart',labor:15}};
+const HEAD_IMG={rose_red:'head_rose_red.png',rose_orange:'head_rose_orange.png',rose_yellow:'head_rose_yellow.png',rose_violet:'head_rose_violet.png',rose_white:'head_rose_white.png',sunflower:'head_sunflower.png',gerbera_daisy:'head_gerbera_daisy.png'};
+const WALLS=ROSES.concat(['sunflower']);
+function idFor(p,K){
+  const b=state.bu;
+  if(p.ring===0)return b.center;
+  if(b.pattern==='rings')return ((K-p.ring)%2===0)?b.wall:b.fill;
+  if(b.pattern==='mix')return (p.i%2===0)?b.wall:b.fill;
+  if(b.wall2&&K>=3&&p.ring>=K-1)return b.wall;
+  return p.ring===K?b.wall:b.fill;
+}
+state.template='classic';
+state.bu={rings:3,wall:'rose_red',fill:'rose_white',center:'sunflower',pattern:'zones',wall2:false,greens:false,jewel:false,choc:false,sash:''};
+const SASH_TXT={bday:'Happy B-Day',wed:'Happy Wedding',love:'I Love You'};
+const SASH_IMG={bday:'sash_bday.png',wed:'sash_wed.png',love:'sash_love.png'};
+const SASH_AR={bday:6.24,wed:6.45,love:6.09};
+const DIAMOND_IMG='diamond_pin.png';
+
+function roundLayout(K){
+  const pts=[{x:0,y:0,ring:0}];
+  for(let k=1;k<=K;k++){
+    const m=Math.round(2*Math.PI*k);
+    for(let j=0;j<m;j++){
+      const a=j/m*2*Math.PI+k*.5;
+      pts.push({x:Math.cos(a)*k,y:Math.sin(a)*k,ring:k});
+    }
+  }
+  return {pts,unitR:K+.5};
+}
+function heartLayout(K){
+  const pts=[{x:0,y:.05,ring:0}];
+  for(let k=1;k<=K;k++){
+    const s=k/K,M=720,xs=[],ys=[],cum=[0];
+    for(let i=0;i<=M;i++){
+      const t=i/M*2*Math.PI;
+      xs.push(16*Math.pow(Math.sin(t),3)/17*s);
+      ys.push(-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))/17*s);
+      if(i>0)cum.push(cum[i-1]+Math.hypot(xs[i]-xs[i-1],ys[i]-ys[i-1]));
+    }
+    const P=cum[M],m=Math.max(6,Math.round(P/(0.92/K)));
+    for(let j=0;j<m;j++){
+      const tgt=j/m*P;let lo=0;
+      while(lo<M&&cum[lo]<tgt)lo++;
+      pts.push({x:xs[lo],y:ys[lo],ring:k});
+    }
+  }
+  let yMin=1e9,yMax=-1e9;pts.forEach(p=>{yMin=Math.min(yMin,p.y);yMax=Math.max(yMax,p.y);});
+  const dy=(yMin+yMax)/2;pts.forEach(p=>p.y-=dy);
+  return {pts,unitR:1.0};
+}
+function buLayout(){
+  const L=state.template==='heart'?heartLayout(state.bu.rings):roundLayout(state.bu.rings);
+  const cnt={};L.pts.forEach(p=>{p.i=(cnt[p.ring]=(cnt[p.ring]||0)+1)-1;});
+  return L;
+}
+function buCountFor(shape,K){return (shape==='heart'?heartLayout(K):roundLayout(K)).pts.length;}
+function buPrice(){
+  const {pts}=buLayout();const K=state.bu.rings;let s=0;
+  pts.forEach(p=>{const id=idFor(p,K);
+    s+=BYID[id].price*(p.ring===0?2:0.9);});
+  const b=state.bu;
+  const extras=(b.greens?8:0)+(b.jewel?35:0)+(b.choc?25:0)+(b.sash?10:0);
+  return Math.round(25+s+SHAPES[state.template].labor+extras);
+}
+function buBar(){
+  if(step===1)return '💐 '+buLayout().pts.length+' blooms auto-arranged like a pro ramo · style the zones on the right';
+  if(step===2)return '🧻 '+curWrap().label+' shown on its own — your giant ramo is hand-wrapped in it at pickup';
+  if(step===3)return '🎀 The bow is tied right on the paper — pick your color';
+  return STEP_META[step-1].bar;
+}
+
+const _total=total;
+total=function(){
+  if(state.template==='classic')return _total();
+  return buPrice()+(state.noteOn?NOTE_PRICE:0);
+};
+
+function resetFinishEffects(){
+  state.wrapStyle='kraft';
+  state.ribbon='none';
+  state.noteOn=false;state.note='';
+  state.bu.wall2=false;state.bu.greens=false;state.bu.jewel=false;state.bu.choc=false;state.bu.sash='';
+  const ws=WRAP_STYLES[0];
+  document.getElementById('wrapBack').style.backgroundImage='url('+assetUrl(ws.back)+')';
+  document.getElementById('wrapFront').style.backgroundImage='url('+assetUrl(ws.front)+')';
+  document.querySelectorAll('#wrapstyles button').forEach(b=>b.classList.toggle('on',b.dataset.w==='kraft'));
+  document.querySelectorAll('#ribbons button').forEach(b=>b.classList.toggle('on',b.dataset.r==='none'));
+  document.querySelectorAll('#buX button,#buSash button').forEach(b=>b.classList.remove('on'));
+  const card=document.getElementById('cardMsg');if(card)card.value='';
+  const ct=document.getElementById('charCt');if(ct)ct.textContent='0';
+  const nw=document.getElementById('noteWrap');if(nw)nw.style.display='none';
+  const off=document.getElementById('noteOff');if(off)off.classList.add('on');
+  const on=document.getElementById('noteOnBtn');if(on)on.classList.remove('on');
+  document.getElementById('ribbon').style.display='none';
+  document.getElementById('noteCard').style.display='none';
+}
+
+const _setStep=setStep;
+setStep=function(n){
+  n=Math.max(1,Math.min(4,n));
+  if(n===1)resetFinishEffects();
+  if(state.template==='classic'){
+    const result=_setStep(n);
+    if(window.innerWidth<=760)requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'smooth'}));
+    return result;
+  }
+  n=Math.max(1,Math.min(4,n));
+  step=n;
+  document.body.className='step-'+n;
+  const m=STEP_META[n-1];
+  document.getElementById('stepTitle').textContent=n===1?'Design your ramo':m.title;
+  const buSub={1:'Pick the shape, the size, and who owns each ring.',2:'Here is the paper on its own — your ramo is hand-wrapped in it at pickup.',3:'Pick the bow color — shown tied on the paper.'};
+  document.getElementById('stepSub').textContent=buSub[n]||m.sub;
+  document.getElementById('stagebar').textContent=buBar();
+  document.getElementById('nextBtn').textContent=m.next;
+  document.querySelectorAll('#stepper li').forEach(li=>{
+    const ln=+li.dataset.n;
+    li.classList.toggle('on',ln===n);
+    li.classList.toggle('done',ln<n);
+  });
+  if(n===4&&!petalsDone&&!reduceMotion){petalsDone=true;petals();}
+  render();
+  if(window.innerWidth<=760)requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'smooth'}));
+};
+
+const _render=render;
+render=function(){
+  if(state.template==='classic'){
+    document.getElementById('flowerLayer').querySelectorAll('.bh').forEach(e=>e.remove());
+    _render();return;
+  }
+  renderBu();
+};
+
+function renderBu(){
+  const stage=document.getElementById('stage'),layer=document.getElementById('flowerLayer');
+  // Steps: 1 = shape only · 2 = paper alone · 3 = paper + bow · 4 = mini ramo + paper + bow
+  const showWrap=step>=2,showBlooms=step===1||step===4;
+  const ws=curWrap();
+  stage.classList.toggle('wrapped',showWrap);
+  stage.classList.toggle('locked',step>1);
+  layer.querySelectorAll('.flower,.bh,.buadd').forEach(e=>e.remove());
+  document.getElementById('hint').style.display='none';
+  layer.style.clipPath='none';
+  let cx=STAGE.W/2,cy=300,targetR=200;
+  let wT=ws.top,wH=ws.h,wW=ws.w;
+  if(showWrap){
+    if(step===4){wT=52;wH=42;wW=34;cy=170;targetR=115;}
+    [document.getElementById('wrapBack'),document.getElementById('wrapFront')].forEach(el=>{
+      el.style.top=wT+'%';el.style.height=wH+'%';el.style.width=wW+'%';
+    });
+  }
+  const {pts,unitR}=buLayout();const K=state.bu.rings;
+  const scale=targetR/unitR;
+  const S=state.template==='heart'?scale*1.12/K:scale*1.25;
+  const order=showBlooms?[...pts].sort((a,b)=>b.ring-a.ring||a.y-b.y):[];
+  order.forEach((p,i)=>{
+    const id=idFor(p,K);
+    const c=BYID[id];
+    const sz=S*(p.ring===0?1.35:1)*(1+Math.sin(i*5.13)*.03);
+    const jx=Math.sin(i*3.71)*S*.045,jy=Math.cos(i*2.93)*S*.045,jr=Math.sin(i*7.37)*9;
+    const x=cx+p.x*scale+jx,y=cy+p.y*scale+jy;
+    const d=document.createElement('div');d.className='bh';
+    d.style.width=pct(sz,STAGE.W);d.style.height=pct(sz,STAGE.H);
+    d.style.left=pct(x-sz/2,STAGE.W);d.style.top=pct(y-sz/2,STAGE.H);
+    d.style.zIndex=100+(K-p.ring)*60+Math.round(y*.1);
+    d.style.transform='rotate('+jr.toFixed(1)+'deg)';
+    d.style.filter='drop-shadow(0 3px 5px rgba(60,20,40,.24)) brightness('+(p.ring===K?.95:1)+')';
+    const img=document.createElement('img');
+    img.alt=c.label;img.draggable=false;
+    if(HEAD_IMG[id]){
+      img.src=assetUrl(HEAD_IMG[id]);
+      img.style.width='107%';img.style.height='107%';
+      img.style.left='50%';img.style.top='50%';
+      img.style.transform='translate(-50%,-50%)';
+      img.style.objectFit='contain';
+      d.style.overflow='visible';d.style.borderRadius='0';
+    } else {
+      img.src=assetUrl(c.file);
+      const hf=HEADF[id]!=null?HEADF[id]:.13;
+      img.style.height='305%';
+      img.style.top=((0.52-hf*3.05)*100).toFixed(1)+'%';
+      const bx=c.bx!=null?c.bx:.5;
+      img.style.transform='translateX(-'+(bx*100).toFixed(1)+'%)';
+    }
+    d.appendChild(img);
+    if(state.bu.jewel&&id.indexOf('rose_')===0){
+      const dm=document.createElement('img');
+      dm.src=assetUrl(DIAMOND_IMG);dm.alt='diamond';dm.draggable=false;
+      dm.className='dmtw';
+      dm.style.cssText='position:absolute;left:50%;top:50%;width:24%;height:24%;transform:translate(-50%,-50%);object-fit:contain;z-index:6;filter:drop-shadow(0 1px 2px rgba(20,20,40,.45));animation:dtw '+(3.2+Math.random()*2.6).toFixed(2)+'s linear infinite;animation-delay:-'+(Math.random()*4).toFixed(2)+'s';
+      d.appendChild(dm);
+    }
+    layer.appendChild(d);
+  });
+  if(showBlooms&&state.bu.greens){
+    pts.filter(p=>p.ring===K).forEach((p,i)=>{
+      const len=Math.hypot(p.x,p.y)||1;
+      const sz=S*1.15;
+      const x=cx+p.x*scale+(p.x/len)*S*.52,y=cy+p.y*scale+(p.y/len)*S*.52;
+      const g=document.createElement('div');g.className='bh';
+      g.style.width=pct(sz,STAGE.W);g.style.height=pct(sz,STAGE.H);
+      g.style.left=pct(x-sz/2,STAGE.W);g.style.top=pct(y-sz/2,STAGE.H);
+      g.style.zIndex=40+Math.round(y*.05);
+      g.style.transform='rotate('+(Math.atan2(p.y,p.x)*180/Math.PI+90+Math.sin(i*5.1)*14).toFixed(1)+'deg)';
+      g.style.filter='drop-shadow(0 2px 4px rgba(30,50,20,.25))';
+      const im=document.createElement('img');im.src=assetUrl('eucalyptus.png');im.alt='greenery';im.draggable=false;
+      im.style.height='250%';im.style.top='6%';im.style.transform='translateX(-50%)';
+      g.appendChild(im);layer.appendChild(g);
+    });
+  }
+  if(showBlooms&&state.bu.sash){
+    const sw=targetR*2.25,sh=sw/SASH_AR[state.bu.sash];
+    const sp=document.createElement('div');sp.className='buadd busashwrap';
+    sp.style.width=pct(sw,STAGE.W);sp.style.height=pct(sh,STAGE.H);
+    sp.style.left=pct(cx,STAGE.W);sp.style.top=pct(cy-targetR*.18,STAGE.H);
+    sp.innerHTML='<img src="'+assetUrl(SASH_IMG[state.bu.sash])+'" alt="'+SASH_TXT[state.bu.sash]+'" draggable="false"><i class="shine"></i>';
+    layer.appendChild(sp);
+  }
+  const rb=document.getElementById('ribbon');const rib=curRibbon();
+  if(step>=3&&rib.c){
+    rb.style.display='block';
+    rb.style.top=(wT+wH*ws.tie)+'%';
+    rb.style.width=Math.max(19,wW*.56)+'%';
+    rb.src=assetUrl(rib.file);rb.alt=rib.label+' ribbon bow';
+  } else rb.style.display='none';
+  const nc=document.getElementById('noteCard');
+  if(step===4&&state.noteOn&&state.note.trim()){
+    nc.style.display='block';
+    document.getElementById('noteCardTxt').textContent=state.note.trim();
+  } else nc.style.display='none';
+  document.getElementById('amt').textContent='$'+total();
+  if(step===4)renderSummary();
+}
+
+const _renderSummary=renderSummary;
+renderSummary=function(){
+  if(state.template==='classic')return _renderSummary();
+  const {pts}=buLayout();const K=state.bu.rings;
+  const tally={};
+  pts.forEach(p=>{if(p.ring===0)return;const id=idFor(p,K);tally[id]=(tally[id]||0)+1;});
+  const rib=curRibbon();
+  const shapeName=SHAPES[state.template].label;
+  const PATN={zones:'Zones',rings:'Alternating rings',mix:'Checker · one by one'};
+  const rows=[
+    ['💐 Ramo Buchón · '+shapeName+' · '+pts.length+' blooms','$'+buPrice()],
+    ['🌀 Formation · '+PATN[state.bu.pattern]+(state.bu.wall2&&state.bu.pattern==='zones'?' · double wall':''),''],
+  ];
+  Object.keys(tally).forEach(id=>rows.push(['🌹 '+tally[id]+'× '+BYID[id].label,'']));
+  rows.push(['⭐ Center · 1× '+BYID[state.bu.center].label,'']);
+  if(state.bu.greens)rows.push(['🌿 Greenery collar','+$8']);
+  rows.push(['🧻 '+curWrap().label+' wrap','Included']);
+  rows.push(['🎀 '+(rib.c?rib.label+' ribbon':'No ribbon'),rib.c?'Included':'—']);
+  if(state.bu.jewel)rows.push(['💎 Diamond pins in every rose','+$35']);
+  if(state.bu.choc)rows.push(['🍫 Chocolate box','+$25']);
+  if(state.bu.sash)rows.push(['🎀 Message sash · “'+SASH_TXT[state.bu.sash]+'”','+$10']);
+  rows.push(['💌 Printed gift card',state.noteOn?'+$'+NOTE_PRICE:'—']);
+  const mck='<div class="minickt">'+
+    '<div class="mtile"><img src="'+assetUrl(curWrap().front)+'" alt="paper"><span>'+curWrap().label+'</span></div>'+
+    '<div class="mtile"><i class="mrib'+(rib.c?'':' none')+'"'+(rib.c?' style="--rc:'+rib.c+'"':'')+'></i><span>'+(rib.c?rib.label+' bow':'No bow')+'</span></div>'+
+    '<div class="mtile"><span class="mshape">'+(state.template==='heart'?'❤️':'⭕')+'</span><span>'+shapeName+' · '+pts.length+'</span></div>'+
+    (state.bu.jewel?'<div class="mtile"><span class="mshape">💎</span><span>Diamonds</span></div>':'')+
+    (state.bu.choc?'<div class="mtile"><span class="mshape">🍫</span><span>Chocolates</span></div>':'')+
+    (state.noteOn?'<div class="mtile"><span class="mshape">💌</span><span>Gift card</span></div>':'')+
+    '</div>';
+  document.getElementById('summary').innerHTML=mck+rows.map(r=>'<div><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('')+
+    '<div class="sumtotal"><span>Total</span><b>$'+total()+'</b></div>';
+  const ord=document.getElementById('order');
+  ord.classList.remove('disabled');
+  let msg='Hi '+SHOP.name+'! My Ramo Buchón: '+shapeName+' shape, '+pts.length+' blooms ('+PATN[state.bu.pattern]+(state.bu.wall2&&state.bu.pattern==='zones'?', double wall':'')+') — '+Object.keys(tally).map(id=>tally[id]+'× '+BYID[id].label).join(', ')+', center: '+BYID[state.bu.center].label+'. Wrap: '+curWrap().label+'.';
+  if(state.bu.greens)msg+=' With greenery collar.';
+  if(rib.c)msg+=' Ribbon: '+rib.label+'.';
+  if(state.bu.jewel)msg+=' Diamond pins in the roses (+$35).';
+  if(state.bu.choc)msg+=' Chocolate box (+$25).';
+  if(state.bu.sash)msg+=' Printed message sash: "'+SASH_TXT[state.bu.sash]+'" (+$10).';
+  if(state.noteOn)msg+=' Printed gift card (+$'+NOTE_PRICE+')'+(state.note.trim()?': "'+state.note.trim()+'"':'')+'.';
+  msg+=' Total ~$'+total()+'. Is it available for delivery?';
+  ord.href='https://wa.me/'+SHOP.whatsapp+'?text='+encodeURIComponent(window.__pavonWA?window.__pavonWA(msg):msg);
+};
+
+// ---- UI injection (step 1 panel)
+const p1=document.querySelector('.step-panel[data-step="1"]');
+Array.from(p1.children).forEach(el=>el.classList.add('classic-only'));
+const tpl=document.createElement('div');
+tpl.innerHTML='<div class="label">Bouquet style</div>'+
+ '<div class="tpls" id="tpls">'+
+ '<button type="button" data-t="classic" class="on" onclick="setTemplate(\'classic\')">🌿 Classic<span>hand-tied</span></button>'+
+ '<button type="button" data-t="round" onclick="setTemplate(\'round\')">💐 Round Buchón<span>rose dome</span></button>'+
+ '<button type="button" data-t="heart" onclick="setTemplate(\'heart\')">❤️ Heart Buchón<span>shaped</span></button></div>';
+p1.insertBefore(tpl,p1.firstChild);
+const SIZE_NAMES={1:'Mini',2:'S',3:'M',4:'L',5:'XL'};
+function swatchHtml(zone,ids,cur){
+  return ids.map(id=>'<button type="button" data-f="'+id+'" title="'+BYID[id].label+'"'+
+    ' style="background-image:url('+assetUrl(HEAD_IMG[id]||BYID[id].file)+');background-size:'+(HEAD_IMG[id]?'cover':'290%')+';background-position:50% '+(HEAD_IMG[id]?'50%':'6%')+'"'+(id===cur?' class="on"':'')+
+    ' onclick="setBuZone(\''+zone+'\',\''+id+'\')"></button>').join('');
+}
+const bc=document.createElement('div');bc.id='buCtrls';bc.className='bu-only';
+bc.innerHTML='<div class="label">Size</div><div class="buSizes" id="buSizes">'+
+  [1,2,3,4,5].map(k=>'<button type="button" data-k="'+k+'"'+(k===3?' class="on"':'')+' onclick="setBuRings('+k+')">'+SIZE_NAMES[k]+'<small id="buc'+k+'"></small></button>').join('')+'</div>'+
+  '<div class="label" style="margin-top:14px">Outer wall · the ring everyone sees</div><div class="swatches" data-zone="wall">'+swatchHtml('wall',WALLS,state.bu.wall)+'</div>'+
+  '<div class="label" style="margin-top:10px">Inside fill</div><div class="swatches" data-zone="fill">'+swatchHtml('fill',WALLS,state.bu.fill)+'</div>'+
+  '<div class="label" style="margin-top:10px">Center bloom · the star</div><div class="swatches" data-zone="center">'+swatchHtml('center',CENTERS,state.bu.center)+'</div>'+
+  '<div class="label" style="margin-top:14px">Formation</div><div class="buSizes" id="buPat">'+
+  [['zones','Zones','wall + fill'],['rings','Rings','ring by ring'],['mix','Checker','one by one']].map(a=>'<button type="button" data-p="'+a[0]+'"'+(a[0]==='zones'?' class="on"':'')+' onclick="setBuPattern(\''+a[0]+'\')">'+a[1]+'<small>'+a[2]+'</small></button>').join('')+'</div>'+
+  '<div class="label" style="margin-top:14px">Extras</div><div class="buSizes" id="buX">'+
+  [['wall2','Double wall','2 wall rings'],['greens','🌿 Greenery','+$8'],['jewel','💎 Diamonds','+$35'],['choc','🍫 Chocolates','+$25']].map(a=>'<button type="button" data-p="'+a[0]+'" onclick="toggleBuOpt(\''+a[0]+'\')">'+a[1]+'<small>'+a[2]+'</small></button>').join('')+'</div>'+
+  '<div class="label" style="margin-top:14px">Message sash · printed ribbon across the ramo · +$10</div><div class="buSizes" id="buSash">'+
+  [['bday','🎂 Happy B-Day'],['wed','🤍 Happy Wedding'],['love','❤️ I Love You']].map(a=>'<button type="button" data-s="'+a[0]+'" onclick="setBuSash(\''+a[0]+'\')">'+a[1]+'<small>tap to add · tap again to remove</small></button>').join('')+'</div>';
+tpl.after(bc);
+function refreshSizeLabels(){
+  const shape=state.template==='heart'?'heart':'round';
+  [1,2,3,4,5].forEach(k=>{
+    const el=document.getElementById('buc'+k);
+    if(el)el.textContent=buCountFor(shape,k)+' blooms';
+  });
+}
+const WRAP_TIP_CLASSIC='🧻 The paper gathers your stems and trims the long ones neatly — your blooms stay untouched. Want to rearrange? Press Back.';
+const WRAP_TIP_BU='🧻 Giant ramos are hand-wrapped at pickup — at the last step you will see your ramo, the paper and the bow side by side.';
+window.setTemplate=function(t){
+  if(t==='classic')resetFinishEffects();
+  state.template=t;
+  const wt=document.getElementById('wrapTip');
+  if(wt)wt.textContent=t==='classic'?WRAP_TIP_CLASSIC:WRAP_TIP_BU;
+  document.querySelector('.panel').classList.toggle('bu-on',t!=='classic');
+  document.querySelectorAll('#tpls button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  refreshSizeLabels();
+  document.getElementById('stagebar').textContent=t==='classic'?STEP_META[step-1].bar:buBar();
+  render();
+};
+window.setBuRings=function(k){
+  state.bu.rings=k;
+  document.querySelectorAll('#buSizes button').forEach(b=>b.classList.toggle('on',+b.dataset.k===k));
+  document.getElementById('stagebar').textContent=buBar();
+  render();
+};
+window.setBuZone=function(zone,id){
+  state.bu[zone]=id;
+  document.querySelectorAll('.swatches[data-zone="'+zone+'"] button').forEach(b=>b.classList.toggle('on',b.dataset.f===id));
+  render();
+};
+window.setBuPattern=function(p){
+  state.bu.pattern=p;
+  document.querySelectorAll('#buPat button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  render();
+};
+window.toggleBuOpt=function(k){
+  state.bu[k]=!state.bu[k];
+  const b=document.querySelector('#buX button[data-p="'+k+'"]');
+  if(b)b.classList.toggle('on',state.bu[k]);
+  render();
+};
+window.setBuSash=function(k){
+  state.bu.sash=state.bu.sash===k?'':k;
+  document.querySelectorAll('#buSash button').forEach(b=>b.classList.toggle('on',b.dataset.s===state.bu.sash));
+  render();
+};
+refreshSizeLabels();
+// deep link: builder.html?tpl=heart&bstep=2
+const q=new URLSearchParams(location.search),hq=new URLSearchParams((location.hash||'').replace(/^#/,''));
+const t=hq.get('tpl')||q.get('tpl');
+if(t==='round'||t==='heart'){
+  setTemplate(t);
+  const bs=parseInt(hq.get('bstep')||q.get('bstep')||'0',10);
+  if(bs>=1&&bs<=4)setStep(bs);
+}
+})();
+</script>
+<script>
+/* v9.0 · gold dust — floating boutique sparkle over the finished ramo (step 4) */
+(function(){
+  var stage=document.getElementById('stage');if(!stage)return;
+  var reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv=document.createElement('canvas');cv.id='golddust';stage.appendChild(cv);
+  var ctx=cv.getContext('2d'),P=[],run=false;
+  function size(){var d=Math.min(window.devicePixelRatio||1,2);cv.width=stage.clientWidth*d;cv.height=stage.clientHeight*d;ctx.setTransform(d,0,0,d,0,0);}
+  function seed(){P=[];for(var i=0;i<34;i++)P.push({x:Math.random(),y:Math.random(),s:.6+Math.random()*1.8,v:.02+Math.random()*.05,w:Math.random()*6.3,tw:2+Math.random()*3});}
+  function draw(t){
+    var w=stage.clientWidth,h=stage.clientHeight;ctx.clearRect(0,0,w,h);
+    P.forEach(function(p){
+      var a=.22+.55*(0.5+0.5*Math.sin(t*p.tw+p.w));
+      var x=p.x*w+Math.sin(t*.6+p.w)*9,y=p.y*h;
+      ctx.beginPath();ctx.arc(x,y,p.s,0,6.3);
+      ctx.fillStyle='rgba(214,178,94,'+a.toFixed(2)+')';ctx.fill();
+      if(p.s>1.9){var g=p.s*2.6;
+        ctx.strokeStyle='rgba(255,246,214,'+(a*.8).toFixed(2)+')';ctx.lineWidth=.8;
+        ctx.beginPath();ctx.moveTo(x-g,y);ctx.lineTo(x+g,y);ctx.moveTo(x,y-g);ctx.lineTo(x,y+g);ctx.stroke();}
+    });
+  }
+  function frame(ts){
+    if(!run)return;
+    P.forEach(function(p){p.y-=p.v/60;if(p.y<-0.04){p.y=1.04;p.x=Math.random();}});
+    draw(ts/1000);requestAnimationFrame(frame);
+  }
+  function check(){
+    var want=document.body.className.indexOf('step-4')>-1;
+    if(want&&!run){size();if(!P.length)seed();if(reduced){draw(1.7);}else{run=true;requestAnimationFrame(frame);}}
+    else if(!want){run=false;ctx.clearRect(0,0,cv.width,cv.height);}
+  }
+  new MutationObserver(check).observe(document.body,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',size);
+  check();
+})();
+</script>
+<script src="builder-i18n.js"></script>
+<script src="webp.js"></script>
+</body>
+</html>

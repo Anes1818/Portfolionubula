@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /demo/pavon/admin.html
+Disallow: /demo/pavon/import.html
+
+Sitemap: https://nebulastudio.site/sitemap.xml
