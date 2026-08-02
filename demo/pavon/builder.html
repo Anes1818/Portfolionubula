@@ -361,7 +361,17 @@ function render(){
   } else nc.style.display='none';
   // header + counters
   document.getElementById('amt').textContent='$'+total();
-  document.querySelectorAll('[data-ct]').forEach(e=>{e.textContent=countOf(e.dataset.ct);});
+  document.querySelectorAll('[data-ct]').forEach(e=>{
+    const n=countOf(e.dataset.ct);
+    e.textContent=n;
+    const row=e.closest('.row');
+    if(row){
+      row.classList.toggle('picked',n>0);
+      const minus=row.querySelector('.step button');
+      if(minus){minus.disabled=n===0;minus.setAttribute('aria-disabled',n===0?'true':'false');}
+    }
+  });
+  updateGroupCounts();
   // step-4 summary + order link
   if(step===4) renderSummary();
 }
@@ -586,9 +596,13 @@ function checkAsset(c,rowEl){
 
 function openFlowerGroup(group,button){
   const oldTop=button.getBoundingClientRect().top;
-  document.querySelectorAll('#rows .flowergroup').forEach(box=>{box.hidden=box.dataset.group!==group;});
+  // second tap on an open group closes it (accordion, not radio)
+  const collapse=button.classList.contains('on');
+  document.querySelectorAll('#rows .flowergroup').forEach(box=>{
+    box.hidden=collapse?true:box.dataset.group!==group;
+  });
   document.querySelectorAll('#rows .grouphead').forEach(btn=>{
-    const on=btn.dataset.group===group;
+    const on=!collapse&&btn.dataset.group===group;
     btn.classList.toggle('on',on);btn.setAttribute('aria-expanded',on?'true':'false');
   });
   requestAnimationFrame(()=>{
@@ -596,6 +610,19 @@ function openFlowerGroup(group,button){
       const shift=button.getBoundingClientRect().top-oldTop;
       if(Math.abs(shift)>1)window.scrollBy(0,shift);
     }
+  });
+}
+
+function updateGroupCounts(){
+  document.querySelectorAll('#rows>.grouphead').forEach(head=>{
+    const g=head.dataset.group;
+    let n=0;
+    CATALOG.forEach(c=>{if(c.group===g)n+=countOf(c.id);});
+    let pill=head.querySelector('.ghct');
+    if(!pill){pill=document.createElement('b');pill.className='ghct';head.insertBefore(pill,head.querySelector('i'));}
+    pill.textContent=n;
+    pill.hidden=n===0;
+    head.classList.toggle('haspicks',n>0);
   });
 }
 
@@ -607,7 +634,7 @@ function init(){
     const h=document.createElement('button');
     h.type='button';h.className='grouphead'+(groupIndex===0?' on':'');h.dataset.group=group;
     h.setAttribute('aria-expanded',groupIndex===0?'true':'false');
-    h.innerHTML='<span>'+group+'</span><small>'+items.length+' available</small><i aria-hidden="true">⌄</i>';
+    h.innerHTML='<span>'+group+'</span><small>'+items.length+' to choose</small><i aria-hidden="true">⌄</i>';
     h.onclick=function(){openFlowerGroup(group,h);};rows.appendChild(h);
     const box=document.createElement('div');box.className='flowergroup';box.dataset.group=group;box.hidden=groupIndex!==0;rows.appendChild(box);
     items.forEach(c=>{
@@ -639,7 +666,7 @@ function init(){
   });
   const sizes=document.getElementById('sizes');
   Object.keys(SIZES).forEach(s=>{const b=document.createElement('button');b.dataset.s=s;b.textContent=s;b.onclick=()=>setSize(s);if(s===state.size)b.classList.add('on');sizes.appendChild(b);});
-  setWrapStyle(state.wrapStyle);setRibbon(state.ribbon);setNoteOn(state.noteOn);
+  setWrapStyle(state.wrapStyle);setRibbon(state.ribbon);setNoteOn(state.noteOn);updateGroupCounts();
   document.getElementById('stepper').addEventListener('click',e=>{
     const li=e.target.closest('li');if(!li)return;
     const n=+li.dataset.n;

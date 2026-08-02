@@ -1014,7 +1014,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <div class="nav-links" role="list">
     <a href="#about" role="listitem">About</a>
     <a href="#showcase" role="listitem">Work</a>
-    <a href="#templates" role="listitem">Templates</a>
+    <a href="#templates" role="listitem">Demos</a>
     <a href="#services" role="listitem">Services</a>
     <a href="#process" role="listitem">Process</a>
     <a href="../build-your-plan.html#plans" role="listitem">Plans</a>
@@ -1032,7 +1032,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true">
   <a href="#about"     class="nav-overlay-link">About</a>
   <a href="#showcase"  class="nav-overlay-link">Work</a>
-  <a href="#templates" class="nav-overlay-link">Templates</a>
+  <a href="#templates" class="nav-overlay-link">Demos</a>
   <a href="#services"  class="nav-overlay-link">Services</a>
   <a href="#process"   class="nav-overlay-link">Process</a>
   <a href="../build-your-plan.html#plans" class="nav-overlay-link">Plans</a>
@@ -1066,7 +1066,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       <a href="../build-your-plan.html" class="btn btn-primary btn-lg">
         Build Your Plan &mdash; Free <span class="btn-arrow-icon">&#8599;</span>
       </a>
-      <a href="#showcase" class="btn btn-ghost btn-lg">See What's Possible</a>
+      <a href="#templates" class="btn btn-ghost btn-lg">See The Live Demos</a>
     </div>
   </div>
   <div class="hero-stats" id="heroStats">
@@ -1132,6 +1132,98 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
   </div>
 </div>
+
+<!-- TEMPLATES -->
+<section class="templates z1" id="templates" aria-labelledby="tplHeading">
+  <div class="templates-header">
+    <div>
+      <p class="section-eyebrow">Templates &amp; Demos</p>
+      <h2 class="section-title clip-reveal" id="tplHeading">A florist experience you can explore</h2>
+    </div>
+    <p class="section-desc">Before we tell you anything about us, look at the work. Both of these are live and fully clickable — open them, break them, and imagine your shop's name on them.</p>
+  </div>
+  <div class="templates-grid">
+
+    <!-- TEMPLATE 01 —— Flower Shop -->
+    <article class="tpl-card" data-tpl-color="#d4a5a5">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--flower">
+        <!-- 05. Live iframe preview injected by JS -->
+        <div class="tpl-preview-inner">
+          <picture>
+            <source srcset="../assets/pavon-shot.webp" type="image/webp">
+            <img src="../assets/pavon-shot.jpg" alt="Flowers Pavon live demo preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </picture>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/index.html" class="btn btn-primary" target="_blank" rel="noopener">View Live Demo &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Live Demo</span><span class="tpl-num">01</span></div>
+        <h3 class="tpl-name">Flowers Pavon &mdash; Florist Experience</h3>
+        <p class="tpl-desc">A complete florist experience you can explore right now: bilingual storefront, occasion-based catalog, seasonal event themes with countdowns, and a bouquet builder your customers can play with.</p>
+        <ul class="tpl-features">
+          <li>Bilingual EN&thinsp;/&thinsp;ES storefront</li>
+          <li>Custom bouquet builder</li>
+          <li>Seasonal event engine &amp; countdowns</li>
+          <li>WhatsApp &amp; card ordering flows</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- TEMPLATE 02 —— Wedding Experience -->
+    <article class="tpl-card" data-tpl-color="#e6c9d4">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--wedding">
+        <div class="tpl-preview-inner">
+          <picture>
+            <source srcset="../assets/weddings-shot.webp" type="image/webp">
+            <img src="../assets/weddings-shot.jpg" alt="Pavon Weddings page preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </picture>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/weddings.html" class="btn btn-primary" target="_blank" rel="noopener">View the wedding page &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/weddings.html" target="_blank" rel="noopener">View the wedding page &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Weddings &middot; Dedicated Page</span><span class="tpl-num">02</span></div>
+        <h3 class="tpl-name">Pavon Weddings &mdash; A Dedicated Experience</h3>
+        <p class="tpl-desc">Wedding work does not belong in the same catalog as a $45 bouquet. So we build it its own experience — its own hero, its own pace, its own way of asking for the date. Brides land somewhere that already feels like their day, and you get enquiries with the details you actually need.</p>
+        <ul class="tpl-features">
+          <li>Cinematic wedding hero</li>
+          <li>Package &amp; palette showcase</li>
+          <li>Date-first enquiry flow</li>
+          <li>Built as an add-on to any plan</li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- HOW WE BUILD IDEAS -->
+  <style>
+    .idea-banner{margin-top:clamp(2.5rem,5vw,4rem);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
+    .idea-banner picture{display:block;height:100%}
+    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
+    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
+    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
+  </style>
+  <div class="idea-banner">
+    <picture>
+      <source srcset="../assets/builder-shot.webp" type="image/webp">
+      <img src="../assets/builder-shot.jpg" alt="The Flowers Pavon bouquet builder" loading="lazy">
+    </picture>
+    <div class="idea-copy">
+      <p class="section-eyebrow">How We Build Ideas</p>
+      <h3 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your idea becomes an experience</h3>
+      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">For Flowers Pavon we asked one question: what if choosing flowers felt like a game? So we built a bouquet builder — pick your stems, wrap and ribbon, and watch the bouquet come to life with a live price. That's how we treat every idea: we don't just describe it, we turn it into something your customers can play with.</p>
+      <a href="../demo/pavon/builder.html" target="_blank" rel="noopener" class="btn btn-ghost">Try the builder &nbsp;&#8599;</a>
+    </div>
+  </div>
+</section>
 
 <!-- PHILOSOPHY -->
 <section class="philosophy z1" aria-labelledby="philHeading">
@@ -1254,98 +1346,6 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       <span class="feat-card-icon" aria-hidden="true">&#8599;</span>
       <h3>Found Nearby</h3>
       <p>Speed, mobile and local SEO — so "florist near me" searches end at your door.</p>
-    </div>
-  </div>
-</section>
-
-<!-- TEMPLATES -->
-<section class="templates z1" id="templates" aria-labelledby="tplHeading">
-  <div class="templates-header">
-    <div>
-      <p class="section-eyebrow">Templates &amp; Demos</p>
-      <h2 class="section-title clip-reveal" id="tplHeading">A florist experience you can explore</h2>
-    </div>
-    <p class="section-desc">This is Flowers Pavon — our complete florist demo. Open it, play with it, and imagine it with your shop's name on it.</p>
-  </div>
-  <div class="templates-grid">
-
-    <!-- TEMPLATE 01 —— Flower Shop -->
-    <article class="tpl-card" data-tpl-color="#d4a5a5">
-      <div class="tpl-shine"></div>
-      <div class="tpl-preview tpl-preview--flower">
-        <!-- 05. Live iframe preview injected by JS -->
-        <div class="tpl-preview-inner">
-          <picture>
-            <source srcset="../assets/pavon-shot.webp" type="image/webp">
-            <img src="../assets/pavon-shot.jpg" alt="Flowers Pavon live demo preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
-          </picture>
-        </div>
-        <div class="tpl-overlay">
-          <a href="../demo/pavon/index.html" class="btn btn-primary" target="_blank" rel="noopener">View Live Demo &nbsp;&#8599;</a>
-        </div>
-      </div>
-      <div class="tpl-mobile-cta"><a href="../demo/pavon/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
-      <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Live Demo</span><span class="tpl-num">01</span></div>
-        <h3 class="tpl-name">Flowers Pavon &mdash; Florist Experience</h3>
-        <p class="tpl-desc">A complete florist experience you can explore right now: bilingual storefront, occasion-based catalog, seasonal event themes with countdowns, and a bouquet builder your customers can play with.</p>
-        <ul class="tpl-features">
-          <li>Bilingual EN&thinsp;/&thinsp;ES storefront</li>
-          <li>Custom bouquet builder</li>
-          <li>Seasonal event engine &amp; countdowns</li>
-          <li>WhatsApp &amp; card ordering flows</li>
-        </ul>
-      </div>
-    </article>
-
-    <!-- TEMPLATE 02 —— Wedding Experience -->
-    <article class="tpl-card" data-tpl-color="#e6c9d4">
-      <div class="tpl-shine"></div>
-      <div class="tpl-preview tpl-preview--wedding">
-        <div class="tpl-preview-inner">
-          <picture>
-            <source srcset="../assets/weddings-shot.webp" type="image/webp">
-            <img src="../assets/weddings-shot.jpg" alt="Pavon Weddings page preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
-          </picture>
-        </div>
-        <div class="tpl-overlay">
-          <a href="../demo/pavon/weddings.html" class="btn btn-primary" target="_blank" rel="noopener">View the wedding page &nbsp;&#8599;</a>
-        </div>
-      </div>
-      <div class="tpl-mobile-cta"><a href="../demo/pavon/weddings.html" target="_blank" rel="noopener">View the wedding page &#8599;</a></div>
-      <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">Weddings &middot; Dedicated Page</span><span class="tpl-num">02</span></div>
-        <h3 class="tpl-name">Pavon Weddings &mdash; A Dedicated Experience</h3>
-        <p class="tpl-desc">Wedding work does not belong in the same catalog as a $45 bouquet. So we build it its own experience — its own hero, its own pace, its own way of asking for the date. Brides land somewhere that already feels like their day, and you get enquiries with the details you actually need.</p>
-        <ul class="tpl-features">
-          <li>Cinematic wedding hero</li>
-          <li>Package &amp; palette showcase</li>
-          <li>Date-first enquiry flow</li>
-          <li>Built as an add-on to any plan</li>
-        </ul>
-      </div>
-    </article>
-
-  </div>
-
-  <!-- HOW WE BUILD IDEAS -->
-  <style>
-    .idea-banner{margin-top:clamp(2.5rem,5vw,4rem);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
-    .idea-banner picture{display:block;height:100%}
-    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
-    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
-    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
-  </style>
-  <div class="idea-banner">
-    <picture>
-      <source srcset="../assets/builder-shot.webp" type="image/webp">
-      <img src="../assets/builder-shot.jpg" alt="The Flowers Pavon bouquet builder" loading="lazy">
-    </picture>
-    <div class="idea-copy">
-      <p class="section-eyebrow">How We Build Ideas</p>
-      <h3 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your idea becomes an experience</h3>
-      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">For Flowers Pavon we asked one question: what if choosing flowers felt like a game? So we built a bouquet builder — pick your stems, wrap and ribbon, and watch the bouquet come to life with a live price. That's how we treat every idea: we don't just describe it, we turn it into something your customers can play with.</p>
-      <a href="../demo/pavon/builder.html" target="_blank" rel="noopener" class="btn btn-ghost">Try the builder &nbsp;&#8599;</a>
     </div>
   </div>
 </section>
