@@ -1498,9 +1498,10 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   </div>
 
   <!-- 08. FORMSUBMIT FORM -->
-  <!-- Contact form sends via FormSubmit to hello@nebulastudio.site. First-ever submission triggers a one-time activation email to that inbox — click "Activate" once. -->
+  <!-- Contact form posts to Formspree (form ID: meajaojg). Every lead is stored in the
+       Formspree dashboard AND emailed to hello@nebulastudio.site, so nothing is ever lost. -->
   <form class="contact-form" id="contactForm"
-        action="https://formspree.io/f/PASTE_FORM_ID"
+        action="https://formspree.io/f/meajaojg"
         method="POST" novalidate data-reveal>
     <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
     <input type="hidden" name="_template" value="table">
@@ -1598,7 +1599,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isMobile = () => window.innerWidth <= 768
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches
 
-  /* ════���══════════════════════════════════════════════���══
+  /* ════�����══════════════════════════════════════════════���══
      LENIS
   ════════════════════��═════════════════════════════════ */
   let lenis
@@ -1828,7 +1829,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ════════════════════════════════════��═════════════════
      WORD REVEAL
-  ══════���═══════════════════════════════════════════════ */
+  ════��═���═══════════════════════════════════════════════ */
   function initWordReveal(el) {
     if (!el) return
     const words = el.textContent.trim().split(/\s+/)
@@ -2217,6 +2218,15 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(json.message || json.error || 'Submission failed')
         }
       } catch(err) {
+        // Tell the site owner exactly WHY it failed (visitors never see the console).
+        const notConfigured = /not configured/.test((err && err.message) || '')
+        if (notConfigured) {
+          console.error('[Nebula] Lead NOT sent — the form action is still "PASTE_FORM_ID".\n' +
+            'Fix: open flowers/index.html (~line 1503) and replace PASTE_FORM_ID with your Formspree form ID.')
+        } else {
+          console.error('[Nebula] Lead NOT sent — the form service refused the submission:', err)
+        }
+
         // Never lose a lead: hand the visitor a pre-filled email they can send in one click.
         const subject = encodeURIComponent('Website enquiry — ' + name)
         const body = encodeURIComponent(
