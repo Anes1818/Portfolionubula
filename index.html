@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Nebula Sites Studio — we believe every business has a story worth telling. Custom websites and brand identities, hand-crafted around your story. Virginia, USA." />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <meta name="theme-color" content="#150a10" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nebula Sites Studio — Every Business Has a Story Worth Telling" />
-  <meta property="og:description" content="We craft custom websites and brand identities that feel as unique as the people behind them. No templates, no copies — built together with you." />
-  <title>Nebula Sites Studio — Custom Websites With a Story</title>
-  <link rel="canonical" href="https://nebulastudio.site/" />
-  <meta property="og:url" content="https://nebulastudio.site/" />
+  <meta property="og:title" content="Nebula Sites Studio — Websites Made for Flower Shops" />
+  <meta property="og:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <title>Nebula Sites Studio — Websites Made for Flower Shops</title>
+  <link rel="canonical" href="https://nebulastudio.site/flowers/" />
+  <meta property="og:url" content="https://nebulastudio.site/flowers/" />
   <meta property="og:site_name" content="Nebula Sites Studio" />
   <meta property="og:image" content="https://nebulastudio.site/assets/og.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Nebula Sites Studio — Custom Websites With a Story" />
-  <meta name="twitter:description" content="Nebula Sites Studio — we believe every business has a story worth telling. Custom websites and brand identities, hand-crafted around your story. Virginia, USA." />
+  <meta name="twitter:title" content="Nebula Sites Studio — Websites for Florists" />
+  <meta name="twitter:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
   <meta name="twitter:image" content="https://nebulastudio.site/assets/og.png" />
-  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="icon" type="image/png" href="../assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -27,6 +27,53 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+  <!-- Safety net: if any CDN above is blocked (office wifi, ad-blocker, CDN outage), stub the
+       animation libraries so the page - and above all the contact form - keeps working. -->
+  <script>
+  (function () {
+    function stub() {
+      var o = {}
+      ;['to','from','fromTo','set','timeline','registerPlugin','killTweensOf','delayedCall','add','play','pause','reverse','restart','kill','progress','seek','eventCallback','call','addLabel','defaults','config'].forEach(function (k) { o[k] = function () { return o } })
+      o.utils = {
+        toArray: function (v) { if (typeof v === 'string') return [].slice.call(document.querySelectorAll(v)); if (!v) return []; return (v.length !== undefined && !v.tagName) ? [].slice.call(v) : [v] },
+        clamp: function (a, b, v) { return arguments.length > 2 ? Math.min(b, Math.max(a, v)) : function (x) { return Math.min(b, Math.max(a, x)) } },
+        interpolate: function () { return function () { return 0 } },
+        random: function (a) { return a },
+        mapRange: function () { return 0 }
+      }
+      o.ticker = { add: function () {}, remove: function () {} }
+      o.quickTo = function () { return function () { return o } }
+      o.getProperty = function () { return 0 }
+      return o
+    }
+    if (typeof window.gsap === 'undefined') window.gsap = stub()
+    if (typeof window.ScrollTrigger === 'undefined') {
+      var st = stub()
+      st.create = function () { return { kill: function () {}, refresh: function () {}, disable: function () {}, enable: function () {} } }
+      st.getAll = function () { return [] }
+      st.refresh = function () {}
+      st.update = function () {}
+      st.sort = function () {}
+      st.clearScrollMemory = function () {}
+      st.normalizeScroll = function () {}
+      st.scrollerProxy = function () {}
+      st.batch = function () {}
+      st.matchMedia = function () { return { add: function () {} } }
+      st.addEventListener = function () {}
+      st.killAll = function () {}
+      window.ScrollTrigger = st
+    }
+    if (typeof window.Lenis === 'undefined') {
+      window.Lenis = function () {
+        return {
+          raf: function () {}, on: function () {}, off: function () {},
+          stop: function () {}, start: function () {}, destroy: function () {},
+          scrollTo: function (t) { try { var el = typeof t === 'string' ? document.querySelector(t) : t; if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth' }); else if (typeof t === 'number') window.scrollTo({ top: t, behavior: 'smooth' }) } catch (e) {} }
+        }
+      }
+    }
+  })()
+  </script>
 
 <style>
 /* ==========================================================================
@@ -38,7 +85,7 @@
    05 Live iframe preview
    06 WebGL bloom overlay
    07 Horizontal pinned process
-   08 Formspree form
+   08 FormSubmit form
    09 Cookie returning-visitor variant
 ========================================================================== */
 
@@ -46,7 +93,7 @@
 html { font-size: 16px; scroll-behavior: auto; overflow-x: hidden; }
 body {
   font-family: 'Manrope', system-ui, sans-serif;
-  background: #0a0a0a; color: #e8e8e4;
+  background: #150a10; color: #f2e9ee;
   line-height: 1.6; overflow-x: hidden;
   cursor: none;
   -webkit-font-smoothing: antialiased;
@@ -57,13 +104,13 @@ ul { list-style: none; }
 button { font: inherit; border: none; background: none; cursor: none; }
 
 :root {
-  --bg:#0a0a0a; --bg-raised:#0f0f0f; --surface:#111;
-  --surface-2:#171717; --surface-3:#1e1e1e;
-  --border:rgba(255,255,255,.055); --border-soft:rgba(255,255,255,.035);
-  --text:#e8e8e4; --text-muted:#525250;
-  --text-dim:#2e2e2c;
-  --accent:#a78bfa; --accent-dim:rgba(167,139,250,.12);
-  --accent-rgb:167,139,250;
+  --bg:#150a10; --bg-raised:#1b0e15; --surface:#20121b;
+  --surface-2:#281723; --surface-3:#311c2b;
+  --border:rgba(255,205,225,.09); --border-soft:rgba(255,205,225,.05);
+  --text:#f2e9ee; --text-muted:#7d6472;
+  --text-dim:#412c38;
+  --accent:#ec8fae; --accent-dim:rgba(236,143,174,.12);
+  --accent-rgb:236,143,174;
   --green:#4caf8a; --blue:#5b8fff;
   --font-serif:'Cinzel',Georgia,serif;
   --font-sans:'Manrope',system-ui,sans-serif;
@@ -92,7 +139,7 @@ button { font: inherit; border: none; background: none; cursor: none; }
 .ghost-card {
   position: absolute;
   width: 100%;
-  border: 1px solid rgba(167,139,250,.25);
+  border: 1px solid rgba(236,143,174,.25);
   border-radius: 16px;
   background: rgba(255,255,255,.03);
   backdrop-filter: blur(6px);
@@ -130,21 +177,21 @@ button { font: inherit; border: none; background: none; cursor: none; }
 .ghost-card-dot {
   width: 7px; height: 7px;
   border-radius: 50%;
-  border: 1px solid rgba(167,139,250,.4);
+  border: 1px solid rgba(236,143,174,.4);
 }
 .ghost-card-url {
   flex: 1;
   height: 7px;
   border-radius: 4px;
-  background: rgba(167,139,250,.1);
-  border: 1px solid rgba(167,139,250,.15);
+  background: rgba(236,143,174,.1);
+  border: 1px solid rgba(236,143,174,.15);
 }
 .ghost-card-img {
   width: 100%;
   height: 80px;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(167,139,250,.07) 0%, rgba(255,255,255,.04) 100%);
-  border: 1px solid rgba(167,139,250,.1);
+  background: linear-gradient(135deg, rgba(236,143,174,.07) 0%, rgba(255,255,255,.04) 100%);
+  border: 1px solid rgba(236,143,174,.1);
   margin-bottom: .4rem;
   display: flex;
   align-items: center;
@@ -154,7 +201,7 @@ button { font: inherit; border: none; background: none; cursor: none; }
   width: 40%;
   height: 2px;
   border-radius: 2px;
-  background: rgba(167,139,250,.2);
+  background: rgba(236,143,174,.2);
 }
 .ghost-card-title {
   font-family: var(--font-serif);
@@ -169,8 +216,8 @@ button { font: inherit; border: none; background: none; cursor: none; }
   font-size: .58rem;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgba(167,139,250,.5);
-  border: 1px solid rgba(167,139,250,.2);
+  color: rgba(236,143,174,.5);
+  border: 1px solid rgba(236,143,174,.2);
   border-radius: 4px;
   padding: .15rem .5rem;
   width: fit-content;
@@ -233,7 +280,7 @@ button { font: inherit; border: none; background: none; cursor: none; }
   position: fixed; top: 0; left: 50%; transform: translateX(-50%);
   z-index: 7500; pointer-events: none;
   padding: .6rem 1.5rem;
-  background: rgba(10,10,10,.9);
+  background: rgba(21,10,16,.9);
   border: 1px solid rgba(var(--accent-rgb),.25);
   border-radius: 0 0 var(--r-md) var(--r-md);
   font-family: var(--font-mono); font-size: .65rem;
@@ -323,9 +370,9 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   color:var(--text); clip-path:inset(0 0 var(--clip) 0); will-change:clip-path;
 }
 
-/* ═══════════════════════════════════════════════════
+/* ══════════════════════════════════════════���════════
    02. MAGNETIC BUTTONS — JS handles transform, CSS handles transition
-═══════════════════════════════════════════════════ */
+══════════════════════════════════════════��════════ */
 .btn {
   display:inline-flex; align-items:center; justify-content:center;
   gap:.6rem; padding:.95rem 2rem;
@@ -344,7 +391,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 }
 .btn:hover::after { opacity:1; }
 .btn-primary {
-  background:var(--accent); color:#0a0a0a;
+  background:var(--accent); color:#150a10;
   box-shadow:0 0 32px rgba(var(--accent-rgb),.2);
 }
 .btn-primary:hover { box-shadow:0 8px 40px rgba(var(--accent-rgb),.4); }
@@ -366,7 +413,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   border-bottom:1px solid transparent;
 }
 .nav.scrolled {
-  background:rgba(10,10,10,.85);
+  background:rgba(21,10,16,.85);
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
   border-bottom-color:var(--border); padding:1rem var(--px);
 }
@@ -397,7 +444,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   transition:transform .4s var(--ease-in-out), opacity .3s; transform-origin:center;
 }
 .nav-overlay {
-  position:fixed; inset:0; z-index:500; background:#0a0a0a;
+  position:fixed; inset:0; z-index:500; background:#150a10;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:.5rem; opacity:0; pointer-events:none; transition:opacity .4s;
 }
@@ -529,11 +576,20 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   padding:var(--sp) var(--px); display:flex; justify-content:center;
   border-bottom:1px solid var(--border); position:relative; z-index:1;
 }
-.philosophy-inner { max-width:920px; }
+.philosophy-inner { max-width:920px; width:100%; }
 .philosophy-quote {
   font-family:var(--font-serif);
-  font-size:clamp(1.7rem,3.8vw,3.2rem);
-  font-weight:600; line-height:1.3; letter-spacing:-.01em;
+  font-size:clamp(1.35rem,2.9vw,2.7rem);
+  font-weight:600; line-height:1.4; letter-spacing:-.01em;
+  color:var(--text);
+  /* Always fully visible, never clipped, never wider than the screen. */
+  opacity:1 !important; max-width:100%;
+  overflow-wrap:break-word; word-break:normal; hyphens:none;
+  text-wrap:pretty;
+}
+@media (max-width:768px) {
+  .philosophy { padding-left:var(--px); padding-right:var(--px); }
+  .philosophy-quote { font-size:clamp(1.2rem,5.4vw,1.7rem); line-height:1.5; }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -644,6 +700,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 .tpl-preview--flower  { background:linear-gradient(135deg,#1a0e10 0%,#2d1519 40%,#1f1012 100%); }
 .tpl-preview--perfume { background:linear-gradient(135deg,#191410 0%,#28200e 40%,#1c180b 100%); }
 .tpl-preview--ecom    { background:linear-gradient(135deg,#0c1220 0%,#111d32 40%,#0f1629 100%); }
+.tpl-preview--wedding { background:linear-gradient(135deg,#231419 0%,#2d181f 45%,#1a1013 100%); }
 .tpl-preview-inner {
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center; padding:1.75rem;
@@ -665,7 +722,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 .tpl-overlay {
   position:absolute; inset:0; z-index:4;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(10,10,10,.55);
+  background:rgba(21,10,16,.55);
   backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
   opacity:0; transition:opacity .35s;
 }
@@ -849,7 +906,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 }
 
 /* ═══════════════════════════════════════════════════
-   08. CONTACT — Formspree-ready
+   08. CONTACT — FormSubmit-ready
 ═══════════════════════════════════════════════════ */
 .contact {
   padding:var(--sp) var(--px);
@@ -938,7 +995,14 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   .contact { grid-template-columns:1fr; gap:3.5rem; }
 }
 @media (max-width:768px) {
-  .nav-links,.nav-right>.btn { display:none; }
+  .nav-links { display:none; }
+  /* The consultation button is the whole point of the page — it stays. */
+  .nav-right { gap:.55rem; }
+  .nav-right>.btn { display:inline-flex; padding:.62rem 1rem; font-size:.7rem; letter-spacing:.04em; }
+  .nav-logo { font-size:1.1rem; }
+  .nav-logo img { width:30px !important; height:30px !important; }
+  .nav { padding:.9rem 1rem; }
+  .nav.scrolled { padding:.75rem 1rem; }
   .nav-toggle { display:flex; }
   .hero-body { padding-top:calc(4rem + 70px); padding-bottom:7rem; }
   .hero-stats { right:var(--px); gap:1.75rem; }
@@ -993,19 +1057,19 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 
 <!-- NAV -->
 <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
-  <a href="#" class="nav-logo" aria-label="Nebula Sites Studio home" style="display:inline-flex;align-items:center;gap:.6rem"><img src="assets/logo.png" alt="" style="width:36px;height:36px;border-radius:50%;box-shadow:0 0 18px rgba(150,110,255,.4)">Nebula<span>.</span></a>
+  <a href="#" class="nav-logo" aria-label="Nebula Sites Studio home" style="display:inline-flex;align-items:center;gap:.6rem"><img src="../assets/logo.png" alt="" style="width:36px;height:36px;border-radius:50%;box-shadow:0 0 18px rgba(150,110,255,.4)">Nebula<span>.</span></a>
   <div class="nav-links" role="list">
     <a href="#about" role="listitem">About</a>
     <a href="#showcase" role="listitem">Work</a>
-    <a href="#templates" role="listitem">Templates</a>
+    <a href="#templates" role="listitem">Demos</a>
     <a href="#services" role="listitem">Services</a>
     <a href="#process" role="listitem">Process</a>
-    <a href="pricing.html" role="listitem">Pricing</a>
+    <a href="../build-your-plan.html#plans" role="listitem">Plans</a>
     <a href="#contact" role="listitem">Contact</a>
-    <a href="flowers/index.html" role="listitem">For Florists</a>
+
   </div>
   <div class="nav-right">
-    <a href="build-your-plan.html" class="btn btn-ghost">Build Your Plan</a>
+    <a href="../build-your-plan.html" class="btn btn-ghost" aria-label="Book a free consultation">Free Consultation</a>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navOverlay">
       <span></span><span></span>
     </button>
@@ -1015,13 +1079,12 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true">
   <a href="#about"     class="nav-overlay-link">About</a>
   <a href="#showcase"  class="nav-overlay-link">Work</a>
-  <a href="#templates" class="nav-overlay-link">Templates</a>
+  <a href="#templates" class="nav-overlay-link">Demos</a>
   <a href="#services"  class="nav-overlay-link">Services</a>
   <a href="#process"   class="nav-overlay-link">Process</a>
-  <a href="pricing.html" class="nav-overlay-link">Pricing</a>
+  <a href="../build-your-plan.html#plans" class="nav-overlay-link">Plans</a>
   <a href="#contact"   class="nav-overlay-link">Contact</a>
-    <a href="flowers/index.html"   class="nav-overlay-link">For Florists</a>
-  <a href="build-your-plan.html" class="btn btn-primary nav-overlay-cta">Build Your Plan &nbsp;&#8599;</a>
+  <a href="../build-your-plan.html" class="btn btn-primary nav-overlay-cta">Free Consultation &nbsp;&#8599;</a>
   <span class="nav-overlay-foot">Nebula Sites Studio — every business has a story worth telling</span>
 </div>
 
@@ -1034,23 +1097,23 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <div class="hero-orb hero-orb--c" id="orbC" aria-hidden="true"></div>
   <div class="hero-body">
     <div class="hero-eyebrow" id="heroEyebrow">
-      <span class="tag" id="heroTag">Nebula Sites Studio &nbsp;✦&nbsp; Virginia, USA &nbsp;✦&nbsp; Accepting new projects</span>
+      <span class="tag" id="heroTag">Nebula Sites Studio &nbsp;✦&nbsp; Florist Website Specialists &nbsp;✦&nbsp; Virginia, USA</span>
     </div>
     <h1 class="hero-headline" id="heroHeadline">
-      <span class="hero-line"><span class="hero-line-inner" id="hl1">Every business has</span></span>
-      <span class="hero-line"><span class="hero-line-inner" id="hl2">a story worth</span></span>
-      <span class="hero-line hero-line--gold"><span class="hero-line-inner" id="hl3">telling.</span></span>
+      <span class="hero-line"><span class="hero-line-inner" id="hl1">Your flowers deserve</span></span>
+      <span class="hero-line"><span class="hero-line-inner" id="hl2">a website as lovely</span></span>
+      <span class="hero-line hero-line--gold"><span class="hero-line-inner" id="hl3">as they are.</span></span>
     </h1>
     <p class="hero-sub" id="heroSub">
-      We craft custom websites and brand identities that feel as unique as the people
-      behind them. No page-builders, no recycled templates, no copies — we listen to your
-      story first, then hand-code an experience your customers will remember.
+      We build websites for flower shops — occasion-based catalogs, bouquet builders
+      your customers can play with, and seasonal themes that switch on for Valentine's
+      and Mother's Day. Hand-coded around your shop, your style, your seasons.
     </p>
     <div class="hero-actions" id="heroActions">
-      <a href="#showcase" class="btn btn-primary btn-lg">
-        See What's Possible <span class="btn-arrow-icon">&#8599;</span>
+      <a href="../build-your-plan.html" class="btn btn-primary btn-lg">
+        Build Your Plan &mdash; Free <span class="btn-arrow-icon">&#8599;</span>
       </a>
-      <a href="#contact" class="btn btn-ghost btn-lg">Get in Touch</a>
+      <a href="#templates" class="btn btn-ghost btn-lg">See The Live Demos</a>
     </div>
   </div>
   <div class="hero-stats" id="heroStats">
@@ -1081,8 +1144,8 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <div class="ghost-card-url"></div>
       </div>
       <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
-      <div class="ghost-card-title">Portfolio Template</div>
-      <div class="ghost-card-tag">In progress</div>
+      <div class="ghost-card-title">Bouquet Builder</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
     </div>
     <!-- Card 3 (front) -->
     <div class="ghost-card">
@@ -1091,8 +1154,8 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <div class="ghost-card-url"></div>
       </div>
       <div class="ghost-card-img"><div class="ghost-card-img-line"></div></div>
-      <div class="ghost-card-title">Robuste Store</div>
-      <div class="ghost-card-tag">Live ✦</div>
+      <div class="ghost-card-title">Pavon Weddings</div>
+      <div class="ghost-card-tag">Live demo ✦</div>
     </div>
   </div>
 </section>
@@ -1100,32 +1163,124 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <!-- MARQUEE -->
 <div class="marquee-band" aria-hidden="true">
   <div class="marquee-track">
-    <span class="marquee-item">Custom Websites <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">E-Commerce Stores <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Brand Systems <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Admin Panels <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Digital Experiences <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Product Stores <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Business Growth <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Custom Websites <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">E-Commerce Stores <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Brand Systems <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Admin Panels <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Digital Experiences <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Product Stores <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Business Growth <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Catalogs <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Builders <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Wedding Florals <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Seasonal Countdowns <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Same-Day Ordering <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Occasion Shopping <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Catalogs <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Bouquet Builders <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Wedding Florals <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Seasonal Countdowns <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Same-Day Ordering <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Occasion Shopping <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
   </div>
 </div>
+
+<!-- TEMPLATES -->
+<section class="templates z1" id="templates" aria-labelledby="tplHeading">
+  <div class="templates-header">
+    <div>
+      <p class="section-eyebrow">Templates &amp; Demos</p>
+      <h2 class="section-title clip-reveal" id="tplHeading">A florist experience you can explore</h2>
+    </div>
+    <p class="section-desc">Before we tell you anything about us, look at the work. Both of these are live and fully clickable — open them, break them, and imagine your shop's name on them.</p>
+  </div>
+  <div class="templates-grid">
+
+    <!-- TEMPLATE 01 —— Flower Shop -->
+    <article class="tpl-card" data-tpl-color="#d4a5a5">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--flower">
+        <!-- 05. Live iframe preview injected by JS -->
+        <div class="tpl-preview-inner">
+          <picture>
+            <source srcset="../assets/pavon-shot.webp" type="image/webp">
+            <img src="../assets/pavon-shot.jpg" alt="Flowers Pavon live demo preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </picture>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/index.html" class="btn btn-primary" target="_blank" rel="noopener">View Live Demo &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Live Demo</span><span class="tpl-num">01</span></div>
+        <h3 class="tpl-name">Flowers Pavon &mdash; Florist Experience</h3>
+        <p class="tpl-desc">A complete florist experience you can explore right now: bilingual storefront, occasion-based catalog, seasonal event themes with countdowns, and a bouquet builder your customers can play with.</p>
+        <ul class="tpl-features">
+          <li>Bilingual EN&thinsp;/&thinsp;ES storefront</li>
+          <li>Custom bouquet builder</li>
+          <li>Seasonal event engine &amp; countdowns</li>
+          <li>WhatsApp &amp; card ordering flows</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- TEMPLATE 02 —— Wedding Experience -->
+    <article class="tpl-card" data-tpl-color="#e6c9d4">
+      <div class="tpl-shine"></div>
+      <div class="tpl-preview tpl-preview--wedding">
+        <div class="tpl-preview-inner">
+          <picture>
+            <source srcset="../assets/weddings-shot.webp" type="image/webp">
+            <img src="../assets/weddings-shot.jpg" alt="Pavon Weddings page preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </picture>
+        </div>
+        <div class="tpl-overlay">
+          <a href="../demo/pavon/weddings.html" class="btn btn-primary" target="_blank" rel="noopener">View the wedding page &nbsp;&#8599;</a>
+        </div>
+      </div>
+      <div class="tpl-mobile-cta"><a href="../demo/pavon/weddings.html" target="_blank" rel="noopener">View the wedding page &#8599;</a></div>
+      <div class="tpl-body">
+        <div class="tpl-meta"><span class="tpl-tag">Weddings &middot; Dedicated Page</span><span class="tpl-num">02</span></div>
+        <h3 class="tpl-name">Pavon Weddings &mdash; A Dedicated Experience</h3>
+        <p class="tpl-desc">Wedding work does not belong in the same catalog as a $45 bouquet. So we build it its own experience — its own hero, its own pace, its own way of asking for the date. Brides land somewhere that already feels like their day, and you get enquiries with the details you actually need.</p>
+        <ul class="tpl-features">
+          <li>Cinematic wedding hero</li>
+          <li>Package &amp; palette showcase</li>
+          <li>Date-first enquiry flow</li>
+          <li>Built as an add-on to any plan</li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- HOW WE BUILD IDEAS -->
+  <style>
+    .idea-banner{margin-top:clamp(2.5rem,5vw,4rem);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
+    .idea-banner picture{display:block;height:100%}
+    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
+    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
+    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
+  </style>
+  <div class="idea-banner">
+    <picture>
+      <source srcset="../assets/builder-shot.webp" type="image/webp">
+      <img src="../assets/builder-shot.jpg" alt="The Flowers Pavon bouquet builder" loading="lazy">
+    </picture>
+    <div class="idea-copy">
+      <p class="section-eyebrow">How We Build Ideas</p>
+      <h3 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your idea becomes an experience</h3>
+      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">For Flowers Pavon we asked one question: what if choosing flowers felt like a game? So we built a bouquet builder — pick your stems, wrap and ribbon, and watch the bouquet come to life with a live price. That's how we treat every idea: we don't just describe it, we turn it into something your customers can play with.</p>
+      <a href="../demo/pavon/builder.html" target="_blank" rel="noopener" class="btn btn-ghost">Try the builder &nbsp;&#8599;</a>
+    </div>
+  </div>
+</section>
 
 <!-- PHILOSOPHY -->
 <section class="philosophy z1" aria-labelledby="philHeading">
   <div class="philosophy-inner">
     <p class="section-eyebrow" aria-hidden="true">Philosophy</p>
-    <h2 class="philosophy-quote wrev" id="philText">
-      We don't force businesses into templates.
-      We take the time to understand your vision, your goals, and what
-      makes you special — then craft something that truly feels like you.
-    </h2>
+    <p class="philosophy-quote">
+      A bouquet is never just flowers — it's a feeling. Your website should work the
+      same way: we build florist sites that make people feel something before they
+      ever smell the roses.
+    </p>
   </div>
 </section>
 
@@ -1148,13 +1303,13 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   </style>
   <div class="about-inner">
     <div class="about-portrait">
-      <div class="about-avatar" style="overflow:hidden;padding:0"><img src="assets/logo.png" alt="Nebula Sites Studio logo" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="about-avatar" style="overflow:hidden;padding:0"><img src="../assets/logo.png" alt="Nebula Sites Studio logo" style="width:100%;height:100%;object-fit:cover"></div>
       <p class="about-portrait-note">Nebula Sites Studio ✦ Virginia, USA</p>
     </div>
     <div class="about-content">
       <p class="section-eyebrow">Who We Are</p>
       <h2 class="section-title" id="aboutHeading">A <em>boutique</em> studio — not a faceless agency</h2>
-      <p class="about-lead">Nebula Sites Studio is a boutique web studio based in Virginia, USA. Every build is hand-coded from scratch — no page-builders, no recycled templates — and a dedicated project lead stays with you from the first conversation to launch, so you always feel heard.</p>
+      <p class="about-lead">Nebula Sites Studio is a boutique web studio based in Virginia, USA, specialized in websites for flower shops. Every build is hand-coded from scratch — no page-builders, no recycled templates — and a dedicated project lead stays with you from the first conversation to launch, so you always feel heard.</p>
       <p class="about-text">Every project starts with listening. Before colors, features, or designs, we want to understand your story, your customers, and what you hope to achieve. Then we build together — your ideas and feedback shape the process from the first conversation until you're proud of what we created. Because to us, we aren't just building websites. We're building relationships.</p>
       <ul class="about-points">
         <li><span>✦</span> People before projects — we always listen first</li>
@@ -1163,7 +1318,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <li><span>✦</span> We stay by your side — support long after launch</li>
         <li><span>✦</span> You own 100% of the files, forever</li>
       </ul>
-      <p class="about-honest">Our promise: you leave with more than a website — you gain a partner who keeps supporting you long after launch. Robuste is live. The Flowers Pavon florist demo below is fully explorable. Real work, shown honestly.</p>
+      <p class="about-honest">Our promise: you leave with more than a website — you gain a partner who keeps supporting you long after launch. Everything below is real and fully explorable: the Flowers Pavon storefront, the wedding experience and the bouquet builder. Open them, click everything, judge us on the work.</p>
     </div>
   </div>
 </section>
@@ -1174,22 +1329,22 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <p class="section-eyebrow">Showcase</p>
     <h2 class="showcase-heading" id="showcaseHeading">Everything is <em>customizable</em></h2>
     <p class="section-desc">
-      Every color, layout, font, product and feature you see here can be reimagined
-      and rebuilt for your brand — from a local flower shop to a high-growth e-commerce brand.
+      Every color, layout, font and feature can be shaped around your shop —
+      your wrapping style, your signature bouquets, your seasons, your neighborhood.
     </p>
   </div>
   <div class="tracks" id="showcaseTracks">
     <div class="track" data-dir="r">
       <div class="track-inner">
         <span>Flower Shops</span><span class="sep">&middot;</span>
-        <span>Perfume Stores</span><span class="sep">&middot;</span>
-        <span>E-Commerce</span><span class="sep">&middot;</span>
-        <span>Restaurants</span><span class="sep">&middot;</span>
-        <span>Boutiques</span><span class="sep">&middot;</span>
-        <span>Startups</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florals</span><span class="sep">&middot;</span>
+        <span>Valentine's Day</span><span class="sep">&middot;</span>
+        <span>Mother's Day</span><span class="sep">&middot;</span>
+        <span>Sympathy Florals</span><span class="sep">&middot;</span>
         <span>Flower Shops</span><span class="sep">&middot;</span>
-        <span>Perfume Stores</span><span class="sep">&middot;</span>
-        <span>E-Commerce</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florals</span><span class="sep">&middot;</span>
       </div>
     </div>
     <div class="track" data-dir="l">
@@ -1198,7 +1353,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
         <span>Layouts</span><span class="sep">&middot;</span>
         <span>Typography</span><span class="sep">&middot;</span>
         <span>Branding</span><span class="sep">&middot;</span>
-        <span>Products</span><span class="sep">&middot;</span>
+        <span>Bouquets</span><span class="sep">&middot;</span>
         <span>Functionality</span><span class="sep">&middot;</span>
         <span>Colors</span><span class="sep">&middot;</span>
         <span>Layouts</span><span class="sep">&middot;</span>
@@ -1207,129 +1362,37 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     </div>
     <div class="track" data-dir="r">
       <div class="track-inner">
-        <span>Local Businesses</span><span class="sep">&middot;</span>
-        <span>Service Providers</span><span class="sep">&middot;</span>
-        <span>Digital Brands</span><span class="sep">&middot;</span>
-        <span>Product Creators</span><span class="sep">&middot;</span>
-        <span>Agencies</span><span class="sep">&middot;</span>
-        <span>Local Businesses</span><span class="sep">&middot;</span>
-        <span>Service Providers</span><span class="sep">&middot;</span>
-        <span>Digital Brands</span><span class="sep">&middot;</span>
+        <span>Local Flower Shops</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florists</span><span class="sep">&middot;</span>
+        <span>Garden Centers</span><span class="sep">&middot;</span>
+        <span>Flower Studios</span><span class="sep">&middot;</span>
+        <span>Local Flower Shops</span><span class="sep">&middot;</span>
+        <span>Wedding Florists</span><span class="sep">&middot;</span>
+        <span>Event Florists</span><span class="sep">&middot;</span>
       </div>
     </div>
   </div>
   <div class="feat-grid">
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&loz;</span>
-      <h3>Visual Identity</h3>
-      <p>Colors, fonts, imagery, spacing — all matched to your brand's personality and target customers.</p>
+      <h3>Petal-Perfect Identity</h3>
+      <p>Colors, fonts and imagery matched to your shop — your wrapping paper, your ribbon, your signature style.</p>
     </div>
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&#9635;</span>
-      <h3>Layout &amp; Structure</h3>
-      <p>Pages and flows designed around how your customers think, browse, and buy.</p>
+      <h3>Occasion-First Shopping</h3>
+      <p>Birthdays, anniversaries, sympathy, "just because" — customers shop the way they actually think about flowers.</p>
     </div>
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&#9889;</span>
-      <h3>Features &amp; Functions</h3>
-      <p>Catalogs, booking, dashboards, automation — built exactly for your workflow.</p>
+      <h3>Florist Features</h3>
+      <p>Bouquet builders, delivery zones, event countdowns, care guides — built for how florists really sell.</p>
     </div>
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&#8599;</span>
-      <h3>Growth-Ready</h3>
-      <p>SEO, speed, mobile optimization — built so customers find you and stay.</p>
-    </div>
-  </div>
-</section>
-
-<!-- TEMPLATES -->
-<section class="templates z1" id="templates" aria-labelledby="tplHeading">
-  <div class="templates-header">
-    <div>
-      <p class="section-eyebrow">Templates &amp; Demos</p>
-      <h2 class="section-title clip-reveal" id="tplHeading">Real experiences for real businesses</h2>
-    </div>
-    <p class="section-desc">Two real projects: a live store serving customers today, and a complete demo you can explore right now. Each one is a starting point — not a limit.</p>
-  </div>
-  <div class="templates-grid">
-
-    <!-- TEMPLATE 01 —— Flower Shop -->
-    <article class="tpl-card" data-tpl-color="#d4a5a5">
-      <div class="tpl-shine"></div>
-      <div class="tpl-preview tpl-preview--flower">
-        <!-- 05. Live iframe preview injected by JS -->
-        <div class="tpl-preview-inner">
-          <picture>
-            <source srcset="assets/pavon-shot.webp" type="image/webp">
-            <img src="assets/pavon-shot.jpg" alt="Flowers Pavon live demo preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
-          </picture>
-        </div>
-        <div class="tpl-overlay">
-          <a href="demo/pavon/index.html" class="btn btn-primary" target="_blank" rel="noopener">View Live Demo &nbsp;&#8599;</a>
-        </div>
-      </div>
-      <div class="tpl-mobile-cta"><a href="demo/pavon/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
-      <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Live Demo</span><span class="tpl-num">01</span></div>
-        <h3 class="tpl-name">Flowers Pavon &mdash; Florist Experience</h3>
-        <p class="tpl-desc">A complete florist experience you can explore right now: bilingual storefront, occasion-based catalog, seasonal event themes with countdowns, and a bouquet builder your customers can play with.</p>
-        <ul class="tpl-features">
-          <li>Bilingual EN&thinsp;/&thinsp;ES storefront</li>
-          <li>Custom bouquet builder</li>
-          <li>Seasonal event engine &amp; countdowns</li>
-          <li>WhatsApp &amp; card ordering flows</li>
-        </ul>
-      </div>
-    </article>
-
-    <!-- TEMPLATE 02 — E-Commerce (ROBUSTE, real project) -->
-    <article class="tpl-card" data-tpl-color="#ff6600">
-      <div class="tpl-shine"></div>
-      <div class="tpl-preview tpl-preview--ecom">
-        <div class="tpl-preview-inner">
-          <picture>
-            <source srcset="assets/robuste-shot.webp" type="image/webp">
-            <img src="assets/robuste-shot.jpg" alt="ROBUSTE live store preview" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top">
-          </picture>
-        </div>
-        <div class="tpl-overlay">
-          <a href="https://www.robusteel.store" class="btn btn-primary" target="_blank" rel="noopener">Visit Live Store &nbsp;&#8599;</a>
-        </div>
-      </div>
-      <div class="tpl-mobile-cta"><a href="https://www.robusteel.store" target="_blank" rel="noopener">Visit Live Store &#8599;</a></div>
-      <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">E-Commerce &middot; Real Project &middot; Live</span><span class="tpl-num">02</span></div>
-        <h3 class="tpl-name">ROBUSTE &mdash; Home Appliances Store</h3>
-        <p class="tpl-desc">A real client build &mdash; a <strong>half e-commerce solution</strong>: a complete, fast storefront with cash-on-delivery checkout (online payment integration is the next step). Orders reach the owner instantly via Telegram &amp; email, backed by a private admin dashboard.</p>
-        <ul class="tpl-features">
-          <li>Full storefront + COD checkout</li>
-          <li>Instant Telegram + email order alerts</li>
-          <li>Secure Firebase admin dashboard</li>
-          <li>Arabic / RTL &middot; dark mode &middot; fast</li>
-        </ul>
-      </div>
-    </article>
-
-  </div>
-
-  <!-- HOW WE BUILD IDEAS -->
-  <style>
-    .idea-banner{margin-top:clamp(2.5rem,5vw,4rem);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
-    .idea-banner picture{display:block;height:100%}
-    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
-    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
-    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
-  </style>
-  <div class="idea-banner">
-    <picture>
-      <source srcset="assets/builder-shot.webp" type="image/webp">
-      <img src="assets/builder-shot.jpg" alt="The Flowers Pavon bouquet builder" loading="lazy">
-    </picture>
-    <div class="idea-copy">
-      <p class="section-eyebrow">How We Build Ideas</p>
-      <h3 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your idea becomes an experience</h3>
-      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">For Flowers Pavon we asked one question: what if choosing flowers felt like a game? So we built a bouquet builder — pick your stems, wrap and ribbon, and watch the bouquet come to life with a live price. That's how we treat every idea: we don't just describe it, we turn it into something your customers can play with.</p>
-      <a href="demo/pavon/builder.html" target="_blank" rel="noopener" class="btn btn-ghost">Try the builder &nbsp;&#8599;</a>
+      <h3>Found Nearby</h3>
+      <p>Speed, mobile and local SEO — so "florist near me" searches end at your door.</p>
     </div>
   </div>
 </section>
@@ -1338,15 +1401,15 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <section class="services z1" id="services" aria-labelledby="svcHeading">
   <div class="services-left">
     <p class="section-eyebrow">What We Build</p>
-    <h2 class="section-title clip-reveal" id="svcHeading" style="margin-bottom:1.5rem">The full stack of your online presence</h2>
-    <p class="section-desc">From storefront to backend — everything your business needs to operate and grow online.</p>
+    <h2 class="section-title clip-reveal" id="svcHeading" style="margin-bottom:1.5rem">Everything a flower shop needs online</h2>
+    <p class="section-desc">From storefront to back office — built around how florists actually work, sell and deliver.</p>
   </div>
   <div class="services-list">
-    <div class="svc-item"><div class="svc-num">01</div><div class="svc-body"><h3>Business Websites</h3><p>Brand-first websites that communicate credibility, attract customers, and represent your business 24&thinsp;/&thinsp;7 — even while you sleep.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">02</div><div class="svc-body"><h3>E-Commerce Stores</h3><p>Online stores built to sell — product management, fast checkout, mobile-first, conversion-optimized, COD-ready for any market.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">03</div><div class="svc-body"><h3>Admin Dashboards</h3><p>Custom management interfaces so you control your data, orders, inventory and content without limitations or third-party fees.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">04</div><div class="svc-body"><h3>Product Management Systems</h3><p>Full backend systems built around how you actually work — inventory, orders, customers, reports, all in one place.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">05</div><div class="svc-body"><h3>Custom Web Solutions</h3><p>Got something unique in mind? We build from scratch — APIs, integrations, automation, booking systems, and beyond.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">01</div><div class="svc-body"><h3>Florist Storefronts</h3><p>Occasion-based catalogs, seasonal collections and best-sellers — a storefront that sells bouquets 24&thinsp;/&thinsp;7, even while you sleep.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">02</div><div class="svc-body"><h3>Bouquet Builders</h3><p>Let customers compose their own bouquet — stems, wrap, ribbon and note — with a live price. Choosing flowers becomes a game.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">03</div><div class="svc-body"><h3>Seasonal Event Engines</h3><p>Valentine's and Mother's Day themes with countdowns that switch on automatically — your site dresses up for every season by itself.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">04</div><div class="svc-body"><h3>Ordering &amp; Delivery</h3><p>Card and WhatsApp ordering, delivery zones, same-day cutoffs — order flows built around how flowers actually move.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">05</div><div class="svc-body"><h3>Admin &amp; Order Management</h3><p>A private dashboard to manage bouquets, prices, photos and orders — no developer needed for everyday changes.</p></div><div class="svc-arrow">&#8599;</div></div>
   </div>
 </section>
 
@@ -1401,23 +1464,23 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <h2 class="statement-quote wrev" id="stmtText">
     The website you're looking at right now —
     its layout, its animations, its feel —
-    can be built for your business.
+    can be built for your flower shop.
   </h2>
-  <a href="#contact" class="btn btn-primary btn-lg" data-reveal>Let's Build Yours &nbsp;&#8599;</a>
+  <a href="../build-your-plan.html" class="btn btn-primary btn-lg" data-reveal>Build Your Plan &mdash; Free Consultation &nbsp;&#8599;</a>
 </section>
 
-<!-- 08. CONTACT — Formspree -->
+<!-- 08. CONTACT — FormSubmit -->
 <section class="contact z1" id="contact" aria-labelledby="contactHeading">
   <div class="contact-left" data-reveal>
     <p class="section-eyebrow">Get In Touch</p>
-    <h2 class="contact-headline" id="contactHeading">Ready to build something <span>real?</span></h2>
-    <p class="contact-desc">Tell us your story. We'll tell you exactly what's possible — and how fast we can get there. We reply within 24 hours.</p>
+    <h2 class="contact-headline" id="contactHeading">Ready to grow something <span>beautiful?</span></h2>
+    <p class="contact-desc">Tell us about your shop. We'll show you exactly what your florist website could be — we reply within 24 hours.</p>
     <div class="contact-channels">
-      <a href="mailto:nebulastudiosite@gmail.com" class="contact-ch">
+      <a href="mailto:hello@nebulastudio.site" class="contact-ch">
         <span class="contact-ch-icon" aria-hidden="true">&#9993;</span>
         <div class="contact-ch-info">
           <div class="contact-ch-label">Email</div>
-          <div class="contact-ch-val">nebulastudiosite@gmail.com</div>
+          <div class="contact-ch-val">hello@nebulastudio.site</div>
         </div>
       </a>
       <a href="https://www.instagram.com/nebulaa_studio" class="contact-ch" target="_blank" rel="noopener noreferrer">
@@ -1429,19 +1492,26 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       </a>
     </div>
     <div class="contact-socials">
-      <a href="flowers/index.html" class="contact-social">Flower shop? Visit our florist studio &#8599;</a>
+      <a href="../build-your-plan.html" class="contact-social">Build your plan — free consultation &#8599;</a>
       <span class="contact-social" style="pointer-events:none">&#128205; Virginia, USA — serving businesses across the US</span>
     </div>
   </div>
 
-  <!-- 08. FORMSPREE FORM -->
-  <!-- ★ Replace YOUR_FORM_ID with your Formspree endpoint ID from formspree.io -->
+  <!-- 08. FORMSUBMIT FORM -->
+  <!-- Contact form sends via FormSubmit to hello@nebulastudio.site. First-ever submission triggers a one-time activation email to that inbox — click "Activate" once. -->
   <form class="contact-form" id="contactForm"
-        action="https://formspree.io/f/YOUR_FORM_ID"
+        action="https://formsubmit.co/ajax/hello@nebulastudio.site"
         method="POST" novalidate data-reveal>
+    <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
     <div class="form-group">
       <label for="fname">Your Name</label>
       <input type="text" id="fname" name="name" placeholder="Holly Parker" autocomplete="name" required />
+    </div>
+    <div class="form-group">
+      <label for="femail">Your Email</label>
+      <input type="email" id="femail" name="email" placeholder="you@yourshop.com" autocomplete="email" required />
     </div>
     <div class="form-group">
       <label for="fbusiness">Business Type</label>
@@ -1456,7 +1526,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       <textarea id="fmessage" name="message" rows="4" placeholder="Tell us about your project, your goals, your deadline…" required></textarea>
     </div>
     <!-- Hidden honeypot anti-spam -->
-    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
     <div class="form-status" id="formStatus"></div>
     <button type="submit" class="btn btn-primary btn-full" id="formBtn">Send Message &nbsp;&#10003;</button>
     <p class="form-note">No spam. No obligations. Just a real conversation.</p>
@@ -1478,16 +1548,15 @@ window.addEventListener('DOMContentLoaded', function () {
 <!-- FOOTER -->
 <footer class="footer" role="contentinfo">
   <div class="footer-top">
-    <span class="footer-logo" style="display:inline-flex;align-items:center;gap:.6rem"><img src="assets/logo.png" alt="" style="width:40px;height:40px;border-radius:50%">Nebula Sites Studio</span>
+    <span class="footer-logo" style="display:inline-flex;align-items:center;gap:.6rem"><img src="../assets/logo.png" alt="" style="width:40px;height:40px;border-radius:50%">Nebula Sites Studio</span>
     <nav class="footer-nav" aria-label="Footer navigation">
       <a href="#about">About</a>
       <a href="#showcase">Work</a>
       <a href="#services">Services</a>
       <a href="#process">Process</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="build-your-plan.html">Build Your Plan</a>
       <a href="#contact">Contact</a>
-    <a href="flowers/index.html">For Florists</a>
+      <a href="../build-your-plan.html#plans">Plans &amp; Prices</a>
+      <a href="../build-your-plan.html">Build Your Plan</a>
     </nav>
   </div>
   <div class="footer-bottom">
@@ -1503,12 +1572,35 @@ window.addEventListener('DOMContentLoaded', function () {
 ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   gsap.registerPlugin(ScrollTrigger)
+
+  /* Scroll engine hardening — stops the jitter/overlap near the footer.
+     1. ignoreMobileResize: URL-bar show/hide no longer re-measures the page.
+     2. Every pin/scrub trigger is re-measured after fonts + images land,
+        because late-loading media changes page height and leaves stale
+        start/end positions behind (the real cause of the end-of-page jump).
+     3. Resizes are debounced into a single refresh instead of dozens. */
+  ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' })
+
+  let refreshTimer
+  const softRefresh = () => {
+    clearTimeout(refreshTimer)
+    refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 180)
+  }
+  window.addEventListener('load', softRefresh)
+  window.addEventListener('resize', softRefresh)
+  window.addEventListener('orientationchange', softRefresh)
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(softRefresh)
+  document.querySelectorAll('img').forEach(img => {
+    if (!img.complete) img.addEventListener('load', softRefresh, { once:true })
+  })
+  setTimeout(softRefresh, 1200)
+  setTimeout(softRefresh, 3000)
   const isMobile = () => window.innerWidth <= 768
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches
 
-  /* ═══════════════════════════════════════════════════���══
+  /* ════���══════════════════════════════════════════════���══
      LENIS
-  ══════════════════════════════════════════════════════ */
+  ════════════════════��═════════════════════════════════ */
   let lenis
   try {
     lenis = new Lenis({
@@ -1548,7 +1640,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (tag) { tag.innerHTML = '&#9670;&nbsp; Welcome back, good to see you'; }
       // Modify hero sub
       const sub = document.getElementById('heroSub')
-      if (sub) sub.textContent = "Good to have you back. Let's build something great for your business — whenever you're ready."
+      if (sub) sub.textContent = "Good to have you back. Let's build something beautiful for your flower shop — whenever you're ready."
       // Show returning visitor banner
       const banner = document.getElementById('rv-banner')
       if (banner) {
@@ -1570,7 +1662,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let W = canvas.width = innerWidth
     let H = canvas.height = innerHeight
     let mob = W <= 768
-    const PAL = [[167,139,250],[167,139,250],[232,232,228],[91,143,255],[232,232,228]]
+    const PAL = [[236,143,174],[236,143,174],[232,232,228],[91,143,255],[232,232,228]]
     const COUNT = 55
     function mp(atBottom) {
       const col = PAL[Math.floor(Math.random() * PAL.length)]
@@ -1736,26 +1828,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ════════════════════════════════════��═════════════════
      WORD REVEAL
-  ══════════════════════════════════════════════════════ */
+  ══════���═══════════════════════════════════════════════ */
   function initWordReveal(el) {
     if (!el) return
     const words = el.textContent.trim().split(/\s+/)
     el.innerHTML = words.map(w => `<span class="wrev-word">${w}&nbsp;</span>`).join('')
-    const spans = el.querySelectorAll('.wrev-word')
-    ScrollTrigger.create({
-      trigger: el, start:'top 76%', end:'bottom 34%', scrub:1.6,
-      onUpdate: self => {
-        const p = self.progress, n = spans.length
-        spans.forEach((s,i) => {
-          const lo = i/n, hi = (i+1)/n
-          let op = .06
-          if (p >= hi) op = 1
-          else if (p >= lo) op = .06 + ((p-lo)/(hi-lo)) * .94
-          s.style.opacity = op
-          s.style.color   = op > .45 ? 'var(--text)' : 'var(--text-muted)'
-        })
+    const spans = Array.from(el.querySelectorAll('.wrev-word'))
+    const total = spans.length
+
+    // Reduced motion / mobile: show the full sentence immediately.
+    if (prefersReducedMotion) {
+      gsap.set(spans, { opacity:1, color:'var(--text)' })
+      return
+    }
+
+    gsap.set(spans, { opacity:.08, color:'var(--text-muted)' })
+
+    // Scroll-linked: the sentence finishes reading itself before the
+    // section leaves the middle of the screen, so it is never half-lit.
+    const paint = p => {
+      // p: 0 -> 1 across the reveal window. Each word gets a small window
+      // of its own but every word is fully lit by p = 0.92.
+      const reach = p * 1.18
+      for (let i = 0; i < total; i++) {
+        const startAt = (i / total) * 0.92
+        const o = Math.min(1, Math.max(0.08, (reach - startAt) / 0.16))
+        const s = spans[i]
+        s.style.opacity = o
+        s.style.color = o > .55 ? 'var(--text)' : 'var(--text-muted)'
       }
+    }
+
+    const finish = () => {
+      for (let i = 0; i < total; i++) {
+        spans[i].style.opacity = 1
+        spans[i].style.color = 'var(--text)'
+      }
+    }
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 88%',
+      end: 'bottom 62%',
+      scrub: .6,
+      invalidateOnRefresh: true,
+      onUpdate: self => paint(self.progress),
+      // Whatever happens — fast scroll, resize, jump link — the sentence
+      // is always left complete once it has been passed.
+      onLeave: finish,
+      onEnterBack: () => paint(1),
+      onLeaveBack: () => paint(0)
     })
+
+    // Safety net: if the element is already above the fold on load.
+    if (el.getBoundingClientRect().top < innerHeight * .55) finish()
   }
   initWordReveal(document.getElementById('philText'))
   initWordReveal(document.getElementById('stmtText'))
@@ -1783,7 +1909,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  /* ════════════��═════════════════════════════════════════
+  /* ════════════��═══════════════════════════════════��═════
      DATA-REVEAL
   ══════════════════════════════════════════════════════ */
   document.querySelectorAll('[data-reveal]').forEach((el,i) => {
@@ -1826,7 +1952,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  /* ═══════════════���══════════════════════════════════════
+  /* ═══��═══════════���══════════════════════════════════════
      04. TEMPLATE CARD 3-D TILT + 05. LIVE IFRAME PREVIEW
   ══════════════════════════════════════════════════════ */
 
@@ -1866,7 +1992,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tplData = [
     null, /* Flowers Pavon — real screenshot */
-    null, /* ROBUSTE — real screenshot */
   ]
 
   document.querySelectorAll('.tpl-card').forEach((card, i) => {
@@ -1903,7 +2028,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transformPerspective: 900, scale: 1.02,
         duration: .25, ease: 'power2.out', overwrite:'auto'
       })
-      if (shine) shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(${data ? data.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(',') : '167,139,250'},.06) 0%, transparent 60%)`
+      if (shine) shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(${data ? data.color.slice(1).match(/../g).map(h=>parseInt(h,16)).join(',') : '236,143,174'},.06) 0%, transparent 60%)`
     })
     card.addEventListener('mouseleave', () => {
       gsap.to(card, {rotateX:0, rotateY:0, scale:1, duration:.7, ease:'elastic.out(1,.35)', overwrite:'auto'})
@@ -1921,7 +2046,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  /* ═══════════════════���═════════════════════���════════════
+  /* ══════════════════════════════════════════════════════
      07. HORIZONTAL PINNED PROCESS
   ════════��═════════════════════════════════════════════ */
   ;(function initProcess() {
@@ -1951,13 +2076,17 @@ document.addEventListener('DOMContentLoaded', () => {
       pinWrap.style.height = (innerHeight + SCROLL_PER_STEP() * steps.length) + 'px'
     }
     setHeight()
-    window.addEventListener('resize', () => { setHeight(); ScrollTrigger.refresh() })
+    window.addEventListener('resize', () => { setHeight(); softRefresh() })
 
     // Pin the sticky div
     ScrollTrigger.create({
       trigger: pinWrap, start: 'top top',
       end: () => `+=${SCROLL_PER_STEP() * steps.length}`,
       pin: sticky, pinSpacing: false,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onRefresh: setHeight,
+      onLeave: () => { gsap.set(track, { x: -totalDist() }) },
       onUpdate: self => {
         const p    = self.progress   // 0 → 1 over entire pin
         // Translate track horizontally
@@ -2018,7 +2147,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ══════════════════════════════════════════════════════
-     08. FORMSPREE ASYNC SUBMIT
+     08. FORMSUBMIT ASYNC SUBMIT
   ══════════════════════════════════════════════════════ */
   const form      = document.getElementById('contactForm')
   const formBtn   = document.getElementById('formBtn')
@@ -2030,11 +2159,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formStat.className  = 'form-status'
       formStat.style.display = 'none'
 
-      const name = form.name.value.trim()
-      const msg  = form.message.value.trim()
-      if (!name || !msg) {
+      const name  = form.name.value.trim()
+      const email = form.email.value.trim()
+      const msg   = form.message.value.trim()
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+      if (!name || !emailOk || !msg) {
         gsap.to(formBtn, {x:-8, duration:.07, yoyo:true, repeat:5, ease:'power1.inOut'})
-        formStat.textContent = 'Please fill in your name and message.'
+        formStat.textContent = (name && msg && !emailOk)
+          ? 'Please enter a valid email so we can reply to you.'
+          : 'Please fill in your name, email and message.'
         formStat.className   = 'form-status error'
         return
       }
@@ -2046,15 +2179,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const data  = new FormData(form)
+        data.append('_replyto', email)
         const res   = await fetch(form.action, {
           method: 'POST',
           body: data,
           headers: { 'Accept': 'application/json' }
         })
-        const json  = await res.json()
+        const json  = await res.json().catch(() => ({}))
 
-        if (res.ok) {
-          formStat.textContent = '✓ Message sent! I\'ll get back to you within 24 hours.'
+        // IMPORTANT: FormSubmit can answer HTTP 200 while still REFUSING the submission
+        // (most commonly when the address has never been activated). Trust the payload,
+        // not just the status code - otherwise we show a green tick for a lost lead.
+        if (res.ok && String(json.success) !== 'false') {
+          formStat.textContent = '✓ Message sent! We\'ll get back to you within 24 hours.'
           formStat.className   = 'form-status success'
           form.reset()
           gsap.from(formStat, {opacity:0, y:8, duration:.5, ease:'power2.out'})
@@ -2062,15 +2199,24 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             const whatsappHint = document.createElement('p')
             whatsappHint.style.cssText = 'font-size:.78rem;color:var(--text-muted);margin-top:.5rem;'
-            whatsappHint.innerHTML = 'You can also reach us directly on <a href="https://wa.me/00000000000" style="color:var(--accent)" target="_blank">WhatsApp ↗</a> for a faster reply.'
+            whatsappHint.innerHTML = 'You can also reach us directly by <a href="mailto:hello@nebulastudio.site" style="color:var(--accent)">email ↗</a> for a faster reply.'
             formStat.after(whatsappHint)
             setTimeout(()=>whatsappHint.remove(), 8000)
           }, 1200)
         } else {
-          throw new Error(json.error || 'Submission failed')
+          throw new Error(json.message || json.error || 'Submission failed')
         }
       } catch(err) {
-        formStat.textContent = '✕ Something went wrong. Please email me directly.'
+        // Never lose a lead: hand the visitor a pre-filled email they can send in one click.
+        const subject = encodeURIComponent('Website enquiry — ' + name)
+        const body = encodeURIComponent(
+          'Name: ' + name + '\n' +
+          'Email: ' + email + '\n' +
+          'Business: ' + (form.business.value.trim() || '—') + '\n' +
+          'Budget: ' + (form.budget.value.trim() || '—') + '\n\n' +
+          msg
+        )
+        formStat.innerHTML = '✕ Our form service did not respond. <a href="mailto:hello@nebulastudio.site?subject=' + subject + '&body=' + body + '" style="color:var(--accent);text-decoration:underline">Send it by email instead ↗</a> — everything you typed is already filled in.'
         formStat.className   = 'form-status error'
       } finally {
         formBtn.innerHTML = originalText
