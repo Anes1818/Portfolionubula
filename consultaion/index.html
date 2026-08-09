@@ -424,7 +424,7 @@ footer .fsep{margin:0 10px;color:var(--line)}
       <div class="success" id="success">
         <div class="mark">✓</div>
         <h3 id="success-title">Got it!</h3>
-        <p id="success-sub">We'll text you within 24 hours with your timeline.</p>
+        <p id="success-sub">We'll get back to you within 24 hours with your timeline.</p>
       </div>
     </section>
 
@@ -461,7 +461,16 @@ footer .fsep{margin:0 10px;color:var(--line)}
 
 /* ============ CONFIG ============ */
 const CONTACT_EMAIL = "hello@nebulastudio.site";
-const SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/" + CONTACT_EMAIL;
+
+/* ---------------------------------------------------------------------------
+   LEAD DELIVERY
+   Paste your Formspree form ID below (replace PASTE_FORM_ID).
+   Formspree stores every submission in a dashboard, so a lead is never lost
+   even if email delivery fails. Until it is filled in, the form automatically
+   falls back to a pre-filled email instead of showing a fake success message.
+--------------------------------------------------------------------------- */
+const SUBMIT_ENDPOINT = "https://formspree.io/f/PASTE_FORM_ID";
+const ENDPOINT_READY  = !/PASTE_FORM_ID/.test(SUBMIT_ENDPOINT);
 
 /* ============ i18n (EN now, ES-ready) ============ */
 const I18N = {
@@ -477,7 +486,7 @@ const I18N = {
     oneTime: "One-time", monthly: "Monthly", annualCare: "Annual care", firstYear: "First year total",
     freeLabel: "FREE", perMo: "/mo", perYr: "/yr",
     deposit: "Start with a 50% deposit", saveNote: "You save {n} with annual billing",
-    successTitle: "Got it, {name}!", successSub: "We'll text you within 24 hours with your timeline.",
+    successTitle: "Got it, {name}!", successSub: "We'll get back to you within 24 hours with your timeline.",
     errBase: "Pick a base package first — it takes one click.",
     errFields: "Please fill in your name, shop, city and a way to reach you.",
     errSend: "Couldn't send right now. Email us directly at "
@@ -768,15 +777,23 @@ form.addEventListener("submit", async (e) => {
     plan: planSummaryText()
   };
   try {
+    // If the endpoint was never configured, do NOT pretend the plan was sent.
+    // Jump to the email fallback below so the lead still reaches us.
+    if (!ENDPOINT_READY) throw new Error("endpoint not configured");
+
     const res = await fetch(SUBMIT_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(payload)
     });
-    // FormSubmit can answer HTTP 200 while still refusing the submission (e.g. address
-    // not activated). Trust the payload, not just the status code.
+    // A form service can answer HTTP 200 while still refusing the submission.
+    // Trust the payload, not just the status code.
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || String(json.success) === "false") throw new Error(json.message || "send failed");
+    const accepted = res.ok
+      && String(json.success) !== "false"
+      && json.ok !== false
+      && !(Array.isArray(json.errors) && json.errors.length);
+    if (!accepted) throw new Error(json.message || "send failed");
     state.sent = true;
     form.style.display = "none";
     const suc = document.getElementById("success");
@@ -786,6 +803,14 @@ form.addEventListener("submit", async (e) => {
     updateProgress();
     suc.scrollIntoView({ behavior: "smooth", block: "center" });
   } catch (err) {
+    // Tell the site owner exactly WHY it failed (visitors never see the console).
+    if (/not configured/.test((err && err.message) || "")) {
+      console.error('[Nebula] Lead NOT sent — SUBMIT_ENDPOINT is still "PASTE_FORM_ID".\n' +
+        "Fix: open flowers/consultaion/index.html (~line 472) and replace PASTE_FORM_ID with your Formspree form ID.");
+    } else {
+      console.error("[Nebula] Lead NOT sent — the form service refused the submission:", err);
+    }
+
     btn.disabled = false; btn.textContent = "Send my plan → we reply within 24 hours";
     const body = encodeURIComponent(`Name: ${name}\nShop: ${shop}\nCity: ${city}\nContact: ${contact}\nNotes: ${form.notes.value.trim()}\n\n${planSummaryText()}`);
     errBox.innerHTML = t("errSend") + `<a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("New plan request — " + shop)}&body=${body}" style="color:inherit">${CONTACT_EMAIL}</a>`;
