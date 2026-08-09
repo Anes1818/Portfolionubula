@@ -1429,11 +1429,11 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <h2 class="contact-headline" id="contactHeading">Ready to grow something <span>beautiful?</span></h2>
     <p class="contact-desc">Tell us about your shop. We'll show you exactly what your florist website could be — we reply within 24 hours.</p>
     <div class="contact-channels">
-      <a href="mailto:nebulastudiosite@gmail.com" class="contact-ch">
+      <a href="mailto:hello@nebulastudio.site" class="contact-ch">
         <span class="contact-ch-icon" aria-hidden="true">&#9993;</span>
         <div class="contact-ch-info">
           <div class="contact-ch-label">Email</div>
-          <div class="contact-ch-val">nebulastudiosite@gmail.com</div>
+          <div class="contact-ch-val">hello@nebulastudio.site</div>
         </div>
       </a>
       <a href="https://www.instagram.com/nebulaa_studio" class="contact-ch" target="_blank" rel="noopener noreferrer">
@@ -1451,9 +1451,9 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   </div>
 
   <!-- 08. FORMSPREE FORM -->
-  <!-- ★ Replace YOUR_FORM_ID with your Formspree endpoint ID from formspree.io -->
+  <!-- Contact form sends via FormSubmit to hello@nebulastudio.site. First-ever submission triggers a one-time activation email to that inbox — click "Activate" once. -->
   <form class="contact-form" id="contactForm"
-        action="https://formsubmit.co/ajax/nebulastudiosite@gmail.com"
+        action="https://formsubmit.co/ajax/hello@nebulastudio.site"
         method="POST" novalidate data-reveal>
     <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
     <input type="hidden" name="_template" value="table">
@@ -2140,7 +2140,7 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             const whatsappHint = document.createElement('p')
             whatsappHint.style.cssText = 'font-size:.78rem;color:var(--text-muted);margin-top:.5rem;'
-            whatsappHint.innerHTML = 'You can also reach us directly on <a href="https://wa.me/00000000000" style="color:var(--accent)" target="_blank">WhatsApp ↗</a> for a faster reply.'
+            whatsappHint.innerHTML = 'You can also reach us directly by <a href="mailto:hello@nebulastudio.site" style="color:var(--accent)">email ↗</a> for a faster reply.'
             formStat.after(whatsappHint)
             setTimeout(()=>whatsappHint.remove(), 8000)
           }, 1200)
@@ -2148,7 +2148,7 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(json.error || 'Submission failed')
         }
       } catch(err) {
-        formStat.textContent = '✕ Something went wrong. Please email us directly at nebulastudiosite@gmail.com.'
+        formStat.textContent = '✕ Something went wrong. Please email us directly at hello@nebulastudio.site.'
         formStat.className   = 'form-status error'
       } finally {
         formBtn.innerHTML = originalText
