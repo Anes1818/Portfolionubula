@@ -1500,7 +1500,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <!-- 08. FORMSUBMIT FORM -->
   <!-- Contact form sends via FormSubmit to hello@nebulastudio.site. First-ever submission triggers a one-time activation email to that inbox — click "Activate" once. -->
   <form class="contact-form" id="contactForm"
-        action="https://formsubmit.co/ajax/hello@nebulastudio.site"
+        action="https://formspree.io/f/PASTE_FORM_ID"
         method="POST" novalidate data-reveal>
     <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
     <input type="hidden" name="_template" value="table">
@@ -1909,7 +1909,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  /* ════════════��═══════════════════════════════════��═════
+  /* ════════════��════════════════════════════���══════��═════
      DATA-REVEAL
   ══════════════════════════════════════════════════════ */
   document.querySelectorAll('[data-reveal]').forEach((el,i) => {
@@ -2180,6 +2180,10 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const data  = new FormData(form)
         data.append('_replyto', email)
+        // If the endpoint was never configured, do NOT pretend the message went through.
+        // Fall through to the email fallback below so the lead still reaches us.
+        if (/PASTE_FORM_ID/.test(form.action)) throw new Error('Form endpoint not configured yet')
+
         const res   = await fetch(form.action, {
           method: 'POST',
           body: data,
@@ -2187,10 +2191,16 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         const json  = await res.json().catch(() => ({}))
 
-        // IMPORTANT: FormSubmit can answer HTTP 200 while still REFUSING the submission
-        // (most commonly when the address has never been activated). Trust the payload,
-        // not just the status code - otherwise we show a green tick for a lost lead.
-        if (res.ok && String(json.success) !== 'false') {
+        // A form service can answer HTTP 200 while still REFUSING the submission.
+        // Trust the payload, not just the status code - otherwise we show a green
+        // tick for a lead that was never delivered.
+        // Handles Formspree ({ok:true} / {errors:[...]}) and FormSubmit ({success:"true"|"false"}).
+        const accepted = res.ok
+          && String(json.success) !== 'false'
+          && json.ok !== false
+          && !(Array.isArray(json.errors) && json.errors.length)
+
+        if (accepted) {
           formStat.textContent = '✓ Message sent! We\'ll get back to you within 24 hours.'
           formStat.className   = 'form-status success'
           form.reset()
