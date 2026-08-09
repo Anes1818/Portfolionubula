@@ -27,6 +27,53 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+  <!-- Safety net: if any CDN above is blocked (office wifi, ad-blocker, CDN outage), stub the
+       animation libraries so the page - and above all the contact form - keeps working. -->
+  <script>
+  (function () {
+    function stub() {
+      var o = {}
+      ;['to','from','fromTo','set','timeline','registerPlugin','killTweensOf','delayedCall','add','play','pause','reverse','restart','kill','progress','seek','eventCallback','call','addLabel','defaults','config'].forEach(function (k) { o[k] = function () { return o } })
+      o.utils = {
+        toArray: function (v) { if (typeof v === 'string') return [].slice.call(document.querySelectorAll(v)); if (!v) return []; return (v.length !== undefined && !v.tagName) ? [].slice.call(v) : [v] },
+        clamp: function (a, b, v) { return arguments.length > 2 ? Math.min(b, Math.max(a, v)) : function (x) { return Math.min(b, Math.max(a, x)) } },
+        interpolate: function () { return function () { return 0 } },
+        random: function (a) { return a },
+        mapRange: function () { return 0 }
+      }
+      o.ticker = { add: function () {}, remove: function () {} }
+      o.quickTo = function () { return function () { return o } }
+      o.getProperty = function () { return 0 }
+      return o
+    }
+    if (typeof window.gsap === 'undefined') window.gsap = stub()
+    if (typeof window.ScrollTrigger === 'undefined') {
+      var st = stub()
+      st.create = function () { return { kill: function () {}, refresh: function () {}, disable: function () {}, enable: function () {} } }
+      st.getAll = function () { return [] }
+      st.refresh = function () {}
+      st.update = function () {}
+      st.sort = function () {}
+      st.clearScrollMemory = function () {}
+      st.normalizeScroll = function () {}
+      st.scrollerProxy = function () {}
+      st.batch = function () {}
+      st.matchMedia = function () { return { add: function () {} } }
+      st.addEventListener = function () {}
+      st.killAll = function () {}
+      window.ScrollTrigger = st
+    }
+    if (typeof window.Lenis === 'undefined') {
+      window.Lenis = function () {
+        return {
+          raf: function () {}, on: function () {}, off: function () {},
+          stop: function () {}, start: function () {}, destroy: function () {},
+          scrollTo: function (t) { try { var el = typeof t === 'string' ? document.querySelector(t) : t; if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth' }); else if (typeof t === 'number') window.scrollTo({ top: t, behavior: 'smooth' }) } catch (e) {} }
+        }
+      }
+    }
+  })()
+  </script>
 
 <style>
 /* ==========================================================================
@@ -325,7 +372,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 
 /* ═══════════════════════════════════════════════════
    02. MAGNETIC BUTTONS — JS handles transform, CSS handles transition
-═══════════════════════════════════════════════════ */
+══════════════════════════════════════════��════════ */
 .btn {
   display:inline-flex; align-items:center; justify-content:center;
   gap:.6rem; padding:.95rem 2rem;
@@ -1463,6 +1510,10 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       <input type="text" id="fname" name="name" placeholder="Holly Parker" autocomplete="name" required />
     </div>
     <div class="form-group">
+      <label for="femail">Your Email</label>
+      <input type="email" id="femail" name="email" placeholder="you@yourshop.com" autocomplete="email" required />
+    </div>
+    <div class="form-group">
       <label for="fbusiness">Business Type</label>
       <input type="text" id="fbusiness" name="business" placeholder="Flower shop, clothing brand, restaurant…" />
     </div>
@@ -1549,7 +1600,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ═══════════════════════════════════════════════════���══
      LENIS
-  ══════════════════════════════════════════════════════ */
+  ════════════════════��═════════════════════════════════ */
   let lenis
   try {
     lenis = new Lenis({
@@ -2108,11 +2159,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formStat.className  = 'form-status'
       formStat.style.display = 'none'
 
-      const name = form.name.value.trim()
-      const msg  = form.message.value.trim()
-      if (!name || !msg) {
+      const name  = form.name.value.trim()
+      const email = form.email.value.trim()
+      const msg   = form.message.value.trim()
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+      if (!name || !emailOk || !msg) {
         gsap.to(formBtn, {x:-8, duration:.07, yoyo:true, repeat:5, ease:'power1.inOut'})
-        formStat.textContent = 'Please fill in your name and message.'
+        formStat.textContent = (name && msg && !emailOk)
+          ? 'Please enter a valid email so we can reply to you.'
+          : 'Please fill in your name, email and message.'
         formStat.className   = 'form-status error'
         return
       }
@@ -2124,6 +2179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const data  = new FormData(form)
+        data.append('_replyto', email)
         const res   = await fetch(form.action, {
           method: 'POST',
           body: data,

@@ -759,6 +759,8 @@ form.addEventListener("submit", async (e) => {
   const payload = {
     _subject: `🌸 New plan request — ${shop} (${city})`,
     _template: "box",
+    _captcha: "false",
+    _replyto: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact) ? contact : CONTACT_EMAIL,
     name, shop, city, contact,
     notes: form.notes.value.trim() || "—",
     customFeature: state.customIdea.trim() || "—",
