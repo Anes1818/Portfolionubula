@@ -773,7 +773,10 @@ form.addEventListener("submit", async (e) => {
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error("send failed");
+    // FormSubmit can answer HTTP 200 while still refusing the submission (e.g. address
+    // not activated). Trust the payload, not just the status code.
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || String(json.success) === "false") throw new Error(json.message || "send failed");
     state.sent = true;
     form.style.display = "none";
     const suc = document.getElementById("success");
