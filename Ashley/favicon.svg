@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ashley's Floral Boutique">
+  <title>Ashley's Floral Boutique</title>
+  <!-- Black circle mark. The "A" is drawn as stroked paths rather than <text>
+       so the favicon never depends on a script font being available. -->
+  <circle cx="32" cy="32" r="32" fill="#0D0C0F"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- left upstroke, curved like a script capital -->
+    <path d="M20 46.5C21.4 36.8 25.8 26.4 32.4 17.8"/>
+    <!-- right downstroke, finishing in a calligraphic flick -->
+    <path d="M32.4 17.8C36.6 26.6 40.2 36.9 42.6 46.4c.7 2.3 2.3 3 4 2"/>
+    <!-- crossbar with a slight bow -->
+    <path d="M24.4 38.4c4.7-1.8 9.9-1.8 14.5.1"/>
+  </g>
+  <!-- one small five-petal pink flower accent -->
+  <g transform="translate(46,19)">
+    <g fill="#E85C8C">
+      <ellipse cx="0" cy="-4" rx="2.4" ry="3.8"/>
+      <ellipse cx="0" cy="-4" rx="2.4" ry="3.8" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-4" rx="2.4" ry="3.8" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-4" rx="2.4" ry="3.8" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-4" rx="2.4" ry="3.8" transform="rotate(288)"/>
+    </g>
+    <circle r="1.6" fill="#FFF7FA"/>
+  </g>
+</svg>
