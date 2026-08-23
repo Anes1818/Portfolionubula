@@ -775,7 +775,7 @@ footer a:hover{color:var(--pink);opacity:1}
 .deposit{display:flex;align-items:flex-start;gap:9px;margin:14px 0 0;padding:11px 14px;
   border-radius:16px;background:var(--blush);border:1px solid var(--line);
   font-size:12.5px;font-weight:600;color:var(--rose-deep);line-height:1.5}
-.deposit::before{content:"🔒";flex:none;font-size:14px;line-height:1.35}
+.deposit::before{content:"💬";flex:none;font-size:14px;line-height:1.35}
 .sig-copy .deposit{background:rgba(232,92,140,.12);border-color:rgba(232,92,140,.32);
   color:var(--paper);max-width:44ch}
 footer .deposit{background:rgba(232,92,140,.12);border-color:rgba(232,92,140,.28);
@@ -791,3 +791,13 @@ footer .deposit{background:rgba(232,92,140,.12);border-color:rgba(232,92,140,.28
 .bq .acts{flex-wrap:wrap;gap:8px}
 .bq .acts .btn-dm,.bq .acts .btn-txt{flex:1 1 calc(50% - 4px);min-width:0;justify-content:center}
 .bq .acts .btn-make{flex:1 1 100%;justify-content:center}
+
+/* ---- 12. narrow-screen order buttons ----
+   The catalog stays 2-up at every width, so on a phone each card is only ~140px
+   wide. Side-by-side CTAs wrapped "Text to order" onto three lines, so below
+   760px the two buttons stack full-width and keep a 44px tap target. */
+@media(max-width:760px){
+  #catalog .bq .acts{flex-direction:column;gap:6px}
+  #catalog .bq .acts .btn{flex:none;width:100%;min-height:44px;padding:11px 8px;
+    font-size:12.5px;white-space:nowrap}
+}

@@ -59,7 +59,7 @@
 </head>
 <body>
 
-<div id="annc">🌸 <span data-i18n="annc">ORDER BY DM OR TEXT · <b>50% DEPOSIT SECURES YOUR DATE</b> · OKLAHOMA CITY</span></div>
+<div id="annc">🌸 <span data-i18n="annc">ORDER BY DM OR TEXT · <b>EVERY PRICE ON THE CARD</b> · OKLAHOMA CITY</span></div>
 
 <nav id="nav"><div class="wrap bar">
   <a class="logo" href="index.html"><span><span class="t">Ashley’s</span><small>FLORAL BOUTIQUE</small></span></a>
@@ -92,17 +92,16 @@
       <div class="bq-lab" id="pearlLab" style="display:none">
         <h3>💎 Pearl initial — free</h3>
         <div class="bq-sizes" id="letterChips"></div>
-        <small>Your letter hand-set in pearls across the roses. Gift-card message is added at checkout.</small>
+        <small>Your letter hand-set in pearls across the roses. Tell us the card message when you DM or text.</small>
       </div>
       <div class="bq-inside"><h3>What's inside</h3><ul id="insideList"></ul></div>
       <div class="bq-cta">
         <a class="btn btn-rose" id="orderBtn" href="#">📱 Text to order</a>
         <a class="btn btn-ghost" id="dmBtn" href="https://ig.me/m/ashleys.floral.boutique" target="_blank" rel="noopener">💬 DM on Instagram</a>
-        <a class="btn btn-ghost" id="makeBtn" href="builder.html">🌸 Make my own</a>
       </div>
-      <p class="bq-ship">🚚 <b>Made to order in Oklahoma City.</b> Every bouquet is hand-tied fresh for your date — DM or text us the occasion and we confirm availability, pickup or local delivery. A 50% deposit secures your date.<span class="es">Hecho a pedido en Oklahoma City · DM o mensaje para confirmar fecha y entrega · Depósito del 50%.</span></p>
+      <p class="bq-ship">🚚 <b>Made to order in Oklahoma City.</b> Every bouquet is hand-tied fresh for your date — DM or text us the occasion and we confirm availability, pickup or local delivery.<span class="es">Hecho a pedido en Oklahoma City · DM o mensaje para confirmar fecha y entrega.</span></p>
       <p class="bq-story" id="bqStory"></p>
-      <div class="bq-trust"><span>📍 Oklahoma City, 73159</span><span>🔒 50% deposit secures your date</span><span>🌱 Tied fresh</span><span>🏷️ Every price on the card</span></div>
+      <div class="bq-trust"><span>📍 Oklahoma City, 73159</span><span>💬 Confirmed by DM or text</span><span>🌱 Tied fresh</span><span>🏷️ Every price on the card</span></div>
     </div>
   </div>
 
@@ -146,9 +145,8 @@
     li.innerHTML='<span class="dot" style="background:'+col+'"></span><div><b>'+esc(it[0])+'</b><small>'+esc(it[1])+'</small></div>';
     ul.appendChild(li);
   });
-  var order=$("orderBtn"), make=$("makeBtn"), dm=$("dmBtn");
+  var order=$("orderBtn"), dm=$("dmBtn");
   var curLetter=null; if(dm){dm.href="https://ig.me/m/"+C.ig; dm.target="_blank"; dm.rel="noopener";}
-  make.href="builder.html"+(b.tpl?("?tpl="+b.tpl):"");
   var curName=b.sizes[0][0], curPrice=b.sizes[0][1];
   function msgEN(){return "Hi Ashley’s Floral Boutique! I'd like to order "+b.name+" \u2014 "+curName+" ($"+curPrice+")"+(curLetter?(" with pearl initial \""+curLetter+"\""):"")+".";}
   function msgES(){return "\u00a1Hola Ashley’s Floral Boutique! Quisiera pedir "+b.name+" \u2014 "+curName+" ($"+curPrice+")"+(curLetter?(" con inicial de perlas \""+curLetter+"\""):"")+".";}

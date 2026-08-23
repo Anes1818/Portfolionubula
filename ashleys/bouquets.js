@@ -1,8 +1,8 @@
 /* ===== Ashley's Floral Boutique — bouquet catalog data =====
    Home-based florist, Oklahoma City OK 73159. Orders come in by Instagram DM
    or text only — there is no WhatsApp line and no online checkout, so there are
-   no `pay` links on these entries (see ADDONS/DEPOSIT below for the terms shown
-   with every order CTA).
+   no `pay` links on these entries. No payment terms are stated anywhere on the
+   site: Ashley confirms the total and how to pay when she replies.
 
    Prices are anchored on her real advertised "75 Roses Classic — $270" (b2) and
    the rest of the range is scaled from it, rounded to $5.
@@ -20,10 +20,11 @@ window.SHOP_CONTACT = {
   city: "Oklahoma City, OK 73159"
 };
 
-/* Shown next to every order CTA — her deposit policy is not optional. */
-window.DEPOSIT = {
-  en: "A 50% non-refundable deposit secures your order.",
-  es: "Un depósito del 50% no reembolsable asegura tu pedido."
+/* Order-confirmation line shown with the CTAs. Deliberately states no payment
+   terms — swap in Ashley's real policy only once she confirms it in writing. */
+window.ORDER_NOTE = {
+  en: "We confirm your date and your total by DM or text.",
+  es: "Confirmamos tu fecha y tu total por DM o mensaje."
 };
 
 /* Add-ons offered with any bouquet. She sells plushies alongside flowers. */

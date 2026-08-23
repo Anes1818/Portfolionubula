@@ -88,7 +88,6 @@
         <a class="btn btn-txt order disabled" id="order">📱 Text (405) 862-6632</a>
       </div>
       <button class="btn btn-secondary" style="width:100%;margin-top:8px" onclick="saveImg()">📸 Save &amp; share my bouquet</button>
-      <p class="depositnote" id="depositNote">🔒 A 50% non-refundable deposit secures your order.</p>
       <p class="hintnote">No online payment — send your bouquet by DM or text and we confirm the total and pickup or local delivery.</p>
     </section>
 
@@ -99,12 +98,10 @@
     <div id="toast"></div>
   </div>
 </div>
-<footer>Ashley’s Floral Boutique · Oklahoma City · Drop real stem photos into assets/build/</footer>
+<footer>Ashley’s Floral Boutique · Oklahoma City</footer>
 
 <script>
 const SHOP={name:"Ashley’s Floral Boutique",phone:"14058626632",phonePretty:"(405) 862-6632",ig:"ashleys.floral.boutique",site:"ashleys.floral.boutique",tagline:"Floral boutique · Oklahoma City"};
-const DEPOSIT_EN="A 50% non-refundable deposit secures your order.";
-const DEPOSIT_ES="Un depósito del 50% no reembolsable asegura tu pedido.";
 /* Orders come in by Instagram DM or SMS. Instagram cannot carry a pre-filled
    message, so the text link is the one that gets the bouquet spec. */
 function orderSms(msg){return "sms:+"+SHOP.phone+"?&body="+encodeURIComponent(msg);}

@@ -39,7 +39,7 @@ var EXACT={
   '📸 Save & share my bouquet':'📸 Guarda y comparte tu ramo',
   'No online payment — send your bouquet by DM or text and we confirm the total and pickup or local delivery.':'Sin pago en línea — envía tu ramo por DM o mensaje y confirmamos el total y la recogida o entrega local.',
   '← Back':'← Atrás',
-  'Ashley’s Floral Boutique · Oklahoma City · Drop real stem photos into assets/build/':'Ashley’s Floral Boutique · Oklahoma City · Coloca fotos reales de tallos en assets/build/',
+  'Ashley’s Floral Boutique · Oklahoma City':'Ashley’s Floral Boutique · Oklahoma City',
   'Pick a preset or tap + to add flowers — then drag each bloom into place':'Elige un preset o toca + para añadir flores — luego arrastra cada flor a su lugar',
   // groups
   'Roses':'Rosas','Tulips':'Tulipanes','Carnations':'Claveles','Other':'Otras',

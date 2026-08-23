@@ -88,7 +88,7 @@ document.querySelectorAll('[data-dm]').forEach(function(a){a.href=dmHref();a.tar
   var now=new Date(), cut=new Date(now); cut.setHours(13,0,0,0);
   if(now<cut){var ms=cut-now,h=Math.floor(ms/36e5),mn=Math.floor(ms%36e5/6e4);
     el.innerHTML='DM OR TEXT IN <b>'+(h?h+'H ':'')+mn+'M</b> TO RESERVE TODAY';}
-  else el.innerHTML='DM OR TEXT ANYTIME · <b>50% DEPOSIT SECURES YOUR DATE</b>';
+  else el.innerHTML='DM OR TEXT ANYTIME · <b>EVERY PRICE ON THE CARD</b>';
 })();
 
 /* ---- pixel petal rain (hero) ---- */
