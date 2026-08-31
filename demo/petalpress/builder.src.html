@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="assets/logo/favicon.svg">
+<meta name="description" content="Design your own hand-tied bouquet or luxury ramo buchón in 4 playful steps — arrange blooms, wrap it, tie the ribbon, add a note, and order on WhatsApp.">
+<meta name="robots" content="noindex, nofollow">
+<title>Build Your Bouquet — Petal Press</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/ink.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="step-1" data-page="builder">
+
+<svg class="ink-defs" aria-hidden="true" focusable="false">
+  <filter id="inkWobble" x="-14%" y="-14%" width="128%" height="128%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.042" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <symbol id="pp-mark" viewBox="0 0 100 100"><!--@inner assets/logo/logo-mark.svg--></symbol>
+  <symbol id="pp-pip" viewBox="0 0 64 76"><!--@inner assets/mascot/pip.svg--></symbol>
+</svg>
+<!--@include assets/ink/stickers.svg-->
+
+<header class="bheader">
+  <a class="brand" href="index.html" aria-label="Petal Press Home">
+    <svg class="nav__mark" viewBox="0 0 100 100" style="width:30px;height:30px;flex:none"><use href="#pp-mark"/></svg>
+    <span><b>Petal Press</b><small>BOUQUET STUDIO</small></span>
+  </a>
+  <ol class="stepper" id="stepper" aria-label="Steps">
+    <li data-n="1" class="on"><i>1</i><span>Flowers</span></li>
+    <li data-n="2"><i>2</i><span>Wrap</span></li>
+    <li data-n="3"><i>3</i><span>Ribbon</span></li>
+    <li data-n="4"><i>4</i><span>Note</span></li>
+  </ol>
+  <div class="row" style="gap:10px;align-items:center">
+    <div class="lang-switch" id="langSwitch" aria-label="Language selector">
+      <button type="button" class="lang-btn on" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button type="button" class="lang-btn" data-lang="es" onclick="setLanguage('es')">ES</button>
+    </div>
+    <div class="pricepill" title="Your bouquet total">
+      <small>Total</small>
+      <b id="amt">$0</b>
+    </div>
+  </div>
+</header>
+
+<div class="bwrap">
+  <div class="stagecard">
+    <div class="harmony-bar" id="harmonyBar" title="Click for Florist Harmony Advice" onclick="showFloristTip()">
+      <span id="harmonyText">🌸 0 Stems · Choose Your Palette</span>
+      <small id="harmonyAdvice">✨ Florist Tip</small>
+    </div>
+    <div id="stage">
+      <div id="ground"></div>
+      <div id="wrapBack"></div>
+      <div id="flowerLayer"></div>
+      <div class="hint" id="hint">Pick a preset or tap + to add flowers — then drag each bloom into place</div>
+      <div id="wrapFront"></div>
+      <img id="ribbon" src="" alt="" aria-hidden="true">
+      <div id="noteCard"><span>💌</span><p id="noteCardTxt"></p></div>
+      <button id="snapBtn" title="Save my bouquet as an image" onclick="saveImg()">📸</button>
+    </div>
+    <p class="stagebar" id="stagebar"></p>
+  </div>
+
+  <div class="panel">
+    <div class="steptitle">
+      <h2 id="stepTitle">Create your bouquet</h2>
+      <p class="sub" id="stepSub">Every stem is priced on the card — build it exactly how you feel.</p>
+    </div>
+
+    <!-- STEP 1: FLOWERS / STYLE -->
+    <section class="step-panel" data-step="1">
+      <div class="label" id="lblStyle">Bouquet style</div>
+      <div class="tpls" id="tpls">
+        <button type="button" data-t="classic" class="on" onclick="setTemplate('classic')">🌿 Classic<span>hand-tied</span></button>
+        <button type="button" data-t="round" onclick="setTemplate('round')">💐 Round Buchón<span>rose dome</span></button>
+        <button type="button" data-t="heart" onclick="setTemplate('heart')">❤️ Heart Buchón<span>shaped</span></button>
+      </div>
+
+      <!-- Classic Controls -->
+      <div class="classic-only">
+        <div class="label" id="lblQuick" style="margin-top:14px">Quick start</div>
+        <div class="presets">
+          <button type="button" onclick="preset('romantic')">❤️ Romantic</button>
+          <button type="button" onclick="preset('bright')">☀️ Bright Mix</button>
+          <button type="button" onclick="preset('white')">🤍 Pure White</button>
+        </div>
+        <div class="label" id="lblSize" style="margin-top:16px">Size</div>
+        <div class="sizes" id="sizes"></div>
+        <div class="label" id="lblStems" style="margin-top:16px">Pick your stems</div>
+        <div id="rows"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="remixFlowers()">✨ Remix</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="tidyUp()">✨ Tidy up</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="clearAll()">Clear all</button>
+        </div>
+      </div>
+
+      <!-- Buchon Controls -->
+      <div class="bu-only" id="buCtrls">
+        <div class="label">Size</div>
+        <div class="buSizes" id="buSizes"></div>
+        <div class="label" style="margin-top:14px">Outer wall · the ring everyone sees</div>
+        <div class="swatches" data-zone="wall"></div>
+        <div class="label" style="margin-top:10px">Inside fill</div>
+        <div class="swatches" data-zone="fill"></div>
+        <div class="label" style="margin-top:10px">Center bloom · the star</div>
+        <div class="swatches" data-zone="center"></div>
+        <div class="label" style="margin-top:14px">Formation</div>
+        <div class="buSizes" id="buPat"></div>
+        <div class="label" style="margin-top:14px">Luxury Extras</div>
+        <div class="buSizes" id="buX"></div>
+        <div class="label" style="margin-top:14px">Message sash · printed ribbon across the ramo · +$10</div>
+        <div class="buSizes" id="buSash"></div>
+      </div>
+    </section>
+
+    <!-- STEP 2: WRAP -->
+    <section class="step-panel" data-step="2">
+      <div class="label" id="lblPaper">Choose your paper</div>
+      <div id="wrapstyles" class="wrapstyles"></div>
+      <p class="tipnote" id="wrapTip">🧻 The paper gathers your stems and trims the long ones neatly — your blooms stay untouched. Want to rearrange? Press Back.</p>
+    </section>
+
+    <!-- STEP 3: RIBBON -->
+    <section class="step-panel" data-step="3">
+      <div class="label" id="lblRibbon">Tie the ribbon</div>
+      <div id="ribbons" class="ribbons"></div>
+      <p class="tipnote" id="ribbonTip">🎀 Included with every bouquet. One little bow changes everything.</p>
+    </section>
+
+    <!-- STEP 4: NOTE & REVIEW -->
+    <section class="step-panel" data-step="4">
+      <div class="label" id="lblNote">Gift note <span class="ap">printed card · optional</span></div>
+      <div class="notepick" id="notePick">
+        <button type="button" id="noteOff" onclick="setNoteOn(false)">No card<span>free</span></button>
+        <button type="button" id="noteOnBtn" onclick="setNoteOn(true)">💌 Printed card<span>+$5</span></button>
+      </div>
+      <div id="noteWrap" style="display:none">
+        <textarea id="cardMsg" maxlength="140" placeholder="Write your message… e.g. “Happy birthday! You deserve every one of these.”" oninput="onNote()"></textarea>
+        <p class="charcount"><span id="charCt">0</span>/140</p>
+      </div>
+      <div class="summary" id="summary"></div>
+      <a class="btn btn-whatsapp order disabled" id="order" target="_blank" rel="noopener">Order on WhatsApp 💬</a>
+      <button class="btn btn-ghost" type="button" style="width:100%;margin-top:8px" onclick="saveImg()">📸 Save &amp; share my bouquet</button>
+      <p class="hintnote" id="lblHintNote">No online payment needed — confirm bouquet &amp; delivery on WhatsApp. Pay on delivery or by card.</p>
+    </section>
+
+    <!-- STEP NAVIGATION -->
+    <div class="navrow">
+      <button type="button" class="btn btn-ghost" id="backBtn" onclick="setStep(step-1)">← Back</button>
+      <button type="button" class="btn btn-accent" id="nextBtn" onclick="setStep(step+1)">Wrap it →</button>
+    </div>
+    <div id="toast"></div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <p style="margin:0;text-align:center;font-size:12.5px;color:var(--muted)">
+      Petal Press LLC · Northern Virginia · Handcrafted floral artistry
+    </p>
+  </div>
+</footer>
+
+<script src="brand.config.js"></script>
+<script src="js/core.js"></script>
+<script src="js/builder.js"></script>
+</body>
+</html>

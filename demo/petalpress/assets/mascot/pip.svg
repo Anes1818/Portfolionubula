@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 76" role="img" aria-labelledby="pip-t">
+  <title id="pip-t">Pip, the Petal Press sprout</title>
+  <!-- Pip is drawn with the same line weight and the same hand as the logo.
+       Two dots, NO mouth: mouthless mascots read modern and calm, a smiling
+       face with eyes reads as children's clip art. -->
+  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- bud body -->
+    <path d="M31.6 25.2C41.4 24.6 48.3 33.2 48 44.4 47.7 55.2 41 63.4 31.8 63.2 22.6 63 16.1 54.6 16.2 43.8 16.3 33.4 22.4 25.4 31.6 25.2Z"/>
+    <!-- sprout + single leaf -->
+    <path d="M32.2 25.1C32.6 19.4 33.8 14.6 36.6 10.8"/>
+    <path d="M36.6 10.8C40.8 8 46.6 8.6 48.8 12.2 46 16.2 39.9 16.4 36.4 13.6"/>
+    <!-- leaf arms -->
+    <path d="M16.5 42.2C11.4 39.4 5.6 39.6 3.2 43 6.1 47 12.3 47.4 16.4 44.9"/>
+    <path d="M47.8 42.2C52.9 39.4 58.7 39.6 61.1 43 58.2 47 52 47.4 47.9 44.9"/>
+    <!-- roots -->
+    <path d="M26.5 63.6C25.2 67.4 25.9 70.6 28 72.6"/>
+    <path d="M37.2 63.6C38.5 67.4 37.8 70.6 35.7 72.6"/>
+  </g>
+  <g fill="currentColor">
+    <circle cx="26.6" cy="42.4" r="2.5"/>
+    <circle cx="37.6" cy="42.4" r="2.5"/>
+  </g>
+</svg>

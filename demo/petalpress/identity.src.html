@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Petal Press — Identity preview</title>
+<meta name="description" content="Phase 0 identity sheet for Petal Press, template #2 by Nebula Sites Studio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="icon" href="assets/logo/favicon.svg">
+<style>
+  /* Preview-sheet only. None of this ships with the template. */
+  .pv-top{ padding-block:var(--s-7) var(--s-6); }
+  .pv-sec{ padding-block:var(--s-7); border-top:var(--line-fine) dashed var(--ink-14); }
+  .pv-lab{ display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-2); }
+  .pv-num{ font-family:var(--font-hand); font-size:var(--fs-xs); letter-spacing:.2em; color:var(--ink-30); }
+  .pv-note{ font-size:var(--fs-sm); color:var(--ink-55); max-width:60ch; }
+  .pv-tile{ display:grid; place-items:center; gap:var(--s-3); padding:var(--s-5) var(--s-3); text-align:center; }
+  .pv-cap{ font-family:var(--font-hand); font-size:.6875rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-55); }
+
+  .logo{ color:var(--ink); }
+  .lockup{ display:inline-flex; align-items:center; gap:.6em; color:var(--ink); text-decoration:none; }
+  .lockup__mark{ width:2.6em; height:2.6em; flex:none; }
+  .lockup__name{ font-family:var(--font-display); font-size:1.6em; line-height:1; letter-spacing:-.01em; }
+  .lockup__sub{ font-family:var(--font-hand); font-size:.5em; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-55); display:block; margin-top:.3em; }
+  .lockup--stack{ flex-direction:column; gap:.3em; text-align:center; }
+
+  .on-dark{ background:var(--ink); color:var(--paper); border-radius:var(--r-md); }
+  .on-dark .lockup, .on-dark .pv-cap{ color:var(--paper); }
+  .on-bloom{ background:var(--bloom); color:var(--white); border-radius:var(--r-md); }
+  .on-bloom .lockup, .on-bloom .pv-cap{ color:var(--white); }
+
+  .sw{ border:var(--line-fine) solid var(--ink); border-radius:var(--r-sm); overflow:hidden; box-shadow:var(--stamp-sm); }
+  .sw__chip{ height:78px; }
+  .sw__meta{ padding:.5rem .7rem; background:var(--white); border-top:var(--line-fine) solid var(--ink-14); }
+  .sw__name{ font-family:var(--font-hand); font-size:.6875rem; letter-spacing:.08em; text-transform:uppercase; }
+  .sw__hex{ font-family:var(--font-hand); font-size:.75rem; color:var(--ink-55); }
+
+  .stick{ display:grid; place-items:center; gap:.5rem; padding:var(--s-4) var(--s-2); border:var(--line-fine) solid var(--ink-14); border-radius:var(--r-sm); background:var(--white); }
+  .stick svg{ width:52px; height:52px; color:var(--ink); }
+  .stick__n{ font-family:var(--font-hand); font-size:.625rem; letter-spacing:.06em; color:var(--ink-55); }
+
+  .type-row{ padding-block:var(--s-3); border-bottom:1px solid var(--ink-07); }
+  .type-row:last-child{ border-bottom:0; }
+  .type-meta{ font-family:var(--font-hand); font-size:.6875rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-30); }
+
+  .fix{ padding:var(--s-4); }
+  .fix li{ font-size:var(--fs-sm); margin-bottom:.5rem; line-height:1.55; }
+  .pip-demo{ width:96px; height:114px; color:var(--ink); }
+  .zone{ font-family:var(--font-hand); font-size:.75rem; }
+  .yes{ color:var(--leaf); } .no{ color:var(--clay); }
+</style>
+</head>
+<body>
+
+<!-- Filter defs + mark/mascot symbols. One <use> per instance keeps the DOM
+     small and lets currentColor drive every colour. -->
+<svg class="ink-defs" aria-hidden="true" focusable="false">
+  <filter id="inkWobble" x="-14%" y="-14%" width="128%" height="128%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.042" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <symbol id="pp-mark" viewBox="0 0 100 100"><!--@inner assets/logo/logo-mark.svg--></symbol>
+  <symbol id="pp-pip" viewBox="0 0 64 76"><!--@inner assets/mascot/pip.svg--></symbol>
+</svg>
+<!--@include assets/ink/stickers.svg-->
+
+<main class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <header class="pv-top">
+    <p class="kicker">Nebula Sites Studio · Template #2 · Phase 0</p>
+    <a class="lockup" href="#" style="font-size:1.6rem">
+      <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+      <span>
+        <span class="lockup__name">Petal Press</span>
+        <span class="lockup__sub">Northern Virginia</span>
+      </span>
+    </a>
+    <h1 class="display" style="margin-top:var(--s-5)">Bouquets drawn <em>by hand.</em><br>Made by hand.</h1>
+    <p class="lead">The identity sheet. Everything below is live code — no mockups, no screenshots, nothing faked.</p>
+    <div class="row" style="margin-top:var(--s-5)">
+      <button class="btn-ink btn-ink--primary btn-ink--lg">
+        <span class="btn-ink__frame" aria-hidden="true"></span>
+        <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>
+        Build your bouquet
+      </button>
+      <button class="btn-ink">
+        <span class="btn-ink__frame" aria-hidden="true"></span>
+        <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>
+        See the shop
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ 01 LOGO ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">01</span><h2 style="margin:0">The mark</h2></div>
+    <p class="pv-note">One nearly-closed ring whose line runs down into the stem and opens into three uneven petals, so the eye reads it as a single unbroken stroke. It is one <code>.svg</code>, 1.4 KB, drawn in <code>currentColor</code> — the same file serves the header, the favicon, the stamp and the white-on-dark footer.</p>
+
+    <div class="grid grid-4" style="margin-top:var(--s-5)">
+      <div class="ink-card pv-tile">
+        <svg class="logo" style="width:112px;height:112px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+        <span class="pv-cap">112 px</span>
+      </div>
+      <div class="ink-card pv-tile">
+        <svg class="logo" style="width:56px;height:56px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+        <span class="pv-cap">56 px · header</span>
+      </div>
+      <div class="ink-card pv-tile">
+        <svg class="logo" style="width:32px;height:32px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+        <span class="pv-cap">32 px</span>
+      </div>
+      <div class="ink-card pv-tile">
+        <div class="row" style="gap:var(--s-5);justify-content:center">
+          <span style="display:grid;place-items:center;gap:.45rem">
+            <svg class="logo" style="width:16px;height:16px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+            <span class="pv-cap no">line ✕</span>
+          </span>
+          <span style="display:grid;place-items:center;gap:.45rem">
+            <img src="assets/logo/favicon.svg" width="16" height="16" alt="">
+            <span class="pv-cap yes">solid ✓</span>
+          </span>
+        </div>
+        <span class="pv-cap">16 px · favicon</span>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:var(--s-5)">
+      <div class="ink-card pv-tile">
+        <a class="lockup" href="#" style="font-size:1.4rem">
+          <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+          <span><span class="lockup__name">Petal Press</span></span>
+        </a>
+        <span class="pv-cap">horizontal</span>
+      </div>
+      <div class="pv-tile on-dark">
+        <a class="lockup lockup--stack" href="#" style="font-size:1.4rem">
+          <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+          <span><span class="lockup__name">Petal Press</span>
+          <span class="lockup__sub" style="color:rgba(251,247,240,.6)">est. 2026</span></span>
+        </a>
+        <span class="pv-cap">stacked · on ink</span>
+      </div>
+      <div class="pv-tile on-bloom">
+        <a class="lockup" href="#" style="font-size:1.4rem">
+          <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+          <span><span class="lockup__name">Petal Press</span></span>
+        </a>
+        <span class="pv-cap">on bloom</span>
+      </div>
+    </div>
+
+    <div class="ink-frame" style="margin-top:var(--s-5);padding:var(--s-5)">
+      <p class="hand" style="margin:0 0 var(--s-3)">Why the wordmark is live text, not part of the SVG</p>
+      <p class="pv-note" style="margin:0">Baking &ldquo;Petal Press&rdquo; into the logo file would freeze it as decoration: unselectable, invisible to search engines, impossible to translate, and blurry when scaled. The mark is a drawing; the name is text in Instrument Serif. That keeps the header accessible and lets the Spanish build swap the tagline without touching a single asset.</p>
+    </div>
+  </section>
+
+  <!-- ============ 02 PIP ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">02</span><h2 style="margin:0">Pip</h2></div>
+    <p class="pv-note">Drawn with the same hand and the same line weight as the mark, so Pip reads as the logo's little sibling rather than a bolted-on cartoon. Two dots and <strong>no mouth</strong> — a smiling face with eyes is what tips a flower brand into children's clip art.</p>
+
+    <div class="grid grid-2" style="margin-top:var(--s-5);align-items:start">
+      <div class="ink-card row" style="gap:var(--s-5)">
+        <svg class="pip-demo" viewBox="0 0 64 76" aria-hidden="true"><use href="#pp-pip"/></svg>
+        <div>
+          <p class="hand" style="margin:0 0 .4rem">Pip · 1.2 KB</p>
+          <p class="pv-note" style="margin:0">Lives in the Builder, empty states, the thanks page, 404, and the seasonal stamps.</p>
+        </div>
+      </div>
+      <div class="ink-card">
+        <p class="hand" style="margin:0 0 var(--s-3)">Zoning</p>
+        <p class="zone"><span class="yes">✓</span> home · builder · thanks · care · faq · 404</p>
+        <p class="zone" style="margin:0"><span class="no">✕</span> weddings · pricing · checkout</p>
+        <p class="pv-note" style="margin-top:var(--s-3)">Personality where people play. Silence where people spend $400. The rule lives in one object in <code>brand.config.js</code>, so it is enforced, not remembered.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 03 COLOUR ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">03</span><h2 style="margin:0">Colour</h2></div>
+    <p class="pv-note">Pulled straight out of the hand-drawn button you liked — its ink, its highlighter yellow, its active blue, its shadow clay. The identity grew from the thing that was already right instead of from a stock palette.</p>
+
+    <div class="grid grid-4" style="margin-top:var(--s-5)">
+      <div class="sw"><div class="sw__chip" style="background:#1F1B18"></div><div class="sw__meta"><div class="sw__name">Ink</div><div class="sw__hex">#1F1B18</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#FBF7F0"></div><div class="sw__meta"><div class="sw__name">Paper</div><div class="sw__hex">#FBF7F0</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#F4EDE1"></div><div class="sw__meta"><div class="sw__name">Paper 2</div><div class="sw__hex">#F4EDE1</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#FFE100"></div><div class="sw__meta"><div class="sw__name">Marker</div><div class="sw__hex">#FFE100</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#FF5D8F"></div><div class="sw__meta"><div class="sw__name">Bloom</div><div class="sw__hex">#FF5D8F</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#1C98EB"></div><div class="sw__meta"><div class="sw__name">Blue</div><div class="sw__hex">#1C98EB</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#BC4E26"></div><div class="sw__meta"><div class="sw__name">Clay</div><div class="sw__hex">#BC4E26</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#3D8B5F"></div><div class="sw__meta"><div class="sw__name">Leaf</div><div class="sw__hex">#3D8B5F</div></div></div>
+    </div>
+  </section>
+
+  <!-- ============ 04 TYPE ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">04</span><h2 style="margin:0">Type</h2></div>
+    <p class="pv-note">The type is the serious adult in the room. Every bit of hand-made energy comes from the ink layer, never from a novelty font — that is what keeps this sellable to a wedding client and a Gen-Z walk-in at the same time.</p>
+
+    <div class="ink-card" style="margin-top:var(--s-5)">
+      <div class="type-row"><div class="type-meta">Instrument Serif · display · clamp 2.9→6rem</div><div class="display" style="margin:0">Peonies <em>in season</em></div></div>
+      <div class="type-row"><div class="type-meta">Instrument Serif · h1</div><h1 style="margin:0">Same-day in Woodbridge</h1></div>
+      <div class="type-row"><div class="type-meta">Instrument Serif · h2</div><h2 style="margin:0">Wrapped while you wait</h2></div>
+      <div class="type-row"><div class="type-meta">Plus Jakarta Sans · body 17px</div><p style="margin:0">Pick your stems, choose a wrap, add a note. We build it the same morning and hand-deliver across Northern Virginia — <span class="mark">order by 2pm for same-day</span>.</p></div>
+      <div class="type-row"><div class="type-meta">Courier Prime · hand · labels &amp; numbers</div><p class="hand" style="margin:0">Best seller · $148 · 12 stems · cutoff 2:00 pm</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 05 THE BUTTON ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">05</span><h2 style="margin:0">The button, rebuilt</h2></div>
+    <p class="pv-note">Same feel as the reference you sent. Four real defects removed. Hover it — the frame wobbles and the highlighter sweeps; the letters never move.</p>
+
+    <div class="ink-card row" style="margin-top:var(--s-5);gap:var(--s-4)">
+      <button class="btn-ink"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>Default</button>
+      <button class="btn-ink btn-ink--primary"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>Primary</button>
+      <button class="btn-ink btn-ink--marker"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>Marker</button>
+      <button class="btn-ink btn-ink--ghost"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>Ghost</button>
+      <button class="btn-ink btn-ink--sm"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>Small</button>
+    </div>
+
+    <div class="ink-frame fix" style="margin-top:var(--s-5)">
+      <p class="hand" style="margin:0 0 var(--s-2)">What changed</p>
+      <ul style="margin:0;padding-left:1.2rem">
+        <li><code>.highlight</code> was <code>position:absolute</code> with no positioned ancestor, so it anchored to the page instead of the button. The wrapper now sets <code>position:relative</code>.</li>
+        <li><code>numOctaves="8"</code> means eight layers of per-pixel Perlin noise, recomputed over the whole element. Capped at <strong>3</strong> — visually identical, a fraction of the cost.</li>
+        <li><code>animation:idle 1s infinite</code> forced the browser to re-rasterise that filter forever, on every button, even untouched. The filter now runs on <code>:hover</code> and <code>:focus-visible</code> only, and never on touch devices where it cannot fire at all.</li>
+        <li>The filter sat on the <em>text</em>, smearing the glyphs. It now sits on a frame layer behind the label, so the wobble is intact and the words stay sharp and readable.</li>
+        <li>Added: <code>prefers-reduced-motion</code> disables the whole thing, focus rings are visible, and every target clears 44 px.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 06 STICKERS ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">06</span><h2 style="margin:0">The ink pack</h2></div>
+    <p class="pv-note">Fourteen doodles, 12.9 KB for the whole sheet, all in <code>currentColor</code> so a season can recolour them with one CSS variable. They are generated by a seeded script from three primitives — petal, wobbly circle, bowed stem — which is why they share one hand, and why a completely new pack takes about a second to produce.</p>
+
+    <div class="grid grid-4" style="margin-top:var(--s-5);grid-template-columns:repeat(auto-fit,minmax(104px,1fr))">
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-rose"/></svg><span class="stick__n">rose</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-tulip"/></svg><span class="stick__n">tulip</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-daisy"/></svg><span class="stick__n">daisy</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-eucalyptus"/></svg><span class="stick__n">eucalyptus</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-babysbreath"/></svg><span class="stick__n">baby's breath</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-leaf"/></svg><span class="stick__n">leaf</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-bouquet"/></svg><span class="stick__n">bouquet</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-ribbon"/></svg><span class="stick__n">ribbon</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-arrow"/></svg><span class="stick__n">arrow</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-star"/></svg><span class="stick__n">star</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-heart"/></svg><span class="stick__n">heart</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-sparkle"/></svg><span class="stick__n">sparkle</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-badge"/></svg><span class="stick__n">badge</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-tape"/></svg><span class="stick__n">tape</span></div>
+    </div>
+
+    <div class="row" style="margin-top:var(--s-5);gap:var(--s-5)">
+      <div class="stick" style="background:var(--paper-2)"><svg viewBox="0 0 48 48" style="color:var(--bloom)"><use href="#st-rose"/></svg><span class="stick__n">bloom</span></div>
+      <div class="stick" style="background:var(--paper-2)"><svg viewBox="0 0 48 48" style="color:var(--leaf)"><use href="#st-eucalyptus"/></svg><span class="stick__n">leaf</span></div>
+      <div class="stick" style="background:var(--paper-2)"><svg viewBox="0 0 48 48" style="color:var(--clay)"><use href="#st-star"/></svg><span class="stick__n">clay</span></div>
+      <div class="stick" style="background:var(--ink)"><svg viewBox="0 0 48 48" style="color:var(--paper)"><use href="#st-heart"/></svg><span class="stick__n" style="color:var(--paper)">on ink</span></div>
+      <p class="pv-note" style="margin:0;flex:1 1 220px">Same four files, four seasons. This is the whole recolouring mechanism.</p>
+    </div>
+  </section>
+
+  <!-- ============ 07 COMPONENTS ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">07</span><h2 style="margin:0">Ink components</h2></div>
+    <p class="pv-note">The hand-drawn feel is carried by irregular border radii — four different corner values on each axis. Zero runtime cost, works in every browser, survives print, and no image or filter is involved.</p>
+
+    <div class="grid grid-3" style="margin-top:var(--s-5);align-items:start">
+      <div class="ink-card">
+        <p class="badge">Best seller</p>
+        <h3 style="margin:var(--s-3) 0 .3rem">Ramo #9</h3>
+        <p class="small muted" style="margin:0">Sunflower · 12 stems</p>
+        <p class="hand" style="margin-top:var(--s-3)">from $148</p>
+      </div>
+
+      <div class="paper" style="position:relative;padding:var(--s-6) var(--s-5);text-align:center">
+        <span class="tape tape--tl"></span><span class="tape tape--tr"></span>
+        <span class="tape tape--bl"></span><span class="tape tape--br"></span>
+        <svg viewBox="0 0 48 48" style="width:56px;height:56px;margin:0 auto"><use href="#st-bouquet"/></svg>
+        <p class="hand" style="margin:var(--s-3) 0 0">The builder stage</p>
+      </div>
+
+      <div class="pv-tile">
+        <div class="ticket">
+          <div class="ticket__label">Your bouquet</div>
+          <div class="ticket__amount">$164</div>
+          <div class="ticket__label">+ $12 delivery</div>
+        </div>
+        <span class="pv-cap">torn price ticket</span>
+      </div>
+    </div>
+
+    <hr class="ink-rule">
+
+    <div class="row" style="gap:var(--s-6)">
+      <div class="stamp">Valentine's<br>2026</div>
+      <div class="stamp" style="border-color:var(--leaf);color:var(--leaf);transform:rotate(7deg)">Spring<br>drop</div>
+      <span class="badge badge--bloom">Same day</span>
+      <span class="badge badge--leaf">In season</span>
+      <span class="badge badge--paper">Local</span>
+      <p class="pv-note" style="margin:0;flex:1 1 240px"><code>seasons.js</code> drops one stamp in the page corner and swaps the sticker set. Nothing else on the page changes.</p>
+    </div>
+  </section>
+
+  <footer class="pv-sec" style="padding-bottom:var(--s-9)">
+    <p class="kicker" style="margin:0">End of sheet · Phase 0</p>
+    <p class="pv-note" style="margin-top:var(--s-2)">Next: the Builder.</p>
+  </footer>
+
+</main>
+</body>
+</html>
