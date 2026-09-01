@@ -176,7 +176,7 @@
         { title: 'Create your bouquet', sub: 'Every stem is priced on the card — build it exactly how you feel.', bar: '🌸 Drag any bloom to arrange it · double-tap a bloom to remove it', next: 'Wrap it →' },
         { title: 'Choose the wrap',     sub: 'Your bouquet is gathered — pick the paper that matches the mood.', bar: '🧻 Blooms are locked while wrapped — press Back to rearrange', next: 'Add ribbon →' },
         { title: 'Tie the ribbon',      sub: 'The finishing touch. Pick a color that says it for you.',          bar: '🎀 Almost there — one bow to go', next: 'Gift note →' },
-        { title: 'Send the request',    sub: 'Name, phone, area. We check the cooler before anyone pays.',       bar: '💌 Send the recipe — deposit comes after we say yes', next: '' }
+        { title: 'Place your order',     sub: 'Fill in your details — the florist will call you to confirm.',             bar: '💌 Almost done — tell us how to reach you', next: '' }
       ],
       buSteps: {
         1: 'Pick the shape, the size, and who owns each ring.',
@@ -192,14 +192,14 @@
       lblPaper: 'Choose your paper',
       lblRibbon: 'Tie the ribbon',
       lblNote: 'Gift note',
-      lblHintNote: 'You are not charged here. The florist confirms stems, then asks for a deposit.'
+      lblHintNote: 'Your order goes straight to the florist — they will call you to confirm everything.'
     },
     es: {
       steps: [
         { title: 'Diseña tu ramo',      sub: 'Cada flor tiene su precio — crea tu arreglo exactamente como lo imaginas.', bar: '🌸 Arrastra cualquier flor para acomodarla · doble toque para quitarla', next: 'Envolver →' },
         { title: 'Elige el papel',      sub: 'Tu ramo está listo — escoge el papel que combine con la ocasión.',            bar: '🧻 Las flores quedan fijas envueltas — pulsa Atrás para moverlas', next: 'Poner lazo →' },
         { title: 'Ata el lazo',         sub: 'El toque final. Elige el color del lazo de satén o terciopelo.',             bar: '🎀 Casi listo — solo falta el lazo', next: 'Dedicatoria →' },
-        { title: 'Enviar solicitud',    sub: 'Nombre, teléfono y zona. Revisamos el cooler antes de cobrar.',               bar: '💌 Envía la receta — el depósito es después', next: '' }
+        { title: 'Realiza tu pedido',   sub: 'Llena tus datos — la florista te llamará para confirmar.',                      bar: '💌 Casi listo — dínos cómo contactarte', next: '' }
       ],
       buSteps: {
         1: 'Elige la forma, el tamaño y los colores de cada anillo.',
@@ -215,7 +215,7 @@
       lblPaper: 'Elige tu papel',
       lblRibbon: 'Ata el lazo',
       lblNote: 'Tarjeta de regalo',
-      lblHintNote: 'Aquí no se cobra. La florista confirma las flores y luego pide el depósito.'
+      lblHintNote: 'Tu pedido llega a la florista — te llamará para confirmar todo.'
     }
   };
 
@@ -857,7 +857,8 @@
       }).join('') + '<div class="sumtotal"><span>Total</span><b>$' + total() + '</b></div>';
 
       var ord = document.getElementById('order');
-      ord.classList.remove('disabled');
+      var ordDM = document.getElementById('orderDM');
+      ord && ord.removeAttribute('disabled');
       var msg = 'Hi ' + SHOP.name + '! My Ramo Buchón: ' + shapeName + ' shape, ' + pts.length + ' blooms (' + PATN[window.state.bu.pattern] + (window.state.bu.wall2 && window.state.bu.pattern === 'zones' ? ', double wall' : '') + ') — ' + Object.keys(tally).map(function (id) { return tally[id] + '× ' + (BYID[id] ? BYID[id].label : id); }).join(', ') + ', center: ' + (BYID[window.state.bu.center] ? BYID[window.state.bu.center].label : 'Center') + '. Wrap: ' + curWrap().label + '.';
       if (window.state.bu.greens) msg += ' With greenery collar.';
       if (rib.c) msg += ' Ribbon: ' + rib.label + '.';
@@ -866,7 +867,7 @@
       if (window.state.bu.sash) msg += ' Printed message sash: "' + SASH_TXT[window.state.bu.sash] + '" (+$10).';
       if (window.state.noteOn) msg += ' Printed gift card (+$' + NOTE_PRICE + ')' + (window.state.note.trim() ? ': "' + window.state.note.trim() + '"' : '') + '.';
       msg += ' Total ~$' + total() + '. Is it available for delivery?';
-      ord.href = 'https://wa.me/' + SHOP.whatsapp + '?text=' + encodeURIComponent(msg);
+      if (ordDM) { ordDM.href = 'https://wa.me/' + SHOP.whatsapp + '?text=' + encodeURIComponent(msg); }
       return;
     }
 
@@ -884,16 +885,17 @@
     }).join('') + '<div class="sumtotal"><span>Total</span><b>$' + total() + '</b></div>';
 
     var ord = document.getElementById('order');
+    var ordDM = document.getElementById('orderDM');
     if (window.state.stems.length) {
-      ord.classList.remove('disabled');
+      ord && ord.removeAttribute('disabled');
       var msg = "Hi " + SHOP.name + "! My custom " + window.state.size + " bouquet: " + lines.join(', ') + '. Wrap: ' + curWrap().label + '.';
       if (rib.c) msg += ' Ribbon: ' + rib.label + '.';
       if (window.state.noteOn) msg += ' Printed gift card (+$' + NOTE_PRICE + ')' + (window.state.note.trim() ? ': "' + window.state.note.trim() + '"' : '') + '.';
       msg += ' Total ~$' + total() + '. Is it available for delivery?';
-      ord.href = 'https://wa.me/' + SHOP.whatsapp + '?text=' + encodeURIComponent(msg);
+      if (ordDM) { ordDM.href = 'https://wa.me/' + SHOP.whatsapp + '?text=' + encodeURIComponent(msg); }
     } else {
-      ord.classList.add('disabled');
-      ord.removeAttribute('href');
+      ord && ord.setAttribute('disabled', '');
+      if (ordDM) { ordDM.href = '#'; ordDM.style.opacity = '.5'; ordDM.style.pointerEvents = 'none'; }
     }
   }
 
@@ -1833,8 +1835,7 @@
     var box = document.getElementById('reqSuccess');
     if (box) {
       box.classList.add('show');
-      box.innerHTML = '<b>' + order.id + ' is on the cooler desk.</b> Nobody charged you. The florist checks stems, then asks for ' +
-        '$' + order.quote.deposit + ' to lock ' + order.customer.date + '. <br><a href="admin.html">Open florist desk →</a>';
+      box.innerHTML = '<b>✅ Order ' + order.id + ' received!</b><br>The florist will call <strong>' + order.customer.phone + '</strong> to confirm your bouquet and arrange delivery.';
     }
     toast('Request ' + order.id + ' sent');
   };

@@ -170,7 +170,7 @@
 
     <!-- STEP 4: NOTE & REQUEST -->
     <section class="step-panel" data-step="4">
-      <p class="req-hint" id="reqHint">No payment yet. Send the recipe to the florist. They check the cooler. If they can make it, they ask for a 50% Zelle.</p>
+      <p class="req-hint" id="reqHint">Fill in your details — the florist will call you to confirm stems, delivery time, and address.</p>
       <div class="label" id="lblNote">Gift note <span class="ap">printed card · optional</span></div>
       <div class="notepick" id="notePick">
         <button type="button" id="noteOff" onclick="setNoteOn(false)">No card<span>free</span></button>
@@ -198,11 +198,12 @@
           </label>
         </div>
       </div>
-      <button type="button" class="btn btn-accent order" id="order" onclick="submitRequest()">Send request to florist</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <a id="orderDM" class="btn btn-whatsapp" href="#" target="_blank" rel="noopener" style="text-align:center;display:flex;align-items:center;justify-content:center;min-height:50px;text-decoration:none">💬 Order via DM</a>
+        <button type="button" class="btn btn-accent" id="order" onclick="submitRequest()" style="min-height:50px">🛍&#xFE0F; Order Now</button>
+      </div>
       <div class="req-success" id="reqSuccess"></div>
       <button class="btn btn-ghost" type="button" style="width:100%;margin-top:8px" onclick="saveImg()">📸 Save &amp; share my bouquet</button>
-      <p class="hintnote" id="lblHintNote">You are not charged here. The florist confirms stems, then asks for a deposit.</p>
-      <p style="margin:10px 0 0;font-size:12px"><a href="admin.html">Open the florist desk →</a></p>
     </section>
 
     <!-- STEP NAVIGATION -->

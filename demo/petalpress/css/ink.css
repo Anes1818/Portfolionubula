@@ -35,6 +35,33 @@
   .nav__links{ display:none; }
   .nav__inner{ justify-content:space-between; }
 }
+/* ===== Hamburger toggle (mobile nav) ===== */
+.nav__toggle{
+  display:none; flex-direction:column; justify-content:center; gap:5px;
+  width:40px; height:40px; border:1.6px solid var(--ink-20); border-radius:var(--r-md);
+  background:var(--white); cursor:pointer; padding:8px; flex:none;
+  transition:border-color var(--ease);
+}
+.nav__toggle:hover{ border-color:var(--ink); }
+.nav__toggle span{
+  display:block; height:2px; background:var(--ink); border-radius:2px;
+  transition:transform .22s ease, opacity .22s ease;
+}
+.nav__toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.nav__toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.nav__toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+@media(max-width:900px){
+  .nav__toggle{ display:flex; }
+  body.nav-open #siteNav{
+    display:flex; flex-direction:column; align-items:flex-start;
+    position:absolute; top:100%; left:0; right:0; z-index:60;
+    background:rgba(251,247,240,.97); backdrop-filter:blur(16px);
+    border-bottom:1.6px solid var(--ink-14); padding:var(--s-5) var(--s-4);
+    gap:var(--s-4); box-shadow:0 12px 32px -14px rgba(31,27,24,.22);
+  }
+  #siteNav.nav--open .nav__link{ font-size:var(--fs-sm); }
+}
+
 
 /* ===== 2. Hero ============================================ */
 .hero{
@@ -782,6 +809,8 @@ body.step-4 #stage::before{ content:''; position:absolute; inset:0; pointer-even
 .wa-float svg{ width:18px; height:18px; fill:currentColor; flex:none; }
 @media(max-width:760px){
   .wa-float{ bottom:calc(74px + env(safe-area-inset-bottom)); right:12px; padding:8px 14px; font-size:11.5px; }
+  /* On the storefront (no fixed nav-row at bottom) use a normal clearance */
+  .page-index .wa-float{ bottom:calc(20px + env(safe-area-inset-bottom)); }
 }
 
 /* ===== Request ticket (builder step 4) + Cooler desk ===== */
@@ -862,3 +891,14 @@ body[data-page="admin"]{ background:var(--paper); }
   .admin-grid{ grid-template-columns:1fr; }
   .detail-meta{ grid-template-columns:1fr 1fr; }
 }
+
+/* ===== Checkout bottom-sheet modal ===== */
+@media(min-width:600px){
+  #checkoutModal{ align-items:center !important; padding:20px !important; }
+  #checkoutModal > div{
+    border-radius:20px !important;
+    border-bottom-left-radius:20px !important;
+    border-bottom-right-radius:20px !important;
+  }
+}
+

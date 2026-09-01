@@ -59,7 +59,7 @@
 
 <!-- Top Announcement Ribbon -->
 <div class="annc">
-  <span>🌸 Order by 2pm for same-day delivery across Northern Virginia &amp; D.C. · 💬 Call / Text <a href="https://wa.me/15713367129" style="color:inherit;text-decoration:underline;font-weight:700">(571) 336-7129</a></span>
+  <span>🌸 Order by 2pm for same-day delivery across Northern Virginia &amp; D.C. · 💬 Call / Text <a data-wa href="#" style="color:inherit;text-decoration:underline;font-weight:700"><span data-brand="phone">(571) 336-7129</span></a></span>
 </div>
 
 <!-- Main Navigation -->
@@ -69,7 +69,7 @@
       <svg class="nav__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
       <span class="nav__name">Petal Press</span>
     </a>
-    <nav class="nav__links">
+    <nav class="nav__links" id="siteNav">
       <a class="nav__link" href="#bouquets">Signature Bouquets</a>
       <a class="nav__link" href="builder.html">Custom Studio</a>
       <a class="nav__link" href="#craft">Craftsmanship</a>
@@ -82,6 +82,9 @@
         <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>
         Build a Bouquet
       </a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </header>
@@ -101,17 +104,17 @@
         <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>
         Build Your Bouquet
       </a>
-      <a class="btn-ink btn-ink--lg" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20a%20fresh%20bouquet%20today." target="_blank" rel="noopener">
+      <a class="btn-ink btn-ink--lg" data-wa href="#" target="_blank" rel="noopener">
         <span class="btn-ink__frame" aria-hidden="true"></span>
         <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>
-        WhatsApp
+        💬 Order via DM
       </a>
     </div>
 
     <div class="hero__stats">
       <span class="stat"><span class="stat__n">2:00 PM</span><span class="stat__l">same-day cutoff</span></span>
       <span class="stat"><span class="stat__n">6 Cities</span><span class="stat__l">NoVA &amp; D.C. covered</span></span>
-      <span class="stat"><span class="stat__n">$150+</span><span class="stat__l">free delivery</span></span>
+      <span class="stat"><span class="stat__n">$150+</span><span class="stat__l">orders above $150</span></span>
     </div>
   </div>
 
@@ -214,12 +217,12 @@
       </div>
       <p class="bq__meta">Sunflowers, red roses &amp; fragrant eucalyptus · Kraft wrap</p>
       <div class="row" style="gap:var(--s-2);margin-top:var(--s-2)">
-        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="builder.html#stems=sunflower:3,rose_red:6,eucalyptus:3&w=kraft&r=blush" style="flex:1;text-align:center">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Customize
+        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Coraz%C3%B3n%20de%20Sol%20bouquet%20(%24120).%20Is%20it%20available%20today%3F" target="_blank" rel="noopener" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>💬 Order via DM
         </a>
-        <a class="btn-ink btn-ink--marker btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Coraz%C3%B3n%20de%20Sol%20bouquet%20(%24120).%20Is%20it%20available%20today%3F" target="_blank" rel="noopener">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Order
-        </a>
+        <button type="button" class="btn-ink btn-ink--marker btn-ink--sm" onclick="openCheckout('Corazón de Sol', 120)" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>🛍️ Order Now
+        </button>
       </div>
     </article>
 
@@ -235,12 +238,12 @@
       </div>
       <p class="bq__meta">Soft pink roses, tulips &amp; limonium · Rustic burlap wrap</p>
       <div class="row" style="gap:var(--s-2);margin-top:var(--s-2)">
-        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="builder.html#stems=rose_pink:4,tulip_pink:3,limonium:3&w=burlap&r=blush" style="flex:1;text-align:center">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Customize
+        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Pastel%20Silvestre%20bouquet%20(%2485)." target="_blank" rel="noopener" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>💬 Order via DM
         </a>
-        <a class="btn-ink btn-ink--marker btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Pastel%20Silvestre%20bouquet%20(%2485)." target="_blank" rel="noopener">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Order
-        </a>
+        <button type="button" class="btn-ink btn-ink--marker btn-ink--sm" onclick="openCheckout('Pastel Silvestre', 85)" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>🛍️ Order Now
+        </button>
       </div>
     </article>
 
@@ -256,12 +259,12 @@
       </div>
       <p class="bq__meta">12 preserved velvet red roses · Vintage Journal wrap</p>
       <div class="row" style="gap:var(--s-2);margin-top:var(--s-2)">
-        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="builder.html#stems=rose_red:12,babys_breath:4&w=journal&r=burgundy" style="flex:1;text-align:center">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Customize
+        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Ramos%20Eternos%20(%24145)." target="_blank" rel="noopener" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>💬 Order via DM
         </a>
-        <a class="btn-ink btn-ink--marker btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Ramos%20Eternos%20(%24145)." target="_blank" rel="noopener">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Order
-        </a>
+        <button type="button" class="btn-ink btn-ink--marker btn-ink--sm" onclick="openCheckout('Ramos Eternos', 145)" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>🛍️ Order Now
+        </button>
       </div>
     </article>
 
@@ -277,12 +280,12 @@
       </div>
       <p class="bq__meta">Orange roses, tulips &amp; gerberas · Sage green ribbon</p>
       <div class="row" style="gap:var(--s-2);margin-top:var(--s-2)">
-        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="builder.html#stems=rose_orange:4,tulip_orange:4,gerbera_daisy:2,eucalyptus:3&w=kraft&r=sage" style="flex:1;text-align:center">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Customize
+        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Flores%20de%20Ensue%C3%B1o%20bouquet%20(%2495)." target="_blank" rel="noopener" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>💬 Order via DM
         </a>
-        <a class="btn-ink btn-ink--marker btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Flores%20de%20Ensue%C3%B1o%20bouquet%20(%2495)." target="_blank" rel="noopener">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Order
-        </a>
+        <button type="button" class="btn-ink btn-ink--marker btn-ink--sm" onclick="openCheckout('Flores de Ensueño', 95)" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>🛍️ Order Now
+        </button>
       </div>
     </article>
 
@@ -298,12 +301,12 @@
       </div>
       <p class="bq__meta">Oriental lilies, white roses &amp; baby's breath</p>
       <div class="row" style="gap:var(--s-2);margin-top:var(--s-2)">
-        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="builder.html#stems=lily:3,rose_white:5,babys_breath:4&w=kraft&r=blush" style="flex:1;text-align:center">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Customize
+        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Pureza%20Blanca%20bouquet%20(%24110)." target="_blank" rel="noopener" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>💬 Order via DM
         </a>
-        <a class="btn-ink btn-ink--marker btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Pureza%20Blanca%20bouquet%20(%24110)." target="_blank" rel="noopener">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Order
-        </a>
+        <button type="button" class="btn-ink btn-ink--marker btn-ink--sm" onclick="openCheckout('Pureza Blanca', 110)" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>🛍️ Order Now
+        </button>
       </div>
     </article>
 
@@ -319,12 +322,12 @@
       </div>
       <p class="bq__meta">12 premium velvet roses, eucalyptus &amp; burgundy velvet ribbon</p>
       <div class="row" style="gap:var(--s-2);margin-top:var(--s-2)">
-        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="builder.html#stems=rose_red:12,eucalyptus:4&w=kraft&r=burgundy" style="flex:1;text-align:center">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Customize
+        <a class="btn-ink btn-ink--ghost btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Pasi%C3%B3n%20Carmes%C3%AD%20bouquet%20(%24135)." target="_blank" rel="noopener" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>💬 Order via DM
         </a>
-        <a class="btn-ink btn-ink--marker btn-ink--sm" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I%20would%20like%20to%20order%20the%20Pasi%C3%B3n%20Carmes%C3%AD%20bouquet%20(%24135)." target="_blank" rel="noopener">
-          <span class="btn-ink__frame" aria-hidden="true"></span>Order
-        </a>
+        <button type="button" class="btn-ink btn-ink--marker btn-ink--sm" onclick="openCheckout('Pasión Carmesí', 135)" style="flex:1;text-align:center">
+          <span class="btn-ink__frame" aria-hidden="true"></span>🛍️ Order Now
+        </button>
       </div>
     </article>
   </div>
@@ -479,9 +482,9 @@
 </footer>
 
 <!-- Sticky Floating WhatsApp Lead Capture Widget -->
-<a class="wa-float" href="https://wa.me/15713367129?text=Hi%20Petal%20Press!%20I'd%20like%20to%20inquire%20about%20a%20bouquet." target="_blank" rel="noopener" aria-label="Chat with a Florist on WhatsApp">
+<a class="wa-float" data-wa href="#" target="_blank" rel="noopener" aria-label="Chat with a Florist on WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.79 14.15c-.24.67-1.39 1.28-1.92 1.36-.51.08-1.17.11-3.37-.8-2.62-1.09-4.3-3.77-4.43-3.95-.13-.17-1.06-1.41-1.06-2.69 0-1.28.67-1.91.91-2.17.24-.26.52-.33.7-.33.17 0 .35.01.5.01.16 0 .38-.06.59.45.22.53.76 1.85.83 1.99.07.14.11.31.02.49-.09.18-.14.29-.28.45-.14.16-.29.35-.42.47-.14.13-.28.28-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.61-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.66.78 1.95.92.29.14.48.21.55.33.07.12.07.7-.17 1.37z"/></svg>
-  <span>Chat with Florist · (571) 336-7129</span>
+  <span>Chat with Florist · <span data-brand="phone">(571) 336-7129</span></span>
 </a>
 
 <script src="brand.config.js"></script>
@@ -500,6 +503,103 @@ function filterCatalog(category, btn) {
     }
   });
 }
+</script>
+
+<!-- ===== CHECKOUT MODAL ===== -->
+<div id="checkoutModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(31,27,24,.68);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);align-items:flex-end;justify-content:center;padding:0" role="dialog" aria-modal="true" aria-labelledby="ckoTitle">
+  <div id="ckoSheet" style="background:var(--paper);border:2px solid var(--ink);border-top-left-radius:24px;border-top-right-radius:24px;padding:10px 24px 36px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 -24px 64px -16px rgba(31,27,24,.38);position:relative">
+    <button onclick="closeCheckout()" aria-label="Close" style="position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1.4px solid var(--ink-20);background:var(--paper-2);font-size:18px;cursor:pointer;color:var(--ink);line-height:1">×</button>
+    <div style="width:40px;height:4px;border-radius:4px;background:var(--ink-20);margin:0 auto 16px"></div>
+    <p style="margin:0 0 2px;font-family:var(--font-hand);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--rose);font-weight:700">Ready to order</p>
+    <h2 id="ckoTitle" style="margin:0 0 2px;font-family:var(--font-display);font-size:1.75rem;line-height:1.1"></h2>
+    <p id="ckoPrice" style="margin:0 0 18px;font-family:var(--font-hand);font-size:1.15rem;font-weight:800;color:var(--ink-55)"></p>
+    <div style="display:grid;gap:10px;margin-bottom:16px">
+      <label style="display:grid;gap:5px;font-family:var(--font-hand);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-55)">Your name<input id="ckoName" type="text" autocomplete="name" placeholder="Sofia Garcia" style="font-size:16px;border:1.6px solid var(--ink-14);border-radius:12px;padding:11px 14px;background:var(--white);color:var(--ink)"></label>
+      <label style="display:grid;gap:5px;font-family:var(--font-hand);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-55)">Phone / WhatsApp<input id="ckoPhone" type="tel" autocomplete="tel" placeholder="(571) 555-0144" style="font-size:16px;border:1.6px solid var(--ink-14);border-radius:12px;padding:11px 14px;background:var(--white);color:var(--ink)"></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <label style="display:grid;gap:5px;font-family:var(--font-hand);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-55)">Needed by<input id="ckoDate" type="date" style="font-size:15px;border:1.6px solid var(--ink-14);border-radius:12px;padding:10px 10px;background:var(--white);color:var(--ink)"></label>
+        <label style="display:grid;gap:5px;font-family:var(--font-hand);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-55)">How<select id="ckoMethod" style="font-size:15px;border:1.6px solid var(--ink-14);border-radius:12px;padding:10px 10px;background:var(--white);color:var(--ink)"><option value="delivery">Delivery</option><option value="pickup">Pickup</option></select></label>
+      </div>
+    </div>
+    <div id="ckoSuccess" style="display:none;margin-bottom:14px;padding:16px;border:1.6px solid var(--ink);border-radius:14px;background:var(--paper-2);font-family:var(--font-hand);font-size:14px;line-height:1.6;text-align:center"></div>
+    <div id="ckoBtns" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="checkoutDM()" class="btn-ink btn-ink--ghost btn-ink--lg" style="width:100%;justify-content:center;min-height:52px;display:flex;align-items:center;gap:6px">
+        <span class="btn-ink__frame" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.79 14.15c-.24.67-1.39 1.28-1.92 1.36-.51.08-1.17.11-3.37-.8-2.62-1.09-4.3-3.77-4.43-3.95-.13-.17-1.06-1.41-1.06-2.69 0-1.28.67-1.91.91-2.17.24-.26.52-.33.7-.33.17 0 .35.01.5.01.16 0 .38-.06.59.45.22.53.76 1.85.83 1.99.07.14.11.31.02.49-.09.18-.14.29-.28.45-.14.16-.29.35-.42.47-.14.13-.28.28-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.61-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.66.78 1.95.92.29.14.48.21.55.33.07.12.07.7-.17 1.37z"/></svg>
+        Order via DM
+      </button>
+      <button onclick="checkoutSubmit()" class="btn-ink btn-ink--primary btn-ink--lg" style="width:100%;justify-content:center;min-height:52px">
+        <span class="btn-ink__frame" aria-hidden="true"></span>
+        🛍️ Confirm Order
+      </button>
+    </div>
+    <p style="margin:12px 0 0;font-size:12px;color:var(--ink-55);text-align:center;line-height:1.5">The florist will call you to confirm availability and delivery details.</p>
+  </div>
+</div>
+<script>
+(function(){
+  var _c={name:'',price:0};
+  window.openCheckout=function(name,price){
+    _c.name=name;_c.price=price;
+    document.getElementById('ckoTitle').textContent=name;
+    document.getElementById('ckoPrice').textContent='$'+price;
+    document.getElementById('ckoSuccess').style.display='none';
+    document.getElementById('ckoBtns').style.display='grid';
+    var d=new Date();d.setDate(d.getDate()+1);
+    document.getElementById('ckoDate').value=d.toISOString().slice(0,10);
+    var m=document.getElementById('checkoutModal');
+    m.style.display='flex';
+    document.body.style.overflow='hidden';
+    setTimeout(function(){document.getElementById('ckoName').focus();},80);
+  };
+  window.closeCheckout=function(){
+    document.getElementById('checkoutModal').style.display='none';
+    document.body.style.overflow='';
+  };
+  window.checkoutDM=function(){
+    var name=(document.getElementById('ckoName').value||'').trim();
+    var date=(document.getElementById('ckoDate').value||'').trim();
+    var msg='Hi! I’d like to order the '+_c.name+' ($'+_c.price+')';
+    if(name) msg+='. Name: '+name;
+    if(date) msg+='. Needed by: '+date;
+    msg+='. Please confirm availability. Thank you!';
+    var waEl=document.querySelector('[data-wa][href^="https://wa.me"]');
+    var num=waEl?waEl.href.match(/wa\.me\/(\d+)/)[1]:'15713367129';
+    window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
+  };
+  window.checkoutSubmit=function(){
+    var name=(document.getElementById('ckoName').value||'').trim();
+    var phone=(document.getElementById('ckoPhone').value||'').trim();
+    var date=(document.getElementById('ckoDate').value||'').trim();
+    var method=document.getElementById('ckoMethod').value;
+    if(!name||!phone){
+      [['ckoName',name],['ckoPhone',phone]].forEach(function(p){
+        if(!p[1]){var el=document.getElementById(p[0]);el.style.borderColor='var(--rose)';el.focus();}
+      });return;
+    }
+    document.getElementById('ckoBtns').style.display='none';
+    var suc=document.getElementById('ckoSuccess');
+    suc.style.display='block';
+    var ds=date?new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):'';
+    suc.innerHTML='✅ <b>Order received!</b><br>The florist will call <strong>'+phone+'</strong> to confirm your <em>'+_c.name+'</em>'+(ds?' for '+ds:'')+'. <small style="color:var(--ink-55)">('+( method==='pickup'?'Pickup':'Delivery')+')</small>';
+  };
+  document.getElementById('checkoutModal').addEventListener('click',function(e){if(e.target===this)closeCheckout();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCheckout();});
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('siteNav');
+  if (nav) {
+    nav.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        document.body.classList.remove('nav-open');
+        var t = document.querySelector('.nav__toggle');
+        if (t) { t.setAttribute('aria-expanded', 'false'); t.setAttribute('aria-label', 'Open menu'); }
+      });
+    });
+  }
+});
 </script>
 </body>
 </html>
