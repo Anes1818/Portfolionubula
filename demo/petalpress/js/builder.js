@@ -487,6 +487,11 @@
 
       var img = document.createElement('img');
       img.className = 'flower' + (st.fresh ? ' pop' : '');
+      if (st.fresh) img.style.opacity = '0'; // hidden until composited
+      // schedule reveal after browser has applied inline transform
+      if (st.fresh) {
+        (function(el){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.style.opacity = ''; }); }); })(img);
+      }
       img.src = assetUrl(c.file);
       img.alt = c.label;
       img.dataset.idx = window.state.stems.indexOf(st);
@@ -1100,7 +1105,7 @@
 
   function swatchHtml(zone, ids, cur) {
     return ids.map(function (id) {
-      return '<button type="button" data-f="' + id + '" title="' + BYID[id].label + '"' +
+      return '<button type="button" data-f="' + id + '" data-hue="' + (BYID[id].hue || '') + '" title="' + BYID[id].label + '"' +
         ' style="background-image:url(' + assetUrl(HEAD_IMG[id] || BYID[id].file) + ');background-size:' + (HEAD_IMG[id] ? 'cover' : '290%') + ';background-position:50% ' + (HEAD_IMG[id] ? '50%' : '6%') + '"' + (id === cur ? ' class="on"' : '') +
         ' onclick="setBuZone(\'' + zone + '\',\'' + id + '\')"></button>';
     }).join('');

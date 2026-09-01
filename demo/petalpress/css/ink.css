@@ -266,7 +266,7 @@
 #flowerLayer .flower{ position:absolute; cursor:grab; touch-action:none; pointer-events:auto; }
 #stage.locked #flowerLayer .flower{ pointer-events:none; cursor:default; }
 #flowerLayer .flower.pop{ animation:pop .4s ease; }
-@keyframes pop{ from{ opacity:0; transform:translate(0,8px); } to{ opacity:1; transform:translate(0,0); } }
+@keyframes pop{ from{ opacity:0; } to{ opacity:1; } }
 #flowerLayer .flower.drag{ cursor:grabbing; }
 #flowerLayer .flower.missing{ opacity:.45; border:1px dashed var(--ink-30); border-radius:8px; background:var(--paper-2); }
 .hint{
@@ -471,6 +471,11 @@ body.step-4 .navrow{ border-top:none; padding-top:0; }
 .buSizes button small{ font-size:10px; opacity:.55; font-weight:600; }
 .buSizes button.on{ border-color:var(--ink); background:var(--marker); }
 .swatches{ display:flex; gap:9px; flex-wrap:wrap; margin-bottom:6px; }
+
+/* White flower swatches — add warm tint so they show against paper bg */
+.swatches button[data-hue="white"]{
+  background-color: #e8ddd7 !important;
+}
 .swatches button{
   width:42px; height:42px; border-radius:50%; border:2px solid var(--ink-14);
   cursor:pointer; background-size:290%; background-position:50% 6%;
@@ -585,7 +590,12 @@ body.step-4 #stage::before{ content:''; position:absolute; inset:0; pointer-even
   .tpls,.buSizes{ flex-wrap:nowrap; overflow-x:auto; padding-bottom:3px; scroll-snap-type:x mandatory; }
   .tpls button,.buSizes button{ flex:0 0 31%; min-width:96px; min-height:52px; scroll-snap-align:start; }
   .swatches{ gap:12px; }
-  .swatches button{ width:46px; height:46px; }
+  
+/* White flower swatches — add warm tint so they show against paper bg */
+.swatches button[data-hue="white"]{
+  background-color: #e8ddd7 !important;
+}
+.swatches button{ width:46px; height:46px; }
   .wrapstyles,.ribbons{ gap:7px; }
   .wrapstyles button{ height:100px; }
   .ribbons button{ min-height:82px; padding:10px 2px 7px; }
@@ -810,7 +820,7 @@ body.step-4 #stage::before{ content:''; position:absolute; inset:0; pointer-even
 @media(max-width:760px){
   .wa-float{ bottom:calc(74px + env(safe-area-inset-bottom)); right:12px; padding:8px 14px; font-size:11.5px; }
   /* On the storefront (no fixed nav-row at bottom) use a normal clearance */
-  .page-index .wa-float{ bottom:calc(20px + env(safe-area-inset-bottom)); }
+  .page-index .wa-float{ bottom:calc(10px + env(safe-area-inset-bottom)); }
 }
 
 /* ===== Request ticket (builder step 4) + Cooler desk ===== */
@@ -902,3 +912,7 @@ body[data-page="admin"]{ background:var(--paper); }
   }
 }
 
+
+/* Ribbon swatch cards — colored background tint per ribbon color */
+.ribbons button{ background-color: var(--paper-2); }
+.ribbons button.realbow::before{ filter: drop-shadow(0 2px 5px rgba(31,27,24,.18)); }
