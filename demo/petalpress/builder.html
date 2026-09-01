@@ -68,7 +68,7 @@
     <li data-n="1" class="on"><i>1</i><span>Flowers</span></li>
     <li data-n="2"><i>2</i><span>Wrap</span></li>
     <li data-n="3"><i>3</i><span>Ribbon</span></li>
-    <li data-n="4"><i>4</i><span>Note</span></li>
+    <li data-n="4"><i>4</i><span>Send</span></li>
   </ol>
   <div class="row" style="gap:10px;align-items:center">
     <div class="lang-switch" id="langSwitch" aria-label="Language selector">
@@ -168,8 +168,9 @@
       <p class="tipnote" id="ribbonTip">🎀 Included with every bouquet. One little bow changes everything.</p>
     </section>
 
-    <!-- STEP 4: NOTE & REVIEW -->
+    <!-- STEP 4: NOTE & REQUEST -->
     <section class="step-panel" data-step="4">
+      <p class="req-hint" id="reqHint">No payment yet. Send the recipe to the florist. They check the cooler. If they can make it, they ask for a 50% Zelle.</p>
       <div class="label" id="lblNote">Gift note <span class="ap">printed card · optional</span></div>
       <div class="notepick" id="notePick">
         <button type="button" id="noteOff" onclick="setNoteOn(false)">No card<span>free</span></button>
@@ -180,9 +181,28 @@
         <p class="charcount"><span id="charCt">0</span>/140</p>
       </div>
       <div class="summary" id="summary"></div>
-      <a class="btn btn-whatsapp order disabled" id="order" target="_blank" rel="noopener">Order on WhatsApp 💬</a>
+      <div class="label" style="margin-top:16px">Your request</div>
+      <div class="req-form" id="reqForm">
+        <label>Your name<input id="reqName" type="text" autocomplete="name" placeholder="Sofia Garcia"></label>
+        <div class="req-grid">
+          <label>Phone<input id="reqPhone" type="tel" autocomplete="tel" placeholder="(571) 555-0144"></label>
+          <label>City / area<input id="reqArea" type="text" placeholder="Arlington, VA"></label>
+        </div>
+        <div class="req-grid">
+          <label>Needed by<input id="reqDate" type="date"></label>
+          <label>How to get it
+            <div class="req-methods" id="reqMethods">
+              <button type="button" class="on" data-m="delivery" onclick="setReqMethod('delivery')">Delivery</button>
+              <button type="button" data-m="pickup" onclick="setReqMethod('pickup')">Pickup</button>
+            </div>
+          </label>
+        </div>
+      </div>
+      <button type="button" class="btn btn-accent order" id="order" onclick="submitRequest()">Send request to florist</button>
+      <div class="req-success" id="reqSuccess"></div>
       <button class="btn btn-ghost" type="button" style="width:100%;margin-top:8px" onclick="saveImg()">📸 Save &amp; share my bouquet</button>
-      <p class="hintnote" id="lblHintNote">No online payment needed — confirm bouquet &amp; delivery on WhatsApp. Pay on delivery or by card.</p>
+      <p class="hintnote" id="lblHintNote">You are not charged here. The florist confirms stems, then asks for a deposit.</p>
+      <p style="margin:10px 0 0;font-size:12px"><a href="admin.html">Open the florist desk →</a></p>
     </section>
 
     <!-- STEP NAVIGATION -->
@@ -204,6 +224,7 @@
 
 <script src="brand.config.js"></script>
 <script src="js/core.js"></script>
+<script src="js/orders.js"></script>
 <script src="js/builder.js"></script>
 </body>
 </html>

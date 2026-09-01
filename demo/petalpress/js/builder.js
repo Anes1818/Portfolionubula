@@ -176,7 +176,7 @@
         { title: 'Create your bouquet', sub: 'Every stem is priced on the card — build it exactly how you feel.', bar: '🌸 Drag any bloom to arrange it · double-tap a bloom to remove it', next: 'Wrap it →' },
         { title: 'Choose the wrap',     sub: 'Your bouquet is gathered — pick the paper that matches the mood.', bar: '🧻 Blooms are locked while wrapped — press Back to rearrange', next: 'Add ribbon →' },
         { title: 'Tie the ribbon',      sub: 'The finishing touch. Pick a color that says it for you.',          bar: '🎀 Almost there — one bow to go', next: 'Gift note →' },
-        { title: 'Add a gift note',     sub: 'Say it with words too. We print it on a little card.',             bar: '💌 Ready! Order it — or save the picture and share it', next: '' }
+        { title: 'Send the request',    sub: 'Name, phone, area. We check the cooler before anyone pays.',       bar: '💌 Send the recipe — deposit comes after we say yes', next: '' }
       ],
       buSteps: {
         1: 'Pick the shape, the size, and who owns each ring.',
@@ -192,14 +192,14 @@
       lblPaper: 'Choose your paper',
       lblRibbon: 'Tie the ribbon',
       lblNote: 'Gift note',
-      lblHintNote: 'No online payment needed — confirm bouquet & delivery on WhatsApp. Pay on delivery or by card.'
+      lblHintNote: 'You are not charged here. The florist confirms stems, then asks for a deposit.'
     },
     es: {
       steps: [
         { title: 'Diseña tu ramo',      sub: 'Cada flor tiene su precio — crea tu arreglo exactamente como lo imaginas.', bar: '🌸 Arrastra cualquier flor para acomodarla · doble toque para quitarla', next: 'Envolver →' },
         { title: 'Elige el papel',      sub: 'Tu ramo está listo — escoge el papel que combine con la ocasión.',            bar: '🧻 Las flores quedan fijas envueltas — pulsa Atrás para moverlas', next: 'Poner lazo →' },
         { title: 'Ata el lazo',         sub: 'El toque final. Elige el color del lazo de satén o terciopelo.',             bar: '🎀 Casi listo — solo falta el lazo', next: 'Dedicatoria →' },
-        { title: 'Dedicatoria y envío', sub: 'Añade una tarjeta impresa con tu mensaje personalizado.',                     bar: '💌 ¡Listo! Pídelo por WhatsApp o guarda la foto', next: '' }
+        { title: 'Enviar solicitud',    sub: 'Nombre, teléfono y zona. Revisamos el cooler antes de cobrar.',               bar: '💌 Envía la receta — el depósito es después', next: '' }
       ],
       buSteps: {
         1: 'Elige la forma, el tamaño y los colores de cada anillo.',
@@ -215,7 +215,7 @@
       lblPaper: 'Elige tu papel',
       lblRibbon: 'Ata el lazo',
       lblNote: 'Tarjeta de regalo',
-      lblHintNote: 'Sin pagos online — confirma tu ramo y entrega por WhatsApp. Pago contra entrega o tarjeta.'
+      lblHintNote: 'Aquí no se cobra. La florista confirma las flores y luego pide el depósito.'
     }
   };
 
@@ -1712,6 +1712,8 @@
       });
     }
 
+    var rd = document.getElementById('reqDate');
+    if (rd && !rd.value) rd.value = tomorrowISO();
     setWrapStyle(window.state.wrapStyle);
     setRibbon(window.state.ribbon);
     setNoteOn(window.state.noteOn);
@@ -1740,6 +1742,102 @@
       setStep(s >= 1 && s <= 4 ? s : 1);
     }
   }
+
+
+  /* ===== Request ticket (no payment yet) =================== */
+  var reqMethod = 'delivery';
+  window.setReqMethod = function (m) {
+    reqMethod = m === 'pickup' ? 'pickup' : 'delivery';
+    document.querySelectorAll('#reqMethods button').forEach(function (b) {
+      b.classList.toggle('on', b.dataset.m === reqMethod);
+    });
+  };
+  function tomorrowISO() {
+    var d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  }
+  function snapshotStems() {
+    var stems = [];
+    if (window.state.template === 'classic') {
+      CATALOG.forEach(function (c) {
+        var n = countOf(c.id);
+        if (n) stems.push({ id: c.id, label: c.label, count: n, file: c.file });
+      });
+      return stems;
+    }
+    var bu = window.state.bu;
+    function push(id, count) {
+      var c = BYID[id];
+      if (!c) return;
+      stems.push({ id: id, label: c.label, count: count, file: c.file });
+    }
+    push(bu.wall, 18);
+    if (bu.fill && bu.fill !== bu.wall) push(bu.fill, 10);
+    push(bu.center, 1);
+    if (bu.greens) push('eucalyptus', 4);
+    return stems;
+  }
+  function snapshotOrder(customer) {
+    var stems = snapshotStems();
+    var tot = total();
+    var dep = Math.round(tot * 0.5);
+    var recipe;
+    if (window.state.template === 'classic') {
+      recipe = window.state.size + ' · ' + stems.map(function (s) { return s.count + '× ' + s.label; }).join(', ') + ' · ' + curWrap().label + ' · ' + curRibbon().label;
+    } else {
+      recipe = (window.state.template === 'heart' ? 'Heart' : 'Round') + ' buchón · ' + stems.map(function (s) { return s.count + '× ' + s.label; }).join(', ') + ' · ' + curWrap().label;
+    }
+    return {
+      id: (window.PPOrders && PPOrders.nextId()) || 'PP-2411',
+      createdAt: Date.now(),
+      status: 'requested',
+      paid: false,
+      customer: customer,
+      quote: { total: tot, depositPct: 50, deposit: dep, balance: tot - dep },
+      bouquet: {
+        template: window.state.template,
+        size: window.state.template === 'classic' ? window.state.size : String(window.state.bu.rings),
+        wrap: window.state.wrapStyle,
+        wrapLabel: curWrap().label,
+        ribbon: window.state.ribbon,
+        ribbonLabel: curRibbon().label,
+        noteOn: window.state.noteOn,
+        note: window.state.note,
+        stems: stems,
+        bu: window.state.template === 'classic' ? null : JSON.parse(JSON.stringify(window.state.bu))
+      },
+      recipe: recipe
+    };
+  }
+  window.submitRequest = function () {
+    var name = (document.getElementById('reqName') || {}).value || '';
+    var phone = (document.getElementById('reqPhone') || {}).value || '';
+    var area = (document.getElementById('reqArea') || {}).value || '';
+    var dateEl = document.getElementById('reqDate');
+    var date = dateEl ? dateEl.value : '';
+    name = name.trim(); phone = phone.trim(); area = area.trim();
+    if (!name || !phone || !area || !date) {
+      toast(curLang === 'es' ? 'Nombre, teléfono, zona y fecha.' : 'Name, phone, area and date first.');
+      return;
+    }
+    if (window.state.template === 'classic' && !window.state.stems.length) {
+      toast(curLang === 'es' ? 'Añade flores primero.' : 'Add flowers first.');
+      return;
+    }
+    if (!window.PPOrders) { toast('Order desk missing'); return; }
+    var order = snapshotOrder({
+      name: name, phone: phone, area: area, method: reqMethod, date: date, card: window.state.note || ''
+    });
+    PPOrders.add(order);
+    var box = document.getElementById('reqSuccess');
+    if (box) {
+      box.classList.add('show');
+      box.innerHTML = '<b>' + order.id + ' is on the cooler desk.</b> Nobody charged you. The florist checks stems, then asks for ' +
+        '$' + order.quote.deposit + ' to lock ' + order.customer.date + '. <br><a href="admin.html">Open florist desk →</a>';
+    }
+    toast('Request ' + order.id + ' sent');
+  };
 
   init();
   window.addEventListener('resize', function () { render(); });
