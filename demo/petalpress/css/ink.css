@@ -47,10 +47,15 @@
 /* A taped-down sheet of graph paper. The bouquet lives inside it,
    which is the whole promise of the brand: it was drawn first. */
 .artpaper{
-  position:relative; aspect-ratio:5/6;
-  display:grid; place-items:center; padding:var(--s-5);
+  position:relative; aspect-ratio:4/5;
+  display:grid; place-items:stretch; padding:14px 14px 22px;
 }
 .artpaper svg{ width:94%; height:94%; }
+.hero__photo{
+  width:100%; height:100%; object-fit:cover; object-position:center 58%;
+  display:block; border:1.4px solid var(--ink-14); background:var(--white);
+}
+.hero__cta{ gap:var(--s-3); margin-top:var(--s-6); flex-wrap:wrap; }
 
 .hero__stats{ display:flex; gap:var(--s-6); flex-wrap:wrap; margin-top:var(--s-7); }
 .stat{ display:grid; gap:.15rem; }
@@ -60,9 +65,12 @@
   letter-spacing:.07em; text-transform:uppercase; color:var(--ink-55);
 }
 @media (max-width:900px){
-  .hero{ grid-template-columns:1fr; gap:var(--s-6); padding-block:var(--s-6); }
-  .hero__art{ order:-1; width:100%; max-width:420px; margin-inline:auto; }
-  .hero__stats{ gap:var(--s-5); margin-top:var(--s-6); }
+  .hero{ grid-template-columns:1fr; gap:var(--s-5); padding-block:var(--s-5) var(--s-6); }
+  .hero__art{ order:-1; width:100%; max-width:520px; margin-inline:auto; }
+  .hero__stats{ gap:var(--s-4); margin-top:var(--s-5); }
+  .hero__cta .btn-ink{ width:100%; justify-content:center; }
+  .artpaper{ aspect-ratio:5/6; padding:12px 12px 18px; }
+  .display{ font-size:clamp(2.1rem, 11vw, 3.2rem); }
 }
 
 /* ===== 3. How it works ==================================== */

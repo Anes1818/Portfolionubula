@@ -72,6 +72,28 @@
     each("[data-price]", function (el) { el.remove(); });
   }
 
+  /* --- phone nav -------------------------------------------- */
+  var toggle = document.querySelector(".nav__toggle");
+  var links = document.getElementById("siteNav");
+  if (toggle && links) {
+    function closeNav() {
+      document.body.classList.remove("nav-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open menu");
+    }
+    toggle.addEventListener("click", function () {
+      var open = document.body.classList.toggle("nav-open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    Array.prototype.forEach.call(links.querySelectorAll("a"), function (a) {
+      a.addEventListener("click", closeNav);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeNav();
+    });
+  }
+
   /* --- toast ------------------------------------------------ */
   var toast, timer;
   window.ppToast = function (msg) {

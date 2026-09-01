@@ -12,7 +12,6 @@
    • Drag-to-Rearrange, Tidy Up, and Double-Click Removal
    • Dual-Layer Wraps with Measured Polygon Silhouette Clipping
    • Twinkling Diamond Pins, Luxury Sashes, Greenery Collars
-   • Gold Dust Sparkle Canvas & Petal Celebration on Step 4
    • 3-Theme Postcard Exporter (Artisanal, Velvet, Polaroid)
    • Bilingual Language Switcher (English / Español)
    • Mobile-First Sticky Stage & Split Layout
@@ -275,7 +274,6 @@
 
   window.step = 1;
   var uid = 0;
-  var petalsDone = false;
   var missingFiles = new Set();
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -924,7 +922,6 @@
       st.jL = Math.random() * 0.08 - 0.04;
     });
     render();
-    spawnPetals();
     toast('Remixed with fresh florist rhythm ✨');
   };
 
@@ -987,11 +984,6 @@
       li.classList.toggle('on', ln === n);
       li.classList.toggle('done', ln < n);
     });
-
-    if (n === 4 && !petalsDone && !reduceMotion) {
-      petalsDone = true;
-      spawnPetals();
-    }
 
     render();
     if (window.innerWidth <= 760) {
@@ -1571,23 +1563,6 @@
   }
   window.toast = toast;
 
-  function spawnPetals() {
-    var petals = ['p1.webp', 'p2.webp', 'p3.webp', 'p4.webp', 'p5.webp', 'p6.webp', 'p7.webp'];
-    for (var i = 0; i < 14; i++) {
-      (function (idx) {
-        setTimeout(function () {
-          var p = document.createElement('img');
-          p.className = 'petal';
-          p.src = 'assets/petals/' + petals[idx % petals.length];
-          p.style.left = (Math.random() * 90 + 5) + 'vw';
-          p.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
-          document.body.appendChild(p);
-          setTimeout(function () { p.remove(); }, 3500);
-        }, idx * 120);
-      })(i);
-    }
-  }
-
   /* ===== 16. INITIALIZATION ================================ */
 
   function checkAsset(c, rowEl) {
@@ -1776,71 +1751,5 @@
   syncStick();
   window.addEventListener('resize', syncStick);
   window.addEventListener('load', syncStick);
-
-  /* Gold dust sparkle on Step 4 */
-  (function () {
-    var stage = document.getElementById('stage');
-    if (!stage) return;
-    var cv = document.createElement('canvas');
-    cv.id = 'golddust';
-    stage.appendChild(cv);
-    var ctx = cv.getContext('2d'), P = [], run = false;
-    function size() {
-      var d = Math.min(window.devicePixelRatio || 1, 2);
-      cv.width = stage.clientWidth * d;
-      cv.height = stage.clientHeight * d;
-      ctx.setTransform(d, 0, 0, d, 0, 0);
-    }
-    function seed() {
-      P = [];
-      for (var i = 0; i < 34; i++) {
-        P.push({ x: Math.random(), y: Math.random(), s: .6 + Math.random() * 1.8, v: .02 + Math.random() * .05, w: Math.random() * 6.3, tw: 2 + Math.random() * 3 });
-      }
-    }
-    function draw(t) {
-      var w = stage.clientWidth, h = stage.clientHeight;
-      ctx.clearRect(0, 0, w, h);
-      P.forEach(function (p) {
-        var a = .22 + .55 * (0.5 + 0.5 * Math.sin(t * p.tw + p.w));
-        var x = p.x * w + Math.sin(t * .6 + p.w) * 9, y = p.y * h;
-        ctx.beginPath();
-        ctx.arc(x, y, p.s, 0, 6.3);
-        ctx.fillStyle = 'rgba(214,178,94,' + a.toFixed(2) + ')';
-        ctx.fill();
-        if (p.s > 1.9) {
-          var g = p.s * 2.6;
-          ctx.strokeStyle = 'rgba(255,246,214,' + (a * .8).toFixed(2) + ')';
-          ctx.lineWidth = .8;
-          ctx.beginPath();
-          ctx.moveTo(x - g, y); ctx.lineTo(x + g, y);
-          ctx.moveTo(x, y - g); ctx.lineTo(x, y + g);
-          ctx.stroke();
-        }
-      });
-    }
-    function frame(ts) {
-      if (!run) return;
-      P.forEach(function (p) {
-        p.y -= p.v / 60;
-        if (p.y < -0.04) { p.y = 1.04; p.x = Math.random(); }
-      });
-      draw(ts / 1000);
-      requestAnimationFrame(frame);
-    }
-    function check() {
-      var want = document.body.className.indexOf('step-4') > -1;
-      if (want && !run) {
-        size();
-        if (!P.length) seed();
-        if (reduceMotion) { draw(1.7); } else { run = true; requestAnimationFrame(frame); }
-      } else if (!want) {
-        run = false;
-        ctx.clearRect(0, 0, cv.width, cv.height);
-      }
-    }
-    new MutationObserver(check).observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('resize', size);
-    check();
-  })();
 
 })();

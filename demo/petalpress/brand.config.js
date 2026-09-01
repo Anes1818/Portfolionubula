@@ -34,7 +34,7 @@ window.BRAND = {
   whatsapp:  "15713367129",        // digits only, country code first
   phone:     "(571) 336-7129",
   instagram: "petalpress.co",      // handle without the @
-  email:     "hello@petalpress.co",
+  email:     "nebulastudiosite@gmail.com",
   domain:    "petalpress.co",
 
   /* ---------- operations ------------------------------------ */
