@@ -1,0 +1,101 @@
+{
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "XL uses v1 zones, not a wall of resize overrides",
+      "pass": true
+    },
+    {
+      "label": "Heart wall still changes after resizing",
+      "pass": true
+    },
+    {
+      "label": "Mini heart retains its zone recipe",
+      "pass": true
+    },
+    {
+      "label": "Resize preserves five hand-painted lilies",
+      "pass": true
+    },
+    {
+      "label": "Resize preserves the intentional empty position",
+      "pass": true
+    },
+    {
+      "label": "Noncanonical duplicate slot keys rejected",
+      "pass": true
+    },
+    {
+      "label": "Impossible Classic paper transformations rejected",
+      "pass": true
+    },
+    {
+      "label": "Default v5 Dome migrates without blocking automatic blending",
+      "pass": true
+    },
+    {
+      "label": "Migrated Dome can immediately blend varieties",
+      "pass": true
+    },
+    {
+      "label": "Old v5 studio imports all three bouquets",
+      "pass": true
+    },
+    {
+      "label": "Explicit extras add only configured cost",
+      "pass": true
+    },
+    {
+      "label": "Copy reports success or an honest manual fallback",
+      "pass": true,
+      "detail": "Request copied. Send it to the florist with your picture."
+    },
+    {
+      "label": "Canceled paint gesture restores the complete design",
+      "pass": true
+    },
+    {
+      "label": "Keyboard can select and delete one fixed slot",
+      "pass": true
+    },
+    {
+      "label": "Owner flower rates recalculate exact mixed estimate",
+      "pass": true,
+      "detail": 15400
+    },
+    {
+      "label": "Approved prices remove the sample flag",
+      "pass": true
+    },
+    {
+      "label": "Currency follows owner configuration without conversion",
+      "pass": true
+    },
+    {
+      "label": "Shop branding comes from one owner file",
+      "pass": true
+    },
+    {
+      "label": "WhatsApp opens only a customer-reviewed draft",
+      "pass": true
+    },
+    {
+      "label": "Email is an encoded draft, not auto-send",
+      "pass": true
+    },
+    {
+      "label": "No external contact or analytics request was made",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "label": "Invalid contact destinations are disabled",
+      "pass": true
+    },
+    {
+      "label": "Invalid prices and currency fall back safely",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "source": "assets/new-originals/classic_lily_pink.jpg",
+    "sourceSHA256": "9b6ab10f33a2ef66e3a21dd53ef9906a858d68f019b55de158dc5ea07aebbe9b",
+    "working": "artwork/working-png/classic_lily_pink.png",
+    "size": [
+      848,
+      1264
+    ],
+    "alphaBounds": [
+      144,
+      142,
+      701,
+      1148
+    ],
+    "matting": "blue-only key, connected-background removal, neighboring-color edge decontamination"
+  },
+  {
+    "source": "assets/new-originals/classic_gerbera_white.jpg",
+    "sourceSHA256": "c9f36bb9f1824eccfc330affc8c8412fa7da13c17195bc00547df57f6ec48d00",
+    "working": "artwork/working-png/classic_gerbera_white.png",
+    "size": [
+      848,
+      1284
+    ],
+    "alphaBounds": [
+      129,
+      124,
+      691,
+      1264
+    ],
+    "matting": "blue-only key, connected-background removal, neighboring-color edge decontamination"
+  },
+  {
+    "source": "assets/new-originals/classic_wrap_ivory_master.jpg",
+    "sourceSHA256": "77e588fe57b7cb256ae372780403fae7303b13840758ec27115cf088cf1e7c80",
+    "working": "artwork/working-png/classic_wrap_ivory_master.png",
+    "size": [
+      896,
+      1200
+    ],
+    "alphaBounds": [
+      38,
+      167,
+      860,
+      1032
+    ],
+    "matting": "blue-only key, connected-background removal, neighboring-color edge decontamination"
+  }
+]

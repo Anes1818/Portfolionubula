@@ -1,0 +1,114 @@
+[
+  {
+    "source": "originals/new-assets/classic_ranunculus_cream.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 8_59PM.jpg",
+    "sha256": "0098f93605e8e60946c93af0f7258d9f97e62224ec8bb34a6129468b7d5b708d",
+    "size": [
+      848,
+      1264
+    ],
+    "alphaBounds": [
+      162,
+      196,
+      686,
+      1264
+    ],
+    "alphaFraction": 0.2044
+  },
+  {
+    "source": "originals/new-assets/classic_hydrangea_white.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 9_00PM.jpg",
+    "sha256": "4715045c1a74eb7837130e10d32341b0e9fedc79c5fffb0ad0dcac0edab26bed",
+    "size": [
+      848,
+      1264
+    ],
+    "alphaBounds": [
+      98,
+      213,
+      753,
+      1189
+    ],
+    "alphaFraction": 0.2848
+  },
+  {
+    "source": "originals/new-assets/head_hydrangea_white.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 9_01PM.jpg",
+    "sha256": "81045888dfc05522fed94f5f9c450de585c5bc57c24d19ce4c1acdc271e8405e",
+    "size": [
+      1024,
+      1024
+    ],
+    "alphaBounds": [
+      87,
+      104,
+      941,
+      928
+    ],
+    "alphaFraction": 0.471
+  },
+  {
+    "source": "originals/new-assets/filler_babys_breath_compact.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 9_02PM.jpg",
+    "sha256": "38a8967dff8ac73e85c376666f7ceaf8f81e2cd32376b0d787e7a486127bb3fa",
+    "size": [
+      1024,
+      1024
+    ],
+    "alphaBounds": [
+      86,
+      119,
+      931,
+      919
+    ],
+    "alphaFraction": 0.4092
+  },
+  {
+    "source": "originals/new-assets/filler_babys_breath_medium.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 9_03PM.jpg",
+    "sha256": "07813df578e88ccbfcfa21acf816fc9bf178f01cb7036f269f75ff94d850acf3",
+    "size": [
+      1024,
+      1024
+    ],
+    "alphaBounds": [
+      86,
+      119,
+      931,
+      919
+    ],
+    "alphaFraction": 0.3243
+  },
+  {
+    "source": "originals/new-assets/wrap_dome_black_top.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 9_04PM.jpg",
+    "sha256": "c28911f47633a6c65a1ea4e6abf62f250ac7c97f7b0136b048620945cbe7164e",
+    "size": [
+      1024,
+      1024
+    ],
+    "alphaBounds": [
+      62,
+      56,
+      963,
+      969
+    ],
+    "alphaFraction": 0.441
+  },
+  {
+    "source": "originals/new-assets/wrap_heart_black_top.jpg",
+    "originalFilename": "Generated Image September 07, 2026 - 9_06PM.jpg",
+    "sha256": "a6c571002fe8335d93c2255621633c2feb71f68ea3589b475bedaa78b99b41c7",
+    "size": [
+      1024,
+      1024
+    ],
+    "alphaBounds": [
+      60,
+      73,
+      964,
+      951
+    ],
+    "alphaFraction": 0.3773
+  }
+]

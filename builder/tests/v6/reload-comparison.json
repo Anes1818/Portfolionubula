@@ -1,0 +1,1968 @@
+{
+  "before": {
+    "format": "nebula-bouquet-studio",
+    "version": 6,
+    "activeMode": "dome",
+    "bouquets": {
+      "classic": {
+        "version": 6,
+        "mode": "classic",
+        "seed": 11,
+        "nextId": 13,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 223.93567167107398,
+                "y": 331.43078467227497,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_white",
+            "anchors": {
+              "classic": {
+                "x": 294.19224380620216,
+                "y": 309.6719506335085,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 365.32505955288315,
+                "y": 327.4675824040836,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "carnation_white",
+            "anchors": {
+              "classic": {
+                "x": 424.35570953043634,
+                "y": 315.19930325571335,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 493.9060657287118,
+                "y": 321.4304080806755,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "gerbera_daisy",
+            "anchors": {
+              "classic": {
+                "x": 274.96783596298167,
+                "y": 391.9343307335027,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_white",
+            "anchors": {
+              "classic": {
+                "x": 350.45567934273834,
+                "y": 392.24589740095047,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 420.4375983854656,
+                "y": 394.1247924051402,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "carnation_white",
+            "anchors": {
+              "classic": {
+                "x": 480.6316410513283,
+                "y": 381.97227078971287,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "gerbera_daisy",
+            "anchors": {
+              "classic": {
+                "x": 278.4304988483649,
+                "y": 454.2937628417242,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "lily",
+            "anchors": {
+              "classic": {
+                "x": 368.4470928912333,
+                "y": 468.8744430111581,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_white",
+            "anchors": {
+              "classic": {
+                "x": 449.056511174747,
+                "y": 461.4830742717446,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "classic": {
+            "mode": "classic",
+            "scale": 0.6400459720570749,
+            "yScale": 0.62,
+            "origin": {
+              "x": 73.25940451843042,
+              "y": 139
+            },
+            "waist": {
+              "x": 360,
+              "y": 666
+            },
+            "rimY": 511,
+            "center": {
+              "x": 360,
+              "y": 403
+            },
+            "radius": 230,
+            "unit": 116
+          }
+        },
+        "finishes": {
+          "paper": "ivory",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "none",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": false,
+          "diamond": false
+        },
+        "title": "",
+        "note": ""
+      },
+      "dome": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 31,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "lily",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 391.94217385631384,
+                "y": 383.0579489464493,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "lily",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 339.68671748760005,
+                "y": 414.4615813126923,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "lily",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 359.4997781256365,
+                "y": 351.98082705473416,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "lily",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 384.2550027232422,
+                "y": 427.1088745501969,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "lily",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 319.2116391568896,
+                "y": 373.81433561938667,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "rose_red",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 415.8171693532303,
+                "y": 331.6611407667352,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_red",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 351.0265747004199,
+                "y": 470.6013048306401,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_red",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 319.33968263649217,
+                "y": 317.58077750859877,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_red",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 435.70046659603315,
+                "y": 424.3291093842539,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_red",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 280.76558125598046,
+                "y": 411.15684524288247,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_red",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 371.9991503896334,
+                "y": 306.44338745751276,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_red",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 402.02555142372535,
+                "y": 465.6304212358306,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "rose_red",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 280.05171719766577,
+                "y": 357.32828686816794,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "rose_red",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 442.45747486258756,
+                "y": 374.20970134082216,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "rose_red",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 305.7565326498315,
+                "y": 453.9139101448286,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 96.34758503905088,
+            "unit": 77.91587071063108,
+            "scale": 1,
+            "capacity": 15,
+            "rings": 0,
+            "top": 275.27703917326033,
+            "tip": 501.76765311489254,
+            "halfWidth": 121.41541021790313
+          }
+        },
+        "finishes": {
+          "paper": "black",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "bday",
+          "sashPlacement": "low",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": false,
+          "diamond": false
+        },
+        "title": "",
+        "note": "Dome request: five lilies.",
+        "template": {
+          "capacity": 15,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_red",
+            "fill": "rose_white",
+            "center": "sunflower",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {
+            "0": "lily",
+            "1": "lily",
+            "2": "lily",
+            "3": "lily",
+            "4": "lily"
+          }
+        }
+      },
+      "heart": {
+        "version": 6,
+        "mode": "heart",
+        "seed": 11,
+        "nextId": 101,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "lily",
+            "slot": 0,
+            "anchors": {
+              "heart": {
+                "x": 360,
+                "y": 372.5030417678048,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_pink",
+            "slot": 1,
+            "anchors": {
+              "heart": {
+                "x": 384.4289690350341,
+                "y": 337.99669444693495,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "rose_pink",
+            "slot": 2,
+            "anchors": {
+              "heart": {
+                "x": 424.1176089033089,
+                "y": 333.4594048305537,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "rose_pink",
+            "slot": 3,
+            "anchors": {
+              "heart": {
+                "x": 404.9803188985288,
+                "y": 375.3984625035293,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_pink",
+            "slot": 4,
+            "anchors": {
+              "heart": {
+                "x": 376.4840491383112,
+                "y": 408.74467276339305,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "rose_pink",
+            "slot": 5,
+            "anchors": {
+              "heart": {
+                "x": 338.98895723723786,
+                "y": 407.06673148599816,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_pink",
+            "slot": 6,
+            "anchors": {
+              "heart": {
+                "x": 315.07446311786725,
+                "y": 370.1625583990836,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_pink",
+            "slot": 7,
+            "anchors": {
+              "heart": {
+                "x": 291.1072939540894,
+                "y": 331.8150876321665,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_white",
+            "slot": 8,
+            "anchors": {
+              "heart": {
+                "x": 332.0358448413115,
+                "y": 334.39616786084065,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_white",
+            "slot": 9,
+            "anchors": {
+              "heart": {
+                "x": 409.21643598930154,
+                "y": 293.99279116462463,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_white",
+            "slot": 10,
+            "anchors": {
+              "heart": {
+                "x": 452.07710242069203,
+                "y": 291.0229680636937,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_white",
+            "slot": 11,
+            "anchors": {
+              "heart": {
+                "x": 466.990330232236,
+                "y": 334.24495237561143,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "rose_white",
+            "slot": 12,
+            "anchors": {
+              "heart": {
+                "x": 444.60865209246276,
+                "y": 376.29369471358524,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "rose_white",
+            "slot": 13,
+            "anchors": {
+              "heart": {
+                "x": 413.89294542578523,
+                "y": 416.4376312741435,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "rose_white",
+            "slot": 14,
+            "anchors": {
+              "heart": {
+                "x": 376.16648635147357,
+                "y": 451.3404279023068,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "rose_white",
+            "slot": 15,
+            "anchors": {
+              "heart": {
+                "x": 338.54276817878036,
+                "y": 448.2890231242375,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "rose_white",
+            "slot": 16,
+            "anchors": {
+              "heart": {
+                "x": 302.722152829492,
+                "y": 414.2252771926248,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "rose_white",
+            "slot": 17,
+            "anchors": {
+              "heart": {
+                "x": 274.19087915625624,
+                "y": 374.52431340049765,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "rose_white",
+            "slot": 18,
+            "anchors": {
+              "heart": {
+                "x": 250.12729329855415,
+                "y": 332.3038635578149,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "rose_white",
+            "slot": 19,
+            "anchors": {
+              "heart": {
+                "x": 269.7297794629699,
+                "y": 290.166235818935,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "rose_white",
+            "slot": 20,
+            "anchors": {
+              "heart": {
+                "x": 311.95447659517004,
+                "y": 293.4392533985762,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "rose_pink",
+            "slot": 21,
+            "anchors": {
+              "heart": {
+                "x": 360,
+                "y": 313.3035698697849,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "rose_pink",
+            "slot": 22,
+            "anchors": {
+              "heart": {
+                "x": 381.3852089984105,
+                "y": 267.16772050596046,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "rose_pink",
+            "slot": 23,
+            "anchors": {
+              "heart": {
+                "x": 422.98347536019907,
+                "y": 244.06593752227698,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b25",
+            "id": "rose_pink",
+            "slot": 24,
+            "anchors": {
+              "heart": {
+                "x": 468.8525868666168,
+                "y": 252.83561639665476,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b26",
+            "id": "rose_pink",
+            "slot": 25,
+            "anchors": {
+              "heart": {
+                "x": 502.51368233970913,
+                "y": 289.6357599684972,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b27",
+            "id": "rose_pink",
+            "slot": 26,
+            "anchors": {
+              "heart": {
+                "x": 508.21456088185346,
+                "y": 340.2855416186006,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b28",
+            "id": "rose_pink",
+            "slot": 27,
+            "anchors": {
+              "heart": {
+                "x": 486.72677700771095,
+                "y": 386.2817974952779,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b29",
+            "id": "rose_pink",
+            "slot": 28,
+            "anchors": {
+              "heart": {
+                "x": 454.4180396445639,
+                "y": 422.4552862253906,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b30",
+            "id": "rose_pink",
+            "slot": 29,
+            "anchors": {
+              "heart": {
+                "x": 417.2195996141252,
+                "y": 457.1352113223928,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b31",
+            "id": "rose_pink",
+            "slot": 30,
+            "anchors": {
+              "heart": {
+                "x": 383.2545406686291,
+                "y": 492.3738248849602,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b32",
+            "id": "rose_pink",
+            "slot": 31,
+            "anchors": {
+              "heart": {
+                "x": 360,
+                "y": 535.934062477723,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b33",
+            "id": "rose_pink",
+            "slot": 32,
+            "anchors": {
+              "heart": {
+                "x": 335.7794228675235,
+                "y": 491.2069784337813,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b34",
+            "id": "rose_pink",
+            "slot": 33,
+            "anchors": {
+              "heart": {
+                "x": 301.3537043907914,
+                "y": 455.7994326941593,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b35",
+            "id": "rose_pink",
+            "slot": 34,
+            "anchors": {
+              "heart": {
+                "x": 264.09983393827815,
+                "y": 421.0096318533822,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b36",
+            "id": "rose_pink",
+            "slot": 35,
+            "anchors": {
+              "heart": {
+                "x": 232.14198870812567,
+                "y": 384.7039286181339,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b37",
+            "id": "rose_pink",
+            "slot": 36,
+            "anchors": {
+              "heart": {
+                "x": 211.4626623450384,
+                "y": 338.5971644209209,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b38",
+            "id": "rose_pink",
+            "slot": 37,
+            "anchors": {
+              "heart": {
+                "x": 218.1929171881552,
+                "y": 288.14253460482746,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b39",
+            "id": "rose_pink",
+            "slot": 38,
+            "anchors": {
+              "heart": {
+                "x": 252.54373432042556,
+                "y": 252.06203134364227,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b40",
+            "id": "rose_pink",
+            "slot": 39,
+            "anchors": {
+              "heart": {
+                "x": 298.4711825825484,
+                "y": 244.31319559086492,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b41",
+            "id": "rose_pink",
+            "slot": 40,
+            "anchors": {
+              "heart": {
+                "x": 339.5178189003431,
+                "y": 268.1735161990999,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "heart": {
+            "mode": "heart",
+            "engine": "v1-fixed-rings",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 159.28949386931598,
+            "unit": 65.69362004621803,
+            "scale": 1,
+            "capacity": 41,
+            "rings": 3,
+            "top": 217.78848950378978,
+            "tip": 562.2115104962103,
+            "halfWidth": 181.3841476780706
+          }
+        },
+        "finishes": {
+          "paper": "black",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "none",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": false,
+          "diamond": false
+        },
+        "title": "",
+        "note": "",
+        "template": {
+          "capacity": 41,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_pink",
+            "fill": "rose_white",
+            "center": "lily",
+            "formation": "rings",
+            "doubleWall": false
+          },
+          "overrides": {}
+        }
+      }
+    }
+  },
+  "after": {
+    "format": "nebula-bouquet-studio",
+    "version": 6,
+    "activeMode": "dome",
+    "bouquets": {
+      "classic": {
+        "version": 6,
+        "mode": "classic",
+        "seed": 11,
+        "nextId": 13,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 223.93567167107398,
+                "y": 331.43078467227497,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_white",
+            "anchors": {
+              "classic": {
+                "x": 294.19224380620216,
+                "y": 309.6719506335085,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 365.32505955288315,
+                "y": 327.4675824040836,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "carnation_white",
+            "anchors": {
+              "classic": {
+                "x": 424.35570953043634,
+                "y": 315.19930325571335,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 493.9060657287118,
+                "y": 321.4304080806755,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "gerbera_daisy",
+            "anchors": {
+              "classic": {
+                "x": 274.96783596298167,
+                "y": 391.9343307335027,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_white",
+            "anchors": {
+              "classic": {
+                "x": 350.45567934273834,
+                "y": 392.24589740095047,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_pink",
+            "anchors": {
+              "classic": {
+                "x": 420.4375983854656,
+                "y": 394.1247924051402,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "carnation_white",
+            "anchors": {
+              "classic": {
+                "x": 480.6316410513283,
+                "y": 381.97227078971287,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "gerbera_daisy",
+            "anchors": {
+              "classic": {
+                "x": 278.4304988483649,
+                "y": 454.2937628417242,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "lily",
+            "anchors": {
+              "classic": {
+                "x": 368.4470928912333,
+                "y": 468.8744430111581,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_white",
+            "anchors": {
+              "classic": {
+                "x": 449.056511174747,
+                "y": 461.4830742717446,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "classic": {
+            "mode": "classic",
+            "center": {
+              "x": 360,
+              "y": 403
+            },
+            "radius": 230,
+            "unit": 116,
+            "scale": 0.6400459720570749,
+            "yScale": 0.62,
+            "origin": {
+              "x": 73.25940451843042,
+              "y": 139
+            },
+            "waist": {
+              "x": 360,
+              "y": 666
+            },
+            "rimY": 511
+          }
+        },
+        "finishes": {
+          "paper": "ivory",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "none",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": false,
+          "diamond": false
+        },
+        "title": "",
+        "note": ""
+      },
+      "dome": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 31,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "lily",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 391.94217385631384,
+                "y": 383.0579489464493,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "lily",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 339.68671748760005,
+                "y": 414.4615813126923,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "lily",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 359.4997781256365,
+                "y": 351.98082705473416,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "lily",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 384.2550027232422,
+                "y": 427.1088745501969,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "lily",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 319.2116391568896,
+                "y": 373.81433561938667,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "rose_red",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 415.8171693532303,
+                "y": 331.6611407667352,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_red",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 351.0265747004199,
+                "y": 470.6013048306401,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_red",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 319.33968263649217,
+                "y": 317.58077750859877,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_red",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 435.70046659603315,
+                "y": 424.3291093842539,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_red",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 280.76558125598046,
+                "y": 411.15684524288247,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_red",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 371.9991503896334,
+                "y": 306.44338745751276,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_red",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 402.02555142372535,
+                "y": 465.6304212358306,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "rose_red",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 280.05171719766577,
+                "y": 357.32828686816794,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "rose_red",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 442.45747486258756,
+                "y": 374.20970134082216,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "rose_red",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 305.7565326498315,
+                "y": 453.9139101448286,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 96.34758503905088,
+            "unit": 77.91587071063108,
+            "scale": 1,
+            "capacity": 15,
+            "rings": 0,
+            "top": 275.27703917326033,
+            "tip": 501.76765311489254,
+            "halfWidth": 121.41541021790313
+          }
+        },
+        "finishes": {
+          "paper": "black",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "bday",
+          "sashPlacement": "low",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": false,
+          "diamond": false
+        },
+        "title": "",
+        "note": "Dome request: five lilies.",
+        "template": {
+          "capacity": 15,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_red",
+            "fill": "rose_white",
+            "center": "sunflower",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {
+            "0": "lily",
+            "1": "lily",
+            "2": "lily",
+            "3": "lily",
+            "4": "lily"
+          }
+        }
+      },
+      "heart": {
+        "version": 6,
+        "mode": "heart",
+        "seed": 11,
+        "nextId": 101,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "lily",
+            "slot": 0,
+            "anchors": {
+              "heart": {
+                "x": 360,
+                "y": 372.5030417678048,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_pink",
+            "slot": 1,
+            "anchors": {
+              "heart": {
+                "x": 384.4289690350341,
+                "y": 337.99669444693495,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "rose_pink",
+            "slot": 2,
+            "anchors": {
+              "heart": {
+                "x": 424.1176089033089,
+                "y": 333.4594048305537,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "rose_pink",
+            "slot": 3,
+            "anchors": {
+              "heart": {
+                "x": 404.9803188985288,
+                "y": 375.3984625035293,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_pink",
+            "slot": 4,
+            "anchors": {
+              "heart": {
+                "x": 376.4840491383112,
+                "y": 408.74467276339305,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "rose_pink",
+            "slot": 5,
+            "anchors": {
+              "heart": {
+                "x": 338.98895723723786,
+                "y": 407.06673148599816,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_pink",
+            "slot": 6,
+            "anchors": {
+              "heart": {
+                "x": 315.07446311786725,
+                "y": 370.1625583990836,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_pink",
+            "slot": 7,
+            "anchors": {
+              "heart": {
+                "x": 291.1072939540894,
+                "y": 331.8150876321665,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_white",
+            "slot": 8,
+            "anchors": {
+              "heart": {
+                "x": 332.0358448413115,
+                "y": 334.39616786084065,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_white",
+            "slot": 9,
+            "anchors": {
+              "heart": {
+                "x": 409.21643598930154,
+                "y": 293.99279116462463,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_white",
+            "slot": 10,
+            "anchors": {
+              "heart": {
+                "x": 452.07710242069203,
+                "y": 291.0229680636937,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_white",
+            "slot": 11,
+            "anchors": {
+              "heart": {
+                "x": 466.990330232236,
+                "y": 334.24495237561143,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "rose_white",
+            "slot": 12,
+            "anchors": {
+              "heart": {
+                "x": 444.60865209246276,
+                "y": 376.29369471358524,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "rose_white",
+            "slot": 13,
+            "anchors": {
+              "heart": {
+                "x": 413.89294542578523,
+                "y": 416.4376312741435,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "rose_white",
+            "slot": 14,
+            "anchors": {
+              "heart": {
+                "x": 376.16648635147357,
+                "y": 451.3404279023068,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "rose_white",
+            "slot": 15,
+            "anchors": {
+              "heart": {
+                "x": 338.54276817878036,
+                "y": 448.2890231242375,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "rose_white",
+            "slot": 16,
+            "anchors": {
+              "heart": {
+                "x": 302.722152829492,
+                "y": 414.2252771926248,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "rose_white",
+            "slot": 17,
+            "anchors": {
+              "heart": {
+                "x": 274.19087915625624,
+                "y": 374.52431340049765,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "rose_white",
+            "slot": 18,
+            "anchors": {
+              "heart": {
+                "x": 250.12729329855415,
+                "y": 332.3038635578149,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "rose_white",
+            "slot": 19,
+            "anchors": {
+              "heart": {
+                "x": 269.7297794629699,
+                "y": 290.166235818935,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "rose_white",
+            "slot": 20,
+            "anchors": {
+              "heart": {
+                "x": 311.95447659517004,
+                "y": 293.4392533985762,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "rose_pink",
+            "slot": 21,
+            "anchors": {
+              "heart": {
+                "x": 360,
+                "y": 313.3035698697849,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "rose_pink",
+            "slot": 22,
+            "anchors": {
+              "heart": {
+                "x": 381.3852089984105,
+                "y": 267.16772050596046,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "rose_pink",
+            "slot": 23,
+            "anchors": {
+              "heart": {
+                "x": 422.98347536019907,
+                "y": 244.06593752227698,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b25",
+            "id": "rose_pink",
+            "slot": 24,
+            "anchors": {
+              "heart": {
+                "x": 468.8525868666168,
+                "y": 252.83561639665476,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b26",
+            "id": "rose_pink",
+            "slot": 25,
+            "anchors": {
+              "heart": {
+                "x": 502.51368233970913,
+                "y": 289.6357599684972,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b27",
+            "id": "rose_pink",
+            "slot": 26,
+            "anchors": {
+              "heart": {
+                "x": 508.21456088185346,
+                "y": 340.2855416186006,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b28",
+            "id": "rose_pink",
+            "slot": 27,
+            "anchors": {
+              "heart": {
+                "x": 486.72677700771095,
+                "y": 386.2817974952779,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b29",
+            "id": "rose_pink",
+            "slot": 28,
+            "anchors": {
+              "heart": {
+                "x": 454.4180396445639,
+                "y": 422.4552862253906,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b30",
+            "id": "rose_pink",
+            "slot": 29,
+            "anchors": {
+              "heart": {
+                "x": 417.2195996141252,
+                "y": 457.1352113223928,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b31",
+            "id": "rose_pink",
+            "slot": 30,
+            "anchors": {
+              "heart": {
+                "x": 383.2545406686291,
+                "y": 492.3738248849602,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b32",
+            "id": "rose_pink",
+            "slot": 31,
+            "anchors": {
+              "heart": {
+                "x": 360,
+                "y": 535.934062477723,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b33",
+            "id": "rose_pink",
+            "slot": 32,
+            "anchors": {
+              "heart": {
+                "x": 335.7794228675235,
+                "y": 491.2069784337813,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b34",
+            "id": "rose_pink",
+            "slot": 33,
+            "anchors": {
+              "heart": {
+                "x": 301.3537043907914,
+                "y": 455.7994326941593,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b35",
+            "id": "rose_pink",
+            "slot": 34,
+            "anchors": {
+              "heart": {
+                "x": 264.09983393827815,
+                "y": 421.0096318533822,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b36",
+            "id": "rose_pink",
+            "slot": 35,
+            "anchors": {
+              "heart": {
+                "x": 232.14198870812567,
+                "y": 384.7039286181339,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b37",
+            "id": "rose_pink",
+            "slot": 36,
+            "anchors": {
+              "heart": {
+                "x": 211.4626623450384,
+                "y": 338.5971644209209,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b38",
+            "id": "rose_pink",
+            "slot": 37,
+            "anchors": {
+              "heart": {
+                "x": 218.1929171881552,
+                "y": 288.14253460482746,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b39",
+            "id": "rose_pink",
+            "slot": 38,
+            "anchors": {
+              "heart": {
+                "x": 252.54373432042556,
+                "y": 252.06203134364227,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b40",
+            "id": "rose_pink",
+            "slot": 39,
+            "anchors": {
+              "heart": {
+                "x": 298.4711825825484,
+                "y": 244.31319559086492,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b41",
+            "id": "rose_pink",
+            "slot": 40,
+            "anchors": {
+              "heart": {
+                "x": 339.5178189003431,
+                "y": 268.1735161990999,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "heart": {
+            "mode": "heart",
+            "engine": "v1-fixed-rings",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 159.28949386931598,
+            "unit": 65.69362004621803,
+            "scale": 1,
+            "capacity": 41,
+            "rings": 3,
+            "top": 217.78848950378978,
+            "tip": 562.2115104962103,
+            "halfWidth": 181.3841476780706
+          }
+        },
+        "finishes": {
+          "paper": "black",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "none",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": false,
+          "diamond": false
+        },
+        "title": "",
+        "note": "",
+        "template": {
+          "capacity": 41,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_pink",
+            "fill": "rose_white",
+            "center": "lily",
+            "formation": "rings",
+            "doubleWall": false
+          },
+          "overrides": {}
+        }
+      }
+    }
+  }
+}

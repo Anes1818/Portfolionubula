@@ -1,0 +1,353 @@
+[
+  {
+    "id": "alstroemeria",
+    "sourceSHA256": "302c8ef83add15a8a4472b6870f5d746c7d39c34adbc72e175cb9d66c0ebcd4c",
+    "bloomBox": [
+      4,
+      0,
+      377,
+      324
+    ],
+    "stemBeginsAt": 316,
+    "bloomEndsAt": 324,
+    "sharedTransform": true
+  },
+  {
+    "id": "babys_breath",
+    "sourceSHA256": "4ed3647bba0a19b8fea8659275177f6e33773b9fd1881ac2602ae3c20a89c8c5",
+    "bloomBox": [
+      0,
+      0,
+      560,
+      544
+    ],
+    "stemBeginsAt": 536,
+    "bloomEndsAt": 544,
+    "sharedTransform": true
+  },
+  {
+    "id": "carnation_orange",
+    "sourceSHA256": "8ac7e410512b49270a2e03a3e0bfdce9b1a294fb5a4157b95ddcebe0b45b3b75",
+    "bloomBox": [
+      0,
+      0,
+      213,
+      158
+    ],
+    "stemBeginsAt": 150,
+    "bloomEndsAt": 158,
+    "sharedTransform": true
+  },
+  {
+    "id": "carnation_pink",
+    "sourceSHA256": "9ab1cd82c8a8360e9aa90badc4313d2fae1d4586132c4d190e5212483d27e55a",
+    "bloomBox": [
+      53,
+      0,
+      423,
+      293
+    ],
+    "stemBeginsAt": 285,
+    "bloomEndsAt": 293,
+    "sharedTransform": true
+  },
+  {
+    "id": "carnation_red",
+    "sourceSHA256": "096df282cc1c248860d9364b901ff11347fa0091088fee853bf8c8a452b6c4b9",
+    "bloomBox": [
+      54,
+      0,
+      422,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "carnation_violet",
+    "sourceSHA256": "b06cb3a7a345bf0b9a97482cda76ec7e391dc91e69d13c3c5f666bbe9f413f4f",
+    "bloomBox": [
+      55,
+      0,
+      421,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "carnation_white",
+    "sourceSHA256": "684c4cfaab8f260dc4983ca5cb52e25f451b84c02a74fc0b9a3d67aee3968a55",
+    "bloomBox": [
+      54,
+      0,
+      422,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "carnation_yellow",
+    "sourceSHA256": "355b6fedb6fd562cdc38ffc2f75177067253de860b31510de05ce653327718cf",
+    "bloomBox": [
+      54,
+      0,
+      422,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "eucalyptus",
+    "sourceSHA256": "1b9872b47a56a876acdd9e901e9830a27e7641ad67afbbd2d14a5c36268ac8e0",
+    "bloomBox": [
+      0,
+      0,
+      482,
+      578
+    ],
+    "stemBeginsAt": 570,
+    "bloomEndsAt": 578,
+    "sharedTransform": true
+  },
+  {
+    "id": "gerbera_daisy",
+    "sourceSHA256": "8f3ea52fa0a9a2c30b41d4f9cc955817e35fbff780f6d817b6747fb779a8e403",
+    "bloomBox": [
+      129,
+      124,
+      691,
+      641
+    ],
+    "stemBeginsAt": 633,
+    "bloomEndsAt": 641,
+    "sharedTransform": true
+  },
+  {
+    "id": "lily",
+    "sourceSHA256": "5289a4c4607b76763decffe20354a3daedd282bd362ef0d40d4c8a4bfaeb6a7d",
+    "bloomBox": [
+      144,
+      142,
+      701,
+      611
+    ],
+    "stemBeginsAt": 603,
+    "bloomEndsAt": 611,
+    "sharedTransform": true
+  },
+  {
+    "id": "limonium",
+    "sourceSHA256": "424854e7bcef8cead4503d99d36a98cd7ec6b5f681d6ffba8f78f52fe0009e68",
+    "bloomBox": [
+      0,
+      0,
+      465,
+      538
+    ],
+    "stemBeginsAt": 530,
+    "bloomEndsAt": 538,
+    "sharedTransform": true
+  },
+  {
+    "id": "ranunculus",
+    "sourceSHA256": "2a29664dc2f897a2a39b56ec6f919d336477610839667db7433f737eac177b7b",
+    "bloomBox": [
+      162,
+      196,
+      686,
+      691
+    ],
+    "stemBeginsAt": 683,
+    "bloomEndsAt": 691,
+    "sharedTransform": true
+  },
+  {
+    "id": "rose_orange",
+    "sourceSHA256": "c0d284bd8159c5b6e609aa787d71e15b2d52fbc99b51759c30f9996e7219278f",
+    "bloomBox": [
+      6,
+      0,
+      220,
+      171
+    ],
+    "stemBeginsAt": 163,
+    "bloomEndsAt": 171,
+    "sharedTransform": true
+  },
+  {
+    "id": "rose_pink",
+    "sourceSHA256": "20b9730de12d7e3a56a46fc96096d693722ed411377200449dd59aff95bb166e",
+    "bloomBox": [
+      18,
+      0,
+      346,
+      271
+    ],
+    "stemBeginsAt": 263,
+    "bloomEndsAt": 271,
+    "sharedTransform": true
+  },
+  {
+    "id": "rose_red",
+    "sourceSHA256": "257bfd00b9c3ade82d07974f65625c2b2031b66159fc042c4a22d7e2795419fa",
+    "bloomBox": [
+      4,
+      0,
+      349,
+      271
+    ],
+    "stemBeginsAt": 263,
+    "bloomEndsAt": 271,
+    "sharedTransform": true
+  },
+  {
+    "id": "rose_violet",
+    "sourceSHA256": "faa33c83e8a04baf30d25415904b0012f49dda6c0140c5c4e2d991b92b9cf860",
+    "bloomBox": [
+      68,
+      0,
+      395,
+      302
+    ],
+    "stemBeginsAt": 294,
+    "bloomEndsAt": 302,
+    "sharedTransform": true
+  },
+  {
+    "id": "rose_white",
+    "sourceSHA256": "f16c0155863a1d942834c9cad8dc5882f115e9742652214d4d9f2b58c2eb8419",
+    "bloomBox": [
+      17,
+      0,
+      343,
+      271
+    ],
+    "stemBeginsAt": 263,
+    "bloomEndsAt": 271,
+    "sharedTransform": true
+  },
+  {
+    "id": "rose_yellow",
+    "sourceSHA256": "5e90e997a3567de4e5599ff36bffd1dd35e1b728fb38725a90f4f1d337dca98a",
+    "bloomBox": [
+      3,
+      0,
+      346,
+      271
+    ],
+    "stemBeginsAt": 263,
+    "bloomEndsAt": 271,
+    "sharedTransform": true
+  },
+  {
+    "id": "sunflower",
+    "sourceSHA256": "1d29475350fe6b7b0913b1d78553f63e430049a0408a88c509bcdac09d2414c5",
+    "bloomBox": [
+      66,
+      0,
+      323,
+      254
+    ],
+    "stemBeginsAt": 246,
+    "bloomEndsAt": 254,
+    "sharedTransform": true
+  },
+  {
+    "id": "tulip_orange",
+    "sourceSHA256": "9d2cc1fb88ab69887b8d838f9d7932e0e660e8dcb52553eebbac80436966885d",
+    "bloomBox": [
+      34,
+      0,
+      177,
+      151
+    ],
+    "stemBeginsAt": 143,
+    "bloomEndsAt": 151,
+    "sharedTransform": true
+  },
+  {
+    "id": "tulip_pink",
+    "sourceSHA256": "ac9e670ce4782a3ef1744df1bf6ead9d8e62bf5a5beed62d0209eb8aa9057821",
+    "bloomBox": [
+      2,
+      0,
+      176,
+      293
+    ],
+    "stemBeginsAt": 285,
+    "bloomEndsAt": 293,
+    "sharedTransform": true
+  },
+  {
+    "id": "tulip_red",
+    "sourceSHA256": "75c035a65fd61f4466cf29b808f7af4a676abfe5bc3218d37311a4261f80d5f9",
+    "bloomBox": [
+      1,
+      0,
+      187,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "tulip_violet",
+    "sourceSHA256": "300862227a18c700f637d33b366506ec6aa30e9ca7c8f4ccdb8a8972e6301388",
+    "bloomBox": [
+      2,
+      0,
+      186,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "tulip_white",
+    "sourceSHA256": "9d7f49d765bc947ee5465c591661c9ff7a731119d7ab8d8ce562177dae9f6106",
+    "bloomBox": [
+      2,
+      0,
+      173,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "tulip_yellow",
+    "sourceSHA256": "3122302166cf4cab275cd7f1f875c391cb3e9daaa1f40bdc3cf75c56069e1111",
+    "bloomBox": [
+      2,
+      0,
+      173,
+      292
+    ],
+    "stemBeginsAt": 284,
+    "bloomEndsAt": 292,
+    "sharedTransform": true
+  },
+  {
+    "id": "hydrangea",
+    "sourceSHA256": "db8ff1bc15e4599a617db16d575bec56260207d81cdd28a8cb685023b16a23d7",
+    "bloomBox": [
+      98,
+      213,
+      753,
+      790
+    ],
+    "stemBeginsAt": 782,
+    "bloomEndsAt": 790,
+    "sharedTransform": true
+  }
+]

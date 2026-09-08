@@ -1,0 +1,512 @@
+{
+  "count": 84,
+  "capacity": 84,
+  "protectedOK": true,
+  "minVisible": 0.4344207723035952,
+  "visible": [
+    {
+      "id": "rose_red",
+      "slot": 67,
+      "fraction": 0.6635034624262631,
+      "pixels": 2587
+    },
+    {
+      "id": "rose_red",
+      "slot": 73,
+      "fraction": 0.5482271262087776,
+      "pixels": 2211
+    },
+    {
+      "id": "rose_red",
+      "slot": 71,
+      "fraction": 0.5563820291579887,
+      "pixels": 1870
+    },
+    {
+      "id": "rose_red",
+      "slot": 79,
+      "fraction": 0.4742647058823529,
+      "pixels": 1806
+    },
+    {
+      "id": "rose_red",
+      "slot": 80,
+      "fraction": 0.6506344054293302,
+      "pixels": 2205
+    },
+    {
+      "id": "rose_red",
+      "slot": 82,
+      "fraction": 0.47266313932980597,
+      "pixels": 1608
+    },
+    {
+      "id": "rose_red",
+      "slot": 64,
+      "fraction": 0.5902187902187902,
+      "pixels": 2293
+    },
+    {
+      "id": "rose_red",
+      "slot": 65,
+      "fraction": 0.6477359938603223,
+      "pixels": 2532
+    },
+    {
+      "id": "rose_red",
+      "slot": 66,
+      "fraction": 0.7446300715990454,
+      "pixels": 2808
+    },
+    {
+      "id": "rose_red",
+      "slot": 72,
+      "fraction": 0.6571897211591033,
+      "pixels": 2404
+    },
+    {
+      "id": "rose_red",
+      "slot": 74,
+      "fraction": 0.5912508544087491,
+      "pixels": 1730
+    },
+    {
+      "id": "rose_red",
+      "slot": 75,
+      "fraction": 0.6124454148471615,
+      "pixels": 2244
+    },
+    {
+      "id": "rose_red",
+      "slot": 76,
+      "fraction": 0.6154232604873148,
+      "pixels": 2450
+    },
+    {
+      "id": "rose_red",
+      "slot": 77,
+      "fraction": 0.614768174012593,
+      "pixels": 2148
+    },
+    {
+      "id": "rose_red",
+      "slot": 83,
+      "fraction": 0.4344207723035952,
+      "pixels": 1305
+    },
+    {
+      "id": "rose_red",
+      "slot": 63,
+      "fraction": 0.8082266412421684,
+      "pixels": 2967
+    },
+    {
+      "id": "rose_red",
+      "slot": 69,
+      "fraction": 0.6929878048780488,
+      "pixels": 2273
+    },
+    {
+      "id": "rose_red",
+      "slot": 81,
+      "fraction": 0.5113396624472574,
+      "pixels": 1939
+    },
+    {
+      "id": "rose_red",
+      "slot": 68,
+      "fraction": 0.7923715779760074,
+      "pixels": 2576
+    },
+    {
+      "id": "rose_red",
+      "slot": 78,
+      "fraction": 0.6234475906607054,
+      "pixels": 2510
+    },
+    {
+      "id": "rose_red",
+      "slot": 59,
+      "fraction": 0.9085583290881304,
+      "pixels": 3567
+    },
+    {
+      "id": "rose_red",
+      "slot": 60,
+      "fraction": 0.8745865490628445,
+      "pixels": 3173
+    },
+    {
+      "id": "rose_red",
+      "slot": 58,
+      "fraction": 0.8981328940142779,
+      "pixels": 3271
+    },
+    {
+      "id": "rose_red",
+      "slot": 70,
+      "fraction": 0.6291982665222102,
+      "pixels": 2323
+    },
+    {
+      "id": "rose_red",
+      "slot": 62,
+      "fraction": 0.8638935108153079,
+      "pixels": 2596
+    },
+    {
+      "id": "rose_red",
+      "slot": 61,
+      "fraction": 0.9303964757709251,
+      "pixels": 3168
+    },
+    {
+      "id": "rose_red",
+      "slot": 57,
+      "fraction": 0.8887993553585818,
+      "pixels": 3309
+    },
+    {
+      "id": "rose_red",
+      "slot": 56,
+      "fraction": 0.9106760477210156,
+      "pixels": 2977
+    },
+    {
+      "id": "rose_red",
+      "slot": 53,
+      "fraction": 0.6999316473000684,
+      "pixels": 2048
+    },
+    {
+      "id": "rose_red",
+      "slot": 55,
+      "fraction": 0.5923762680602521,
+      "pixels": 1927
+    },
+    {
+      "id": "rose_red",
+      "slot": 54,
+      "fraction": 0.6045740802121312,
+      "pixels": 1824
+    },
+    {
+      "id": "rose_red",
+      "slot": 50,
+      "fraction": 0.583206106870229,
+      "pixels": 1910
+    },
+    {
+      "id": "rose_red",
+      "slot": 51,
+      "fraction": 0.6122387155407453,
+      "pixels": 2021
+    },
+    {
+      "id": "rose_red",
+      "slot": 52,
+      "fraction": 0.55320970042796,
+      "pixels": 1939
+    },
+    {
+      "id": "rose_red",
+      "slot": 49,
+      "fraction": 0.5822925339994449,
+      "pixels": 2098
+    },
+    {
+      "id": "rose_red",
+      "slot": 46,
+      "fraction": 0.6853002070393375,
+      "pixels": 2317
+    },
+    {
+      "id": "rose_red",
+      "slot": 48,
+      "fraction": 0.5683530678148547,
+      "pixels": 2112
+    },
+    {
+      "id": "rose_red",
+      "slot": 45,
+      "fraction": 0.664126149802891,
+      "pixels": 2527
+    },
+    {
+      "id": "rose_red",
+      "slot": 47,
+      "fraction": 0.6547274163813537,
+      "pixels": 2486
+    },
+    {
+      "id": "rose_red",
+      "slot": 43,
+      "fraction": 0.6852409638554217,
+      "pixels": 2730
+    },
+    {
+      "id": "rose_red",
+      "slot": 44,
+      "fraction": 0.6855774079677257,
+      "pixels": 2719
+    },
+    {
+      "id": "rose_red",
+      "slot": 42,
+      "fraction": 0.7586877278250304,
+      "pixels": 3122
+    },
+    {
+      "id": "rose_red",
+      "slot": 41,
+      "fraction": 0.7446283032847617,
+      "pixels": 3015
+    },
+    {
+      "id": "rose_red",
+      "slot": 39,
+      "fraction": 0.7918753478018921,
+      "pixels": 2846
+    },
+    {
+      "id": "rose_red",
+      "slot": 37,
+      "fraction": 0.7237539766702015,
+      "pixels": 2730
+    },
+    {
+      "id": "rose_red",
+      "slot": 38,
+      "fraction": 0.7923299565846599,
+      "pixels": 3285
+    },
+    {
+      "id": "rose_red",
+      "slot": 40,
+      "fraction": 0.7263363028953229,
+      "pixels": 2609
+    },
+    {
+      "id": "rose_red",
+      "slot": 35,
+      "fraction": 0.7597229621736814,
+      "pixels": 2852
+    },
+    {
+      "id": "rose_red",
+      "slot": 36,
+      "fraction": 0.7428288822947576,
+      "pixels": 3004
+    },
+    {
+      "id": "rose_red",
+      "slot": 33,
+      "fraction": 0.6837039495519416,
+      "pixels": 2060
+    },
+    {
+      "id": "rose_red",
+      "slot": 34,
+      "fraction": 0.6860189573459715,
+      "pixels": 2316
+    },
+    {
+      "id": "rose_red",
+      "slot": 32,
+      "fraction": 0.584916047343793,
+      "pixels": 2125
+    },
+    {
+      "id": "rose_red",
+      "slot": 30,
+      "fraction": 0.5973907766990292,
+      "pixels": 1969
+    },
+    {
+      "id": "rose_red",
+      "slot": 31,
+      "fraction": 0.6161019583462853,
+      "pixels": 1982
+    },
+    {
+      "id": "rose_red",
+      "slot": 29,
+      "fraction": 0.6135044301863734,
+      "pixels": 2008
+    },
+    {
+      "id": "rose_red",
+      "slot": 28,
+      "fraction": 0.6735202492211838,
+      "pixels": 2162
+    },
+    {
+      "id": "rose_red",
+      "slot": 27,
+      "fraction": 0.6531547409235108,
+      "pixels": 1853
+    },
+    {
+      "id": "rose_red",
+      "slot": 24,
+      "fraction": 0.7170263788968825,
+      "pixels": 2691
+    },
+    {
+      "id": "rose_red",
+      "slot": 26,
+      "fraction": 0.6235150776728602,
+      "pixels": 2047
+    },
+    {
+      "id": "rose_red",
+      "slot": 25,
+      "fraction": 0.6339313818067359,
+      "pixels": 2014
+    },
+    {
+      "id": "rose_red",
+      "slot": 22,
+      "fraction": 0.6768844221105528,
+      "pixels": 2694
+    },
+    {
+      "id": "rose_red",
+      "slot": 23,
+      "fraction": 0.6706837830757139,
+      "pixels": 2560
+    },
+    {
+      "id": "rose_red",
+      "slot": 21,
+      "fraction": 0.6982758620689655,
+      "pixels": 2511
+    },
+    {
+      "id": "rose_red",
+      "slot": 20,
+      "fraction": 0.7482912332838039,
+      "pixels": 2518
+    },
+    {
+      "id": "rose_red",
+      "slot": 19,
+      "fraction": 0.6699615595826469,
+      "pixels": 2440
+    },
+    {
+      "id": "rose_red",
+      "slot": 18,
+      "fraction": 0.6917573872472784,
+      "pixels": 2224
+    },
+    {
+      "id": "rose_red",
+      "slot": 17,
+      "fraction": 0.7105052125100241,
+      "pixels": 2658
+    },
+    {
+      "id": "rose_red",
+      "slot": 16,
+      "fraction": 0.7056758338209479,
+      "pixels": 2412
+    },
+    {
+      "id": "rose_red",
+      "slot": 14,
+      "fraction": 0.6422535211267606,
+      "pixels": 1824
+    },
+    {
+      "id": "rose_red",
+      "slot": 15,
+      "fraction": 0.6782500775674837,
+      "pixels": 2186
+    },
+    {
+      "id": "rose_red",
+      "slot": 13,
+      "fraction": 0.6482923906530856,
+      "pixels": 2164
+    },
+    {
+      "id": "rose_red",
+      "slot": 12,
+      "fraction": 0.6577624135763671,
+      "pixels": 2093
+    },
+    {
+      "id": "rose_red",
+      "slot": 11,
+      "fraction": 0.692180251822399,
+      "pixels": 2089
+    },
+    {
+      "id": "rose_red",
+      "slot": 10,
+      "fraction": 0.726975476839237,
+      "pixels": 2668
+    },
+    {
+      "id": "rose_red",
+      "slot": 9,
+      "fraction": 0.7222917187890918,
+      "pixels": 2887
+    },
+    {
+      "id": "rose_red",
+      "slot": 7,
+      "fraction": 0.7484008528784648,
+      "pixels": 2106
+    },
+    {
+      "id": "rose_red",
+      "slot": 8,
+      "fraction": 0.7273925652517796,
+      "pixels": 2759
+    },
+    {
+      "id": "rose_red",
+      "slot": 6,
+      "fraction": 0.7176860500150648,
+      "pixels": 2382
+    },
+    {
+      "id": "rose_red",
+      "slot": 5,
+      "fraction": 0.7909035409035409,
+      "pixels": 2591
+    },
+    {
+      "id": "rose_red",
+      "slot": 4,
+      "fraction": 0.7791952894995093,
+      "pixels": 2382
+    },
+    {
+      "id": "rose_red",
+      "slot": 3,
+      "fraction": 0.7288808664259928,
+      "pixels": 2019
+    },
+    {
+      "id": "rose_red",
+      "slot": 2,
+      "fraction": 0.8250355618776671,
+      "pixels": 2320
+    },
+    {
+      "id": "rose_red",
+      "slot": 1,
+      "fraction": 0.8620464203988232,
+      "pixels": 2637
+    },
+    {
+      "id": "rose_red",
+      "slot": 0,
+      "fraction": 1,
+      "pixels": 2758
+    }
+  ]
+}

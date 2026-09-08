@@ -1,0 +1,866 @@
+[
+  {
+    "path": "assets/classic/alstroemeria-bloom.webp",
+    "size": 108968,
+    "dimensions": [
+      383,
+      334
+    ],
+    "sha256": "f849b968b54173fe1860e00a352ee59112bdd0baeb035003217f22caa6ae6ba1"
+  },
+  {
+    "path": "assets/classic/alstroemeria-stem.webp",
+    "size": 16306,
+    "dimensions": [
+      380,
+      1105
+    ],
+    "sha256": "5594904d33d7a8faa2dacf5b506d588e968d407676613581a1cfd413c76e2dc3"
+  },
+  {
+    "path": "assets/classic/babys_breath-bloom.webp",
+    "size": 211798,
+    "dimensions": [
+      570,
+      554
+    ],
+    "sha256": "a22d5ab23586cfdc7531d415e2f67eba75d20600fcdc8b27fd92339449923bb9"
+  },
+  {
+    "path": "assets/classic/babys_breath-stem.webp",
+    "size": 21320,
+    "dimensions": [
+      560,
+      1236
+    ],
+    "sha256": "bea632f8e7c7dabeee5ac7766e1aa9243accd88a70a4459407da38f6b657c62b"
+  },
+  {
+    "path": "assets/classic/carnation_orange-bloom.webp",
+    "size": 39246,
+    "dimensions": [
+      223,
+      168
+    ],
+    "sha256": "29de2b47825b6b848529821093b4eecb56ed6eaca75bd2b4ae2f0d14f30e15f3"
+  },
+  {
+    "path": "assets/classic/carnation_orange-stem.webp",
+    "size": 20378,
+    "dimensions": [
+      214,
+      645
+    ],
+    "sha256": "9c44d10f9f066e6c890ef2e49fa51256bc3f182662232d26ede31ab9c50286be"
+  },
+  {
+    "path": "assets/classic/carnation_pink-bloom.webp",
+    "size": 103290,
+    "dimensions": [
+      380,
+      303
+    ],
+    "sha256": "77f7629a5d1d612fc856599abc2fb160589cfc24a3c5ecc6549c7ba6e072389f"
+  },
+  {
+    "path": "assets/classic/carnation_pink-stem.webp",
+    "size": 94958,
+    "dimensions": [
+      447,
+      1240
+    ],
+    "sha256": "67ade75b2db1411c314dfd5054abb32859cc373c73efaeaf209dcd006c863a08"
+  },
+  {
+    "path": "assets/classic/carnation_red-bloom.webp",
+    "size": 93754,
+    "dimensions": [
+      378,
+      302
+    ],
+    "sha256": "ec36bf857f77228585df72f249259652090342c994d60e42ffd5fa00f71e4a72"
+  },
+  {
+    "path": "assets/classic/carnation_red-stem.webp",
+    "size": 99810,
+    "dimensions": [
+      447,
+      1238
+    ],
+    "sha256": "a0559151fbaa85943360157aff26395687757e841f93c55a9a4f349bcc631a4b"
+  },
+  {
+    "path": "assets/classic/carnation_violet-bloom.webp",
+    "size": 98888,
+    "dimensions": [
+      376,
+      302
+    ],
+    "sha256": "da1cf37bde5b03fe9ae7f295a6adc222ff7e689b3a73880becb1cbb5979d011b"
+  },
+  {
+    "path": "assets/classic/carnation_violet-stem.webp",
+    "size": 101048,
+    "dimensions": [
+      446,
+      1236
+    ],
+    "sha256": "02ef5e265b3599f97ffe29a03f32eaf47d8f394d4d104a6e2a4d2872bfb8ed60"
+  },
+  {
+    "path": "assets/classic/carnation_white-bloom.webp",
+    "size": 67406,
+    "dimensions": [
+      378,
+      302
+    ],
+    "sha256": "f14c7dbf644e886d38203b50fc15bdc1fb242f4802b93e5080c231a3e39c1617"
+  },
+  {
+    "path": "assets/classic/carnation_white-stem.webp",
+    "size": 99858,
+    "dimensions": [
+      447,
+      1238
+    ],
+    "sha256": "2de44727189c32186b933c7bc1816e4138f1940ddf6b86cb5165d10c52652afa"
+  },
+  {
+    "path": "assets/classic/carnation_yellow-bloom.webp",
+    "size": 100014,
+    "dimensions": [
+      378,
+      302
+    ],
+    "sha256": "778c236fde2174d805fa4663f468df50a1d0e055b516a569d6b8bc2ae20999ae"
+  },
+  {
+    "path": "assets/classic/carnation_yellow-stem.webp",
+    "size": 101854,
+    "dimensions": [
+      446,
+      1238
+    ],
+    "sha256": "047faf510799b6f10031cc6fa0acb61bb2a1d209141d412aff7103a0859b5017"
+  },
+  {
+    "path": "assets/classic/eucalyptus-bloom.webp",
+    "size": 149508,
+    "dimensions": [
+      492,
+      588
+    ],
+    "sha256": "235eed806827cbc43df368f78ec41e240cd5dc4a1df0e8bba08377f90d855821"
+  },
+  {
+    "path": "assets/classic/eucalyptus-stem.webp",
+    "size": 24466,
+    "dimensions": [
+      482,
+      1229
+    ],
+    "sha256": "7b8bd4986c094901d7993cd75d4320f7df49838adb9f219cb80bcfe9e56a530f"
+  },
+  {
+    "path": "assets/classic/gerbera_daisy-bloom.webp",
+    "size": 193952,
+    "dimensions": [
+      572,
+      527
+    ],
+    "sha256": "1237935bb7e7e4499e5e2ef49a7a61ad7094899cd243ab11d2a1ec02dd22322c"
+  },
+  {
+    "path": "assets/classic/gerbera_daisy-stem.webp",
+    "size": 24914,
+    "dimensions": [
+      848,
+      1284
+    ],
+    "sha256": "f5cd74b57fe3d354719d9ad7e459f590bf9ee6ec1a67aba95c430d93749da98d"
+  },
+  {
+    "path": "assets/classic/hydrangea-bloom.webp",
+    "size": 343360,
+    "dimensions": [
+      671,
+      593
+    ],
+    "sha256": "740cac827279a5a1aa07fb1a3d62cf8093fb5b8d3757b3dcd0948cae028bcfbd"
+  },
+  {
+    "path": "assets/classic/hydrangea-stem.webp",
+    "size": 45364,
+    "dimensions": [
+      848,
+      1264
+    ],
+    "sha256": "c956a0d71f495f33206ca9050c8f35c72cbf86304a169488fc485299e221ba96"
+  },
+  {
+    "path": "assets/classic/lily-bloom.webp",
+    "size": 186302,
+    "dimensions": [
+      567,
+      479
+    ],
+    "sha256": "dfcd1d7fad3e649377c1bf8044271190395dc653360043bb0f51c2bc356e7296"
+  },
+  {
+    "path": "assets/classic/lily-stem.webp",
+    "size": 22910,
+    "dimensions": [
+      848,
+      1264
+    ],
+    "sha256": "dd7da2de9c27ba8b95e0b754598dc0f06cb3e1376787b1abbbdade819eb81b6c"
+  },
+  {
+    "path": "assets/classic/limonium-bloom.webp",
+    "size": 166858,
+    "dimensions": [
+      475,
+      548
+    ],
+    "sha256": "464cb0e3f6e9b47029a67639eeca7fd75b2eedec3b6c0fee67d2e2f6ee8063c8"
+  },
+  {
+    "path": "assets/classic/limonium-stem.webp",
+    "size": 23360,
+    "dimensions": [
+      465,
+      1097
+    ],
+    "sha256": "b4a93c4f8f5900606bf55f0377760484a875e85936a9a5b89f91816cdcea66fc"
+  },
+  {
+    "path": "assets/classic/ranunculus-bloom.webp",
+    "size": 191674,
+    "dimensions": [
+      540,
+      511
+    ],
+    "sha256": "e60fdb85794f390339faf3e5f29a0e26362847c6b4cccde49e74c32e5ecfc3da"
+  },
+  {
+    "path": "assets/classic/ranunculus-stem.webp",
+    "size": 43026,
+    "dimensions": [
+      848,
+      1264
+    ],
+    "sha256": "dd01567bcb4d0e055c6fd193d528b22e5bb79628d68a305d391f0ddc267a6b80"
+  },
+  {
+    "path": "assets/classic/rose_orange-bloom.webp",
+    "size": 38958,
+    "dimensions": [
+      224,
+      181
+    ],
+    "sha256": "2d7ce1ca7df60bc98cd8a8c3ad652876c00d9c29ca3a8f36271037fe0680f3a5"
+  },
+  {
+    "path": "assets/classic/rose_orange-stem.webp",
+    "size": 39578,
+    "dimensions": [
+      221,
+      646
+    ],
+    "sha256": "3cfd857ceb0e110723c40064d83027f1b1f86d64df54ac5d7de643ddb293cf08"
+  },
+  {
+    "path": "assets/classic/rose_pink-bloom.webp",
+    "size": 81558,
+    "dimensions": [
+      338,
+      281
+    ],
+    "sha256": "e78e8294854119a3599d4b00ac31cf724f514348d44ff9743f1072371379da8a"
+  },
+  {
+    "path": "assets/classic/rose_pink-stem.webp",
+    "size": 90168,
+    "dimensions": [
+      346,
+      1110
+    ],
+    "sha256": "05054ea0c63346b324692d044f2620baf512b0c37eec3b3b1ae77f1055947692"
+  },
+  {
+    "path": "assets/classic/rose_red-bloom.webp",
+    "size": 75370,
+    "dimensions": [
+      355,
+      281
+    ],
+    "sha256": "da52a73a8fbe13dd1859ceed67266bd9960016c452c9eb59976e0e790820161f"
+  },
+  {
+    "path": "assets/classic/rose_red-stem.webp",
+    "size": 90134,
+    "dimensions": [
+      349,
+      1111
+    ],
+    "sha256": "ba385a5df4dea3f88a79f570647909d3a003f299fb6521e733b059a102c2faa7"
+  },
+  {
+    "path": "assets/classic/rose_violet-bloom.webp",
+    "size": 91802,
+    "dimensions": [
+      337,
+      312
+    ],
+    "sha256": "8afba6fffa417e28f405c76613f996b26bab8a34eddb98cd871ef478effc65bd"
+  },
+  {
+    "path": "assets/classic/rose_violet-stem.webp",
+    "size": 94682,
+    "dimensions": [
+      447,
+      1239
+    ],
+    "sha256": "c41f1e8d134cf2a0c991e91336a119fd3361c5c0fe3d61e8dd6176d869f76859"
+  },
+  {
+    "path": "assets/classic/rose_white-bloom.webp",
+    "size": 55908,
+    "dimensions": [
+      336,
+      281
+    ],
+    "sha256": "960dbfaaebe51555c280b06ac8c58079de25693e5802b50dbc018bd0795ca18e"
+  },
+  {
+    "path": "assets/classic/rose_white-stem.webp",
+    "size": 89466,
+    "dimensions": [
+      345,
+      1112
+    ],
+    "sha256": "0e3f50d9e192ef623e762024f5ea88689f130d6fdae66b7267a827221def758f"
+  },
+  {
+    "path": "assets/classic/rose_yellow-bloom.webp",
+    "size": 75624,
+    "dimensions": [
+      353,
+      281
+    ],
+    "sha256": "c4a2d75711432bf31545062a0e82ad29873f32038fa464c0f43014526c095360"
+  },
+  {
+    "path": "assets/classic/rose_yellow-stem.webp",
+    "size": 90766,
+    "dimensions": [
+      346,
+      1111
+    ],
+    "sha256": "d1b207a8a95b05744a1d8f0a127c6dbbaeff836346aa9b8481bad1d9ff0b99b8"
+  },
+  {
+    "path": "assets/classic/sunflower-bloom.webp",
+    "size": 78044,
+    "dimensions": [
+      267,
+      264
+    ],
+    "sha256": "4b836c3e463bd3cec96e3386f6284a53287499fd256f47f4bd8853288508f6d9"
+  },
+  {
+    "path": "assets/classic/sunflower-stem.webp",
+    "size": 52962,
+    "dimensions": [
+      351,
+      695
+    ],
+    "sha256": "dc8106d1471baa1dae449f677c96edf0f21698fc2adb6d354c188533953c6bcb"
+  },
+  {
+    "path": "assets/classic/tulip_orange-bloom.webp",
+    "size": 25706,
+    "dimensions": [
+      153,
+      161
+    ],
+    "sha256": "fb8a795df0a790fced1fd00b965199f6d71e135d66d6ef2ebbc0ba269d5b329c"
+  },
+  {
+    "path": "assets/classic/tulip_orange-stem.webp",
+    "size": 34922,
+    "dimensions": [
+      189,
+      641
+    ],
+    "sha256": "81a05321a140cb4b7264b28319f1a06bd9f4712926656e8cbd43740302cf741e"
+  },
+  {
+    "path": "assets/classic/tulip_pink-bloom.webp",
+    "size": 38136,
+    "dimensions": [
+      184,
+      303
+    ],
+    "sha256": "dc22edb91579d05022995abcaa67660989e451b914a553a387012f3078948ab4"
+  },
+  {
+    "path": "assets/classic/tulip_pink-stem.webp",
+    "size": 74702,
+    "dimensions": [
+      239,
+      1240
+    ],
+    "sha256": "bd2400dcec9588795e211b49ab9d96895264bbf83d1879be64330b6e208f717e"
+  },
+  {
+    "path": "assets/classic/tulip_red-bloom.webp",
+    "size": 45122,
+    "dimensions": [
+      196,
+      302
+    ],
+    "sha256": "2b59880ff8364626ab301b6bddae1248d0128f945b764200d94ab2455f0be8a0"
+  },
+  {
+    "path": "assets/classic/tulip_red-stem.webp",
+    "size": 83068,
+    "dimensions": [
+      238,
+      1237
+    ],
+    "sha256": "107e3ee8c5fa1b938f9a1cec935d138382a3045b9fe0ba8fec08b3a390432945"
+  },
+  {
+    "path": "assets/classic/tulip_violet-bloom.webp",
+    "size": 42954,
+    "dimensions": [
+      194,
+      302
+    ],
+    "sha256": "1b634b8ffadb2f4fab91121c900f0a0d6e3c4ce4c0a3f2af0c745e01246a311b"
+  },
+  {
+    "path": "assets/classic/tulip_violet-stem.webp",
+    "size": 80648,
+    "dimensions": [
+      238,
+      1237
+    ],
+    "sha256": "73ee9bcb49d9b7552c0ca73243642c8cfa443c9ea2edb190fc4ba2f161d3385f"
+  },
+  {
+    "path": "assets/classic/tulip_white-bloom.webp",
+    "size": 27014,
+    "dimensions": [
+      181,
+      302
+    ],
+    "sha256": "ce46083360f779911c1d7fc969243f1485665741d1167df83d37d51d342593c7"
+  },
+  {
+    "path": "assets/classic/tulip_white-stem.webp",
+    "size": 77630,
+    "dimensions": [
+      238,
+      1237
+    ],
+    "sha256": "808432b233ed30e0eec4a65e2fded76199ebd828101b5ccd7f479ea45e073eee"
+  },
+  {
+    "path": "assets/classic/tulip_yellow-bloom.webp",
+    "size": 31032,
+    "dimensions": [
+      181,
+      302
+    ],
+    "sha256": "0b9a718683724c14f60a8f1f11265d8da7f9d4df90632981311e068be25305b3"
+  },
+  {
+    "path": "assets/classic/tulip_yellow-stem.webp",
+    "size": 77220,
+    "dimensions": [
+      238,
+      1237
+    ],
+    "sha256": "0cd3c854170e410a0cb5a1edaf6d8b4431c19bad22c3daf588cac1463cc70d04"
+  },
+  {
+    "path": "assets/classic/wrap-ivory-back.webp",
+    "size": 303202,
+    "dimensions": [
+      896,
+      1200
+    ],
+    "sha256": "a1e717ed0fdebc039a9d2432ecdd815e7b64c2dce699f74eb189efd93d47dbec"
+  },
+  {
+    "path": "assets/classic/wrap-ivory-front.webp",
+    "size": 155408,
+    "dimensions": [
+      896,
+      1200
+    ],
+    "sha256": "5ca47957152ee483b93849c5fbef442fa8364fbfeac81062673253662c52af28"
+  },
+  {
+    "path": "assets/finishes/diamond_pin.webp",
+    "size": 29390,
+    "dimensions": [
+      250,
+      248
+    ],
+    "sha256": "58b419845c9dd9ca58c66d78dde529a46ed23b2c6504000474e34142ae7394b4"
+  },
+  {
+    "path": "assets/finishes/extra_butterfly_gold.webp",
+    "size": 101822,
+    "dimensions": [
+      522,
+      456
+    ],
+    "sha256": "bf9047c5597e0576e64cedce7e2d6d643db3ce938cd85ebb1c694bfc1c29ad87"
+  },
+  {
+    "path": "assets/finishes/extra_chocolate_gold.webp",
+    "size": 115746,
+    "dimensions": [
+      521,
+      522
+    ],
+    "sha256": "160504e6847b40894bf7e512944c16a1170c5c237290252665fb2fa06033bdec"
+  },
+  {
+    "path": "assets/finishes/ribbon_blush.webp",
+    "size": 24422,
+    "dimensions": [
+      382,
+      421
+    ],
+    "sha256": "9c67a450da4818c16b4e587708f3e2759cba75e867a8559483ad723920fbd640"
+  },
+  {
+    "path": "assets/finishes/ribbon_burgundy.webp",
+    "size": 23508,
+    "dimensions": [
+      383,
+      426
+    ],
+    "sha256": "4dbf10579ce07135ecc57e671f20e21163e8a75834cf9b8742d1fa83c63d4a70"
+  },
+  {
+    "path": "assets/finishes/ribbon_sage.webp",
+    "size": 24666,
+    "dimensions": [
+      378,
+      421
+    ],
+    "sha256": "0d1f1acabbe58ef0be68290fbc390ef095a3d21595e52237625404350cb4e4a6"
+  },
+  {
+    "path": "assets/finishes/sash_bday.webp",
+    "size": 17960,
+    "dimensions": [
+      714,
+      122
+    ],
+    "sha256": "cbce4cc433055c0c384900ffeb70d6a45128a2241a71f17322e72b06bb999d6b"
+  },
+  {
+    "path": "assets/finishes/sash_love.webp",
+    "size": 18264,
+    "dimensions": [
+      715,
+      125
+    ],
+    "sha256": "88cbbacf381ba7b590a5e37650f52226d2a12eb9e77f83ddfde6e07b170a30b8"
+  },
+  {
+    "path": "assets/finishes/sash_wed.webp",
+    "size": 15946,
+    "dimensions": [
+      751,
+      124
+    ],
+    "sha256": "e59f21a0e152ca51d791792965d7c5b9bcfb9821d30034b41bdff6e9b1fc16c9"
+  },
+  {
+    "path": "assets/heads/alstroemeria.webp",
+    "size": 57384,
+    "dimensions": [
+      505,
+      522
+    ],
+    "sha256": "9bd675c7f77950519bf04134da447672a12fe85c5f4b08cfafedb76d73acf58c"
+  },
+  {
+    "path": "assets/heads/babys_breath.webp",
+    "size": 86918,
+    "dimensions": [
+      522,
+      432
+    ],
+    "sha256": "586584966e675bc3fc15c13fd240df7b8d3eedbe8d0e837ab060896e7857d1c2"
+  },
+  {
+    "path": "assets/heads/babys_compact.webp",
+    "size": 660592,
+    "dimensions": [
+      861,
+      816
+    ],
+    "sha256": "08ec13aada67628b8e7b1ba3af7a25752f33e21130f8ac9fcefab2362253cbb2"
+  },
+  {
+    "path": "assets/heads/babys_medium.webp",
+    "size": 592500,
+    "dimensions": [
+      861,
+      816
+    ],
+    "sha256": "956527ee23a841b27454a19d203c0d6262e0ee363fd3d7d2ecbe9bdd50eab9f4"
+  },
+  {
+    "path": "assets/heads/carnation_orange.webp",
+    "size": 82246,
+    "dimensions": [
+      521,
+      522
+    ],
+    "sha256": "8323a78c136909bc4244c3c1f8ca551296a9eed7ad19feff68ab442dca5a8bea"
+  },
+  {
+    "path": "assets/heads/carnation_pink.webp",
+    "size": 83660,
+    "dimensions": [
+      516,
+      522
+    ],
+    "sha256": "ee0f12c7f093b69c40e7227c235de8ac84bd60beba87b2db799bf0d3a94b8b83"
+  },
+  {
+    "path": "assets/heads/carnation_red.webp",
+    "size": 68918,
+    "dimensions": [
+      518,
+      522
+    ],
+    "sha256": "063235d53065137873df1815fe36f625bbfc2303a79e5f6a8b29271a84f2dff8"
+  },
+  {
+    "path": "assets/heads/carnation_violet.webp",
+    "size": 85846,
+    "dimensions": [
+      514,
+      522
+    ],
+    "sha256": "e5714e61543612642c30f9ddbd11c9fc059289a91f23e9c094ecc38e2d4aa8b3"
+  },
+  {
+    "path": "assets/heads/carnation_white.webp",
+    "size": 63238,
+    "dimensions": [
+      515,
+      522
+    ],
+    "sha256": "4d3da4048270fbd0d1b5587b5aabf5f74574939af34d3e36dac2393dc2deb0b5"
+  },
+  {
+    "path": "assets/heads/carnation_yellow.webp",
+    "size": 74886,
+    "dimensions": [
+      515,
+      522
+    ],
+    "sha256": "3c367163e81129d9b2a06f8c3f2f24196cb7a955d0ca6e78a7372368bce25232"
+  },
+  {
+    "path": "assets/heads/eucalyptus.webp",
+    "size": 44696,
+    "dimensions": [
+      312,
+      522
+    ],
+    "sha256": "8729ca846199dbc4d68e1841ba36a230314648c5f8eb821b0d39a93c17a2ea98"
+  },
+  {
+    "path": "assets/heads/gerbera_daisy.webp",
+    "size": 58836,
+    "dimensions": [
+      490,
+      488
+    ],
+    "sha256": "da871ec439d9368c18e55a323bd328f024efa7de0a169b94df9ad041a73760d7"
+  },
+  {
+    "path": "assets/heads/hydrangea.webp",
+    "size": 568630,
+    "dimensions": [
+      870,
+      840
+    ],
+    "sha256": "1ce57b4bb24366e6ef16cb33c24643f149ddb5092340cfddf65ec513450469bc"
+  },
+  {
+    "path": "assets/heads/lily.webp",
+    "size": 57398,
+    "dimensions": [
+      470,
+      522
+    ],
+    "sha256": "26d63f38cce6f8a792cc04d77cec47d26529319eb87b6756c9c2b7337e18299e"
+  },
+  {
+    "path": "assets/heads/limonium.webp",
+    "size": 107454,
+    "dimensions": [
+      522,
+      522
+    ],
+    "sha256": "b8398c2d39c12bcfcf3f177ecbae810803360d0e27afe0463aadc7f3eaf35e95"
+  },
+  {
+    "path": "assets/heads/ranunculus.webp",
+    "size": 50026,
+    "dimensions": [
+      522,
+      519
+    ],
+    "sha256": "e00496639301b336d1d1749c92c0cff049dfee666661e89335d30387c75ac348"
+  },
+  {
+    "path": "assets/heads/rose_orange.webp",
+    "size": 54472,
+    "dimensions": [
+      461,
+      472
+    ],
+    "sha256": "249310351da3c3036a2a9d35f6aa1a6cca048c8519f4539e3350fabe49968ca9"
+  },
+  {
+    "path": "assets/heads/rose_pink.webp",
+    "size": 57078,
+    "dimensions": [
+      522,
+      521
+    ],
+    "sha256": "0bf69dceb0f6d470761334c726dfef339cb625f1057b03b652e71da996f54355"
+  },
+  {
+    "path": "assets/heads/rose_red.webp",
+    "size": 58848,
+    "dimensions": [
+      485,
+      490
+    ],
+    "sha256": "ed4cb3c355b8fb1671e0e54665e5bde42706d59e7f5110c84d02521ea0d9e274"
+  },
+  {
+    "path": "assets/heads/rose_violet.webp",
+    "size": 57858,
+    "dimensions": [
+      480,
+      485
+    ],
+    "sha256": "8f19e937a8c7500695b684838345e999c7b564fce0329dd59f4d9a590c07510c"
+  },
+  {
+    "path": "assets/heads/rose_white.webp",
+    "size": 41332,
+    "dimensions": [
+      490,
+      464
+    ],
+    "sha256": "4b5444f7b3d6e9f8e0ba4af0a72b3382b2762fb70a6e3ed53021119809685024"
+  },
+  {
+    "path": "assets/heads/rose_yellow.webp",
+    "size": 46914,
+    "dimensions": [
+      473,
+      473
+    ],
+    "sha256": "333d64f0426f50ca1cf8ef6b5b47fa76a9c2ab1c57477c040c4242ddedf140a0"
+  },
+  {
+    "path": "assets/heads/sunflower.webp",
+    "size": 84048,
+    "dimensions": [
+      490,
+      489
+    ],
+    "sha256": "d9eab783ce8caf17da5d94841b8a25ea6ae2454b42a07651e6e323a2194fee3d"
+  },
+  {
+    "path": "assets/heads/tulip_orange.webp",
+    "size": 36558,
+    "dimensions": [
+      481,
+      522
+    ],
+    "sha256": "50095c23289fdb3a85c28f154086933f8c4b262d2ae74b2697e393508159d9b4"
+  },
+  {
+    "path": "assets/heads/tulip_pink.webp",
+    "size": 41872,
+    "dimensions": [
+      510,
+      522
+    ],
+    "sha256": "230f0c12d756d2dc4cff90c64b1153fff435a49933d77698208fda0fc861fa8c"
+  },
+  {
+    "path": "assets/heads/tulip_red.webp",
+    "size": 32814,
+    "dimensions": [
+      485,
+      522
+    ],
+    "sha256": "33ceafa2f19fedae6053a194323af2ca0b21557c15d3122a1ab30a227efa722b"
+  },
+  {
+    "path": "assets/heads/tulip_violet.webp",
+    "size": 52618,
+    "dimensions": [
+      497,
+      522
+    ],
+    "sha256": "97db562b8c227724fa9fdee2a079a292d36ca7d014fcf2d22c878c7e3600dc47"
+  },
+  {
+    "path": "assets/heads/tulip_white.webp",
+    "size": 30154,
+    "dimensions": [
+      513,
+      522
+    ],
+    "sha256": "d89264a531d3e062c6b6a4186cca8a99261a8a3880c67cc92b0375bbe40c7d91"
+  },
+  {
+    "path": "assets/heads/tulip_yellow.webp",
+    "size": 34810,
+    "dimensions": [
+      514,
+      522
+    ],
+    "sha256": "9dc458bf41f7ec3d0839c02d7a5c05ffb70e8e41c5454f6232f33a977dd9faca"
+  },
+  {
+    "path": "assets/wrapping/dome-black.webp",
+    "size": 297670,
+    "dimensions": [
+      917,
+      929
+    ],
+    "sha256": "e821749e335b6410e3737ae647ca4a9f5ef4d231e80194c9938ce9d27882719e"
+  },
+  {
+    "path": "assets/wrapping/heart-black.webp",
+    "size": 264842,
+    "dimensions": [
+      920,
+      894
+    ],
+    "sha256": "53b9cee8b3f7c8408a4235069cfc905509919a36fe0b92a2119568073850da7f"
+  }
+]

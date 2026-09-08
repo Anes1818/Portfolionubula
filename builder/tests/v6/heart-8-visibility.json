@@ -1,0 +1,56 @@
+{
+  "count": 8,
+  "capacity": 8,
+  "protectedOK": true,
+  "minVisible": 0.7042164883574575,
+  "visible": [
+    {
+      "id": "rose_red",
+      "slot": 2,
+      "fraction": 0.7570142932768661,
+      "pixels": 1430
+    },
+    {
+      "id": "rose_red",
+      "slot": 7,
+      "fraction": 0.7042164883574575,
+      "pixels": 1119
+    },
+    {
+      "id": "rose_red",
+      "slot": 6,
+      "fraction": 0.9176100628930818,
+      "pixels": 1459
+    },
+    {
+      "id": "rose_red",
+      "slot": 3,
+      "fraction": 0.9296714579055442,
+      "pixels": 1811
+    },
+    {
+      "id": "rose_red",
+      "slot": 4,
+      "fraction": 0.8112272977435333,
+      "pixels": 1474
+    },
+    {
+      "id": "rose_red",
+      "slot": 1,
+      "fraction": 0.8816475495307612,
+      "pixels": 1691
+    },
+    {
+      "id": "rose_red",
+      "slot": 5,
+      "fraction": 0.7828843106180665,
+      "pixels": 988
+    },
+    {
+      "id": "sunflower",
+      "slot": 0,
+      "fraction": 1,
+      "pixels": 1279
+    }
+  ]
+}

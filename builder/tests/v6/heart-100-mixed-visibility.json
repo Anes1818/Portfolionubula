@@ -1,0 +1,608 @@
+{
+  "count": 100,
+  "capacity": 100,
+  "protectedOK": true,
+  "minVisible": 0.5293056807935077,
+  "visible": [
+    {
+      "id": "hydrangea",
+      "slot": 94,
+      "fraction": 0.6903669724770642,
+      "pixels": 2408
+    },
+    {
+      "id": "hydrangea",
+      "slot": 73,
+      "fraction": 0.5912220309810671,
+      "pixels": 2061
+    },
+    {
+      "id": "rose_white",
+      "slot": 72,
+      "fraction": 0.7955047899778924,
+      "pixels": 2159
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 95,
+      "fraction": 0.729120473022912,
+      "pixels": 1973
+    },
+    {
+      "id": "rose_white",
+      "slot": 93,
+      "fraction": 0.9170204554226168,
+      "pixels": 2376
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 74,
+      "fraction": 0.8820068132548776,
+      "pixels": 2848
+    },
+    {
+      "id": "lily",
+      "slot": 71,
+      "fraction": 0.7745438748913988,
+      "pixels": 1783
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 96,
+      "fraction": 0.9042769857433809,
+      "pixels": 1776
+    },
+    {
+      "id": "lily",
+      "slot": 92,
+      "fraction": 0.8765957446808511,
+      "pixels": 2472
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 75,
+      "fraction": 0.9289501590668081,
+      "pixels": 1752
+    },
+    {
+      "id": "rose_red",
+      "slot": 70,
+      "fraction": 0.8013950073421439,
+      "pixels": 2183
+    },
+    {
+      "id": "ranunculus",
+      "slot": 97,
+      "fraction": 0.8966804979253112,
+      "pixels": 2161
+    },
+    {
+      "id": "rose_red",
+      "slot": 91,
+      "fraction": 0.7659574468085106,
+      "pixels": 1944
+    },
+    {
+      "id": "rose_red",
+      "slot": 63,
+      "fraction": 0.6811023622047244,
+      "pixels": 1730
+    },
+    {
+      "id": "ranunculus",
+      "slot": 76,
+      "fraction": 0.7586347013409184,
+      "pixels": 1867
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 46,
+      "fraction": 0.7084557623245185,
+      "pixels": 2170
+    },
+    {
+      "id": "hydrangea",
+      "slot": 45,
+      "fraction": 0.7785714285714286,
+      "pixels": 2071
+    },
+    {
+      "id": "ranunculus",
+      "slot": 62,
+      "fraction": 0.898989898989899,
+      "pixels": 2225
+    },
+    {
+      "id": "rose_white",
+      "slot": 44,
+      "fraction": 0.7477348593228421,
+      "pixels": 1568
+    },
+    {
+      "id": "lily",
+      "slot": 64,
+      "fraction": 0.7124518613607189,
+      "pixels": 1110
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 47,
+      "fraction": 0.9571428571428572,
+      "pixels": 2010
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 61,
+      "fraction": 0.9161821705426356,
+      "pixels": 1891
+    },
+    {
+      "id": "ranunculus",
+      "slot": 83,
+      "fraction": 0.7311827956989247,
+      "pixels": 408
+    },
+    {
+      "id": "ranunculus",
+      "slot": 90,
+      "fraction": 0.727474478473147,
+      "pixels": 1639
+    },
+    {
+      "id": "ranunculus",
+      "slot": 69,
+      "fraction": 0.7512019230769231,
+      "pixels": 1250
+    },
+    {
+      "id": "rose_red",
+      "slot": 77,
+      "fraction": 0.7527298344487495,
+      "pixels": 2137
+    },
+    {
+      "id": "rose_red",
+      "slot": 98,
+      "fraction": 0.8389261744966443,
+      "pixels": 1250
+    },
+    {
+      "id": "rose_red",
+      "slot": 84,
+      "fraction": 0.8385214007782101,
+      "pixels": 431
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 60,
+      "fraction": 0.7046236148261368,
+      "pixels": 1844
+    },
+    {
+      "id": "lily",
+      "slot": 43,
+      "fraction": 0.642219387755102,
+      "pixels": 1007
+    },
+    {
+      "id": "ranunculus",
+      "slot": 48,
+      "fraction": 0.8391208791208791,
+      "pixels": 1909
+    },
+    {
+      "id": "rose_white",
+      "slot": 65,
+      "fraction": 0.6541425818882466,
+      "pixels": 1358
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 82,
+      "fraction": 0.7488662131519275,
+      "pixels": 1321
+    },
+    {
+      "id": "lily",
+      "slot": 85,
+      "fraction": 0.8338368580060423,
+      "pixels": 1104
+    },
+    {
+      "id": "hydrangea",
+      "slot": 38,
+      "fraction": 0.7047318611987382,
+      "pixels": 2234
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 89,
+      "fraction": 0.719256434699714,
+      "pixels": 1509
+    },
+    {
+      "id": "lily",
+      "slot": 78,
+      "fraction": 0.7687385740402194,
+      "pixels": 1682
+    },
+    {
+      "id": "hydrangea",
+      "slot": 24,
+      "fraction": 0.6181189053161371,
+      "pixels": 1965
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 25,
+      "fraction": 0.8350374914792092,
+      "pixels": 2450
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 68,
+      "fraction": 0.7406143344709898,
+      "pixels": 1085
+    },
+    {
+      "id": "rose_white",
+      "slot": 37,
+      "fraction": 0.8660179640718563,
+      "pixels": 2314
+    },
+    {
+      "id": "lily",
+      "slot": 99,
+      "fraction": 0.7735124760076776,
+      "pixels": 806
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 54,
+      "fraction": 0.7981807845366685,
+      "pixels": 1404
+    },
+    {
+      "id": "hydrangea",
+      "slot": 59,
+      "fraction": 0.7133891213389121,
+      "pixels": 2046
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 81,
+      "fraction": 0.6696528555431132,
+      "pixels": 1196
+    },
+    {
+      "id": "rose_white",
+      "slot": 86,
+      "fraction": 0.6301633045148896,
+      "pixels": 1312
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 88,
+      "fraction": 0.6995636119503189,
+      "pixels": 2084
+    },
+    {
+      "id": "rose_red",
+      "slot": 49,
+      "fraction": 0.7708061002178649,
+      "pixels": 1769
+    },
+    {
+      "id": "rose_white",
+      "slot": 79,
+      "fraction": 0.7274641954507161,
+      "pixels": 1727
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 26,
+      "fraction": 0.783481101259916,
+      "pixels": 1679
+    },
+    {
+      "id": "lily",
+      "slot": 36,
+      "fraction": 0.7225950782997763,
+      "pixels": 1615
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 39,
+      "fraction": 0.7994114762138304,
+      "pixels": 1630
+    },
+    {
+      "id": "rose_white",
+      "slot": 23,
+      "fraction": 0.7988668555240793,
+      "pixels": 1692
+    },
+    {
+      "id": "hydrangea",
+      "slot": 80,
+      "fraction": 0.6289252543122512,
+      "pixels": 1422
+    },
+    {
+      "id": "hydrangea",
+      "slot": 87,
+      "fraction": 0.736890951276102,
+      "pixels": 1588
+    },
+    {
+      "id": "rose_red",
+      "slot": 42,
+      "fraction": 0.8543689320388349,
+      "pixels": 704
+    },
+    {
+      "id": "ranunculus",
+      "slot": 55,
+      "fraction": 0.666090961427749,
+      "pixels": 1157
+    },
+    {
+      "id": "hydrangea",
+      "slot": 66,
+      "fraction": 0.8260481712756468,
+      "pixels": 926
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 53,
+      "fraction": 0.7110117384013416,
+      "pixels": 1272
+    },
+    {
+      "id": "rose_white",
+      "slot": 58,
+      "fraction": 0.7414495114006515,
+      "pixels": 1821
+    },
+    {
+      "id": "hydrangea",
+      "slot": 10,
+      "fraction": 0.6442166910688141,
+      "pixels": 1760
+    },
+    {
+      "id": "lily",
+      "slot": 50,
+      "fraction": 0.7418576598311218,
+      "pixels": 1230
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 19,
+      "fraction": 0.6317535545023697,
+      "pixels": 1333
+    },
+    {
+      "id": "hydrangea",
+      "slot": 31,
+      "fraction": 0.7418111753371869,
+      "pixels": 1155
+    },
+    {
+      "id": "lily",
+      "slot": 22,
+      "fraction": 0.7431972789115646,
+      "pixels": 437
+    },
+    {
+      "id": "hydrangea",
+      "slot": 52,
+      "fraction": 0.6718680338831922,
+      "pixels": 1507
+    },
+    {
+      "id": "ranunculus",
+      "slot": 27,
+      "fraction": 0.7600518806744487,
+      "pixels": 1758
+    },
+    {
+      "id": "rose_red",
+      "slot": 35,
+      "fraction": 0.7448755490483162,
+      "pixels": 2035
+    },
+    {
+      "id": "rose_red",
+      "slot": 56,
+      "fraction": 0.7448148148148148,
+      "pixels": 2011
+    },
+    {
+      "id": "rose_white",
+      "slot": 51,
+      "fraction": 0.8094180364282542,
+      "pixels": 1822
+    },
+    {
+      "id": "lily",
+      "slot": 57,
+      "fraction": 0.8357933579335793,
+      "pixels": 1359
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 40,
+      "fraction": 0.5293056807935077,
+      "pixels": 587
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 18,
+      "fraction": 0.8147304479878512,
+      "pixels": 2146
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 11,
+      "fraction": 0.784320809248555,
+      "pixels": 2171
+    },
+    {
+      "id": "rose_white",
+      "slot": 9,
+      "fraction": 0.7404129793510325,
+      "pixels": 1255
+    },
+    {
+      "id": "ranunculus",
+      "slot": 20,
+      "fraction": 0.7112781954887218,
+      "pixels": 946
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 67,
+      "fraction": 0.702054794520548,
+      "pixels": 820
+    },
+    {
+      "id": "rose_white",
+      "slot": 30,
+      "fraction": 0.6869719875500222,
+      "pixels": 1545
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 32,
+      "fraction": 0.9195505617977529,
+      "pixels": 2046
+    },
+    {
+      "id": "ranunculus",
+      "slot": 34,
+      "fraction": 0.8125791473195441,
+      "pixels": 1925
+    },
+    {
+      "id": "rose_red",
+      "slot": 28,
+      "fraction": 0.7038478166882837,
+      "pixels": 1628
+    },
+    {
+      "id": "ranunculus",
+      "slot": 41,
+      "fraction": 0.8090976882923192,
+      "pixels": 1085
+    },
+    {
+      "id": "rose_white",
+      "slot": 2,
+      "fraction": 0.8005390835579514,
+      "pixels": 2079
+    },
+    {
+      "id": "rose_red",
+      "slot": 7,
+      "fraction": 0.6663974151857835,
+      "pixels": 1650
+    },
+    {
+      "id": "lily",
+      "slot": 29,
+      "fraction": 0.7461447212336892,
+      "pixels": 1258
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 33,
+      "fraction": 0.8342245989304813,
+      "pixels": 1560
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 12,
+      "fraction": 0.7617787188988883,
+      "pixels": 1439
+    },
+    {
+      "id": "rose_red",
+      "slot": 21,
+      "fraction": 0.8736479842674533,
+      "pixels": 1777
+    },
+    {
+      "id": "hydrangea",
+      "slot": 17,
+      "fraction": 0.7480662983425415,
+      "pixels": 1354
+    },
+    {
+      "id": "lily",
+      "slot": 8,
+      "fraction": 0.8151840490797546,
+      "pixels": 1063
+    },
+    {
+      "id": "lily",
+      "slot": 15,
+      "fraction": 0.6946815495732108,
+      "pixels": 1058
+    },
+    {
+      "id": "rose_white",
+      "slot": 16,
+      "fraction": 0.781134401972873,
+      "pixels": 1267
+    },
+    {
+      "id": "rose_red",
+      "slot": 14,
+      "fraction": 0.841025641025641,
+      "pixels": 1804
+    },
+    {
+      "id": "ranunculus",
+      "slot": 13,
+      "fraction": 0.7818104184457728,
+      "pixels": 1831
+    },
+    {
+      "id": "ranunculus",
+      "slot": 6,
+      "fraction": 0.8606150793650794,
+      "pixels": 1735
+    },
+    {
+      "id": "hydrangea",
+      "slot": 3,
+      "fraction": 0.9287275907302143,
+      "pixels": 2124
+    },
+    {
+      "id": "lily",
+      "slot": 1,
+      "fraction": 0.7844690966719493,
+      "pixels": 990
+    },
+    {
+      "id": "tulip_pink",
+      "slot": 5,
+      "fraction": 0.7470697100555213,
+      "pixels": 1211
+    },
+    {
+      "id": "gerbera_daisy",
+      "slot": 4,
+      "fraction": 0.8014616321559074,
+      "pixels": 1316
+    },
+    {
+      "id": "rose_red",
+      "slot": 0,
+      "fraction": 1,
+      "pixels": 1742
+    }
+  ]
+}

@@ -1,0 +1,465 @@
+{
+  "passed": 111,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "classic default validates",
+      "pass": true
+    },
+    {
+      "label": "dome default validates",
+      "pass": true
+    },
+    {
+      "label": "heart default validates",
+      "pass": true
+    },
+    {
+      "label": "15 positions, five lilies, ten roses",
+      "pass": true
+    },
+    {
+      "label": "Five lily swaps cost exactly $5 more in sample rates",
+      "pass": true
+    },
+    {
+      "label": "Painting never moves slot centers",
+      "pass": true
+    },
+    {
+      "label": "Sixteenth item blocked with no mutation",
+      "pass": true
+    },
+    {
+      "label": "X leaves an empty fixed slot",
+      "pass": true
+    },
+    {
+      "label": "Deleted lily not charged",
+      "pass": true
+    },
+    {
+      "label": "Only the vacant slot refills",
+      "pass": true
+    },
+    {
+      "label": "Automatic blend honors explicit empty and painted slots",
+      "pass": true
+    },
+    {
+      "label": "v2 cluster exact five accents",
+      "pass": true
+    },
+    {
+      "label": "v2 border exact five accents",
+      "pass": true
+    },
+    {
+      "label": "v2 half exact five accents",
+      "pass": true
+    },
+    {
+      "label": "v2 scatter exact five accents",
+      "pass": true
+    },
+    {
+      "label": "v2 ring exact five accents",
+      "pass": true
+    },
+    {
+      "label": "Zero accents restores base recipe",
+      "pass": true
+    },
+    {
+      "label": "patches keeps 15 slots and two varieties",
+      "pass": true
+    },
+    {
+      "label": "half keeps 15 slots and two varieties",
+      "pass": true
+    },
+    {
+      "label": "border keeps 15 slots and two varieties",
+      "pass": true
+    },
+    {
+      "label": "rings keeps 15 slots and two varieties",
+      "pass": true
+    },
+    {
+      "label": "Repositioning swaps slot contents",
+      "pass": true
+    },
+    {
+      "label": "Original v1 41-position heart signature",
+      "pass": true
+    },
+    {
+      "label": "v1 zones change species without moving or adding",
+      "pass": true
+    },
+    {
+      "label": "Heart zones fixed count",
+      "pass": true
+    },
+    {
+      "label": "Heart rings fixed count",
+      "pass": true
+    },
+    {
+      "label": "Heart checker fixed count",
+      "pass": true
+    },
+    {
+      "label": "Three separate bouquets preserve notes",
+      "pass": true
+    },
+    {
+      "label": "Version 6 studio round-trips",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 29",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 30",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 31",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 32",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 33",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 34",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 35",
+      "pass": true
+    },
+    {
+      "label": "Malformed import rejected 36",
+      "pass": true
+    },
+    {
+      "label": "Extra imported flower beyond capacity rejected",
+      "pass": true
+    },
+    {
+      "label": "Legacy import retains every priced item",
+      "pass": true
+    },
+    {
+      "label": "Classic rose_red valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic rose_pink valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic rose_white valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic rose_violet valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic rose_yellow valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic rose_orange valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic tulip_red valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic tulip_pink valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic tulip_white valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic tulip_violet valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic tulip_yellow valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic tulip_orange valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic carnation_red valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic carnation_pink valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic carnation_white valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic carnation_violet valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic carnation_yellow valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic carnation_orange valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic lily valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic gerbera_daisy valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic sunflower valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic ranunculus valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic alstroemeria valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic eucalyptus valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic limonium valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic babys_breath valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic hydrangea valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic babys_compact valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic babys_medium valid and supported",
+      "pass": true
+    },
+    {
+      "label": "Classic refuses 21st rose",
+      "pass": true
+    },
+    {
+      "label": "Classic refuses detached off-paper placement",
+      "pass": true
+    },
+    {
+      "label": "dome-15 fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-15 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-15 all flower heads visible",
+      "pass": true,
+      "detail": 0.4627944949848379
+    },
+    {
+      "label": "dome-30 fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-30 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-30 all flower heads visible",
+      "pass": true,
+      "detail": 0.4605296343001261
+    },
+    {
+      "label": "dome-44 fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-44 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-44 all flower heads visible",
+      "pass": true,
+      "detail": 0.4416135881104034
+    },
+    {
+      "label": "dome-62 fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-62 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-62 all flower heads visible",
+      "pass": true,
+      "detail": 0.42942857142857144
+    },
+    {
+      "label": "dome-84 fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-84 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-84 all flower heads visible",
+      "pass": true,
+      "detail": 0.4344207723035952
+    },
+    {
+      "label": "heart-8 fixed count",
+      "pass": true
+    },
+    {
+      "label": "heart-8 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "heart-8 all flower heads visible",
+      "pass": true,
+      "detail": 0.7042164883574575
+    },
+    {
+      "label": "heart-21 fixed count",
+      "pass": true
+    },
+    {
+      "label": "heart-21 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "heart-21 all flower heads visible",
+      "pass": true,
+      "detail": 0.5363834422657952
+    },
+    {
+      "label": "heart-41 fixed count",
+      "pass": true
+    },
+    {
+      "label": "heart-41 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "heart-41 all flower heads visible",
+      "pass": true,
+      "detail": 0.5730563002680965
+    },
+    {
+      "label": "heart-67 fixed count",
+      "pass": true
+    },
+    {
+      "label": "heart-67 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "heart-67 all flower heads visible",
+      "pass": true,
+      "detail": 0.5859431900946832
+    },
+    {
+      "label": "heart-100 fixed count",
+      "pass": true
+    },
+    {
+      "label": "heart-100 protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "heart-100 all flower heads visible",
+      "pass": true,
+      "detail": 0.5394973070017953
+    },
+    {
+      "label": "dome-15-five-lilies fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-15-five-lilies protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-15-five-lilies all flower heads visible",
+      "pass": true,
+      "detail": 0.4977839981338932
+    },
+    {
+      "label": "dome-84-mixed fixed count",
+      "pass": true
+    },
+    {
+      "label": "dome-84-mixed protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "dome-84-mixed all flower heads visible",
+      "pass": true,
+      "detail": 0.4085920351207275
+    },
+    {
+      "label": "heart-100-mixed fixed count",
+      "pass": true
+    },
+    {
+      "label": "heart-100-mixed protects every flower face",
+      "pass": true
+    },
+    {
+      "label": "heart-100-mixed all flower heads visible",
+      "pass": true,
+      "detail": 0.5293056807935077
+    },
+    {
+      "label": "27 source-aligned bloom and neck pairs",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "label": "Zero page errors",
+      "pass": true,
+      "detail": []
+    }
+  ]
+}

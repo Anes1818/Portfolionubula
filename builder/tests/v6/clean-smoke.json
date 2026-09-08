@@ -1,0 +1,82 @@
+{
+  "passed": 13,
+  "failed": 0,
+  "runtimeHashes": {
+    "app.css": "1973d3ba92a6a12f8f7d012ee3f1468753c0b18c042b59a99012843c7d5e16d4",
+    "app.js": "76e1a750e02a27f8dc00e7167092356d59e362bbc89f90279d21bd1f34667c5c",
+    "asset-meta.js": "8b23be1b234f6f5ab4dfa0936f8a9166766797f553dc403be3164a5eefe52068",
+    "assets-bundle.js": "e539527d9f8239e4f3d1dcc610504c21adb6b38c438c4f5fbae4d6b9edefc5c9",
+    "config.js": "6836fd213ed798927a1559e45f6819b566a3da0de0ce16149a46890dd06d6e26",
+    "dome-engine-v2.js": "b5dcb6a1907fc4485b4524d06d9f7ed9fe46a0fee7c0f6a0890bd660e1debc5d",
+    "geometry.js": "246b77193e45991f9373104bac75b9e1f1baeaa256c94a9bb371fa3ffcfcf4a8",
+    "i18n-v6.js": "1df9dacfb111e419fe07b88bc621acc6db7fcce0a1977584568853d9f7cfe209",
+    "i18n.js": "0d7630a2cb0a1e9b1031434ac429dfdcbf087663ff5f6d62ee102cdb1628907c",
+    "index.html": "8d33fb8ea4ebc4d7bf725c13233b109b316cc151d2186c5068d21905b6139e63",
+    "model.js": "ee4c00f4beae7a1496ff80a4ab46efd81aad028431ea0b32dcc9d8a167aa2e92",
+    "renderer.js": "785a6379a7995d10bf4aa594c44e442832e388a755f9739c73acd0e9bf4d3ee0",
+    "shop-config.js": "f484e647c523c39fff27387d96770b54797e794527faa206ca49e14d050929cf",
+    "template-engine.js": "b58b443c9af042f8c3c0d5dd7617943034eca1774c8e7ddc5254076c49521091"
+  },
+  "checks": [
+    {
+      "label": "HTTP serves the clean extraction, not the working tree",
+      "pass": true
+    },
+    {
+      "label": "file starts the complete v6 builder",
+      "pass": true
+    },
+    {
+      "label": "file five real taps preserve 15 slots and exact $100 estimate",
+      "pass": true
+    },
+    {
+      "label": "file quote is accurate and not an order",
+      "pass": true
+    },
+    {
+      "label": "file real PNG export works",
+      "pass": true
+    },
+    {
+      "label": "file reload preserves the complete studio and quote reference",
+      "pass": true
+    },
+    {
+      "label": "file no runtime errors or external requests",
+      "pass": true,
+      "detail": {
+        "errors": [],
+        "external": []
+      }
+    },
+    {
+      "label": "http starts the complete v6 builder",
+      "pass": true
+    },
+    {
+      "label": "http five real taps preserve 15 slots and exact $100 estimate",
+      "pass": true
+    },
+    {
+      "label": "http quote is accurate and not an order",
+      "pass": true
+    },
+    {
+      "label": "http real PNG export works",
+      "pass": true
+    },
+    {
+      "label": "http reload preserves the complete studio and quote reference",
+      "pass": true
+    },
+    {
+      "label": "http no runtime errors or external requests",
+      "pass": true,
+      "detail": {
+        "errors": [],
+        "external": []
+      }
+    }
+  ]
+}
