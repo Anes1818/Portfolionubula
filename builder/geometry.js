@@ -104,6 +104,21 @@ function heart(items,seed){
 const heartShapes=new Map();
 function heartShape(R){if(!heartShapes.has(R)){heartShapes.set(R,DomeEngine.buildShape('heart',R,120));if(heartShapes.size>64)heartShapes.delete(heartShapes.keys().next().value);}return heartShapes.get(R);}
 function arrange(items,mode,seed){return (mode==='classic'?classic:mode==='dome'?dome:heart)(items,seed);}
+/* Optional eucalyptus collar for the Dome. Positions come straight from the supplied v2
+   greenery() recipe, whose off/swing pair is measured and coupled — see the engine notes.
+   Sprigs are decorative geometry, not slots: they never occupy or displace a position.
+   Listed as GREEN_RIM real stems in the estimate; nothing is added silently. */
+const GREEN_RIM=8;
+function greenRim(s,L){
+ if(s.mode!=='dome'||!s.finishes?.greenRim||!L)return [];
+ const meta=NEBULA_META.flowers.eucalyptus,r=rng(hash('greenRim'+s.seed+L.frame.capacity));
+ return DomeEngine.greenery(L.shape,L.frame.unit,r,{count:GREEN_RIM}).filter(g=>g.rim).map((g,i)=>{
+  const factor=g.size/Math.max(meta.headWidth,meta.headHeight);
+  return {uid:'green'+i,id:'eucalyptus',slot:null,decorative:true,x:360+g.x,y:390+g.y,
+   w:meta.headWidth*factor,h:meta.headHeight*factor,d:g.size,rot:g.rot*Math.PI/180,
+   bright:g.bright,depth:1,core:0,radiusCap:g.size,meta,url:meta.head,z:-9999,manual:false,index:-1-i};
+ });
+}
 function nodes(s){
  const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:s.frames.classic||classicFrame(s.items);
  const ns=s.items.map((it,i)=>{
@@ -115,9 +130,12 @@ function nodes(s){
   const mw=top?meta.headWidth:meta.bloomWidth,mh=top?meta.headHeight:meta.bloomHeight,factor=top?d/Math.max(mw,mh):d/mw;
   return {uid:it.uid,id:it.id,slot,x:anchor.x,y:anchor.y,w:mw*factor,h:mh*factor,d,rot,bright,depth,core,radiusCap:cap,meta,url:top?meta.head:meta.classicBloom,z:top?-Math.hypot(anchor.x-frame.center.x,anchor.y-frame.center.y):anchor.y,manual:anchor.manual||false,index:i};
  }).filter(Boolean).sort((a,b)=>a.z-b.z||a.index-b.index);
- return {frame,nodes:ns,slots:L?L.points.map(p=>({...p,x:360+p.x,y:390+p.y,uid:s.items.find(it=>it.slot===p.slot)?.uid||null})):[]};
+ return {frame,nodes:greenRim(s,L).concat(ns),slots:L?L.points.map(p=>({...p,x:360+p.x,y:390+p.y,uid:s.items.find(it=>it.slot===p.slot)?.uid||null})):[]};
 }
-function classicEnvelope(frame,id){const d=CAT[id].classicDiameter,m=NEBULA_META.flowers[id],h=d*m.bloomHeight/m.bloomWidth,half=896*frame.scale*.455,margin=Math.hypot(d,h)*.51;return {xmin:360-half+margin,xmax:360+half-margin,ymin:Math.max(95+h*.52,frame.rimY-210),ymax:frame.rimY-Math.max(24,h*.24)};}
+/* Blooms are painted after the front paper panel, so anything reaching past the paper
+   mouth lands ON the paper instead of behind it. The old h*.24 let a tall bloom's lower
+   half cross the mouth by up to 41px. h*.5 keeps the whole bloom above it. */
+function classicEnvelope(frame,id){const d=CAT[id].classicDiameter,m=NEBULA_META.flowers[id],h=d*m.bloomHeight/m.bloomWidth,half=896*frame.scale*.455,margin=Math.hypot(d,h)*.51;return {xmin:360-half+margin,xmax:360+half-margin,ymin:Math.max(95+h*.52,frame.rimY-210),ymax:frame.rimY-Math.max(24,h*.5)-4};}
 function constrainClassic(p,frame,id){const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};if(!NEBULA_META.flowers[id].classicStem){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
 function inside(p,frame,d){
  if(p.x-d/2<20||p.x+d/2>700||p.y-d/2<55||p.y+d/2>740)return false;
@@ -147,5 +165,5 @@ function findPlace(s,id,p,ignoreUid=null){
  if(p&&score>95)return null;
  return best;
 }
-g.NebulaGeometry={classicEnvelope,constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings};
+g.NebulaGeometry={classicEnvelope,constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,GREEN_RIM};
 })(typeof window!=='undefined'?window:globalThis);

@@ -721,6 +721,6 @@
     build: build, buildShape: buildShape, unitFor: unitFor, depthOf: depthOf, spec: spec, skeleton: skeleton, patchAssign: patchAssign, placeAccent: placeAccent,
     SPEC: SPEC, DEPTH: DEPTH, specKey: specKey,
     GOLDEN_DEG: 137.507, rng: rng,
-    exposure: exposure, greenVisible: greenVisible
+    exposure: exposure, greenVisible: greenVisible, greenery: greenery
   };
 })(typeof window !== 'undefined' ? window : globalThis);

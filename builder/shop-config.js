@@ -1,6 +1,6 @@
 /* SHOP OWNER: approved integer cents, no automatic currency conversion. See SHOP-SETUP.md.
    No passwords or API keys belong in this public file. Keep demo:true until prices are reviewed. */
-window.NEBULA_SHOP={name:'Nebula',currency:'USD',demo:true,whatsapp:'',email:'',baseCents:2500,laborCents:{classic:1000,dome:1000,heart:1500},extrasCents:{butterfly:300,diamond:200,ribbon:0,sash:0},flowerPrices:{
+window.NEBULA_SHOP={name:'Nebula',currency:'USD',demo:true,whatsapp:'',email:'',baseCents:2500,laborCents:{classic:1000,dome:1000,heart:1500},extrasCents:{butterfly:300,ribbon:0,sash:0},flowerPrices:{
   "rose_red": 400,
   "rose_pink": 400,
   "rose_white": 400,
@@ -28,7 +28,5 @@ window.NEBULA_SHOP={name:'Nebula',currency:'USD',demo:true,whatsapp:'',email:'',
   "limonium": 200,
   "babys_breath": 200,
   "hydrangea": 650,
-  "babys_compact": 200,
-  "babys_medium": 200,
   "__choc": 500
 }};

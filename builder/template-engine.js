@@ -64,7 +64,7 @@ function layout(mode,n){
  const out={points,frame,rings,shape:roundShape(R)};cache.set(key,out);return out;
 }
 function nearest(mode,n,p){const L=layout(mode,n);let best=null,d=Infinity;for(const a of L.points){const v=Math.hypot(p.x-360-a.x,p.y-390-a.y);if(v<d&&v<=a.near*.70){best=a.slot;d=v;}}return best;}
-function defaults(mode,capacity){return {capacity,palette:['rose_red'],formation:'patches',accent:{id:'lily',count:0,pattern:'cluster',angle:340},zones:{wall:'rose_red',fill:'rose_white',center:'sunflower',formation:'zones',doubleWall:false},overrides:{}};}
+function defaults(mode,capacity){return {capacity,palette:['rose_red'],formation:'patches',accent:{id:'lily',count:0,pattern:'cluster',angle:340},zones:{wall:'rose_red',fill:'rose_red',center:'rose_red',formation:'zones',doubleWall:false},overrides:{}};}
 function recipe(mode,t,seed=11){
  const L=layout(mode,t.capacity),pts=L.points.map(p=>({...p,dEdge:L.frame.radius-p.r}));
  if(mode==='heart'){const z=t.zones;return pts.map(p=>p.ring===0?z.center:z.formation==='rings'?((L.rings-p.ring)%2===0?z.wall:z.fill):z.formation==='checker'?(p.i%2===0?z.wall:z.fill):p.ring>=(z.doubleWall&&L.rings>=3?L.rings-1:L.rings)?z.wall:z.fill);}

@@ -1,7 +1,9 @@
 /* Versioned, explicit state. UI language is stored separately; history snapshots are complete designs. */
 (function(g){'use strict';
-const {CAT,CONFIG,PRESETS}=NebulaConfig,G=NebulaGeometry,clone=x=>JSON.parse(JSON.stringify(x));
-function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],frames:{},finishes:{paper:'ivory',tint:'#dcc8b7',ribbon:'none',sash:'none',sashPlacement:'auto',sashOffset:0,sashScale:1,collar:true,butterfly:false,diamond:false},title:'',note:''};}
+const {CAT,CONFIG,PRESETS,RETIRED}=NebulaConfig,G=NebulaGeometry,clone=x=>JSON.parse(JSON.stringify(x));
+/* A withdrawn catalogue id must not invalidate a saved design; swap it for its survivor. */
+const live=id=>RETIRED[id]||id;
+function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],frames:{},finishes:{paper:'ivory',tint:'#dcc8b7',ribbon:'none',sash:'none',sashPlacement:'auto',sashOffset:0,sashScale:1,collar:true,butterfly:false,greenRim:false},title:'',note:''};}
 function newItem(s,id){return {uid:'b'+s.nextId++,id,anchors:{}};}
 function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  if(mode!=='classic'){if(!s.template)migrateTemplate(s);return syncTemplate(s);}
@@ -9,14 +11,17 @@ function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  for(const it of s.items){if(fresh||!it.anchors[mode])it.anchors[mode]=geo.positions[it.uid];}
  return s;
 }
-function create(preset='blush',mode='classic'){
- const s=empty();s.mode=mode;s.items=(PRESETS[preset]||PRESETS.blush).items.map(id=>newItem(s,id));arrange(s,mode,{fresh:true});return s;
+function create(preset='romantic',mode='classic'){
+ const s=empty();s.mode=mode;s.items=(PRESETS[preset]||PRESETS.romantic).items.map(id=>newItem(s,id));arrange(s,mode,{fresh:true});return s;
 }
 function counts(s){const result={};for(const it of s.items)result[it.id]=(result[it.id]||0)+1;return result;}
 function price(s){
  const lines=Object.entries(counts(s)).map(([id,quantity])=>({id,quantity,unitCents:CAT[id].priceCents,totalCents:quantity*CAT[id].priceCents}));
  const flowersCents=lines.reduce((n,line)=>n+line.totalCents,0),baseCents=s.items.length?CONFIG.baseCents:0,laborCents=s.items.length?CONFIG.laborCents[s.mode]:0;
- const extraLines=[];for(const name of ['butterfly','diamond'])if(s.finishes[name])extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
+ const extraLines=[];for(const name of ['butterfly'])if(s.finishes[name])extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
+ /* The eucalyptus collar is 8 real sprigs a florist must supply, so it is priced as
+    8 catalogue units rather than hidden as free decoration. */
+ if(s.mode==='dome'&&s.finishes.greenRim)extraLines.push({id:'greenRim',quantity:G.GREEN_RIM,totalCents:G.GREEN_RIM*CAT.eucalyptus.priceCents});
  for(const name of ['ribbon','sash'])if(s.finishes[name]!=='none')extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
  const extrasCents=extraLines.reduce((n,x)=>n+x.totalCents,0);
  return {currency:CONFIG.currency,demo:CONFIG.demo,estimateOnly:true,lines,extraLines,flowersCents,baseCents,laborCents,extrasCents,totalCents:flowersCents+baseCents+laborCents+extrasCents,flowers:s.items.filter(i=>CAT[i.id].kind==='flower').length,texture:s.items.filter(i=>CAT[i.id].kind==='texture').length,chocolates:s.items.filter(i=>CAT[i.id].kind==='chocolate').length,pieces:s.items.length};
@@ -97,7 +102,8 @@ function move(s,uid,p){const it=s.items.find(i=>i.uid===uid);if(!it)return {ok:f
 function validateV4(raw){
  if(!raw||raw.version!==4||!['classic','dome','heart'].includes(raw.mode)||!Array.isArray(raw.items)||raw.items.length>100)return null;
  if(!Number.isInteger(raw.seed)||raw.seed<1||raw.seed>99999999||!Number.isInteger(raw.nextId)||raw.nextId<1||raw.nextId>1e8)return null;
- const f=raw.finishes;if(!f||!['ivory','blush','sage','custom','black'].includes(f.paper)||!/^#[0-9a-f]{6}$/i.test(f.tint)||!['none','blush','burgundy','sage'].includes(f.ribbon)||!['none','love','bday','wed'].includes(f.sash)||typeof f.butterfly!=='boolean'||typeof f.diamond!=='boolean')return null;
+ const f=raw.finishes;if(!f||!['ivory','blush','sage','custom','black'].includes(f.paper)||!/^#[0-9a-f]{6}$/i.test(f.tint)||!['none','blush','burgundy','sage'].includes(f.ribbon)||!['none','love','bday','wed'].includes(f.sash)||typeof f.butterfly!=='boolean')return null;
+ if(f.greenRim!==undefined&&typeof f.greenRim!=='boolean')return null;
  if(typeof raw.title!=='string'||raw.title.length>70||typeof raw.note!=='string'||raw.note.length>180)return null;
  if(f.sashPlacement!==undefined&&!['auto','low','diagonal'].includes(f.sashPlacement))return null;
  if(f.sashOffset!==undefined&&(!Number.isFinite(f.sashOffset)||Math.abs(f.sashOffset)>60))return null;
@@ -106,6 +112,7 @@ function validateV4(raw){
  const s=empty();Object.assign(s,{mode:raw.mode,seed:raw.seed,nextId:raw.nextId,finishes:{...s.finishes,...clone(f)},title:raw.title,note:raw.note});
  const used=new Set();
  for(const it of raw.items){
+  if(it&&typeof it.id==='string')it.id=live(it.id);
   if(!it||typeof it.uid!=='string'||!/^b\d{1,8}$/.test(it.uid)||used.has(it.uid)||!Object.hasOwn(CAT,it.id)||!it.anchors||typeof it.anchors!=='object')return null;
   if(+it.uid.slice(1)>=raw.nextId)return null;used.add(it.uid);
   const anchors={};for(const mode of ['classic','dome','heart'])if(it.anchors[mode]){
@@ -146,7 +153,7 @@ function migrateV3(raw){
  s.items=raw.items.map(id=>newItem(s,id));
  if(!G.capacity(s.items,s.mode).ok)s.mode='dome';
  for(const k of ['ribbon','sash']){const allowed=k==='ribbon'?['none','blush','burgundy','sage']:['none','love','bday','wed'];if(allowed.includes(raw[k]))s.finishes[k]=raw[k];}
- for(const k of ['butterfly','diamond'])s.finishes[k]=raw[k]===true;
+ for(const k of ['butterfly'])s.finishes[k]=raw[k]===true;
  s.title=String(raw.title||'').slice(0,70);s.note=String(raw.note||'').slice(0,180);arrange(s,s.mode,{fresh:true});return validate(s);
 }
 function order(s,lang='en'){return {format:'nebula-bouquet',version:6,estimateOnly:true,currency:CONFIG.currency,design:clone(s),pickList:price(s).lines.map(l=>({...l,name:CAT[l.id][lang]})),pricing:price(s),artworkLimitations:[],templateCapacity:s.template?.capacity||null,emptySlots:s.template?s.template.capacity-s.items.length:0,notice:(CONFIG.demo?'Sample prices. ':'')+'Estimate only; florist must confirm price, stock, feasibility and delivery. No order has been placed or sent.'};}
