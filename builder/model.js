@@ -108,7 +108,8 @@ function move(s,uid,p){const it=s.items.find(i=>i.uid===uid);if(!it)return {ok:f
 function validateV4(raw){
  if(!raw||raw.version!==4||!['classic','dome','heart'].includes(raw.mode)||!Array.isArray(raw.items)||raw.items.length>100)return null;
  if(!Number.isInteger(raw.seed)||raw.seed<1||raw.seed>99999999||!Number.isInteger(raw.nextId)||raw.nextId<1||raw.nextId>1e8)return null;
- const f=raw.finishes;if(!f||!['ivory','kraft','blush','sage','custom','black'].includes(f.paper)||!/^#[0-9a-f]{6}$/i.test(f.tint)||!['none','blush','burgundy','sage'].includes(f.ribbon)||!['none','love','bday','wed'].includes(f.sash)||typeof f.butterfly!=='boolean')return null;
+ const f=raw.finishes;if(f&&f.paper==='kraft')f.paper='ivory';   /* withdrawn wrap */
+ if(!f||!['ivory','blush','sage','custom','black'].includes(f.paper)||!/^#[0-9a-f]{6}$/i.test(f.tint)||!['none','blush','burgundy','sage'].includes(f.ribbon)||!['none','love','bday','wed'].includes(f.sash)||typeof f.butterfly!=='boolean')return null;
  if(f.greenRim!==undefined&&typeof f.greenRim!=='boolean')return null;
  if(typeof raw.title!=='string'||raw.title.length>70||typeof raw.note!=='string'||raw.note.length>180)return null;
  if(f.sashPlacement!==undefined&&!['auto','low','diagonal'].includes(f.sashPlacement))return null;

@@ -19,11 +19,12 @@ function variation(it,seed){return .965+rng(hash(it.uid)+seed)()*.07;}
       0.70      17%          57-64%          35-42%   <- chosen
       0.60      14%          49-61%          27-34%
 
-   A real hand-tie spans about 60% of the mouth with the paper flaring past it.
-   0.70 is the only factor that lands both: near-realistic bloom size AND a
-   cluster that still reads as full. Pricing and the 20-unit capacity use the
-   raw catalogue numbers, so only the picture changes. */
-let CLASSIC_BLOOM=0.70;
+   Reviewed on a phone: 1.00 read as blooms crowding the paper, 0.70 as blooms
+   lost inside it, with bare stems showing between the rows. 0.85 sits between,
+   and the row offsets above now scale with this number so the rows stay packed
+   at any size. Pricing and the 20-unit capacity use the raw catalogue numbers,
+   so only the picture changes. */
+let CLASSIC_BLOOM=0.85;
 function setClassicBloom(v){CLASSIC_BLOOM=Math.max(.3,Math.min(1.4,+v||1));}
 function diameter(it,mode,seed=11){const d=CAT[it.id][mode==='classic'?'classicDiameter':'topDiameter']*variation(it,seed);return mode==='classic'?d*CLASSIC_BLOOM:d;}
 function capacity(items,mode){
@@ -68,7 +69,13 @@ function classic(items,seed,paper){
  }
  const positions={};
  // Back/middle/front centers overlap by photographic bloom height; no fourth/taller row is appended.
- const dy=n<=6?[180,107,39]:[194,121,48];
+ /* These offsets were tuned when a bloom was drawn at full catalogue size, so they
+    must follow CLASSIC_BLOOM. Left absolute, a smaller bloom keeps the old row gap
+    and the bare stems between rows show through as a green hedge - which is exactly
+    what shrinking the blooms first produced. The rim gap stays fixed so the lowest
+    row keeps meeting the paper. */
+ const rowGap=r=>(n<=6?[180,107,39]:[194,121,48])[r];
+ const dy=[0,1,2].map(r=>rowGap(2)+(rowGap(r)-rowGap(2))*CLASSIC_BLOOM);
  rows.forEach((row,r)=>{
   if(!row.length)return;
   let x=-rowWidth(row,seed)/2;

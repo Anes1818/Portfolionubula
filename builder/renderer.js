@@ -6,7 +6,7 @@ const makeCanvas=(w=720,h=820)=>{const c=document.createElement('canvas');c.widt
 /* Several photographed papers share ONE geometry. Each new wrap is resampled at
    build time onto the ivory's paper box, so swapping the layers needs no change
    to classicFrame's measured constants. Tinted tones still recolour the ivory. */
-const PHOTO_PAPERS=['ivory','kraft'];
+const PHOTO_PAPERS=['ivory'];
 const BRAND_LOGO='assets/brand/logo-full.webp';
 function wrapLayers(paper){const W=NEBULA_META.wraps;return (W&&W[paper])||{back:NEBULA_META.wrap.back,front:NEBULA_META.wrap.front};}
 const source=path=>(g.NEBULA_EMBED&&g.NEBULA_EMBED[path])||path;
