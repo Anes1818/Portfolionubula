@@ -119,13 +119,34 @@ function greenRim(s,L){
    bright:g.bright,depth:1,core:0,radiusCap:g.size,meta,url:meta.head,z:-9999,manual:false,index:-1-i};
  });
 }
+/* One shared bloom size for a Heart template: the median neighbour cap, cached
+   per layout+flower. See the note at its call site for why the median. */
+const heartUnits=new Map();
+function heartUnit(L,id){
+ const meta=NEBULA_META.flowers[id],hr=meta?.headRadius||.58,key=L.frame.capacity+':'+id;
+ if(!heartUnits.has(key)){
+  const caps=L.points.map(p=>p.radiusCap/hr).sort((a,b)=>a-b);
+  heartUnits.set(key,caps[Math.floor(caps.length*0.5)]);
+  if(heartUnits.size>256)heartUnits.delete(heartUnits.keys().next().value);
+ }
+ return heartUnits.get(key);
+}
 function nodes(s){
  const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:s.frames.classic||classicFrame(s.items);
  const ns=s.items.map((it,i)=>{
   const anchor=top?{x:360+L.points[it.slot??i].x,y:390+L.points[it.slot??i].y}:it.anchors.classic;if(!anchor)return null;
   const meta=NEBULA_META.flowers[it.id];let d=diameter(it,s.mode,s.seed),bright=1,depth=0,slot=null,core=0,cap=0,rot=0;
   if(top){slot=it.slot??i;const p=L.points[slot];core=p.core;cap=p.radiusCap;depth=clamp(p.r/frame.radius,0,1);const dep=s.mode==='dome'?DomeEngine.depthOf(depth):{scale:1,bright:1},natural=s.mode==='dome'?DomeEngine.spec(it.id).base:CAT[it.id].topDiameter/88;
-   d=frame.unit*natural*(s.mode==='dome'?.92+dep.scale*.10:1)*(.965+rng(hash('slot'+slot)+73)()*.07);d=Math.min(d,p.radiusCap/(meta.headRadius||.58));bright=dep.bright;rot=(rng(hash('slot'+slot)+89)()-.5)*(s.mode==='heart'?.22:2*DomeEngine.spec(it.id).spin*Math.PI/180);
+   d=frame.unit*natural*(s.mode==='dome'?.92+dep.scale*.10:1)*(.965+rng(hash('slot'+slot)+73)()*.07);
+   /* The Heart is FLAT, so it has no depth ramp to justify size variation. Capping
+      every bloom to its own neighbour gap made the crowded interior shrink: measured
+      centre/rim 0.82 at 21 slots, a 1.56x spread that reads as a mistake rather than
+      perspective. One shared size, taken at the median cap, holds the worst overlap
+      at ~32% - which is the engine's own measured overlap constant of 0.33.
+      The Dome keeps per-slot capping: there the centre really is nearer the camera. */
+   if(s.mode==='heart')d=Math.min(d,heartUnit(L,it.id));
+   else d=Math.min(d,p.radiusCap/(meta.headRadius||.58));
+   bright=dep.bright;rot=(rng(hash('slot'+slot)+89)()-.5)*(s.mode==='heart'?.22:2*DomeEngine.spec(it.id).spin*Math.PI/180);
   }else{const b=meta.stemBase,c=meta.bloomCenter;rot=meta.classicStem?clamp(Math.atan2(frame.waist.y-anchor.y,frame.waist.x-anchor.x)-Math.atan2(b[1]-c[1],b[0]-c[0]),-.42,.42):0;}
   const mw=top?meta.headWidth:meta.bloomWidth,mh=top?meta.headHeight:meta.bloomHeight,factor=top?d/Math.max(mw,mh):d/mw;
   return {uid:it.uid,id:it.id,slot,x:anchor.x,y:anchor.y,w:mw*factor,h:mh*factor,d,rot,bright,depth,core,radiusCap:cap,meta,url:top?meta.head:meta.classicBloom,z:top?-Math.hypot(anchor.x-frame.center.x,anchor.y-frame.center.y):anchor.y,manual:anchor.manual||false,index:i};

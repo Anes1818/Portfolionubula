@@ -99,3 +99,18 @@ dialog{background:var(--surface);color:var(--text);border:1px solid var(--border
  .icon-button:hover:not(:disabled),.art-surface .icon-button:hover:not(:disabled){background:none}
  .button.primary:hover:not(:disabled),.button.secondary:hover:not(:disabled),.button.danger:hover{background:inherit}
 }
+
+/* v6: studio credit under the footer, and on every exported picture. */
+.studio-credit{max-width:1432px;margin:0 auto;padding:0 48px 34px;display:flex;flex-wrap:wrap;
+ align-items:center;gap:6px 18px;font-size:12px;color:var(--muted)}
+.studio-credit strong{font-weight:600;color:var(--text)}
+.studio-credit a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+@media(max-width:900px){.studio-credit{padding:0 20px 26px}}
+
+/* The studio logo is black line art on watercolour, drawn for a light ground.
+   Measured on the dark header its strokes vanish, so it sits on a light chip —
+   the same treatment the studio uses for its own profile picture. */
+.brand-chip{width:52px;height:52px;flex:none;border-radius:50%;background:#fbf9f4;
+ display:grid;place-items:center;overflow:hidden;box-shadow:0 1px 4px rgba(20,26,20,.18)}
+.brand-chip img{width:46px;height:auto;display:block}
+@media(max-width:760px){.brand-chip{width:42px;height:42px}.brand-chip img{width:37px}}

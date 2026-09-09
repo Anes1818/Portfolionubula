@@ -67,6 +67,20 @@ function localize(){
  $('focusLabel').textContent=t(focusPreview?'closeShort':'expandShort');
  $('focusPreview').setAttribute('aria-label',t(focusPreview?'closeFocus':'expandPreview'));
 }
+/* Studio credit: rendered once, from validated config, never from page input. */
+function renderStudio(){
+ /* Point the header mark at the embedded copy, so it also shows from file://
+    where a relative path would resolve but a tainted canvas would not. */
+ const mark=NEBULA_META.brand?.mark;if(mark&&$('brandLogo'))$('brandLogo').src=R.source(mark);
+ const S=CONFIG.studio||{},on=!!(S.name||S.site||S.phone);
+ $('studioCredit').hidden=!on;if(!on)return;
+ $('studioName').textContent=S.name;$('studioPlace').textContent=S.place;
+ const site=$('studioSite');site.textContent=S.site;site.hidden=!S.site;
+ if(S.site)site.href='https://'+S.site.replace(/^https?:\/\//,'');
+ const tel=$('studioPhone');tel.textContent=S.phone;tel.hidden=!S.phone;
+ if(S.phone)tel.href='tel:'+S.phone.replace(/[^\d+]/g,'');
+ $('studioSocial').textContent=S.instagram;
+}
 function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected,ghost:hover,guides:true,camera});positionDelete();}});}
 /* Some catalogue entries only read correctly from one camera angle. */
 function offered(id){return st.mode==='classic'?CAT[id].classic!==false:CAT[id].top!==false;}
@@ -97,8 +111,8 @@ function render(save=true){
  $('arrangeRow').hidden=top;
  $('classicWrapping').hidden=false;$('missingWrapping').hidden=true;$('collarToggleLabel').hidden=!top;$('showCollar').checked=st.finishes.collar!==false;
  $('wrapHeading').textContent=t(top?'blackCollar':'ivoryPaper');$('wrapCopy').textContent=t(top?'collarDescription':'wrapDescription');$('wrapEyebrow').textContent=t(top?'realPaper':'oneOriginal');
- $('wrapPreview').src=R.source(top?NEBULA_META.collars[st.mode].url:NEBULA_META.wrap.back);$('wrapPreview').alt=t(top?'blackCollar':'wrapAlt');$('customTintLabel').hidden=st.finishes.paper!=='custom';$('customTint').value=st.finishes.tint;
- $('sash').value=st.finishes.sash;$('sashSettings').hidden=st.finishes.sash==='none';$('sashPosition').value=st.finishes.sashPlacement||'auto';$('sashOffset').value=st.finishes.sashOffset||0;$('sashScale').value=Math.round((st.finishes.sashScale||1)*100);
+ $('wrapPreview').src=R.source(top?NEBULA_META.collars[st.mode].url:(NEBULA_META.wraps?.[st.finishes.paper]||NEBULA_META.wrap).back);$('wrapPreview').alt=t(top?'blackCollar':'wrapAlt');$('customTintLabel').hidden=st.finishes.paper!=='custom';$('customTint').value=st.finishes.tint;
+ $('sash').value=st.finishes.sash;$('sashSettings').hidden=st.finishes.sash==='none';$('sashPosition').value=st.finishes.sashPlacement||'auto';$('sashOffset').value=st.finishes.sashOffset||0;
  $('greenRimLabel').hidden=st.mode!=='dome';$('greenRim').checked=!!st.finishes.greenRim;
  $('greenRimPrice').textContent=M.money(G.GREEN_RIM*CAT.eucalyptus.priceCents,lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
  for(const key of ['butterfly']){$(key).checked=st.finishes[key];$(key+'Price').textContent=M.money(CONFIG.extrasCents[key],lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');}
@@ -145,7 +159,7 @@ function renderStarting(){
  }));
 }
 function renderPaper(){
- $('paperChoices').replaceChildren(...(st.mode==='classic'?[['ivory','#e6deca'],['blush','#dbb3b7'],['sage','#b1bba1'],['custom',st.finishes.tint]]:[['black','#292826'],['ivory','#e6deca'],['blush','#dbb3b7'],['custom',st.finishes.tint]]).map(([id,col])=>{
+ $('paperChoices').replaceChildren(...(st.mode==='classic'?[['ivory','#e6deca'],['kraft','#b99568'],['blush','#dbb3b7'],['sage','#b1bba1'],['custom',st.finishes.tint]]:[['black','#292826'],['ivory','#e6deca'],['blush','#dbb3b7'],['custom',st.finishes.tint]]).map(([id,col])=>{
   const b=button('','',()=>change(()=>{st.finishes.paper=id;})),dot=document.createElement('span'),label=document.createElement('span');dot.className='swatch';dot.style.setProperty('--swatch',col);label.textContent=t(id);b.append(dot,label);pressed(b,st.finishes.paper===id);b.dataset.paper=id;return b;
  }));
 }
@@ -267,14 +281,14 @@ $('arrangeButton').onclick=()=>confirm(t('arrangeTitle'),t('arrangeText'),t('arr
 $('customTint').oninput=()=>{st.finishes.tint=$('customTint').value;scheduleCanvas();};$('customTint').onfocus=()=>{editFocus={before:snap(),key:'tint'};};$('customTint').onchange=()=>{commitTextEdit();render();};$('customTint').onblur=commitTextEdit;
 $('sash').onchange=()=>change(()=>{st.finishes.sash=$('sash').value;});
 $('sashPosition').onchange=()=>change(()=>{st.finishes.sashPlacement=$('sashPosition').value;});
-for(const [id,key,factor] of [['sashOffset','sashOffset',1],['sashScale','sashScale',.01]]){
+for(const [id,key,factor] of [['sashOffset','sashOffset',1]]){
  const input=$(id);let before=null;
  input.onpointerdown=()=>{before=snap();};input.onfocus=()=>{if(before===null)before=snap();};
  input.oninput=()=>{st.finishes[key]=Number(input.value)*factor;scheduleCanvas();};
  input.onchange=()=>{if(before!==null)storeHistory(before);before=null;render();};
  input.onblur=()=>{if(before!==null){storeHistory(before);before=null;persist();}};
 }
-$('resetSash').onclick=()=>change(()=>{st.finishes.sashPlacement='auto';st.finishes.sashOffset=0;st.finishes.sashScale=1;});
+$('resetSash').onclick=()=>change(()=>{st.finishes.sashPlacement='auto';st.finishes.sashOffset=0;});
 $('showCollar').onchange=()=>change(()=>{st.finishes.collar=$('showCollar').checked;});
 $('focusPreview').onclick=()=>setFocusPreview(!focusPreview);
 $('loadFromSave').onclick=()=>{$('saveDialog').close();$('importFile').click();};
@@ -303,7 +317,7 @@ function fitPhoneCanvas(){
 }
 addEventListener('scroll',positionDelete,{passive:true});
 new ResizeObserver(fitPhoneCanvas).observe($('artSurface'));addEventListener('resize',fitPhoneCanvas);fitPhoneCanvas();
-localize();
+localize();renderStudio();
 /* Wait only for the artwork the three saved bouquets actually use; the rest of the
    catalogue decodes in the background and each arrival triggers a repaint. */
 R.onAssetReady=()=>{if(isReady)scheduleCanvas();};

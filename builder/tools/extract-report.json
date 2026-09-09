@@ -1,0 +1,58 @@
+{
+ "chrysanthemum_yellow": {
+  "file": "assets/heads/chrysanthemum_yellow.webp",
+  "w": 509,
+  "h": 512,
+  "aspect": 0.994,
+  "alphaFill": 0.744,
+  "kb": 53.1
+ },
+ "spray_rose": {
+  "file": "assets/heads/spray_rose.webp",
+  "w": 507,
+  "h": 512,
+  "aspect": 0.99,
+  "alphaFill": 0.709,
+  "kb": 85.5
+ },
+ "rose_cream": {
+  "file": "assets/heads/rose_cream.webp",
+  "w": 512,
+  "h": 512,
+  "aspect": 1.0,
+  "alphaFill": 0.784,
+  "kb": 49.1
+ },
+ "stock_yellow": {
+  "file": "assets/heads/stock_yellow.webp",
+  "w": 509,
+  "h": 512,
+  "aspect": 0.994,
+  "alphaFill": 0.745,
+  "kb": 75.0
+ },
+ "statice_purple": {
+  "file": "assets/heads/statice_purple.webp",
+  "w": 512,
+  "h": 512,
+  "aspect": 1.0,
+  "alphaFill": 0.748,
+  "kb": 110.4
+ },
+ "babys_breath": {
+  "file": "assets/heads/babys_breath.webp",
+  "w": 512,
+  "h": 501,
+  "aspect": 1.022,
+  "alphaFill": 0.614,
+  "kb": 124.5
+ },
+ "eucalyptus": {
+  "file": "assets/heads/eucalyptus.webp",
+  "w": 507,
+  "h": 512,
+  "aspect": 0.99,
+  "alphaFill": 0.672,
+  "kb": 70.8
+ }
+}

@@ -1,0 +1,158 @@
+{
+ "chrysanthemum_yellow": {
+  "classicBloom": "assets/classic/chrysanthemum_yellow-bloom.webp",
+  "classicStem": "assets/classic/chrysanthemum_yellow-stem.webp",
+  "bloomWidth": 228,
+  "bloomHeight": 203,
+  "sourceWidth": 299,
+  "sourceHeight": 1200,
+  "sourceBloomBox": [
+   51,
+   0,
+   269,
+   193
+  ],
+  "bloomCenter": [
+   160.0,
+   96.5
+  ],
+  "stemBase": [
+   173.0,
+   1199
+  ],
+  "stemCutY": 193,
+  "joinOverlap": 8,
+  "bloomPadding": 5,
+  "classicAvailable": true
+ },
+ "spray_rose": {
+  "classicBloom": "assets/classic/spray_rose-bloom.webp",
+  "classicStem": "assets/classic/spray_rose-stem.webp",
+  "bloomWidth": 327,
+  "bloomHeight": 305,
+  "sourceWidth": 317,
+  "sourceHeight": 1200,
+  "sourceBloomBox": [
+   0,
+   0,
+   317,
+   295
+  ],
+  "bloomCenter": [
+   158.5,
+   147.5
+  ],
+  "stemBase": [
+   160.0,
+   1199
+  ],
+  "stemCutY": 295,
+  "joinOverlap": 8,
+  "bloomPadding": 5,
+  "classicAvailable": true
+ },
+ "statice_purple": {
+  "classicBloom": "assets/classic/statice_purple-bloom.webp",
+  "classicStem": "assets/classic/statice_purple-stem.webp",
+  "bloomWidth": 254,
+  "bloomHeight": 313,
+  "sourceWidth": 244,
+  "sourceHeight": 1200,
+  "sourceBloomBox": [
+   0,
+   0,
+   244,
+   303
+  ],
+  "bloomCenter": [
+   122.0,
+   151.5
+  ],
+  "stemBase": [
+   121.0,
+   1199
+  ],
+  "stemCutY": 303,
+  "joinOverlap": 8,
+  "bloomPadding": 5,
+  "classicAvailable": true
+ },
+ "eucalyptus": {
+  "classicBloom": "assets/classic/eucalyptus-bloom.webp",
+  "classicStem": "assets/classic/eucalyptus-stem.webp",
+  "bloomWidth": 273,
+  "bloomHeight": 795,
+  "sourceWidth": 263,
+  "sourceHeight": 1200,
+  "sourceBloomBox": [
+   0,
+   0,
+   263,
+   785
+  ],
+  "bloomCenter": [
+   131.5,
+   392.5
+  ],
+  "stemBase": [
+   130.0,
+   1199
+  ],
+  "stemCutY": 785,
+  "joinOverlap": 8,
+  "bloomPadding": 5,
+  "classicAvailable": true
+ },
+ "rose_cream": {
+  "classicBloom": "assets/classic/rose_cream-bloom.webp",
+  "classicStem": "assets/classic/rose_cream-stem.webp",
+  "bloomWidth": 319,
+  "bloomHeight": 271,
+  "sourceWidth": 321,
+  "sourceHeight": 1200,
+  "sourceBloomBox": [
+   1,
+   0,
+   310,
+   261
+  ],
+  "bloomCenter": [
+   155.5,
+   130.5
+  ],
+  "stemBase": [
+   163.0,
+   1199
+  ],
+  "stemCutY": 261,
+  "joinOverlap": 8,
+  "bloomPadding": 5,
+  "classicAvailable": true
+ },
+ "stock_yellow": {
+  "classicBloom": "assets/classic/stock_yellow-bloom.webp",
+  "classicStem": "assets/classic/stock_yellow-stem.webp",
+  "bloomWidth": 185,
+  "bloomHeight": 434,
+  "sourceWidth": 193,
+  "sourceHeight": 1200,
+  "sourceBloomBox": [
+   2,
+   0,
+   177,
+   424
+  ],
+  "bloomCenter": [
+   89.5,
+   212.0
+  ],
+  "stemBase": [
+   99.0,
+   1199
+  ],
+  "stemCutY": 424,
+  "joinOverlap": 8,
+  "bloomPadding": 5,
+  "classicAvailable": true
+ }
+}

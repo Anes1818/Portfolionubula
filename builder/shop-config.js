@@ -1,6 +1,9 @@
 /* SHOP OWNER: approved integer cents, no automatic currency conversion. See SHOP-SETUP.md.
    No passwords or API keys belong in this public file. Keep demo:true until prices are reviewed. */
-window.NEBULA_SHOP={name:'Nebula',currency:'USD',demo:true,whatsapp:'',email:'',baseCents:2500,laborCents:{classic:1000,dome:1000,heart:1500},extrasCents:{butterfly:300,ribbon:0,sash:0},flowerPrices:{
+window.NEBULA_SHOP={name:'Nebula',
+  studio:{name:'Nebula Sites Studio',site:'nebulastudio.site/flowers',
+          phone:'(571) 336-7129',instagram:'@nebulaa_studio',
+          place:'Virginia, USA — serving businesses across the US'},currency:'USD',demo:true,whatsapp:'',email:'',baseCents:2500,laborCents:{classic:1000,dome:1000,heart:1500},extrasCents:{butterfly:300,ribbon:0,sash:0},flowerPrices:{
   "rose_red": 400,
   "rose_pink": 400,
   "rose_white": 400,
@@ -25,8 +28,12 @@ window.NEBULA_SHOP={name:'Nebula',currency:'USD',demo:true,whatsapp:'',email:'',
   "ranunculus": 500,
   "alstroemeria": 300,
   "eucalyptus": 200,
-  "limonium": 200,
+  "statice_purple": 200,
   "babys_breath": 200,
   "hydrangea": 650,
+  "chrysanthemum_yellow": 400,
+  "spray_rose": 450,
+  "stock_yellow": 350,
+  "rose_cream": 400,
   "__choc": 500
 }};

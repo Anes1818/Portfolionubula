@@ -10,7 +10,7 @@
 <body>
 <a class="skip-link" href="#controls" data-i18n="skip">Skip to bouquet controls</a>
 <header class="site-header">
- <a class="brand" href="index.html" aria-label="Nebula bouquet studio"><svg viewBox="0 0 38 38" aria-hidden="true"><path d="M19 18C6 17 7 5 13 5c5 0 7 7 6 13Zm1 0C21 5 33 7 33 13c0 5-7 7-13 5Zm0 2c13 1 11 13 5 13-5 0-7-7-5-13Zm-2 0C17 33 5 31 5 25c0-5 7-7 13-5Z"/></svg><span><span id="brandName">Nebula</span><small data-i18n="studio">THE BOUQUET STUDIO</small></span></a>
+ <a class="brand" href="https://nebulastudio.site" aria-label="Nebula bouquet studio"><span class="brand-chip"><img id="brandLogo" src="assets/brand/logo-mark.webp" alt="" width="44" height="44" decoding="async"></span><span><span id="brandName">Nebula</span><small data-i18n="studio">THE BOUQUET STUDIO</small></span></a>
  <div class="header-actions"><span class="header-note" data-i18n="oneStem">One stem. Endless possibilities.</span><label class="language-label"><span class="sr-only" data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">EN</option><option value="es">ES</option></select></label><button id="saveTop" class="button primary small" data-i18n="saveDesign" disabled>Save design</button></div>
 </header>
 <main id="main">
@@ -57,7 +57,6 @@
     <div id="sashSettings" class="sash-settings" hidden>
      <label class="field"><span data-i18n="sashPosition">Sash position</span><select id="sashPosition"><option value="auto" data-i18n="sashAuto">Across the front flowers</option><option value="low" data-i18n="sashLow">Lower, on the paper</option><option value="diagonal" data-i18n="sashDiagonal">Soft diagonal</option></select></label>
      <label class="range-field"><span data-i18n="sashHeight">Move up / down</span><input id="sashOffset" type="range" min="-60" max="60" value="0"></label>
-     <label class="range-field"><span data-i18n="sashWidth">Sash width</span><input id="sashScale" type="range" min="65" max="125" value="100"></label>
      <p class="helper" data-i18n="sashLogic">The front placement may overlap flowers. Choose the lower placement to reveal more of the bouquet.</p><button id="resetSash" class="text-button" data-i18n="resetPosition">Reset position</button>
     </div>
     <div class="finish-toggles"><label><span><strong data-i18n="butterfly">Gold butterfly</strong><small id="butterflyPrice"></small></span><input type="checkbox" id="butterfly"></label><label id="greenRimLabel" hidden><span><strong data-i18n="greenRim">Eucalyptus collar</strong><small id="greenRimPrice"></small></span><input type="checkbox" id="greenRim"></label></div>
@@ -69,6 +68,7 @@
  </aside>
 </main>
 <footer class="site-footer"><span>Nebula <span aria-hidden="true">/</span> <span data-i18n="studioFooter">Bouquet studio</span></span><span data-i18n="madeByYou">Thoughtfully arranged. Entirely yours.</span></footer>
+<div class="studio-credit" id="studioCredit" hidden><strong id="studioName"></strong><span id="studioPlace"></span><a id="studioSite" rel="noopener noreferrer" target="_blank"></a><a id="studioPhone"></a><span id="studioSocial"></span></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <dialog id="confirmDialog"><div class="dialog-heading"><h2 id="confirmTitle"></h2><button class="icon-button" data-close="confirmDialog" data-label="close" aria-label="Close">×</button></div><p id="confirmText"></p><div class="dialog-actions"><button class="button secondary" id="confirmCancel" data-i18n="keepMine">Keep mine</button><button class="button primary" id="confirmYes" data-i18n="confirm">Confirm</button></div></dialog>
 <dialog id="messageDialog"><div class="dialog-heading"><h2 id="messageTitle"></h2><button class="icon-button" data-close="messageDialog" data-label="close" aria-label="Close">×</button></div><div id="messageContent"></div><button class="button primary full-width" data-close="messageDialog" data-i18n="gotIt">Got it</button></dialog>
