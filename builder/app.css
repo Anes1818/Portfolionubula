@@ -114,3 +114,15 @@ dialog{background:var(--surface);color:var(--text);border:1px solid var(--border
  display:grid;place-items:center;overflow:hidden;box-shadow:0 1px 4px rgba(20,26,20,.18)}
 .brand-chip img{width:46px;height:auto;display:block}
 @media(max-width:760px){.brand-chip{width:42px;height:42px}.brand-chip img{width:37px}}
+
+/* Measured on a 375x812 phone: the Finishing panel had only 153px for 664px of
+   content — 23% visible. The studio credit I added was taking 116px of that
+   budget by wrapping onto four lines. On a phone it collapses to one quiet
+   line, and the panel gets a floor so it can never become a sliver again. */
+@media(max-width:820px){
+ .studio-credit{padding:0 12px 6px;gap:0 10px;font-size:11px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;flex-wrap:nowrap;line-height:1.4}
+ .studio-credit #studioPlace,.studio-credit #studioSocial{display:none}
+ .panel-body{min-height:clamp(238px,34dvh,392px)}
+ .art-surface{height:clamp(196px,27dvh,300px)}
+}

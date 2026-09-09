@@ -7,13 +7,19 @@ function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],fram
 function newItem(s,id){return {uid:'b'+s.nextId++,id,anchors:{}};}
 function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  if(mode!=='classic'){if(!s.template)migrateTemplate(s);return syncTemplate(s);}
- const geo=G.arrange(s.items,mode,seed);s.frames[mode]=geo.frame;
+ const geo=G.arrange(s.items,mode,seed,s.finishes&&s.finishes.paper);s.frames[mode]=geo.frame;
  for(const it of s.items){if(fresh||!it.anchors[mode])it.anchors[mode]=geo.positions[it.uid];}
  return s;
 }
 function create(preset='romantic',mode='classic'){
  const s=empty();s.mode=mode;s.items=(PRESETS[preset]||PRESETS.romantic).items.map(id=>newItem(s,id));arrange(s,mode,{fresh:true});return s;
 }
+/* A narrower paper must not leave blooms hanging outside it. Re-clamp on change. */
+function refitPaper(s){
+ if(s.mode!=='classic'||!s.frames.classic)return s;
+ const f=G.stampPaper(s.frames.classic,s);
+ for(const it of s.items)if(it.anchors.classic)it.anchors.classic=G.constrainClassic(it.anchors.classic,f,it.id);
+ return s;}
 function counts(s){const result={};for(const it of s.items)result[it.id]=(result[it.id]||0)+1;return result;}
 function price(s){
  const lines=Object.entries(counts(s)).map(([id,quantity])=>({id,quantity,unitCents:CAT[id].priceCents,totalCents:quantity*CAT[id].priceCents}));
@@ -78,7 +84,7 @@ function add(s,id,p){
  if(!cap.ok){s.nextId--;return cap;}
  if(s.items.length===0){s.items.push(it);arrange(s,s.mode,{fresh:true});return {ok:true,uid:it.uid};}
  // Adding does NOT rearrange or rescale existing flowers. The wrapper only grows when space is needed.
- if(s.mode==='classic'){const fitting=G.classicFrame(s.items.concat(it));if(fitting.scale>s.frames.classic.scale)s.frames.classic=fitting;}
+ if(s.mode==='classic'){const fitting=G.classicFrame(s.items.concat(it),s.finishes&&s.finishes.paper);if(fitting.scale>s.frames.classic.scale)s.frames.classic=fitting;}
  let pos=G.findPlace(s,id,p);
  if(!pos&&s.mode==='dome'){
   const oldFrame=clone(s.frames.dome);s.frames.dome.radius=Math.min(270,s.frames.dome.radius+CAT[id].topDiameter*.32);
@@ -157,5 +163,5 @@ function migrateV3(raw){
  s.title=String(raw.title||'').slice(0,70);s.note=String(raw.note||'').slice(0,180);arrange(s,s.mode,{fresh:true});return validate(s);
 }
 function order(s,lang='en'){return {format:'nebula-bouquet',version:6,estimateOnly:true,currency:CONFIG.currency,design:clone(s),pickList:price(s).lines.map(l=>({...l,name:CAT[l.id][lang]})),pricing:price(s),artworkLimitations:[],templateCapacity:s.template?.capacity||null,emptySlots:s.template?s.template.capacity-s.items.length:0,notice:(CONFIG.demo?'Sample prices. ':'')+'Estimate only; florist must confirm price, stock, feasibility and delivery. No order has been placed or sent.'};}
-g.NebulaModel={syncTemplate,paintSlot,resize,updateTemplate,validTemplate,clone,empty,newItem,arrange,create,counts,price,money,switchMode,defaultMode,portfolio,validatePortfolio,add,replace,remove,move,validate,migrateV3,order};
+g.NebulaModel={refitPaper,syncTemplate,paintSlot,resize,updateTemplate,validTemplate,clone,empty,newItem,arrange,create,counts,price,money,switchMode,defaultMode,portfolio,validatePortfolio,add,replace,remove,move,validate,migrateV3,order};
 })(typeof window!=='undefined'?window:globalThis);

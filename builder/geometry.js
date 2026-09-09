@@ -8,7 +8,24 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function hash(s){let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
 function rng(seed){let a=seed|0;return ()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t^=t+Math.imul(t^t>>>7,61|t);return ((t^t>>>14)>>>0)/4294967296;};}
 function variation(it,seed){return .965+rng(hash(it.uid)+seed)()*.07;}
-function diameter(it,mode,seed=11){return CAT[it.id][mode==='classic'?'classicDiameter':'topDiameter']*variation(it,seed);}
+/* Drawn size of a Classic bloom relative to its catalogue diameter.
+   Untuned, blooms rendered at 24-30% of the paper mouth width; a real 6cm rose
+   in a 45cm wrap is about 13%. But shrinking to that alone empties the wrap,
+   because a preset only holds 10-12 stems. Measured across four factors:
+
+     factor  bloom/mouth  cluster spread  mouth filled
+      1.00      24%          81-89%          58-62%
+      0.82      20%          67-74%          44-51%
+      0.70      17%          57-64%          35-42%   <- chosen
+      0.60      14%          49-61%          27-34%
+
+   A real hand-tie spans about 60% of the mouth with the paper flaring past it.
+   0.70 is the only factor that lands both: near-realistic bloom size AND a
+   cluster that still reads as full. Pricing and the 20-unit capacity use the
+   raw catalogue numbers, so only the picture changes. */
+let CLASSIC_BLOOM=0.70;
+function setClassicBloom(v){CLASSIC_BLOOM=Math.max(.3,Math.min(1.4,+v||1));}
+function diameter(it,mode,seed=11){const d=CAT[it.id][mode==='classic'?'classicDiameter':'topDiameter']*variation(it,seed);return mode==='classic'?d*CLASSIC_BLOOM:d;}
 function capacity(items,mode){
  const unavailable=items.filter(it=>mode==='classic'&&!CAT[it.id].classic);
  if(unavailable.length)return {ok:false,reason:'art',ids:[...new Set(unavailable.map(x=>x.id))]};
@@ -19,17 +36,24 @@ function capacity(items,mode){
  if(items.length>CONFIG.limits.topItems)return {ok:false,reason:'topCapacity',limit:100};
  return {ok:true,main:main.length,texture:texture.length,area};
 }
-function classicFrame(items){
+/* Each photographed wrap has its own mouth width, so the bloom envelope cannot
+   use one constant. Measured at rimCenter.y-170: ivory 0.4526 (which reproduces
+   the shipped 0.455) and kraft 0.3672 - the kraft cone is 18.9% narrower, and
+   blooms placed at the ivory limit sat 78.7px outside its paper on each side. */
+const MOUTH_FALLBACK=.455;
+function mouthHalf(paper){const w=NEBULA_META.wraps&&NEBULA_META.wraps[paper];return (w&&w.mouthHalf)||MOUTH_FALLBACK;}
+function classicFrame(items,paper){
  const c=capacity(items,'classic'),units=c.area||items.filter(i=>CAT[i.id].kind==='flower').length;
  const scale=clamp(.49+Math.max(0,units-4)*.0153,.49,.735);
  const yScale=Math.min(scale,.62);
  const waist={x:360,y:666},origin={x:360-448*scale,y:waist.y-850*yScale};
  const rimY=origin.y+600*yScale;
- return {mode:'classic',scale,yScale,origin,waist,rimY,center:{x:360,y:rimY-108},radius:230,unit:116};
+ return {mode:'classic',scale,yScale,origin,waist,rimY,center:{x:360,y:rimY-108},radius:230,unit:116,
+         paper:paper||'ivory',mouthHalf:mouthHalf(paper)};
 }
 function rowWidth(row,seed){if(!row.length)return 0;const ds=row.map(it=>diameter(it,'classic',seed));return ds[0]/2+ds.at(-1)/2+ds.slice(1).reduce((s,d,i)=>s+(d+ds[i])*.29,0);}
-function classic(items,seed){
- const frame=classicFrame(items),rand=rng(seed),main=items.filter(x=>CAT[x.id].kind!=='texture'),tex=items.filter(x=>CAT[x.id].kind==='texture'),n=main.length;
+function classic(items,seed,paper){
+ const frame=classicFrame(items,paper),rand=rng(seed),main=items.filter(x=>CAT[x.id].kind!=='texture'),tex=items.filter(x=>CAT[x.id].kind==='texture'),n=main.length;
  const rows=[[],[],[]],weights=[.40,.35,.25];
  let quota=n<=3?[Math.ceil(n/2),Math.floor(n/2),0]:n<=6?[Math.ceil(n*.5),Math.ceil(n*.3),0]:weights.map(w=>Math.floor(n*w));
  if(n<=6)quota[2]=n-quota[0]-quota[1];
@@ -103,7 +127,7 @@ function heart(items,seed){
 }
 const heartShapes=new Map();
 function heartShape(R){if(!heartShapes.has(R)){heartShapes.set(R,DomeEngine.buildShape('heart',R,120));if(heartShapes.size>64)heartShapes.delete(heartShapes.keys().next().value);}return heartShapes.get(R);}
-function arrange(items,mode,seed){return (mode==='classic'?classic:mode==='dome'?dome:heart)(items,seed);}
+function arrange(items,mode,seed,paper){return mode==='classic'?classic(items,seed,paper):(mode==='dome'?dome:heart)(items,seed);}
 /* Optional eucalyptus collar for the Dome. Positions come straight from the supplied v2
    greenery() recipe, whose off/swing pair is measured and coupled — see the engine notes.
    Sprigs are decorative geometry, not slots: they never occupy or displace a position.
@@ -131,8 +155,12 @@ function heartUnit(L,id){
  }
  return heartUnits.get(key);
 }
+/* A frame saved before this paper was chosen still carries the old mouth. */
+function stampPaper(frame,s){const p=s.finishes&&s.finishes.paper;
+ if(frame&&p&&frame.paper!==p){frame.paper=p;frame.mouthHalf=mouthHalf(p);}
+ return frame;}
 function nodes(s){
- const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:s.frames.classic||classicFrame(s.items);
+ const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:stampPaper(s.frames.classic||classicFrame(s.items,s.finishes&&s.finishes.paper),s);
  const ns=s.items.map((it,i)=>{
   const anchor=top?{x:360+L.points[it.slot??i].x,y:390+L.points[it.slot??i].y}:it.anchors.classic;if(!anchor)return null;
   const meta=NEBULA_META.flowers[it.id];let d=diameter(it,s.mode,s.seed),bright=1,depth=0,slot=null,core=0,cap=0,rot=0;
@@ -156,7 +184,7 @@ function nodes(s){
 /* Blooms are painted after the front paper panel, so anything reaching past the paper
    mouth lands ON the paper instead of behind it. The old h*.24 let a tall bloom's lower
    half cross the mouth by up to 41px. h*.5 keeps the whole bloom above it. */
-function classicEnvelope(frame,id){const d=CAT[id].classicDiameter,m=NEBULA_META.flowers[id],h=d*m.bloomHeight/m.bloomWidth,half=896*frame.scale*.455,margin=Math.hypot(d,h)*.51;return {xmin:360-half+margin,xmax:360+half-margin,ymin:Math.max(95+h*.52,frame.rimY-210),ymax:frame.rimY-Math.max(24,h*.5)-4};}
+function classicEnvelope(frame,id){const d=CAT[id].classicDiameter,m=NEBULA_META.flowers[id],h=d*m.bloomHeight/m.bloomWidth,half=896*frame.scale*(frame.mouthHalf||MOUTH_FALLBACK),margin=Math.hypot(d,h)*.51;return {xmin:360-half+margin,xmax:360+half-margin,ymin:Math.max(95+h*.52,frame.rimY-210),ymax:frame.rimY-Math.max(24,h*.5)-4};}
 function constrainClassic(p,frame,id){const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};if(!NEBULA_META.flowers[id].classicStem){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
 function inside(p,frame,d){
  if(p.x-d/2<20||p.x+d/2>700||p.y-d/2<55||p.y+d/2>740)return false;
@@ -186,5 +214,5 @@ function findPlace(s,id,p,ignoreUid=null){
  if(p&&score>95)return null;
  return best;
 }
-g.NebulaGeometry={classicEnvelope,constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,GREEN_RIM};
+g.NebulaGeometry={classicEnvelope,mouthHalf,stampPaper,setClassicBloom,get classicBloom(){return CLASSIC_BLOOM;},constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,GREEN_RIM};
 })(typeof window!=='undefined'?window:globalThis);
