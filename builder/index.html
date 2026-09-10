@@ -21,6 +21,19 @@
    <button data-mode="dome" aria-pressed="false" disabled><span class="mode-number">02</span><span><strong data-i18n="dome">Dome</strong><small data-i18n="domeShort">A rounded crown</small></span><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M4 24C4 4 30 4 30 24M4 24q13 6 26 0M10 23C10 4 24 4 24 23M5 16q12 4 24 0"/></svg></button>
    <button data-mode="heart" aria-pressed="false" disabled><span class="mode-number">03</span><span><strong data-i18n="heart">Flat heart</strong><small data-i18n="heartShort">Love, on one plane</small></span><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M17 29C13 25 3 18 3 11c0-8 11-10 14-3 3-7 14-5 14 3 0 7-10 14-14 18Z"/></svg></button>
   </div>
+  <details id="aboutBlock" class="about-block">
+   <summary><span data-i18n="aboutTitle">What is this studio for?</span></summary>
+   <div class="about-body">
+    <p data-i18n="aboutLead">Try an idea before a single stem is cut.</p>
+    <ul>
+     <li data-i18n="aboutPoint1">Design and redesign as often as you like — no flowers are used, nothing is wasted.</li>
+     <li data-i18n="aboutPoint2">Show a customer what their bouquet will look like before they commit.</li>
+     <li data-i18n="aboutPoint3">Save a square or story picture and post it. Every share carries your shop back to you.</li>
+     <li data-i18n="aboutPoint4">Prices update live as you build, so nobody is surprised at the counter.</li>
+    </ul>
+    <p class="about-note" data-i18n="aboutHonest">A photographic preview, not a florist's production guarantee. Your florist confirms real stems, availability and the final price.</p>
+   </div>
+  </details>
   <p id="separateHint" class="separate-hint"></p>
   <div class="art-surface" id="artSurface">
    <div class="art-meta"><span class="live-label"><i></i><span data-i18n="livePreview">LIVE PREVIEW</span></span><div class="history-tools"><button id="focusPreview" class="text-button focus-preview" aria-label="Expand preview" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg><span id="focusLabel">Expand</span></button><button id="undo" class="icon-button" aria-label="Undo" data-label="undo" title="Undo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 4 10l5 5M4 10h9a6 6 0 0 1 0 12" transform="translate(0 -2)"/></svg></button><button id="redo" class="icon-button" aria-label="Redo" data-label="redo" title="Redo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5 5 5-5 5m5-5h-9a6 6 0 0 0 0 12" transform="translate(0 -2)"/></svg></button></div></div>
@@ -67,7 +80,7 @@
   <input id="importFile" type="file" accept=".json,application/json" hidden>
  </aside>
 </main>
-<footer class="site-footer"><span>Nebula <span aria-hidden="true">/</span> <span data-i18n="studioFooter">Bouquet studio</span></span><span data-i18n="madeByYou">Thoughtfully arranged. Entirely yours.</span></footer>
+<footer class="site-footer"><span>Nebula <span aria-hidden="true">/</span> <span data-i18n="studioFooter">Bouquet studio</span></span><span data-i18n="madeByYou">Thoughtfully arranged. Entirely yours.</span><span id="copyLine" class="copy-line"></span></footer>
 <div class="studio-credit" id="studioCredit" hidden><strong id="studioName"></strong><span id="studioPlace"></span><a id="studioSite" rel="noopener noreferrer" target="_blank"></a><a id="studioPhone"></a><span id="studioSocial"></span></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <dialog id="confirmDialog"><div class="dialog-heading"><h2 id="confirmTitle"></h2><button class="icon-button" data-close="confirmDialog" data-label="close" aria-label="Close">×</button></div><p id="confirmText"></p><div class="dialog-actions"><button class="button secondary" id="confirmCancel" data-i18n="keepMine">Keep mine</button><button class="button primary" id="confirmYes" data-i18n="confirm">Confirm</button></div></dialog>

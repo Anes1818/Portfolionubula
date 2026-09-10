@@ -75,6 +75,7 @@ function renderStudio(){
  const S=CONFIG.studio||{},on=!!(S.name||S.site||S.phone);
  $('studioCredit').hidden=!on;if(!on)return;
  $('studioName').textContent=S.name;$('studioPlace').textContent=S.place;
+ $('copyLine').textContent='© '+(S.year||'2026')+' '+(S.name||CONFIG.brand)+' · '+t('rightsReserved');
  const site=$('studioSite');site.textContent=S.site;site.hidden=!S.site;
  if(S.site)site.href='https://'+S.site.replace(/^https?:\/\//,'');
  const tel=$('studioPhone');tel.textContent=S.phone;tel.hidden=!S.phone;

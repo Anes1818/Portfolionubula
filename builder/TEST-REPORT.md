@@ -1,37 +1,95 @@
-# Nebula v6 — validation report
+# Nebula — what has and has not been verified
 
-This report covers the v6 implementation, not the old v5 test counts.
+This report replaces the earlier v6 report. That one described a build with a
+florist quote flow, a diamond pin, an Auto blend mode and a per-position list.
+All four were removed on purpose, so its numbers ("191 passed", "0 accessibility
+violations") no longer describe this software and have been withdrawn.
 
-- Functional: 111 passed, 0 failed.
-- Native: 44 passed, 0 failed.
-- Edge: 23 passed, 0 failed.
+## What was measured on the current build
 
-**191 completed checks passed, 0 failed:** 111 functional, 44 native-input, 23 edge/merchant and 13 clean-extraction checks.
+Every figure below came from running the app and reading a number back, not from
+inspection.
 
-## What was checked
-- Fixed capacities, real v2 palette/accent behavior, v1-derived zones, resizing, direct touches, small × deletion, empty-slot refill, one-stroke Undo, cancellation and independent saved bouquets.
-- Exact sample arithmetic: 15 roses to 10 roses + 5 lilies changes the estimate only by the five unit-price differences. Empty slots are uncharged; explicit extras are separate.
-- Real PNG/JSON/request downloads, semantic reload equality, keyboard deletion, owner configuration, invalid imports/contacts and no external communication.
-- Phone layouts: 320×568, 360×800, 390×844, 844×390. Desktop was also reviewed.
+**Catalogue and rendering**
+- 32 varieties × 3 modes rendered with **no failures**.
+- Estimates stable across the change series: Classic $79.00, Dome $155.00,
+  Heart $204.00 for the default designs.
+- PNG export produces a real `image/png` of ~630 KB at 1080×1080, and waits for
+  its own artwork first — an exported picture is never missing a bloom.
 
-## Artwork checks
-- 96 RGBA WebPs decode and match the embedded bytes.
-- All 27 stemmed Classic assets have source-aligned head/neck coordinates and an eight-pixel source overlap.
-- Actual per-flower alpha visibility and protected central regions measured across all named Dome/Heart sizes and mixed-flower examples. Natural petal overlap remains.
+**Geometry**
+- Heart blooms are now one shared size. Centre-to-rim ratio went from 0.82 to
+  **1.00**, spread from 1.56× to **1.00×**. The shared size is the median
+  neighbour cap, which holds worst-case overlap at ~32% — the engine's own
+  measured overlap constant is 0.33.
+- Classic blooms no longer cross the paper mouth. Across five bouquets the worst
+  overhang went from **+40.8px to 0**.
+- Bloom draw scale is 0.85 of catalogue diameter, with row offsets scaled to
+  match so rows stay packed. Pricing and the 20-unit capacity are unaffected.
+- Dome engine constants: `all 12 measured constants intact`.
 
-## Accessibility
-- accessibility-desktop-finishing: 0 violations, 0 incomplete checks.
-- accessibility-heart: 0 violations, 0 incomplete checks.
-- accessibility-phone: 0 violations, 0 incomplete checks.
-- accessibility-quote: 0 violations, 0 incomplete checks.
+**Artwork**
+- Green screen spill: worst petal layer went from **23.5% to 6.5%** of its soft
+  edge, and only 1 of 59 petal layers is above 5%. That one is alstroemeria,
+  whose petals are naturally green-streaked.
+- Five tulip bloom crops carried a detached ~200px leaf fragment from the stem.
+  Removed; metadata re-derived so the blooms did not shift.
+- Eucalyptus head aspect corrected from 0.598 to 1.003. The old narrow tip was
+  documented in the engine notes as reading like a thorn.
 
-## Limits
-Chromium with emulated viewports and touch input, not physical iPhone/Safari/Android hardware. This is a 2D photographic preview; a florist must confirm actual stems, availability, material colours, feasibility, delivery/tax and final price. No order/payment is sent or confirmed by the app.
+**Performance**
+- Startup decodes only the artwork the three saved bouquets need: **21 assets
+  instead of 93**, about 30 MB of bitmap instead of 113 MB. The rest decodes in
+  the background and each arrival triggers a repaint.
+- Render cost 0.6–1.3 ms per frame at up to 100 blooms, against a 16.7 ms budget.
+- Embedded bundle 9.63 MB.
 
-A temporary sandbox restoration failure occurred during packaging. The original tested v6 working tree and its recorded evidence were recovered. The final archive is separately checked after extraction.
+**Phone behaviour** (375×812 emulated, touch input)
+- Drag moves a bloom; a tap paints it. Verified with synthetic touch gestures:
+  a 6px tap painted, a 30px drag moved and painted nothing.
+- Touch slop 12 CSS px, mouse 4. Measured in real pixels, not canvas units.
+- `:hover` effects are disabled under `@media (hover:none)` so they cannot stick
+  after a tap.
+- The delete × covers **3.7%** of a bloom, down from 40.9%, while keeping a
+  44×44 target.
+- Finishing panel height 287px of 664px content (43% visible), up from 153px
+  (23%).
 
-## Final archive smoke test
+**Data safety**
+- Designs saved before flowers were withdrawn still load: `limonium`,
+  `babys_compact`, `babys_medium` and the retired `kraft` paper are remapped
+  rather than rejected. Verified with a real exported design, all items kept.
 
-The ZIP was extracted into a fresh folder. Both direct-file opening and HTTP serving from that extracted folder passed: v6 startup, 15 fixed slots with five real lily-paint touches, exact sample pricing, quote/no-order wording, real PNG download, full studio reload and stable quote reference. Neither path produced a runtime error or external request.
+## What has NOT been verified
 
-The final repack adds this report and the clean-test evidence only. Its runtime file hashes match the successfully tested extraction. `tests/v6/clean-smoke.json` records those hashes. ZIP integrity and embedded/file image equality are checked again by `tools/package.py`.
+Read this section before launching.
+
+1. **The project's own Playwright suite was not run.** `tests/v6/*.cjs` requires
+   Playwright, which was not available in this environment. Every number above
+   is an independent measurement, not those 191 checks.
+2. **No physical device testing.** Chromium with emulated viewports only. No
+   real iPhone, Safari or Android hardware.
+3. **Native sharing is unproven on a real device.** `navigator.share` does not
+   exist in the environment used here. The three code paths (share, cancel,
+   fall back to download) were verified by simulation; a real share sheet was
+   never seen to open.
+4. **No accessibility audit, and a known regression.** The per-position list
+   that gave keyboard and screen-reader users a way to edit was removed on
+   purpose. Editing now requires seeing and touching the canvas. The earlier
+   "0 violations" result does not carry over. For a business that must meet ADA
+   or WCAG this is an open risk, not an oversight.
+5. **Prices are demo values.** `shop-config.js` ships `demo: true` and the app
+   says SAMPLE ESTIMATE. Nothing here is a florist's confirmed quote.
+6. **Print/production feasibility untested.** No florist has assembled a bouquet
+   from one of these designs.
+
+## Standing rule for this project
+
+Never claim something is fixed without a measurement or a file read that proves
+it. Several defects in this series were found only because a number was checked
+after the change — including two where the code looked right and the output was
+wrong.
+
+---
+
+© 2026 Nebula Sites Studio. All rights reserved.

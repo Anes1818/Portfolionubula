@@ -3,7 +3,7 @@
 window.NEBULA_SHOP={name:'Nebula',
   studio:{name:'Nebula Sites Studio',site:'nebulastudio.site/flowers',
           phone:'(571) 336-7129',instagram:'@nebulaa_studio',
-          place:'Virginia, USA — serving businesses across the US'},currency:'USD',demo:true,whatsapp:'',email:'',baseCents:2500,laborCents:{classic:1000,dome:1000,heart:1500},extrasCents:{butterfly:300,ribbon:0,sash:0},flowerPrices:{
+          place:'Virginia, USA — serving businesses across the US',year:'2026'},currency:'USD',demo:true,whatsapp:'',email:'',baseCents:2500,laborCents:{classic:1000,dome:1000,heart:1500},extrasCents:{butterfly:300,ribbon:0,sash:0},flowerPrices:{
   "rose_red": 400,
   "rose_pink": 400,
   "rose_white": 400,
