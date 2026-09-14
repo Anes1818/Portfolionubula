@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Petal Press — Identity preview</title>
+<meta name="description" content="Phase 0 identity sheet for Petal Press, template #2 by Nebula Sites Studio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="icon" href="assets/logo/favicon.svg">
+<style>
+  /* Preview-sheet only. None of this ships with the template. */
+  .pv-top{ padding-block:var(--s-7) var(--s-6); }
+  .pv-sec{ padding-block:var(--s-7); border-top:var(--line-fine) dashed var(--ink-14); }
+  .pv-lab{ display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-2); }
+  .pv-num{ font-family:var(--font-hand); font-size:var(--fs-xs); letter-spacing:.2em; color:var(--ink-30); }
+  .pv-note{ font-size:var(--fs-sm); color:var(--ink-55); max-width:60ch; }
+  .pv-tile{ display:grid; place-items:center; gap:var(--s-3); padding:var(--s-5) var(--s-3); text-align:center; }
+  .pv-cap{ font-family:var(--font-hand); font-size:.6875rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-55); }
+
+  .logo{ color:var(--ink); }
+  .lockup{ display:inline-flex; align-items:center; gap:.6em; color:var(--ink); text-decoration:none; }
+  .lockup__mark{ width:2.6em; height:2.6em; flex:none; }
+  .lockup__name{ font-family:var(--font-display); font-size:1.6em; line-height:1; letter-spacing:-.01em; }
+  .lockup__sub{ font-family:var(--font-hand); font-size:.5em; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-55); display:block; margin-top:.3em; }
+  .lockup--stack{ flex-direction:column; gap:.3em; text-align:center; }
+
+  .on-dark{ background:var(--ink); color:var(--paper); border-radius:var(--r-md); }
+  .on-dark .lockup, .on-dark .pv-cap{ color:var(--paper); }
+  .on-bloom{ background:var(--bloom); color:var(--white); border-radius:var(--r-md); }
+  .on-bloom .lockup, .on-bloom .pv-cap{ color:var(--white); }
+
+  .sw{ border:var(--line-fine) solid var(--ink); border-radius:var(--r-sm); overflow:hidden; box-shadow:var(--stamp-sm); }
+  .sw__chip{ height:78px; }
+  .sw__meta{ padding:.5rem .7rem; background:var(--white); border-top:var(--line-fine) solid var(--ink-14); }
+  .sw__name{ font-family:var(--font-hand); font-size:.6875rem; letter-spacing:.08em; text-transform:uppercase; }
+  .sw__hex{ font-family:var(--font-hand); font-size:.75rem; color:var(--ink-55); }
+
+  .stick{ display:grid; place-items:center; gap:.5rem; padding:var(--s-4) var(--s-2); border:var(--line-fine) solid var(--ink-14); border-radius:var(--r-sm); background:var(--white); }
+  .stick svg{ width:52px; height:52px; color:var(--ink); }
+  .stick__n{ font-family:var(--font-hand); font-size:.625rem; letter-spacing:.06em; color:var(--ink-55); }
+
+  .type-row{ padding-block:var(--s-3); border-bottom:1px solid var(--ink-07); }
+  .type-row:last-child{ border-bottom:0; }
+  .type-meta{ font-family:var(--font-hand); font-size:.6875rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-30); }
+
+  .fix{ padding:var(--s-4); }
+  .fix li{ font-size:var(--fs-sm); margin-bottom:.5rem; line-height:1.55; }
+  .pip-demo{ width:96px; height:114px; color:var(--ink); }
+  .zone{ font-family:var(--font-hand); font-size:.75rem; }
+  .yes{ color:var(--leaf); } .no{ color:var(--clay); }
+</style>
+</head>
+<body>
+
+<!-- Filter defs + mark/mascot symbols. One <use> per instance keeps the DOM
+     small and lets currentColor drive every colour. -->
+<svg class="ink-defs" aria-hidden="true" focusable="false">
+  <filter id="inkWobble" x="-14%" y="-14%" width="128%" height="128%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.042" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <symbol id="pp-mark" viewBox="0 0 100 100"><!-- currentColor everywhere: the mark inherits text colour, so seasons.js
+       can recolour it and it works white-on-dark with no second file. -->
+  <g fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- The stamp ring. One nearly-closed hand-drawn circle, radii between
+         32.8 and 34.8 so it wobbles like a hand, not like a mistake. -->
+    <path d="M62 76.5C46 82.5 27 74 19.5 58.5 12 43 18 25.5 32 17 46 8.5 66 11 76 23.5 86 36 86.5 57 76.5 68.5 72.5 73 68.5 75.5 64.5 77"/>
+    <!-- The stem is drawn to land exactly on the ring's start point, so the
+         eye reads ring + stem + bloom as one unbroken stroke. -->
+    <path d="M49.5 43C50.5 52 51.5 60 53.5 67 55 72 58 75.5 62 76.5"/>
+    <path d="M52.6 62.4C57.2 60.2 63 60 65.6 63.2 62.6 67.2 56.6 67.6 52.6 65.4"/>
+    <!-- Three petals, deliberately uneven. -->
+    <path d="M49.8 43C45.6 37.5 43.4 29.8 46.6 24.6 49.2 20.4 54.4 22.2 55.6 27.8 56.9 33.8 54.2 39.2 49.8 43Z"/>
+    <path d="M49.8 43C43.2 41.2 36.4 37.6 34.6 32.2 33.1 27.7 38.4 25.6 42.6 29.4 46.2 32.7 48.6 38.2 49.8 43Z"/>
+    <path d="M49.8 43C56.4 41.6 63.2 38.4 65.4 33.2 67.2 28.9 62.2 26.2 57.8 29.6 54 32.6 51.2 38.2 49.8 43Z"/>
+  </g></symbol>
+  <symbol id="pp-pip" viewBox="0 0 64 76"><!-- Pip is drawn with the same line weight and the same hand as the logo.
+       Two dots, NO mouth: mouthless mascots read modern and calm, a smiling
+       face with eyes reads as children's clip art. -->
+  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- bud body -->
+    <path d="M31.6 25.2C41.4 24.6 48.3 33.2 48 44.4 47.7 55.2 41 63.4 31.8 63.2 22.6 63 16.1 54.6 16.2 43.8 16.3 33.4 22.4 25.4 31.6 25.2Z"/>
+    <!-- sprout + single leaf -->
+    <path d="M32.2 25.1C32.6 19.4 33.8 14.6 36.6 10.8"/>
+    <path d="M36.6 10.8C40.8 8 46.6 8.6 48.8 12.2 46 16.2 39.9 16.4 36.4 13.6"/>
+    <!-- leaf arms -->
+    <path d="M16.5 42.2C11.4 39.4 5.6 39.6 3.2 43 6.1 47 12.3 47.4 16.4 44.9"/>
+    <path d="M47.8 42.2C52.9 39.4 58.7 39.6 61.1 43 58.2 47 52 47.4 47.9 44.9"/>
+    <!-- roots -->
+    <path d="M26.5 63.6C25.2 67.4 25.9 70.6 28 72.6"/>
+    <path d="M37.2 63.6C38.5 67.4 37.8 70.6 35.7 72.6"/>
+  </g>
+  <g fill="currentColor">
+    <circle cx="26.6" cy="42.4" r="2.5"/>
+    <circle cx="37.6" cy="42.4" r="2.5"/>
+  </g></symbol>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false"><symbol id="st-rose" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M25.6,19.0C25.6,19.2 26.0,19.6 25.9,19.9C25.9,20.2 25.6,20.7 25.2,21.0C24.9,21.2 24.4,21.5 23.9,21.6C23.5,21.7 23.1,21.9 22.6,21.8C22.1,21.6 21.3,21.1 20.9,20.7C20.4,20.3 20.0,20.0 19.9,19.4C19.8,18.8 20.0,17.7 20.3,17.0C20.5,16.4 21.0,16.1 21.6,15.6C22.1,15.2 22.8,14.6 23.6,14.3C24.3,14.1 25.2,13.9 26.0,14.1C26.8,14.3 28.0,14.8 28.6,15.5C29.3,16.2 29.7,17.1 29.9,18.1C30.1,19.1 30.1,20.3 29.8,21.3C29.6,22.3 29.1,23.5 28.3,24.3C27.5,25.0 26.4,25.6 25.2,25.9C24.1,26.2 22.6,26.3 21.4,25.9C20.2,25.6 18.8,24.7 17.9,23.9C17.0,23.0 16.3,22.1 16.0,20.8C15.6,19.6 15.8,17.2 15.8,16.5"/><path vector-effect="non-scaling-stroke" d="M14.8,23.0C14.4,21.7 11.9,17.5 12.4,15.2C12.9,12.9 15.6,10.6 17.8,9.4C20.0,8.2 24.1,8.4 25.4,8.2"/><path vector-effect="non-scaling-stroke" d="M33.6,22.4C34.0,21.1 36.5,17.0 36.0,14.8C35.5,12.6 32.6,10.1 30.8,9.0C29.0,7.9 26.3,8.3 25.4,8.2"/><path vector-effect="non-scaling-stroke" d="M24.0,31.0Q23.3,37.6 24.0,45.0"/><path vector-effect="non-scaling-stroke" d="M24.4,37.9C27.6,40.0 32.2,37.8 33.4,35.3C31.1,33.8 26.0,34.3 24.4,37.9"/><path vector-effect="non-scaling-stroke" d="M23.3,40.6C21.7,36.7 18.2,36.7 15.8,38.4C17.0,41.1 19.9,43.1 23.3,40.6"/></g></symbol><symbol id="st-tulip" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M23.6,27.7C30.7,23.2 28.4,14.4 23.4,11.1C18.5,14.4 16.5,23.2 23.6,27.7"/><path vector-effect="non-scaling-stroke" d="M23.5,27.3C26.7,21.6 23.0,17.2 18.4,17.1C16.2,21.2 17.0,27.2 23.5,27.3"/><path vector-effect="non-scaling-stroke" d="M24.7,26.5C31.5,26.3 32.7,21.0 30.5,16.7C25.6,16.9 21.5,20.4 24.7,26.5"/><path vector-effect="non-scaling-stroke" d="M24.0,28.0Q25.2,36.4 24.5,45.0"/><path vector-effect="non-scaling-stroke" d="M24.0,38.4C27.5,41.3 33.3,38.0 34.5,35.1C32.1,33.0 25.7,34.2 24.0,38.4"/><path vector-effect="non-scaling-stroke" d="M24.3,33.8C22.4,30.2 17.9,30.9 15.5,32.4C16.9,34.9 20.9,36.1 24.3,33.8"/></g></symbol><symbol id="st-daisy" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M24.2,18.4C28.3,15.3 26.9,9.9 24.1,7.7C21.2,9.9 20.1,15.3 24.2,18.4"/><path vector-effect="non-scaling-stroke" d="M23.4,18.9C28.7,20.1 31.4,14.6 30.6,10.9C26.9,10.1 22.2,13.6 23.4,18.9"/><path vector-effect="non-scaling-stroke" d="M23.5,18.6C26.6,23.7 33.3,23.4 35.6,19.8C33.3,16.2 26.6,13.5 23.5,18.6"/><path vector-effect="non-scaling-stroke" d="M24.7,18.4C23.8,23.8 29.0,27.4 32.9,26.9C33.5,23.0 30.1,17.5 24.7,18.4"/><path vector-effect="non-scaling-stroke" d="M23.7,19.4C19.7,22.4 20.6,27.7 23.4,29.8C26.3,27.7 27.8,22.4 23.7,19.4"/><path vector-effect="non-scaling-stroke" d="M24.1,18.4C18.6,17.6 14.3,23.0 14.8,26.8C18.7,27.3 24.8,23.8 24.1,18.4"/><path vector-effect="non-scaling-stroke" d="M23.7,19.1C20.4,14.6 14.4,15.5 12.0,18.6C14.4,21.8 20.4,23.6 23.7,19.1"/><path vector-effect="non-scaling-stroke" d="M23.6,19.1C24.7,13.2 19.6,10.4 15.4,11.1C14.7,15.2 17.8,20.2 23.6,19.1"/><path vector-effect="non-scaling-stroke" d="M27.8,19.0C27.8,20.0 26.7,21.3 25.7,21.9C24.7,22.5 22.8,23.1 21.9,22.6C21.1,22.1 20.8,20.1 20.8,19.0C20.9,17.9 21.4,16.5 22.2,16.0C23.1,15.4 25.0,15.1 25.9,15.6C26.9,16.1 27.9,18.0 27.8,19.0Z"/><path vector-effect="non-scaling-stroke" d="M24.0,23.0Q22.8,33.5 25.0,44.0"/><path vector-effect="non-scaling-stroke" d="M25.4,36.1C28.7,38.8 32.7,36.0 33.4,33.1C31.1,31.3 26.4,32.0 25.4,36.1"/></g></symbol><symbol id="st-eucalyptus" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M11.0,43.0Q20.9,24.5 37.0,8.0"/><path vector-effect="non-scaling-stroke" d="M23.3,40.4C23.3,41.6 22.5,43.5 21.6,44.0C20.7,44.5 18.7,44.0 17.8,43.4C16.9,42.8 16.1,41.4 16.1,40.4C16.1,39.4 16.8,37.9 17.7,37.3C18.6,36.7 20.7,36.2 21.7,36.7C22.6,37.2 23.3,39.2 23.3,40.4Z"/><path vector-effect="non-scaling-stroke" d="M17.0,30.6C17.0,31.7 16.6,33.6 15.7,34.2C14.8,34.8 12.5,34.7 11.6,34.1C10.7,33.5 10.3,31.7 10.3,30.6C10.3,29.5 10.8,27.8 11.7,27.3C12.6,26.7 14.6,26.8 15.5,27.4C16.4,27.9 17.0,29.5 17.0,30.6Z"/><path vector-effect="non-scaling-stroke" d="M30.5,30.4C30.6,31.5 29.9,33.7 29.1,34.1C28.2,34.6 26.2,33.8 25.4,33.1C24.5,32.5 24.0,31.5 23.9,30.4C23.8,29.3 24.0,27.3 24.8,26.7C25.6,26.2 27.8,26.7 28.7,27.3C29.7,27.9 30.4,29.3 30.5,30.4Z"/><path vector-effect="non-scaling-stroke" d="M24.2,20.6C24.2,21.5 23.5,23.0 22.7,23.5C21.9,24.0 20.3,24.0 19.4,23.5C18.4,23.0 17.0,21.5 17.0,20.6C17.0,19.7 18.5,18.3 19.5,17.8C20.4,17.4 21.9,17.4 22.7,17.8C23.4,18.3 24.2,19.7 24.2,20.6Z"/><path vector-effect="non-scaling-stroke" d="M37.9,20.4C37.9,21.3 37.0,22.8 36.1,23.4C35.2,23.9 33.3,24.3 32.4,23.8C31.5,23.3 30.5,21.4 30.6,20.4C30.7,19.4 31.9,18.1 32.8,17.6C33.6,17.2 35.0,17.3 35.9,17.8C36.7,18.2 37.8,19.5 37.9,20.4Z"/><path vector-effect="non-scaling-stroke" d="M32.1,10.6C32.1,11.6 31.2,13.5 30.4,13.9C29.5,14.3 28.0,13.5 27.1,13.0C26.2,12.4 25.1,11.5 25.0,10.6C24.9,9.7 25.8,7.9 26.7,7.4C27.5,6.9 29.3,7.1 30.2,7.6C31.1,8.2 32.1,9.6 32.1,10.6Z"/></g></symbol><symbol id="st-babysbreath" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M24.0,45.0Q24.4,31.3 24.0,17.0"/><path vector-effect="non-scaling-stroke" d="M24.0,27.0Q20.2,24.1 15.2,20.5"/><path vector-effect="non-scaling-stroke" d="M16.6,17.1C16.6,17.6 16.0,18.4 15.6,18.5C15.3,18.6 14.6,18.1 14.4,17.7C14.1,17.4 14.0,16.7 14.2,16.4C14.4,16.0 15.3,15.6 15.6,15.7C16.0,15.8 16.6,16.6 16.6,17.1Z"/><path vector-effect="non-scaling-stroke" d="M19.5,22.2C19.5,22.6 19.0,23.5 18.6,23.6C18.2,23.7 17.5,23.2 17.3,22.8C17.0,22.5 16.9,21.8 17.1,21.5C17.3,21.2 18.1,21.0 18.5,21.1C18.9,21.2 19.4,21.8 19.5,22.2Z"/><path vector-effect="non-scaling-stroke" d="M13.5,22.2C13.5,22.6 13.0,23.3 12.7,23.4C12.3,23.5 11.6,23.1 11.4,22.8C11.2,22.5 11.1,21.8 11.3,21.5C11.5,21.3 12.2,21.0 12.6,21.1C13.0,21.2 13.5,21.8 13.5,22.2Z"/><path vector-effect="non-scaling-stroke" d="M24.0,24.1Q29.2,21.1 32.8,17.6"/><path vector-effect="non-scaling-stroke" d="M34.9,14.3C34.9,14.7 34.6,15.6 34.2,15.7C33.9,15.8 33.2,15.3 32.9,15.0C32.7,14.6 32.5,13.9 32.7,13.6C32.9,13.3 33.8,13.2 34.1,13.3C34.5,13.4 34.9,14.0 34.9,14.3Z"/><path vector-effect="non-scaling-stroke" d="M36.1,20.1C36.1,20.5 35.9,21.3 35.6,21.4C35.2,21.5 34.4,21.1 34.2,20.7C34.0,20.4 34.0,19.8 34.2,19.4C34.4,19.1 35.2,18.6 35.6,18.7C35.9,18.8 36.1,19.6 36.1,20.1Z"/><path vector-effect="non-scaling-stroke" d="M30.9,18.4C30.9,18.8 30.3,19.3 29.8,19.5C29.4,19.6 28.5,19.5 28.3,19.2C28.1,18.9 28.2,18.0 28.5,17.6C28.7,17.3 29.5,17.0 29.9,17.1C30.3,17.2 30.9,18.0 30.9,18.4Z"/><path vector-effect="non-scaling-stroke" d="M24.0,36.3Q21.5,33.4 20.2,29.8"/><path vector-effect="non-scaling-stroke" d="M23.4,27.0C23.5,27.4 23.0,28.2 22.6,28.4C22.1,28.5 21.2,28.2 20.9,27.8C20.7,27.5 20.9,26.6 21.2,26.3C21.4,26.0 22.1,25.7 22.5,25.9C22.8,26.0 23.4,26.6 23.4,27.0Z"/><path vector-effect="non-scaling-stroke" d="M22.8,32.9C22.8,33.2 22.4,33.8 22.0,33.9C21.7,34.0 21.1,33.8 20.8,33.5C20.6,33.2 20.5,32.5 20.8,32.2C21.0,31.9 21.8,31.5 22.1,31.6C22.4,31.7 22.8,32.5 22.8,32.9Z"/><path vector-effect="non-scaling-stroke" d="M17.8,29.6C17.8,30.0 17.5,30.7 17.2,30.8C16.9,30.9 16.1,30.6 15.9,30.3C15.6,29.9 15.6,29.2 15.9,28.9C16.1,28.5 16.9,28.1 17.2,28.2C17.6,28.4 17.8,29.1 17.8,29.6Z"/><path vector-effect="non-scaling-stroke" d="M24.0,33.7Q27.1,30.3 30.2,27.2"/><path vector-effect="non-scaling-stroke" d="M34.1,25.1C34.1,25.4 33.6,26.2 33.3,26.3C32.9,26.4 32.3,26.0 32.0,25.7C31.7,25.3 31.5,24.5 31.7,24.2C31.9,23.9 32.8,23.9 33.2,24.1C33.6,24.2 34.1,24.7 34.1,25.1Z"/><path vector-effect="non-scaling-stroke" d="M32.1,30.6C32.1,31.0 31.5,31.8 31.2,31.9C30.8,32.0 30.2,31.5 29.9,31.2C29.6,30.8 29.4,30.0 29.6,29.7C29.8,29.5 30.7,29.3 31.1,29.4C31.5,29.6 32.1,30.1 32.1,30.6Z"/><path vector-effect="non-scaling-stroke" d="M28.3,26.0C28.3,26.4 27.7,26.9 27.3,27.0C27.0,27.1 26.4,26.9 26.2,26.6C26.0,26.3 25.9,25.7 26.1,25.3C26.3,25.0 27.1,24.5 27.5,24.6C27.8,24.7 28.3,25.6 28.3,26.0Z"/></g></symbol><symbol id="st-leaf" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M12.8,38.6C25.2,39.8 31.5,28.1 29.2,19.6C20.5,18.9 9.4,26.5 12.8,38.6"/><path vector-effect="non-scaling-stroke" d="M13.6,38.2C14.3,37.2 16.5,34.1 18.0,32.0C19.5,29.9 21.0,27.5 22.4,25.4C23.8,23.3 25.7,20.4 26.4,19.4"/></g></symbol><symbol id="st-bouquet" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M13.5,25.0C14.1,26.5 15.8,31.3 17.0,34.0C18.2,36.7 19.8,39.1 21.0,41.0C22.2,42.9 23.0,45.5 24.0,45.5C25.0,45.5 25.8,42.9 27.0,41.0C28.2,39.1 29.8,36.7 31.0,34.0C32.2,31.3 33.9,26.5 34.5,25.0"/><path vector-effect="non-scaling-stroke" d="M13.5,25.0C14.4,25.4 17.2,26.9 19.0,27.5C20.8,28.1 22.3,28.5 24.0,28.5C25.7,28.5 27.2,28.1 29.0,27.5C30.8,26.9 33.6,25.4 34.5,25.0"/><path vector-effect="non-scaling-stroke" d="M21.4,27.0Q19.8,24.3 17.5,22.5"/><path vector-effect="non-scaling-stroke" d="M17.8,19.2C20.4,17.6 20.0,13.5 18.2,12.3C16.4,13.5 15.3,17.6 17.8,19.2"/><path vector-effect="non-scaling-stroke" d="M17.1,19.0C19.5,20.7 21.8,18.5 22.5,16.6C20.8,15.4 18.0,16.2 17.1,19.0"/><path vector-effect="non-scaling-stroke" d="M17.1,19.1C15.9,22.2 19.5,23.4 21.8,23.3C22.7,21.1 20.5,18.9 17.1,19.1"/><path vector-effect="non-scaling-stroke" d="M17.3,18.5C13.8,18.3 13.5,21.7 14.5,24.0C16.9,24.2 18.6,21.8 17.3,18.5"/><path vector-effect="non-scaling-stroke" d="M18.0,19.1C17.2,16.3 14.2,16.4 12.6,17.7C13.2,19.6 15.7,21.0 18.0,19.1"/><path vector-effect="non-scaling-stroke" d="M24.0,27.0Q24.1,23.7 24.0,19.5"/><path vector-effect="non-scaling-stroke" d="M24.5,16.2C27.6,15.2 27.7,11.9 26.0,10.2C23.8,11.0 22.1,13.9 24.5,16.2"/><path vector-effect="non-scaling-stroke" d="M23.6,15.7C25.6,17.9 28.5,16.7 29.7,15.0C28.2,13.4 25.2,13.2 23.6,15.7"/><path vector-effect="non-scaling-stroke" d="M24.2,15.8C22.4,18.3 23.9,20.4 26.0,20.7C27.2,19.0 27.2,16.3 24.2,15.8"/><path vector-effect="non-scaling-stroke" d="M24.2,16.2C20.9,14.8 18.4,17.8 18.9,20.3C21.3,21.2 25.1,19.6 24.2,16.2"/><path vector-effect="non-scaling-stroke" d="M24.7,16.2C24.7,13.1 21.1,12.3 19.1,13.4C19.2,15.6 21.9,17.7 24.7,16.2"/><path vector-effect="non-scaling-stroke" d="M26.6,27.0Q29.4,25.0 30.5,22.5"/><path vector-effect="non-scaling-stroke" d="M30.2,18.7C33.1,18.2 33.5,16.3 32.6,14.5C30.5,14.9 28.8,16.2 30.2,18.7"/><path vector-effect="non-scaling-stroke" d="M30.7,18.9C32.2,21.7 36.3,21.5 37.8,19.9C36.8,17.8 32.9,16.5 30.7,18.9"/><path vector-effect="non-scaling-stroke" d="M30.6,18.7C28.3,20.7 29.7,24.7 31.7,25.5C33.2,24.1 33.4,19.9 30.6,18.7"/><path vector-effect="non-scaling-stroke" d="M31.2,19.0C28.5,17.6 24.6,18.9 24.4,21.0C26.3,22.0 30.9,22.1 31.2,19.0"/><path vector-effect="non-scaling-stroke" d="M30.9,18.9C31.8,15.7 27.8,14.1 25.6,14.8C25.0,17.1 27.7,19.9 30.9,18.9"/></g></symbol><symbol id="st-ribbon" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M24.0,24.0C22.5,22.8 17.8,17.0 15.0,16.5C12.2,16.0 8.2,19.0 7.5,21.0C6.8,23.0 8.9,27.5 11.0,28.5C13.1,29.5 17.8,27.8 20.0,27.0C22.2,26.2 23.3,24.5 24.0,24.0"/><path vector-effect="non-scaling-stroke" d="M24.0,24.0C25.5,22.8 30.2,17.0 33.0,16.5C35.8,16.0 39.8,19.0 40.5,21.0C41.2,23.0 39.1,27.5 37.0,28.5C34.9,29.5 30.2,27.8 28.0,27.0C25.8,26.2 24.7,24.5 24.0,24.0"/><path vector-effect="non-scaling-stroke" d="M26.7,24.0C26.8,24.8 26.2,26.2 25.5,26.6C24.8,27.0 23.3,26.9 22.6,26.5C21.8,26.1 20.9,24.9 20.9,24.0C20.9,23.1 21.7,21.7 22.4,21.3C23.2,20.9 24.6,21.3 25.3,21.8C26.0,22.2 26.7,23.2 26.7,24.0Z"/><path vector-effect="non-scaling-stroke" d="M22.0,27.0C21.3,28.3 19.2,32.5 18.0,35.0C16.8,37.5 15.1,40.8 14.5,42.0"/><path vector-effect="non-scaling-stroke" d="M26.0,27.0C26.7,28.3 28.8,32.5 30.0,35.0C31.2,37.5 32.9,40.8 33.5,42.0"/></g></symbol><symbol id="st-arrow" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M6.5,37.5C7.3,35.0 8.7,26.3 11.5,22.5C14.3,18.7 19.5,15.4 23.5,14.5C27.5,13.6 32.6,15.2 35.5,17.0C38.4,18.8 40.1,23.7 41.0,25.0"/><path vector-effect="non-scaling-stroke" d="M41.0,25.0C40.2,24.7 37.8,23.9 36.2,23.2C34.6,22.5 32.2,21.2 31.4,20.8"/><path vector-effect="non-scaling-stroke" d="M41.0,25.0C40.7,25.9 40.1,28.6 39.2,30.2C38.3,31.8 36.0,33.9 35.4,34.6"/></g></symbol><symbol id="st-star" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M24.0,7.2L27.7,19.0L39.5,19.0L30.1,26.0L33.9,37.7L24.0,30.2L14.2,37.5L17.5,26.1L8.2,18.9L19.8,18.2Z"/></g></symbol><symbol id="st-heart" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M24,41.5C24,41.5 9.4,31.6 9.4,21.4 9.4,15.2 14.6,11.6 19.2,13.5 21.7,14.5 23.2,16.8 24,18.9 24.8,16.8 26.3,14.5 28.8,13.5 33.4,11.6 38.6,15.2 38.6,21.4 38.6,31.6 24,41.5 24,41.5Z"/></g></symbol><symbol id="st-sparkle" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M24.0,6.5C24.4,8.8 23.3,17.1 26.2,20.0C29.1,22.9 41.5,22.7 41.5,24.0C41.5,25.3 29.1,25.1 26.2,28.0C23.3,30.9 24.7,41.5 24.0,41.5C23.3,41.5 24.7,30.9 21.8,28.0C18.9,25.1 6.5,25.3 6.5,24.0C6.5,22.7 18.9,22.9 21.8,20.0C24.7,17.1 23.6,8.8 24.0,6.5"/></g></symbol><symbol id="st-badge" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M43.8,24.0C43.8,28.3 42.0,33.5 39.3,36.8C36.6,40.2 31.7,43.6 27.6,44.2C23.4,44.8 18.1,42.6 14.6,40.3C11.1,38.0 8.1,34.2 6.6,30.4C5.0,26.5 3.7,20.9 5.0,17.1C6.3,13.3 10.7,9.4 14.4,7.4C18.1,5.4 23.2,4.5 27.3,5.1C31.5,5.7 36.7,7.9 39.5,11.0C42.2,14.2 43.8,19.7 43.8,24.0Z"/></g></symbol><symbol id="st-tape" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M5.0,17.0C6.8,16.8 12.2,15.5 16.0,15.5C19.8,15.5 23.5,17.1 28.0,17.0C32.5,16.9 40.5,15.3 43.0,15.0"/><path vector-effect="non-scaling-stroke" d="M5.0,32.0C7.0,32.2 12.8,33.5 17.0,33.5C21.2,33.5 25.7,32.0 30.0,32.0C34.3,32.0 40.8,33.2 43.0,33.5"/><path vector-effect="non-scaling-stroke" d="M5,17L5,32"/><path vector-effect="non-scaling-stroke" d="M43,15L43,33.5"/></g></symbol></svg>
+
+<main class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <header class="pv-top">
+    <p class="kicker">Nebula Sites Studio · Template #2 · Phase 0</p>
+    <a class="lockup" href="#" style="font-size:1.6rem">
+      <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+      <span>
+        <span class="lockup__name">Petal Press</span>
+        <span class="lockup__sub">Northern Virginia</span>
+      </span>
+    </a>
+    <h1 class="display" style="margin-top:var(--s-5)">Bouquets drawn <em>by hand.</em><br>Made by hand.</h1>
+    <p class="lead">The identity sheet. Everything below is live code — no mockups, no screenshots, nothing faked.</p>
+    <div class="row" style="margin-top:var(--s-5)">
+      <button class="btn-ink btn-ink--primary btn-ink--lg">
+        <span class="btn-ink__frame" aria-hidden="true"></span>
+        <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>
+        Build your bouquet
+      </button>
+      <button class="btn-ink">
+        <span class="btn-ink__frame" aria-hidden="true"></span>
+        <svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>
+        See the shop
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ 01 LOGO ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">01</span><h2 style="margin:0">The mark</h2></div>
+    <p class="pv-note">One nearly-closed ring whose line runs down into the stem and opens into three uneven petals, so the eye reads it as a single unbroken stroke. It is one <code>.svg</code>, 1.4 KB, drawn in <code>currentColor</code> — the same file serves the header, the favicon, the stamp and the white-on-dark footer.</p>
+
+    <div class="grid grid-4" style="margin-top:var(--s-5)">
+      <div class="ink-card pv-tile">
+        <svg class="logo" style="width:112px;height:112px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+        <span class="pv-cap">112 px</span>
+      </div>
+      <div class="ink-card pv-tile">
+        <svg class="logo" style="width:56px;height:56px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+        <span class="pv-cap">56 px · header</span>
+      </div>
+      <div class="ink-card pv-tile">
+        <svg class="logo" style="width:32px;height:32px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+        <span class="pv-cap">32 px</span>
+      </div>
+      <div class="ink-card pv-tile">
+        <div class="row" style="gap:var(--s-5);justify-content:center">
+          <span style="display:grid;place-items:center;gap:.45rem">
+            <svg class="logo" style="width:16px;height:16px" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+            <span class="pv-cap no">line ✕</span>
+          </span>
+          <span style="display:grid;place-items:center;gap:.45rem">
+            <img src="assets/logo/favicon.svg" width="16" height="16" alt="">
+            <span class="pv-cap yes">solid ✓</span>
+          </span>
+        </div>
+        <span class="pv-cap">16 px · favicon</span>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:var(--s-5)">
+      <div class="ink-card pv-tile">
+        <a class="lockup" href="#" style="font-size:1.4rem">
+          <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+          <span><span class="lockup__name">Petal Press</span></span>
+        </a>
+        <span class="pv-cap">horizontal</span>
+      </div>
+      <div class="pv-tile on-dark">
+        <a class="lockup lockup--stack" href="#" style="font-size:1.4rem">
+          <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+          <span><span class="lockup__name">Petal Press</span>
+          <span class="lockup__sub" style="color:rgba(251,247,240,.6)">est. 2026</span></span>
+        </a>
+        <span class="pv-cap">stacked · on ink</span>
+      </div>
+      <div class="pv-tile on-bloom">
+        <a class="lockup" href="#" style="font-size:1.4rem">
+          <svg class="lockup__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#pp-mark"/></svg>
+          <span><span class="lockup__name">Petal Press</span></span>
+        </a>
+        <span class="pv-cap">on bloom</span>
+      </div>
+    </div>
+
+    <div class="ink-frame" style="margin-top:var(--s-5);padding:var(--s-5)">
+      <p class="hand" style="margin:0 0 var(--s-3)">Why the wordmark is live text, not part of the SVG</p>
+      <p class="pv-note" style="margin:0">Baking &ldquo;Petal Press&rdquo; into the logo file would freeze it as decoration: unselectable, invisible to search engines, impossible to translate, and blurry when scaled. The mark is a drawing; the name is text in Instrument Serif. That keeps the header accessible and lets the Spanish build swap the tagline without touching a single asset.</p>
+    </div>
+  </section>
+
+  <!-- ============ 02 PIP ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">02</span><h2 style="margin:0">Pip</h2></div>
+    <p class="pv-note">Drawn with the same hand and the same line weight as the mark, so Pip reads as the logo's little sibling rather than a bolted-on cartoon. Two dots and <strong>no mouth</strong> — a smiling face with eyes is what tips a flower brand into children's clip art.</p>
+
+    <div class="grid grid-2" style="margin-top:var(--s-5);align-items:start">
+      <div class="ink-card row" style="gap:var(--s-5)">
+        <svg class="pip-demo" viewBox="0 0 64 76" aria-hidden="true"><use href="#pp-pip"/></svg>
+        <div>
+          <p class="hand" style="margin:0 0 .4rem">Pip · 1.2 KB</p>
+          <p class="pv-note" style="margin:0">Lives in the Builder, empty states, the thanks page, 404, and the seasonal stamps.</p>
+        </div>
+      </div>
+      <div class="ink-card">
+        <p class="hand" style="margin:0 0 var(--s-3)">Zoning</p>
+        <p class="zone"><span class="yes">✓</span> home · builder · thanks · care · faq · 404</p>
+        <p class="zone" style="margin:0"><span class="no">✕</span> weddings · pricing · checkout</p>
+        <p class="pv-note" style="margin-top:var(--s-3)">Personality where people play. Silence where people spend $400. The rule lives in one object in <code>brand.config.js</code>, so it is enforced, not remembered.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 03 COLOUR ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">03</span><h2 style="margin:0">Colour</h2></div>
+    <p class="pv-note">Pulled straight out of the hand-drawn button you liked — its ink, its highlighter yellow, its active blue, its shadow clay. The identity grew from the thing that was already right instead of from a stock palette.</p>
+
+    <div class="grid grid-4" style="margin-top:var(--s-5)">
+      <div class="sw"><div class="sw__chip" style="background:#1F1B18"></div><div class="sw__meta"><div class="sw__name">Ink</div><div class="sw__hex">#1F1B18</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#FBF7F0"></div><div class="sw__meta"><div class="sw__name">Paper</div><div class="sw__hex">#FBF7F0</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#F4EDE1"></div><div class="sw__meta"><div class="sw__name">Paper 2</div><div class="sw__hex">#F4EDE1</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#FFE100"></div><div class="sw__meta"><div class="sw__name">Marker</div><div class="sw__hex">#FFE100</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#FF5D8F"></div><div class="sw__meta"><div class="sw__name">Bloom</div><div class="sw__hex">#FF5D8F</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#1C98EB"></div><div class="sw__meta"><div class="sw__name">Blue</div><div class="sw__hex">#1C98EB</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#BC4E26"></div><div class="sw__meta"><div class="sw__name">Clay</div><div class="sw__hex">#BC4E26</div></div></div>
+      <div class="sw"><div class="sw__chip" style="background:#3D8B5F"></div><div class="sw__meta"><div class="sw__name">Leaf</div><div class="sw__hex">#3D8B5F</div></div></div>
+    </div>
+  </section>
+
+  <!-- ============ 04 TYPE ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">04</span><h2 style="margin:0">Type</h2></div>
+    <p class="pv-note">The type is the serious adult in the room. Every bit of hand-made energy comes from the ink layer, never from a novelty font — that is what keeps this sellable to a wedding client and a Gen-Z walk-in at the same time.</p>
+
+    <div class="ink-card" style="margin-top:var(--s-5)">
+      <div class="type-row"><div class="type-meta">Instrument Serif · display · clamp 2.9→6rem</div><div class="display" style="margin:0">Peonies <em>in season</em></div></div>
+      <div class="type-row"><div class="type-meta">Instrument Serif · h1</div><h1 style="margin:0">Same-day in Woodbridge</h1></div>
+      <div class="type-row"><div class="type-meta">Instrument Serif · h2</div><h2 style="margin:0">Wrapped while you wait</h2></div>
+      <div class="type-row"><div class="type-meta">Plus Jakarta Sans · body 17px</div><p style="margin:0">Pick your stems, choose a wrap, add a note. We build it the same morning and hand-deliver across Northern Virginia — <span class="mark">order by 2pm for same-day</span>.</p></div>
+      <div class="type-row"><div class="type-meta">Courier Prime · hand · labels &amp; numbers</div><p class="hand" style="margin:0">Best seller · $148 · 12 stems · cutoff 2:00 pm</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 05 THE BUTTON ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">05</span><h2 style="margin:0">The button, rebuilt</h2></div>
+    <p class="pv-note">Same feel as the reference you sent. Four real defects removed. Hover it — the frame wobbles and the highlighter sweeps; the letters never move.</p>
+
+    <div class="ink-card row" style="margin-top:var(--s-5);gap:var(--s-4)">
+      <button class="btn-ink"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>Default</button>
+      <button class="btn-ink btn-ink--primary"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>Primary</button>
+      <button class="btn-ink btn-ink--marker"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>Marker</button>
+      <button class="btn-ink btn-ink--ghost"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 13C70 18 150 7 234 13"/></svg>Ghost</button>
+      <button class="btn-ink btn-ink--sm"><span class="btn-ink__frame" aria-hidden="true"></span><svg class="btn-ink__hl" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="M6 14C60 8 140 19 234 11"/></svg>Small</button>
+    </div>
+
+    <div class="ink-frame fix" style="margin-top:var(--s-5)">
+      <p class="hand" style="margin:0 0 var(--s-2)">What changed</p>
+      <ul style="margin:0;padding-left:1.2rem">
+        <li><code>.highlight</code> was <code>position:absolute</code> with no positioned ancestor, so it anchored to the page instead of the button. The wrapper now sets <code>position:relative</code>.</li>
+        <li><code>numOctaves="8"</code> means eight layers of per-pixel Perlin noise, recomputed over the whole element. Capped at <strong>3</strong> — visually identical, a fraction of the cost.</li>
+        <li><code>animation:idle 1s infinite</code> forced the browser to re-rasterise that filter forever, on every button, even untouched. The filter now runs on <code>:hover</code> and <code>:focus-visible</code> only, and never on touch devices where it cannot fire at all.</li>
+        <li>The filter sat on the <em>text</em>, smearing the glyphs. It now sits on a frame layer behind the label, so the wobble is intact and the words stay sharp and readable.</li>
+        <li>Added: <code>prefers-reduced-motion</code> disables the whole thing, focus rings are visible, and every target clears 44 px.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 06 STICKERS ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">06</span><h2 style="margin:0">The ink pack</h2></div>
+    <p class="pv-note">Fourteen doodles, 12.9 KB for the whole sheet, all in <code>currentColor</code> so a season can recolour them with one CSS variable. They are generated by a seeded script from three primitives — petal, wobbly circle, bowed stem — which is why they share one hand, and why a completely new pack takes about a second to produce.</p>
+
+    <div class="grid grid-4" style="margin-top:var(--s-5);grid-template-columns:repeat(auto-fit,minmax(104px,1fr))">
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-rose"/></svg><span class="stick__n">rose</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-tulip"/></svg><span class="stick__n">tulip</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-daisy"/></svg><span class="stick__n">daisy</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-eucalyptus"/></svg><span class="stick__n">eucalyptus</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-babysbreath"/></svg><span class="stick__n">baby's breath</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-leaf"/></svg><span class="stick__n">leaf</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-bouquet"/></svg><span class="stick__n">bouquet</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-ribbon"/></svg><span class="stick__n">ribbon</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-arrow"/></svg><span class="stick__n">arrow</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-star"/></svg><span class="stick__n">star</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-heart"/></svg><span class="stick__n">heart</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-sparkle"/></svg><span class="stick__n">sparkle</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-badge"/></svg><span class="stick__n">badge</span></div>
+      <div class="stick"><svg viewBox="0 0 48 48"><use href="#st-tape"/></svg><span class="stick__n">tape</span></div>
+    </div>
+
+    <div class="row" style="margin-top:var(--s-5);gap:var(--s-5)">
+      <div class="stick" style="background:var(--paper-2)"><svg viewBox="0 0 48 48" style="color:var(--bloom)"><use href="#st-rose"/></svg><span class="stick__n">bloom</span></div>
+      <div class="stick" style="background:var(--paper-2)"><svg viewBox="0 0 48 48" style="color:var(--leaf)"><use href="#st-eucalyptus"/></svg><span class="stick__n">leaf</span></div>
+      <div class="stick" style="background:var(--paper-2)"><svg viewBox="0 0 48 48" style="color:var(--clay)"><use href="#st-star"/></svg><span class="stick__n">clay</span></div>
+      <div class="stick" style="background:var(--ink)"><svg viewBox="0 0 48 48" style="color:var(--paper)"><use href="#st-heart"/></svg><span class="stick__n" style="color:var(--paper)">on ink</span></div>
+      <p class="pv-note" style="margin:0;flex:1 1 220px">Same four files, four seasons. This is the whole recolouring mechanism.</p>
+    </div>
+  </section>
+
+  <!-- ============ 07 COMPONENTS ============ -->
+  <section class="pv-sec">
+    <div class="pv-lab"><span class="pv-num">07</span><h2 style="margin:0">Ink components</h2></div>
+    <p class="pv-note">The hand-drawn feel is carried by irregular border radii — four different corner values on each axis. Zero runtime cost, works in every browser, survives print, and no image or filter is involved.</p>
+
+    <div class="grid grid-3" style="margin-top:var(--s-5);align-items:start">
+      <div class="ink-card">
+        <p class="badge">Best seller</p>
+        <h3 style="margin:var(--s-3) 0 .3rem">Ramo #9</h3>
+        <p class="small muted" style="margin:0">Sunflower · 12 stems</p>
+        <p class="hand" style="margin-top:var(--s-3)">from $148</p>
+      </div>
+
+      <div class="paper" style="position:relative;padding:var(--s-6) var(--s-5);text-align:center">
+        <span class="tape tape--tl"></span><span class="tape tape--tr"></span>
+        <span class="tape tape--bl"></span><span class="tape tape--br"></span>
+        <svg viewBox="0 0 48 48" style="width:56px;height:56px;margin:0 auto"><use href="#st-bouquet"/></svg>
+        <p class="hand" style="margin:var(--s-3) 0 0">The builder stage</p>
+      </div>
+
+      <div class="pv-tile">
+        <div class="ticket">
+          <div class="ticket__label">Your bouquet</div>
+          <div class="ticket__amount">$164</div>
+          <div class="ticket__label">+ $12 delivery</div>
+        </div>
+        <span class="pv-cap">torn price ticket</span>
+      </div>
+    </div>
+
+    <hr class="ink-rule">
+
+    <div class="row" style="gap:var(--s-6)">
+      <div class="stamp">Valentine's<br>2026</div>
+      <div class="stamp" style="border-color:var(--leaf);color:var(--leaf);transform:rotate(7deg)">Spring<br>drop</div>
+      <span class="badge badge--bloom">Same day</span>
+      <span class="badge badge--leaf">In season</span>
+      <span class="badge badge--paper">Local</span>
+      <p class="pv-note" style="margin:0;flex:1 1 240px"><code>seasons.js</code> drops one stamp in the page corner and swaps the sticker set. Nothing else on the page changes.</p>
+    </div>
+  </section>
+
+  <footer class="pv-sec" style="padding-bottom:var(--s-9)">
+    <p class="kicker" style="margin:0">End of sheet · Phase 0</p>
+    <p class="pv-note" style="margin-top:var(--s-2)">Next: the Builder.</p>
+  </footer>
+
+</main>
+</body>
+</html>

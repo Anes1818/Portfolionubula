@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Order Desk — Ramos by Julia</title>
+<link rel="icon" href="assets/logo/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/ink.css">
+</head>
+<body data-page="admin">
+
+<div class="annc">Julia’s Florist Desk · Orders &amp; Pickup Inbox · Gresham &amp; Rockwood, Oregon</div>
+
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a class="nav__brand" href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <img class="nav__mark" src="assets/logo/butterfly-circle.png" alt="Ramos by Julia" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
+      <span class="nav__name" style="font-weight:700">Ramos by Julia · Orders Desk</span>
+    </a>
+    <nav class="nav__links" style="display:flex;gap:18px;margin-left:auto">
+      <a class="nav__link" href="builder.html">Open builder</a>
+      <a class="nav__link" href="index.html">Storefront</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap admin-desk">
+  <div class="admin-lead">
+    <div>
+      <p class="kicker">No charge until you confirm</p>
+      <h1>Today’s tickets</h1>
+      <p class="muted">A client submitted a bouquet request. Review the design, verify pickup slot and payment (Zelle / Cash App), and update status below.</p>
+    </div>
+    <div class="admin-actions">
+      <a class="btn-ink btn-ink--sm" href="builder.html"><span class="btn-ink__frame"></span>Place a test order</a>
+      <button type="button" class="btn-ink btn-ink--ghost btn-ink--sm" id="resetDemo"><span class="btn-ink__frame"></span>Reset demo tickets</button>
+    </div>
+  </div>
+
+  <p class="admin-banner">Demo inbox — tickets live in this browser. Firebase can replace this file later without changing the ticket shape.</p>
+
+  <div class="admin-grid">
+    <aside class="ticket-list" id="ticketList"></aside>
+    <section class="ticket-detail ink-frame" id="ticketDetail">
+      <p class="muted">Pick a ticket.</p>
+    </section>
+  </div>
+</main>
+
+<script src="brand.config.js"></script>
+<script src="js/orders.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+[
+ {
+  "shop": "The Flower Box",
+  "name": "Sunny Summer Florals (Designer's Choice)",
+  "price": "$65 / $75 / $85",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Designer's choice - seasonal summer mix",
+  "build": "tulip_yellow + gerbera_daisy + rose_yellow + eucalyptus",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Vivid Sorbet",
+  "price": "$65.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "rose_pink + tulip_pink + carnation_pink + limonium",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Serene Optimism",
+  "price": "$65.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "rose_white + tulip_yellow + babys_breath",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Sophisticated Scarlet",
+  "price": "$75.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "rose_red + carnation_red + eucalyptus",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Yellow Lilies",
+  "price": "$70.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Yellow lilies",
+  "build": "lily + eucalyptus + babys_breath",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Summer Florals",
+  "price": "$95.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Aurora",
+  "price": "$80.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "The Flower Box",
+  "name": "Blooming at Dawn",
+  "price": "$85.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Orange lilies, coral roses, yellow tulips, snapdragons, carnations, asters",
+  "build": "lily + rose_pink + tulip_yellow + carnation_pink",
+  "link": "https://www.the-flowerbox.com/"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Florist's Choice Daily Deal",
+  "price": "from $39.95",
+  "tier": "Entry",
+  "best_seller": false,
+  "recipe": "Florist's choice",
+  "build": "",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Simple Gifts Bouquet(TM)",
+  "price": "from $44.95",
+  "tier": "Entry",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "The Prettiest Picture",
+  "price": "from $45.00",
+  "tier": "Entry",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Sweet and Sunny(TM)",
+  "price": "from $48.95",
+  "tier": "Entry",
+  "best_seller": false,
+  "recipe": "",
+  "build": "tulip_yellow + gerbera_daisy + babys_breath",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Halcyon Heart(TM)",
+  "price": "from $52.95",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Invigorate(TM)",
+  "price": "from $52.95",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Radiant Rainbow(TM)",
+  "price": "from $62.95",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "tulip_pink + tulip_yellow + tulip_violet + gerbera_daisy",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Devoted to You(TM) Red Roses",
+  "price": "from $65.00",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Red roses",
+  "build": "rose_red x12 + babys_breath + eucalyptus",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "Michael's Flowers",
+  "name": "Bright Medley(TM)",
+  "price": "from $68.95",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.michaelsflowers.net/flower-delivery/va/woodbridge"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Designer's Choice",
+  "price": "$79.95",
+  "tier": "Core",
+  "best_seller": true,
+  "recipe": "Designer's choice",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "The Perfect Dozen",
+  "price": "$115.00",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "Dozen premium roses",
+  "build": "rose_red x12 + eucalyptus",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "My Everything",
+  "price": "$125.95",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Sparks Fly",
+  "price": "$129.95",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Breathtaking Blossoms",
+  "price": "$139.95",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "French Garden",
+  "price": "$149.95",
+  "tier": "Premium",
+  "best_seller": false,
+  "recipe": "",
+  "build": "ranunculus + rose_pink + eucalyptus",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "All My Love",
+  "price": "$159.95",
+  "tier": "Premium",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Classic Premium Preserved Rose Ensemble",
+  "price": "$162.00",
+  "tier": "Premium",
+  "best_seller": false,
+  "recipe": "Preserved roses",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Love You Forever",
+  "price": "$175.95",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Precious Love For Mom",
+  "price": "$179.95",
+  "tier": "Premium",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Sweet as Sugar",
+  "price": "$189.95",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Pink Promises",
+  "price": "$220.00",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "rose_pink + tulip_pink + carnation_pink",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Hugs & Kisses",
+  "price": "$220.95",
+  "tier": "Premium",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "LakeRidge Florist",
+  "name": "Luxurious Phalaenopsis Orchid Garden",
+  "price": "$275.00",
+  "tier": "Premium",
+  "best_seller": false,
+  "recipe": "Phalaenopsis orchids",
+  "build": "",
+  "link": "https://lakeridgeflorist.com/"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "Classic All White Arrangement",
+  "price": "$99.99",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "All-white blooms",
+  "build": "rose_white + lily + carnation_white + babys_breath",
+  "link": "https://www.anaflowersva.com/classic-all-white-arrangement-1/?value=214"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "Daphne's Bliss(TM)",
+  "price": "$99.99",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.anaflowersva.com/daphne-s-bliss-/?value=214"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "Blooming Love(TM) Premium Red Roses",
+  "price": "$79.99 - $94.99",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Premium red roses",
+  "build": "rose_red + babys_breath",
+  "link": "https://www.anaflowersva.com/blooming-love-premium-red-roses-/?value=190"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "Multicolor Bright Rose Bouquet",
+  "price": "$44.99 - $69.99",
+  "tier": "Entry",
+  "best_seller": false,
+  "recipe": "Multicolor roses",
+  "build": "rose_red + rose_yellow + rose_pink + rose_violet",
+  "link": "https://www.anaflowersva.com/multicolor-bright-rose-bouquet/?value=190"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "1 Dozen Roses - Red Bundle",
+  "price": "$89.99",
+  "tier": "Core",
+  "best_seller": true,
+  "recipe": "Dozen red roses bundle",
+  "build": "rose_red x12 + eucalyptus",
+  "link": "https://www.anaflowersva.com/1-dozen-roses-red-bundle-/bf231-11kmbndl/?value=1679"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "Garden Of Grandeur(TM)",
+  "price": "$124.99 - $149.99",
+  "tier": "Premium",
+  "best_seller": true,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.anaflowersva.com/garden-of-grandeur-10/?value=1679"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "A Heart Remembered(TM)",
+  "price": "$79.99",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Sympathy arrangement",
+  "build": "",
+  "link": "https://www.anaflowersva.com/a-heart-remembered-/?value=189"
+ },
+ {
+  "shop": "Victoria K Flowers",
+  "name": "Gathered Abundance(TM)",
+  "price": "$79.99",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "",
+  "build": "",
+  "link": "https://www.anaflowersva.com/gathered-abundance-/?value=189"
+ },
+ {
+  "shop": "Flowers With Passion",
+  "name": "Dozen Roses",
+  "price": "$79.99",
+  "tier": "Core",
+  "best_seller": false,
+  "recipe": "Dozen roses",
+  "build": "rose_red x12 + babys_breath",
+  "link": "https://www.flowerswithpassionmanassas.com/"
+ }
+]
