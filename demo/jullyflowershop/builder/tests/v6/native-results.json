@@ -1,0 +1,207 @@
+{
+  "passed": 44,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "Phone opens Classic",
+      "pass": true
+    },
+    {
+      "label": "No Replace buttons or replacement dialog",
+      "pass": true
+    },
+    {
+      "label": "Dome opens independent 30-slot template",
+      "pass": true
+    },
+    {
+      "label": "No top-view add-one or arbitrary count controls",
+      "pass": true
+    },
+    {
+      "label": "Template size change is confirmed",
+      "pass": true
+    },
+    {
+      "label": "Mini offers 15 fixed slots",
+      "pass": true
+    },
+    {
+      "label": "A palette card directly blends another variety",
+      "pass": true
+    },
+    {
+      "label": "Lily card selects a brush without a modal",
+      "pass": true
+    },
+    {
+      "label": "Five real touch taps replace five roses with lilies",
+      "pass": true
+    },
+    {
+      "label": "Touch changes update exact live price",
+      "pass": true
+    },
+    {
+      "label": "Selecting a bloom shows its contextual X",
+      "pass": true
+    },
+    {
+      "label": "X has a 44px touch target",
+      "pass": true
+    },
+    {
+      "label": "X deletes exactly one lily, not the template slot",
+      "pass": true
+    },
+    {
+      "label": "Undo restores the same slot and price",
+      "pass": true
+    },
+    {
+      "label": "Redo restores deletion",
+      "pass": true
+    },
+    {
+      "label": "Tapping the visible empty slot refills only it",
+      "pass": true
+    },
+    {
+      "label": "A touch sweep paints multiple slots",
+      "pass": true
+    },
+    {
+      "label": "A complete sweep is one Undo step",
+      "pass": true
+    },
+    {
+      "label": "Undo restores entire pre-sweep design",
+      "pass": true
+    },
+    {
+      "label": "Expanded phone preview hides controls",
+      "pass": true
+    },
+    {
+      "label": "Preview zooms without changing the design",
+      "pass": true
+    },
+    {
+      "label": "Move preview pans, never paints",
+      "pass": true
+    },
+    {
+      "label": "Heart opens its independent v1-style 41-slot bouquet",
+      "pass": true
+    },
+    {
+      "label": "Heart zones change directly, with one center",
+      "pass": true
+    },
+    {
+      "label": "Heart formation works without adding flowers",
+      "pass": true
+    },
+    {
+      "label": "XL heart keeps automatic zones and one center",
+      "pass": true
+    },
+    {
+      "label": "Zones remain editable after resizing",
+      "pass": true
+    },
+    {
+      "label": "Dome composition, note and sash are remembered",
+      "pass": true
+    },
+    {
+      "label": "Reopening preserves all three bouquets",
+      "pass": true
+    },
+    {
+      "label": "Ask florist opens a quote, not checkout",
+      "pass": true
+    },
+    {
+      "label": "Florist receives the actual quantities and no other bouquet",
+      "pass": true
+    },
+    {
+      "label": "Estimate and no-order warnings are explicit",
+      "pass": true
+    },
+    {
+      "label": "Unconfigured WhatsApp and email are not faked",
+      "pass": true
+    },
+    {
+      "label": "Past date cannot be shared as a valid request",
+      "pass": true
+    },
+    {
+      "label": "Future request date enables export",
+      "pass": true
+    },
+    {
+      "label": "Real request text download succeeds",
+      "pass": true
+    },
+    {
+      "label": "Real image download succeeds",
+      "pass": true
+    },
+    {
+      "label": "JSON download includes all fixed-slot bouquets",
+      "pass": true
+    },
+    {
+      "label": "Language changes copy without changing prices or flowers",
+      "pass": true
+    },
+    {
+      "label": "Usable viewport 320x568",
+      "pass": true,
+      "detail": {
+        "overflow": false,
+        "controls": 182,
+        "canvas": 166.828125,
+        "footer": true
+      }
+    },
+    {
+      "label": "Usable viewport 360x800",
+      "pass": true,
+      "detail": {
+        "overflow": false,
+        "controls": 293,
+        "canvas": 223.015625,
+        "footer": true
+      }
+    },
+    {
+      "label": "Usable viewport 390x844",
+      "pass": true,
+      "detail": {
+        "overflow": false,
+        "controls": 336.921875,
+        "canvas": 235.375,
+        "footer": true
+      }
+    },
+    {
+      "label": "Usable viewport 844x390",
+      "pass": true,
+      "detail": {
+        "overflow": false,
+        "controls": 264,
+        "canvas": 187.015625,
+        "footer": true
+      }
+    },
+    {
+      "label": "No page runtime errors in touch workflows",
+      "pass": true,
+      "detail": []
+    }
+  ]
+}

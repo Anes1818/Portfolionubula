@@ -1,0 +1,134 @@
+{
+  "count": 21,
+  "capacity": 21,
+  "protectedOK": true,
+  "minVisible": 0.5363834422657952,
+  "visible": [
+    {
+      "id": "rose_red",
+      "slot": 19,
+      "fraction": 0.5508253692441355,
+      "pixels": 1268
+    },
+    {
+      "id": "rose_red",
+      "slot": 10,
+      "fraction": 0.5363834422657952,
+      "pixels": 1231
+    },
+    {
+      "id": "rose_red",
+      "slot": 18,
+      "fraction": 0.7390169638973467,
+      "pixels": 1699
+    },
+    {
+      "id": "rose_red",
+      "slot": 11,
+      "fraction": 0.7405602923264312,
+      "pixels": 1824
+    },
+    {
+      "id": "rose_red",
+      "slot": 9,
+      "fraction": 0.8280503690838037,
+      "pixels": 1907
+    },
+    {
+      "id": "rose_red",
+      "slot": 20,
+      "fraction": 0.8161474330846863,
+      "pixels": 1860
+    },
+    {
+      "id": "rose_red",
+      "slot": 17,
+      "fraction": 0.7867118070249682,
+      "pixels": 1859
+    },
+    {
+      "id": "rose_red",
+      "slot": 12,
+      "fraction": 0.756544502617801,
+      "pixels": 1734
+    },
+    {
+      "id": "rose_red",
+      "slot": 14,
+      "fraction": 0.7207278481012658,
+      "pixels": 911
+    },
+    {
+      "id": "rose_red",
+      "slot": 15,
+      "fraction": 0.9318001586042823,
+      "pixels": 1175
+    },
+    {
+      "id": "rose_white",
+      "slot": 7,
+      "fraction": 0.7971652003910068,
+      "pixels": 1631
+    },
+    {
+      "id": "rose_white",
+      "slot": 2,
+      "fraction": 0.8086330935251799,
+      "pixels": 1686
+    },
+    {
+      "id": "rose_red",
+      "slot": 13,
+      "fraction": 0.6440071556350626,
+      "pixels": 1080
+    },
+    {
+      "id": "rose_red",
+      "slot": 16,
+      "fraction": 0.6488781079442086,
+      "pixels": 1070
+    },
+    {
+      "id": "rose_red",
+      "slot": 8,
+      "fraction": 0.805940594059406,
+      "pixels": 814
+    },
+    {
+      "id": "rose_white",
+      "slot": 6,
+      "fraction": 0.9255996084189917,
+      "pixels": 1891
+    },
+    {
+      "id": "rose_white",
+      "slot": 3,
+      "fraction": 0.8912314326784858,
+      "pixels": 1860
+    },
+    {
+      "id": "rose_white",
+      "slot": 4,
+      "fraction": 0.8036386449184442,
+      "pixels": 1281
+    },
+    {
+      "id": "rose_white",
+      "slot": 5,
+      "fraction": 0.9592616168045831,
+      "pixels": 1507
+    },
+    {
+      "id": "rose_white",
+      "slot": 1,
+      "fraction": 0.7821989528795812,
+      "pixels": 747
+    },
+    {
+      "id": "sunflower",
+      "slot": 0,
+      "fraction": 1,
+      "pixels": 1031
+    }
+  ]
+}

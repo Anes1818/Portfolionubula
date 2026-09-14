@@ -1,0 +1,2064 @@
+{
+  "wrap": {
+    "width": 896,
+    "height": 1200,
+    "waist": [
+      448,
+      850
+    ],
+    "rimCenter": [
+      449,
+      600
+    ],
+    "sharedOrigin": [
+      0,
+      0
+    ],
+    "back": "assets/classic/wrap-ivory-back.webp",
+    "front": "assets/classic/wrap-ivory-front.webp",
+    "frontContour": [
+      [
+        0,
+        1200
+      ],
+      [
+        0,
+        440
+      ],
+      [
+        38,
+        439
+      ],
+      [
+        38.0,
+        439.0
+      ],
+      [
+        42.64,
+        436.48
+      ],
+      [
+        47.28,
+        434.05
+      ],
+      [
+        51.93,
+        431.72
+      ],
+      [
+        56.58,
+        429.49
+      ],
+      [
+        61.23,
+        427.36
+      ],
+      [
+        65.86,
+        425.31
+      ],
+      [
+        70.49,
+        423.37
+      ],
+      [
+        75.09,
+        421.52
+      ],
+      [
+        79.67,
+        419.76
+      ],
+      [
+        84.23,
+        418.09
+      ],
+      [
+        88.75,
+        416.52
+      ],
+      [
+        93.23,
+        415.03
+      ],
+      [
+        97.67,
+        413.64
+      ],
+      [
+        102.06,
+        412.34
+      ],
+      [
+        106.41,
+        411.13
+      ],
+      [
+        110.69,
+        410.01
+      ],
+      [
+        114.91,
+        408.98
+      ],
+      [
+        119.07,
+        408.04
+      ],
+      [
+        123.16,
+        407.18
+      ],
+      [
+        127.17,
+        406.42
+      ],
+      [
+        131.1,
+        405.74
+      ],
+      [
+        134.94,
+        405.14
+      ],
+      [
+        138.7,
+        404.63
+      ],
+      [
+        142.36,
+        404.21
+      ],
+      [
+        145.92,
+        403.87
+      ],
+      [
+        149.37,
+        403.61
+      ],
+      [
+        152.72,
+        403.44
+      ],
+      [
+        155.95,
+        403.35
+      ],
+      [
+        159.07,
+        403.35
+      ],
+      [
+        162.06,
+        403.42
+      ],
+      [
+        164.92,
+        403.58
+      ],
+      [
+        167.65,
+        403.81
+      ],
+      [
+        170.25,
+        404.13
+      ],
+      [
+        172.7,
+        404.52
+      ],
+      [
+        175.0,
+        405.0
+      ],
+      [
+        257,
+        543
+      ],
+      [
+        257.0,
+        543.0
+      ],
+      [
+        256.4,
+        545.97
+      ],
+      [
+        256.32,
+        548.86
+      ],
+      [
+        256.72,
+        551.69
+      ],
+      [
+        257.62,
+        554.44
+      ],
+      [
+        258.98,
+        557.13
+      ],
+      [
+        260.79,
+        559.74
+      ],
+      [
+        263.05,
+        562.27
+      ],
+      [
+        265.73,
+        564.73
+      ],
+      [
+        268.83,
+        567.12
+      ],
+      [
+        272.32,
+        569.43
+      ],
+      [
+        276.21,
+        571.67
+      ],
+      [
+        280.46,
+        573.82
+      ],
+      [
+        285.07,
+        575.9
+      ],
+      [
+        290.02,
+        577.9
+      ],
+      [
+        295.31,
+        579.81
+      ],
+      [
+        300.91,
+        581.65
+      ],
+      [
+        306.81,
+        583.4
+      ],
+      [
+        313.01,
+        585.08
+      ],
+      [
+        319.47,
+        586.66
+      ],
+      [
+        326.2,
+        588.17
+      ],
+      [
+        333.18,
+        589.58
+      ],
+      [
+        340.38,
+        590.92
+      ],
+      [
+        347.81,
+        592.16
+      ],
+      [
+        355.44,
+        593.32
+      ],
+      [
+        363.27,
+        594.38
+      ],
+      [
+        371.27,
+        595.36
+      ],
+      [
+        379.44,
+        596.25
+      ],
+      [
+        387.75,
+        597.05
+      ],
+      [
+        396.2,
+        597.75
+      ],
+      [
+        404.78,
+        598.36
+      ],
+      [
+        413.46,
+        598.88
+      ],
+      [
+        422.24,
+        599.31
+      ],
+      [
+        431.1,
+        599.63
+      ],
+      [
+        440.02,
+        599.87
+      ],
+      [
+        449.0,
+        600.0
+      ],
+      [
+        449.0,
+        600.0
+      ],
+      [
+        457.96,
+        600.02
+      ],
+      [
+        466.83,
+        599.91
+      ],
+      [
+        475.6,
+        599.68
+      ],
+      [
+        484.26,
+        599.32
+      ],
+      [
+        492.8,
+        598.85
+      ],
+      [
+        501.21,
+        598.25
+      ],
+      [
+        509.48,
+        597.55
+      ],
+      [
+        517.6,
+        596.74
+      ],
+      [
+        525.55,
+        595.82
+      ],
+      [
+        533.33,
+        594.8
+      ],
+      [
+        540.93,
+        593.69
+      ],
+      [
+        548.33,
+        592.47
+      ],
+      [
+        555.53,
+        591.17
+      ],
+      [
+        562.52,
+        589.78
+      ],
+      [
+        569.28,
+        588.3
+      ],
+      [
+        575.8,
+        586.74
+      ],
+      [
+        582.08,
+        585.1
+      ],
+      [
+        588.1,
+        583.38
+      ],
+      [
+        593.86,
+        581.6
+      ],
+      [
+        599.33,
+        579.74
+      ],
+      [
+        604.52,
+        577.82
+      ],
+      [
+        609.41,
+        575.84
+      ],
+      [
+        613.99,
+        573.8
+      ],
+      [
+        618.25,
+        571.71
+      ],
+      [
+        622.18,
+        569.56
+      ],
+      [
+        625.77,
+        567.37
+      ],
+      [
+        629.0,
+        565.13
+      ],
+      [
+        631.88,
+        562.85
+      ],
+      [
+        634.38,
+        560.53
+      ],
+      [
+        636.5,
+        558.17
+      ],
+      [
+        638.23,
+        555.79
+      ],
+      [
+        639.56,
+        553.38
+      ],
+      [
+        640.47,
+        550.94
+      ],
+      [
+        640.95,
+        548.48
+      ],
+      [
+        641.0,
+        546.0
+      ],
+      [
+        722,
+        406
+      ],
+      [
+        722.0,
+        406.0
+      ],
+      [
+        725.06,
+        405.77
+      ],
+      [
+        728.24,
+        405.6
+      ],
+      [
+        731.52,
+        405.5
+      ],
+      [
+        734.92,
+        405.45
+      ],
+      [
+        738.41,
+        405.47
+      ],
+      [
+        741.99,
+        405.55
+      ],
+      [
+        745.66,
+        405.69
+      ],
+      [
+        749.4,
+        405.9
+      ],
+      [
+        753.23,
+        406.17
+      ],
+      [
+        757.12,
+        406.51
+      ],
+      [
+        761.07,
+        406.91
+      ],
+      [
+        765.08,
+        407.39
+      ],
+      [
+        769.14,
+        407.93
+      ],
+      [
+        773.25,
+        408.54
+      ],
+      [
+        777.39,
+        409.23
+      ],
+      [
+        781.57,
+        409.98
+      ],
+      [
+        785.77,
+        410.81
+      ],
+      [
+        789.99,
+        411.71
+      ],
+      [
+        794.22,
+        412.68
+      ],
+      [
+        798.47,
+        413.73
+      ],
+      [
+        802.71,
+        414.86
+      ],
+      [
+        806.95,
+        416.06
+      ],
+      [
+        811.19,
+        417.33
+      ],
+      [
+        815.4,
+        418.69
+      ],
+      [
+        819.59,
+        420.13
+      ],
+      [
+        823.76,
+        421.64
+      ],
+      [
+        827.89,
+        423.24
+      ],
+      [
+        831.98,
+        424.91
+      ],
+      [
+        836.03,
+        426.67
+      ],
+      [
+        840.02,
+        428.51
+      ],
+      [
+        843.96,
+        430.44
+      ],
+      [
+        847.83,
+        432.45
+      ],
+      [
+        851.63,
+        434.55
+      ],
+      [
+        855.36,
+        436.73
+      ],
+      [
+        859.0,
+        439.0
+      ],
+      [
+        896,
+        440
+      ],
+      [
+        896,
+        1200
+      ]
+    ]
+  },
+  "flowers": {
+    "alstroemeria": {
+      "head": "assets/heads/alstroemeria.webp",
+      "headWidth": 505,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        500,
+        517
+      ],
+      "classicBloom": "assets/classic/alstroemeria-bloom.webp",
+      "classicStem": "assets/classic/alstroemeria-stem.webp",
+      "bloomWidth": 383,
+      "bloomHeight": 334,
+      "sourceWidth": 380,
+      "sourceHeight": 1105,
+      "sourceBloomBox": [
+        4,
+        0,
+        377,
+        324
+      ],
+      "bloomCenter": [
+        190.5,
+        162.0
+      ],
+      "stemBase": [
+        191.0,
+        1103
+      ],
+      "stemCutY": 332,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.52618,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "babys_breath": {
+      "head": "assets/heads/babys_breath.webp",
+      "headWidth": 522,
+      "headHeight": 432,
+      "headAlphaBounds": [
+        5,
+        5,
+        517,
+        427
+      ],
+      "classicBloom": "assets/classic/babys_breath-bloom.webp",
+      "classicStem": "assets/classic/babys_breath-stem.webp",
+      "bloomWidth": 570,
+      "bloomHeight": 554,
+      "sourceWidth": 560,
+      "sourceHeight": 1236,
+      "sourceBloomBox": [
+        0,
+        0,
+        560,
+        544
+      ],
+      "bloomCenter": [
+        280.0,
+        272.0
+      ],
+      "stemBase": [
+        284.0,
+        1234
+      ],
+      "stemCutY": 544,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.54006,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "carnation_orange": {
+      "head": "assets/heads/carnation_orange.webp",
+      "headWidth": 521,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        516,
+        517
+      ],
+      "classicBloom": "assets/classic/carnation_orange-bloom.webp",
+      "classicStem": "assets/classic/carnation_orange-stem.webp",
+      "bloomWidth": 223,
+      "bloomHeight": 168,
+      "sourceWidth": 214,
+      "sourceHeight": 645,
+      "sourceBloomBox": [
+        0,
+        0,
+        213,
+        158
+      ],
+      "bloomCenter": [
+        106.5,
+        79.0
+      ],
+      "stemBase": [
+        114.0,
+        641
+      ],
+      "stemCutY": 158,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.51799,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "carnation_pink": {
+      "head": "assets/heads/carnation_pink.webp",
+      "headWidth": 516,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        511,
+        517
+      ],
+      "classicBloom": "assets/classic/carnation_pink-bloom.webp",
+      "classicStem": "assets/classic/carnation_pink-stem.webp",
+      "bloomWidth": 380,
+      "bloomHeight": 303,
+      "sourceWidth": 447,
+      "sourceHeight": 1240,
+      "sourceBloomBox": [
+        53,
+        0,
+        423,
+        293
+      ],
+      "bloomCenter": [
+        238.0,
+        146.5
+      ],
+      "stemBase": [
+        238.0,
+        1238
+      ],
+      "stemCutY": 293,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.51952,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "carnation_red": {
+      "head": "assets/heads/carnation_red.webp",
+      "headWidth": 518,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        513,
+        517
+      ],
+      "classicBloom": "assets/classic/carnation_red-bloom.webp",
+      "classicStem": "assets/classic/carnation_red-stem.webp",
+      "bloomWidth": 378,
+      "bloomHeight": 302,
+      "sourceWidth": 447,
+      "sourceHeight": 1238,
+      "sourceBloomBox": [
+        54,
+        0,
+        422,
+        292
+      ],
+      "bloomCenter": [
+        238.0,
+        146.0
+      ],
+      "stemBase": [
+        238.0,
+        1236
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.52068,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "carnation_violet": {
+      "head": "assets/heads/carnation_violet.webp",
+      "headWidth": 514,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        509,
+        517
+      ],
+      "classicBloom": "assets/classic/carnation_violet-bloom.webp",
+      "classicStem": "assets/classic/carnation_violet-stem.webp",
+      "bloomWidth": 376,
+      "bloomHeight": 302,
+      "sourceWidth": 446,
+      "sourceHeight": 1236,
+      "sourceBloomBox": [
+        55,
+        0,
+        421,
+        292
+      ],
+      "bloomCenter": [
+        238.0,
+        146.0
+      ],
+      "stemBase": [
+        238.0,
+        1234
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50796,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "carnation_white": {
+      "head": "assets/heads/carnation_white.webp",
+      "headWidth": 515,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        510,
+        517
+      ],
+      "classicBloom": "assets/classic/carnation_white-bloom.webp",
+      "classicStem": "assets/classic/carnation_white-stem.webp",
+      "bloomWidth": 378,
+      "bloomHeight": 302,
+      "sourceWidth": 447,
+      "sourceHeight": 1238,
+      "sourceBloomBox": [
+        54,
+        0,
+        422,
+        292
+      ],
+      "bloomCenter": [
+        238.0,
+        146.0
+      ],
+      "stemBase": [
+        238.0,
+        1236
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50849,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "carnation_yellow": {
+      "head": "assets/heads/carnation_yellow.webp",
+      "headWidth": 515,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        510,
+        517
+      ],
+      "classicBloom": "assets/classic/carnation_yellow-bloom.webp",
+      "classicStem": "assets/classic/carnation_yellow-stem.webp",
+      "bloomWidth": 378,
+      "bloomHeight": 302,
+      "sourceWidth": 446,
+      "sourceHeight": 1238,
+      "sourceBloomBox": [
+        54,
+        0,
+        422,
+        292
+      ],
+      "bloomCenter": [
+        238.0,
+        146.0
+      ],
+      "stemBase": [
+        238.0,
+        1236
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50849,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "eucalyptus": {
+      "head": "assets/heads/eucalyptus.webp",
+      "headWidth": 312,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        307,
+        517
+      ],
+      "classicBloom": "assets/classic/eucalyptus-bloom.webp",
+      "classicStem": "assets/classic/eucalyptus-stem.webp",
+      "bloomWidth": 492,
+      "bloomHeight": 588,
+      "sourceWidth": 482,
+      "sourceHeight": 1229,
+      "sourceBloomBox": [
+        0,
+        0,
+        482,
+        578
+      ],
+      "bloomCenter": [
+        241.0,
+        289.0
+      ],
+      "stemBase": [
+        240.0,
+        1227
+      ],
+      "stemCutY": 578,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50105,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "gerbera_daisy": {
+      "head": "assets/heads/gerbera_daisy.webp",
+      "headWidth": 490,
+      "headHeight": 488,
+      "headAlphaBounds": [
+        5,
+        5,
+        485,
+        483
+      ],
+      "classicBloom": "assets/classic/gerbera_daisy-bloom.webp",
+      "classicStem": "assets/classic/gerbera_daisy-stem.webp",
+      "bloomWidth": 572,
+      "bloomHeight": 527,
+      "sourceWidth": 848,
+      "sourceHeight": 1284,
+      "sourceBloomBox": [
+        129,
+        124,
+        691,
+        641
+      ],
+      "bloomCenter": [
+        410.0,
+        382.5
+      ],
+      "stemBase": [
+        581.0,
+        1263
+      ],
+      "stemCutY": 641,
+      "classicAvailable": true,
+      "identityNote": "Matched white source, not the old peach gerbera. v6: one source transform for flower and neck.",
+      "headRadius": 0.52078,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "lily": {
+      "head": "assets/heads/lily.webp",
+      "headWidth": 470,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        465,
+        517
+      ],
+      "classicBloom": "assets/classic/lily-bloom.webp",
+      "classicStem": "assets/classic/lily-stem.webp",
+      "bloomWidth": 567,
+      "bloomHeight": 479,
+      "sourceWidth": 848,
+      "sourceHeight": 1264,
+      "sourceBloomBox": [
+        144,
+        142,
+        701,
+        611
+      ],
+      "bloomCenter": [
+        422.5,
+        376.5
+      ],
+      "stemBase": [
+        484.0,
+        1146
+      ],
+      "stemCutY": 611,
+      "classicAvailable": true,
+      "identityNote": "Matched pink source, not the old white lily. v6: one source transform for flower and neck.",
+      "headRadius": 0.50428,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "limonium": {
+      "head": "assets/heads/limonium.webp",
+      "headWidth": 522,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        517,
+        517
+      ],
+      "classicBloom": "assets/classic/limonium-bloom.webp",
+      "classicStem": "assets/classic/limonium-stem.webp",
+      "bloomWidth": 475,
+      "bloomHeight": 548,
+      "sourceWidth": 465,
+      "sourceHeight": 1097,
+      "sourceBloomBox": [
+        0,
+        0,
+        465,
+        538
+      ],
+      "bloomCenter": [
+        232.5,
+        269.0
+      ],
+      "stemBase": [
+        231.0,
+        1095
+      ],
+      "stemCutY": 538,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.60329,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "ranunculus": {
+      "head": "assets/heads/ranunculus.webp",
+      "headWidth": 522,
+      "headHeight": 519,
+      "headAlphaBounds": [
+        5,
+        5,
+        517,
+        514
+      ],
+      "classicBloom": "assets/classic/ranunculus-bloom.webp",
+      "classicStem": "assets/classic/ranunculus-stem.webp",
+      "bloomWidth": 540,
+      "bloomHeight": 511,
+      "sourceWidth": 848,
+      "sourceHeight": 1264,
+      "sourceBloomBox": [
+        162,
+        196,
+        686,
+        691
+      ],
+      "bloomCenter": [
+        424.0,
+        443.5
+      ],
+      "stemBase": [
+        501.0,
+        1263
+      ],
+      "stemCutY": 691,
+      "classicAvailable": true,
+      "identityNote": "Matching new supplied photographic source; original preserved. v6: one source transform for flower and neck.",
+      "headRadius": 0.5179,
+      "joinOverlap": 8,
+      "bloomPadding": 8
+    },
+    "rose_orange": {
+      "head": "assets/heads/rose_orange.webp",
+      "headWidth": 461,
+      "headHeight": 472,
+      "headAlphaBounds": [
+        5,
+        5,
+        456,
+        467
+      ],
+      "classicBloom": "assets/classic/rose_orange-bloom.webp",
+      "classicStem": "assets/classic/rose_orange-stem.webp",
+      "bloomWidth": 224,
+      "bloomHeight": 181,
+      "sourceWidth": 221,
+      "sourceHeight": 646,
+      "sourceBloomBox": [
+        6,
+        0,
+        220,
+        171
+      ],
+      "bloomCenter": [
+        113.0,
+        85.5
+      ],
+      "stemBase": [
+        120.0,
+        643
+      ],
+      "stemCutY": 171,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50326,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "rose_pink": {
+      "head": "assets/heads/rose_pink.webp",
+      "headWidth": 522,
+      "headHeight": 521,
+      "headAlphaBounds": [
+        5,
+        5,
+        517,
+        516
+      ],
+      "classicBloom": "assets/classic/rose_pink-bloom.webp",
+      "classicStem": "assets/classic/rose_pink-stem.webp",
+      "bloomWidth": 338,
+      "bloomHeight": 281,
+      "sourceWidth": 346,
+      "sourceHeight": 1110,
+      "sourceBloomBox": [
+        18,
+        0,
+        346,
+        271
+      ],
+      "bloomCenter": [
+        182.0,
+        135.5
+      ],
+      "stemBase": [
+        171.0,
+        1108
+      ],
+      "stemCutY": 271,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50499,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "rose_red": {
+      "head": "assets/heads/rose_red.webp",
+      "headWidth": 485,
+      "headHeight": 490,
+      "headAlphaBounds": [
+        5,
+        5,
+        480,
+        485
+      ],
+      "classicBloom": "assets/classic/rose_red-bloom.webp",
+      "classicStem": "assets/classic/rose_red-stem.webp",
+      "bloomWidth": 355,
+      "bloomHeight": 281,
+      "sourceWidth": 349,
+      "sourceHeight": 1111,
+      "sourceBloomBox": [
+        4,
+        0,
+        349,
+        271
+      ],
+      "bloomCenter": [
+        176.5,
+        135.5
+      ],
+      "stemBase": [
+        171.0,
+        1109
+      ],
+      "stemCutY": 271,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.51627,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "rose_violet": {
+      "head": "assets/heads/rose_violet.webp",
+      "headWidth": 480,
+      "headHeight": 485,
+      "headAlphaBounds": [
+        5,
+        5,
+        475,
+        480
+      ],
+      "classicBloom": "assets/classic/rose_violet-bloom.webp",
+      "classicStem": "assets/classic/rose_violet-stem.webp",
+      "bloomWidth": 337,
+      "bloomHeight": 312,
+      "sourceWidth": 447,
+      "sourceHeight": 1239,
+      "sourceBloomBox": [
+        68,
+        0,
+        395,
+        302
+      ],
+      "bloomCenter": [
+        231.5,
+        151.0
+      ],
+      "stemBase": [
+        238.0,
+        1237
+      ],
+      "stemCutY": 302,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.51461,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "rose_white": {
+      "head": "assets/heads/rose_white.webp",
+      "headWidth": 490,
+      "headHeight": 464,
+      "headAlphaBounds": [
+        5,
+        5,
+        485,
+        459
+      ],
+      "classicBloom": "assets/classic/rose_white-bloom.webp",
+      "classicStem": "assets/classic/rose_white-stem.webp",
+      "bloomWidth": 336,
+      "bloomHeight": 281,
+      "sourceWidth": 345,
+      "sourceHeight": 1112,
+      "sourceBloomBox": [
+        17,
+        0,
+        343,
+        271
+      ],
+      "bloomCenter": [
+        180.0,
+        135.5
+      ],
+      "stemBase": [
+        171.0,
+        1110
+      ],
+      "stemCutY": 271,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.52655,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "rose_yellow": {
+      "head": "assets/heads/rose_yellow.webp",
+      "headWidth": 473,
+      "headHeight": 473,
+      "headAlphaBounds": [
+        5,
+        5,
+        468,
+        468
+      ],
+      "classicBloom": "assets/classic/rose_yellow-bloom.webp",
+      "classicStem": "assets/classic/rose_yellow-stem.webp",
+      "bloomWidth": 353,
+      "bloomHeight": 281,
+      "sourceWidth": 346,
+      "sourceHeight": 1111,
+      "sourceBloomBox": [
+        3,
+        0,
+        346,
+        271
+      ],
+      "bloomCenter": [
+        174.5,
+        135.5
+      ],
+      "stemBase": [
+        171.0,
+        1109
+      ],
+      "stemCutY": 271,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.51474,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "sunflower": {
+      "head": "assets/heads/sunflower.webp",
+      "headWidth": 490,
+      "headHeight": 489,
+      "headAlphaBounds": [
+        5,
+        5,
+        485,
+        484
+      ],
+      "classicBloom": "assets/classic/sunflower-bloom.webp",
+      "classicStem": "assets/classic/sunflower-stem.webp",
+      "bloomWidth": 267,
+      "bloomHeight": 264,
+      "sourceWidth": 351,
+      "sourceHeight": 695,
+      "sourceBloomBox": [
+        66,
+        0,
+        323,
+        254
+      ],
+      "bloomCenter": [
+        194.5,
+        127.0
+      ],
+      "stemBase": [
+        196.0,
+        692
+      ],
+      "stemCutY": 254,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.50514,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "tulip_orange": {
+      "head": "assets/heads/tulip_orange.webp",
+      "headWidth": 481,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        476,
+        517
+      ],
+      "classicBloom": "assets/classic/tulip_orange-bloom.webp",
+      "classicStem": "assets/classic/tulip_orange-stem.webp",
+      "bloomWidth": 153,
+      "bloomHeight": 161,
+      "sourceWidth": 189,
+      "sourceHeight": 641,
+      "sourceBloomBox": [
+        34,
+        0,
+        177,
+        151
+      ],
+      "bloomCenter": [
+        105.5,
+        75.5
+      ],
+      "stemBase": [
+        108.0,
+        638
+      ],
+      "stemCutY": 151,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.52009,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "tulip_pink": {
+      "head": "assets/heads/tulip_pink.webp",
+      "headWidth": 510,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        505,
+        517
+      ],
+      "classicBloom": "assets/classic/tulip_pink-bloom.webp",
+      "classicStem": "assets/classic/tulip_pink-stem.webp",
+      "bloomWidth": 184,
+      "bloomHeight": 303,
+      "sourceWidth": 239,
+      "sourceHeight": 1240,
+      "sourceBloomBox": [
+        2,
+        0,
+        176,
+        293
+      ],
+      "bloomCenter": [
+        89.0,
+        146.5
+      ],
+      "stemBase": [
+        92.0,
+        1238
+      ],
+      "stemCutY": 293,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.52975,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "tulip_red": {
+      "head": "assets/heads/tulip_red.webp",
+      "headWidth": 485,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        480,
+        517
+      ],
+      "classicBloom": "assets/classic/tulip_red-bloom.webp",
+      "classicStem": "assets/classic/tulip_red-stem.webp",
+      "bloomWidth": 196,
+      "bloomHeight": 302,
+      "sourceWidth": 238,
+      "sourceHeight": 1237,
+      "sourceBloomBox": [
+        1,
+        0,
+        187,
+        292
+      ],
+      "bloomCenter": [
+        94.0,
+        146.0
+      ],
+      "stemBase": [
+        91.0,
+        1235
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.53216,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "tulip_violet": {
+      "head": "assets/heads/tulip_violet.webp",
+      "headWidth": 497,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        492,
+        517
+      ],
+      "classicBloom": "assets/classic/tulip_violet-bloom.webp",
+      "classicStem": "assets/classic/tulip_violet-stem.webp",
+      "bloomWidth": 194,
+      "bloomHeight": 302,
+      "sourceWidth": 238,
+      "sourceHeight": 1237,
+      "sourceBloomBox": [
+        2,
+        0,
+        186,
+        292
+      ],
+      "bloomCenter": [
+        94.0,
+        146.0
+      ],
+      "stemBase": [
+        91.0,
+        1235
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.5473,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "tulip_white": {
+      "head": "assets/heads/tulip_white.webp",
+      "headWidth": 513,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        508,
+        517
+      ],
+      "classicBloom": "assets/classic/tulip_white-bloom.webp",
+      "classicStem": "assets/classic/tulip_white-stem.webp",
+      "bloomWidth": 181,
+      "bloomHeight": 302,
+      "sourceWidth": 238,
+      "sourceHeight": 1237,
+      "sourceBloomBox": [
+        2,
+        0,
+        173,
+        292
+      ],
+      "bloomCenter": [
+        87.5,
+        146.0
+      ],
+      "stemBase": [
+        90.5,
+        1235
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.55925,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "tulip_yellow": {
+      "head": "assets/heads/tulip_yellow.webp",
+      "headWidth": 514,
+      "headHeight": 522,
+      "headAlphaBounds": [
+        5,
+        5,
+        509,
+        517
+      ],
+      "classicBloom": "assets/classic/tulip_yellow-bloom.webp",
+      "classicStem": "assets/classic/tulip_yellow-stem.webp",
+      "bloomWidth": 181,
+      "bloomHeight": 302,
+      "sourceWidth": 238,
+      "sourceHeight": 1237,
+      "sourceBloomBox": [
+        2,
+        0,
+        173,
+        292
+      ],
+      "bloomCenter": [
+        87.5,
+        146.0
+      ],
+      "stemBase": [
+        91.0,
+        1235
+      ],
+      "stemCutY": 292,
+      "classicAvailable": true,
+      "identityNote": " v6: one source transform for flower and neck.",
+      "headRadius": 0.56111,
+      "joinOverlap": 8,
+      "bloomPadding": 5
+    },
+    "__choc": {
+      "head": "assets/finishes/extra_chocolate_gold.webp",
+      "headWidth": 521,
+      "headHeight": 522,
+      "classicAvailable": false,
+      "identityNote": "Loose foil chocolate has no supplied Classic support/stick photo.",
+      "headRadius": 0.50095
+    },
+    "hydrangea": {
+      "head": "assets/heads/hydrangea.webp",
+      "headWidth": 870,
+      "headHeight": 840,
+      "headAlphaBounds": [
+        8,
+        8,
+        862,
+        832
+      ],
+      "classicBloom": "assets/classic/hydrangea-bloom.webp",
+      "classicStem": "assets/classic/hydrangea-stem.webp",
+      "bloomWidth": 671,
+      "bloomHeight": 593,
+      "sourceWidth": 848,
+      "sourceHeight": 1264,
+      "sourceBloomBox": [
+        98,
+        213,
+        753,
+        790
+      ],
+      "bloomCenter": [
+        425.5,
+        501.5
+      ],
+      "stemBase": [
+        497.0,
+        1187
+      ],
+      "stemCutY": 790,
+      "classicAvailable": true,
+      "identityNote": "Matching new supplied photographic source; original preserved. v6: one source transform for flower and neck.",
+      "headRadius": 0.50948,
+      "joinOverlap": 8,
+      "bloomPadding": 8
+    },
+    "babys_compact": {
+      "head": "assets/heads/babys_compact.webp",
+      "headWidth": 861,
+      "headHeight": 816,
+      "headAlphaBounds": [
+        8,
+        8,
+        853,
+        808
+      ],
+      "classicAvailable": true,
+      "classicBloom": "assets/heads/babys_compact.webp",
+      "classicStem": null,
+      "bloomWidth": 861,
+      "bloomHeight": 816,
+      "bloomCenter": [
+        430.5,
+        408.0
+      ],
+      "stemBase": [
+        430.5,
+        816
+      ],
+      "identityNote": "Explicit small filler cluster tucked among heads; no invented long stem.",
+      "headRadius": 0.51124
+    },
+    "babys_medium": {
+      "head": "assets/heads/babys_medium.webp",
+      "headWidth": 861,
+      "headHeight": 816,
+      "headAlphaBounds": [
+        8,
+        8,
+        853,
+        808
+      ],
+      "classicAvailable": true,
+      "classicBloom": "assets/heads/babys_medium.webp",
+      "classicStem": null,
+      "bloomWidth": 861,
+      "bloomHeight": 816,
+      "bloomCenter": [
+        430.5,
+        408.0
+      ],
+      "stemBase": [
+        430.5,
+        816
+      ],
+      "identityNote": "Explicit small filler cluster tucked among heads; no invented long stem.",
+      "headRadius": 0.51124
+    }
+  },
+  "finishes": {
+    "ribbon_blush": {
+      "url": "assets/finishes/ribbon_blush.webp",
+      "width": 382,
+      "height": 421
+    },
+    "ribbon_burgundy": {
+      "url": "assets/finishes/ribbon_burgundy.webp",
+      "width": 383,
+      "height": 426
+    },
+    "ribbon_sage": {
+      "url": "assets/finishes/ribbon_sage.webp",
+      "width": 378,
+      "height": 421
+    },
+    "sash_love": {
+      "url": "assets/finishes/sash_love.webp",
+      "width": 715,
+      "height": 125
+    },
+    "sash_bday": {
+      "url": "assets/finishes/sash_bday.webp",
+      "width": 714,
+      "height": 122
+    },
+    "sash_wed": {
+      "url": "assets/finishes/sash_wed.webp",
+      "width": 751,
+      "height": 124
+    },
+    "diamond_pin": {
+      "url": "assets/finishes/diamond_pin.webp",
+      "width": 250,
+      "height": 248
+    },
+    "extra_butterfly_gold": {
+      "url": "assets/finishes/extra_butterfly_gold.webp",
+      "width": 522,
+      "height": 456
+    },
+    "extra_chocolate_gold": {
+      "url": "assets/finishes/extra_chocolate_gold.webp",
+      "width": 521,
+      "height": 522
+    }
+  },
+  "collars": {
+    "dome": {
+      "url": "assets/wrapping/dome-black.webp",
+      "width": 917,
+      "height": 929,
+      "alphaBounds": [
+        8,
+        8,
+        909,
+        921
+      ],
+      "openingBounds": [
+        234,
+        243,
+        442,
+        442
+      ],
+      "openingCenter": [
+        454.29562098633966,
+        463.25675013555804
+      ],
+      "openingPolygon": [
+        [
+          440,
+          243
+        ],
+        [
+          397,
+          250
+        ],
+        [
+          364,
+          262
+        ],
+        [
+          324,
+          285
+        ],
+        [
+          288,
+          318
+        ],
+        [
+          265,
+          350
+        ],
+        [
+          244,
+          396
+        ],
+        [
+          236,
+          430
+        ],
+        [
+          234,
+          481
+        ],
+        [
+          244,
+          532
+        ],
+        [
+          261,
+          570
+        ],
+        [
+          282,
+          601
+        ],
+        [
+          309,
+          629
+        ],
+        [
+          342,
+          653
+        ],
+        [
+          380,
+          671
+        ],
+        [
+          427,
+          683
+        ],
+        [
+          469,
+          684
+        ],
+        [
+          517,
+          675
+        ],
+        [
+          556,
+          659
+        ],
+        [
+          592,
+          635
+        ],
+        [
+          623,
+          605
+        ],
+        [
+          645,
+          574
+        ],
+        [
+          663,
+          535
+        ],
+        [
+          673,
+          494
+        ],
+        [
+          675,
+          452
+        ],
+        [
+          669,
+          411
+        ],
+        [
+          653,
+          367
+        ],
+        [
+          631,
+          331
+        ],
+        [
+          603,
+          300
+        ],
+        [
+          571,
+          276
+        ],
+        [
+          530,
+          256
+        ],
+        [
+          481,
+          244
+        ]
+      ],
+      "source": "originals/new-assets/wrap_dome_black_top.jpg"
+    },
+    "heart": {
+      "url": "assets/wrapping/heart-black.webp",
+      "width": 920,
+      "height": 894,
+      "alphaBounds": [
+        8,
+        8,
+        912,
+        886
+      ],
+      "openingBounds": [
+        207,
+        175,
+        506,
+        520
+      ],
+      "openingCenter": [
+        459.6689524597467,
+        399.3820562591485
+      ],
+      "openingPolygon": [
+        [
+          310,
+          181
+        ],
+        [
+          294,
+          187
+        ],
+        [
+          265,
+          205
+        ],
+        [
+          240,
+          231
+        ],
+        [
+          222,
+          263
+        ],
+        [
+          210,
+          301
+        ],
+        [
+          207,
+          328
+        ],
+        [
+          210,
+          375
+        ],
+        [
+          220,
+          416
+        ],
+        [
+          234,
+          453
+        ],
+        [
+          256,
+          495
+        ],
+        [
+          278,
+          528
+        ],
+        [
+          312,
+          570
+        ],
+        [
+          390,
+          645
+        ],
+        [
+          455,
+          693
+        ],
+        [
+          462,
+          694
+        ],
+        [
+          533,
+          642
+        ],
+        [
+          601,
+          577
+        ],
+        [
+          633,
+          539
+        ],
+        [
+          669,
+          485
+        ],
+        [
+          695,
+          429
+        ],
+        [
+          709,
+          377
+        ],
+        [
+          712,
+          326
+        ],
+        [
+          703,
+          279
+        ],
+        [
+          696,
+          260
+        ],
+        [
+          677,
+          227
+        ],
+        [
+          643,
+          197
+        ],
+        [
+          604,
+          179
+        ],
+        [
+          571,
+          175
+        ],
+        [
+          553,
+          177
+        ],
+        [
+          528,
+          185
+        ],
+        [
+          498,
+          205
+        ],
+        [
+          464,
+          239
+        ],
+        [
+          454,
+          238
+        ],
+        [
+          413,
+          198
+        ],
+        [
+          389,
+          184
+        ],
+        [
+          368,
+          177
+        ],
+        [
+          349,
+          175
+        ]
+      ],
+      "source": "originals/new-assets/wrap_heart_black_top.jpg"
+    }
+  }
+}

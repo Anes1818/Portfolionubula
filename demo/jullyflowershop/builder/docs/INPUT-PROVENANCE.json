@@ -1,0 +1,17 @@
+{
+  "inputs": [
+    {
+      "input": "nebula-bouquet-builder-v4.zip",
+      "bytes": 42211585,
+      "sha256": "a02149fded53d9b25323a16c49c199c15f55609f384f6acf7c29a4baab9f8b01",
+      "inputModified": false
+    },
+    {
+      "input": "Generated Image September 07, 2026 - 8_59PM.zip",
+      "bytes": 3724232,
+      "sha256": "a7180146b3ff9d8b0a2317d2f3d0fb0fea015feed8da4718e7e8266447c6e06e",
+      "inputModified": false
+    }
+  ],
+  "classicLayoutFunctionsUnchanged": true
+}
