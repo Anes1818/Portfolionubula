@@ -59,28 +59,26 @@ function setZoom(z){camera.zoom=G.clamp(z,1,3);const lim=(camera.zoom-1)*300;cam
 function setFocusPreview(on){focusPreview=!!on;document.body.classList.toggle('preview-focus',focusPreview);$('focusPreview').setAttribute('aria-pressed',String(focusPreview));$('focusPreview').setAttribute('aria-label',t(focusPreview?'closeFocus':'expandPreview'));$('focusLabel').textContent=t(focusPreview?'closeShort':'expandShort');fitPhoneCanvas();scheduleCanvas();}
 function setLanguage(value){if(editFocus)commitTextEdit();lang=value==='es'?'es':'en';try{localStorage.setItem('nebulaLanguageV4',lang);}catch(e){}render(false);}
 function localize(){
- document.documentElement.lang=lang;document.title=CONFIG.brand+' — '+t('pageTitle');$('brandName').textContent=CONFIG.brand;document.querySelector('.brand').setAttribute('aria-label',CONFIG.brand+' '+t('studioFooter'));document.querySelector('.site-footer>span').firstChild.textContent=CONFIG.brand+' ';$('language').value=lang;
+ document.documentElement.lang=lang;document.title=CONFIG.brand+' — '+t('pageTitle');if($('brandName'))$('brandName').textContent=CONFIG.brand;const bEl=document.querySelector('.brand');if(bEl)bEl.setAttribute('aria-label',CONFIG.brand+' '+t('studioFooter'));const fs=document.querySelector('.site-footer>span');if(fs&&fs.firstChild)fs.firstChild.textContent=CONFIG.brand+' ';if($('language'))$('language').value=lang;
  for(const el of document.querySelectorAll('[data-i18n]'))el.textContent=t(el.dataset.i18n);
  for(const el of document.querySelectorAll('[data-label]'))el.setAttribute('aria-label',t(el.dataset.label));
  for(const el of document.querySelectorAll('[data-placeholder]'))el.placeholder=t(el.dataset.placeholder);
  for(const el of document.querySelectorAll('[data-alt]'))el.alt=t(el.dataset.alt);
- $('focusLabel').textContent=t(focusPreview?'closeShort':'expandShort');
- $('focusPreview').setAttribute('aria-label',t(focusPreview?'closeFocus':'expandPreview'));
+ if($('focusLabel'))$('focusLabel').textContent=t(focusPreview?'closeShort':'expandShort');
+ if($('focusPreview'))$('focusPreview').setAttribute('aria-label',t(focusPreview?'closeFocus':'expandPreview'));
 }
 /* Studio credit: rendered once, from validated config, never from page input. */
 function renderStudio(){
- /* Point the header mark at the embedded copy, so it also shows from file://
-    where a relative path would resolve but a tainted canvas would not. */
- const mark=NEBULA_META.brand?.mark;if(mark&&$('brandLogo'))$('brandLogo').src=R.source(mark);
+ const mark=NEBULA_META.brand?.mark;if(mark&&$('brandLogo')&&!$('brandLogo').src?.includes('butterfly'))$('brandLogo').src=R.source(mark);
  const S=CONFIG.studio||{},on=!!(S.name||S.site||S.phone);
- $('studioCredit').hidden=!on;if(!on)return;
- $('studioName').textContent=S.name;$('studioPlace').textContent=S.place;
- $('copyLine').textContent='© '+(S.year||'2026')+' '+(S.name||CONFIG.brand)+' · '+t('rightsReserved');
- const site=$('studioSite');site.textContent=S.site;site.hidden=!S.site;
- if(S.site)site.href='https://'+S.site.replace(/^https?:\/\//,'');
- const tel=$('studioPhone');tel.textContent=S.phone;tel.hidden=!S.phone;
- if(S.phone)tel.href='tel:'+S.phone.replace(/[^\d+]/g,'');
- $('studioSocial').textContent=S.instagram;
+ if($('studioCredit'))$('studioCredit').hidden=!on;
+ if(!on)return;
+ if($('studioName'))$('studioName').textContent=S.name;
+ if($('studioPlace'))$('studioPlace').textContent=S.place;
+ if($('copyLine'))$('copyLine').textContent='© '+(S.year||'2026')+' '+(S.name||CONFIG.brand)+' · '+t('rightsReserved');
+ const site=$('studioSite');if(site){site.textContent=S.site;site.hidden=!S.site;if(S.site)site.href='https://'+S.site.replace(/^https?:\/\//,'');}
+ const tel=$('studioPhone');if(tel){tel.textContent=S.phone;tel.hidden=!S.phone;if(S.phone)tel.href='tel:'+S.phone.replace(/[^\d+]/g,'');}
+ if($('studioSocial'))$('studioSocial').textContent=S.instagram;
 }
 function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected,ghost:hover,guides:true,camera});positionDelete();}});}
 /* Some catalogue entries only read correctly from one camera angle. */
