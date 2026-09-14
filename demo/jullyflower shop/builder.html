@@ -1,18 +1,16 @@
-﻿<!DOCTYPE html>
-<html lang=en>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset=utf-8>
-<meta name=viewport content=width=device-width, initial-scale=1, viewport-fit=cover>
-<meta http-equiv=refresh content=0; url=builder/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="refresh" content="0; url=builder/index.html">
 <title>Build Your Ramo — Ramos by Julia</title>
 <script>
-  window.location.replace(builder/ + (window.location.hash || window.location.search || "));
+  var extra = window.location.hash || window.location.search || "";
+  window.location.replace("builder/index.html" + extra);
 </script>
 </head>
-<body style=background:#f7f5ef;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;color:#2c2c2a>
- <div style=text-align:center>
- <p style=font-size:18px;margin-bottom:12px>Opening Ramos by Julia Bouquet Atelier...</p>
- <a href=builder/ style=display:inline-block;padding:10px 20px;background:#c08081;color:#fff;text-decoration:none;border-radius:24px;font-weight:600>Enter Builder</a>
- </div>
+<body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#f7f5ef;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#2c2c2a">
+  <p><a href="builder/index.html" style="color:#8b3d45">Open the bouquet studio</a></p>
 </body>
 </html>

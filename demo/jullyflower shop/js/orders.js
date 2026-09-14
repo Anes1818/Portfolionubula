@@ -1,11 +1,7 @@
-/* Petal Press — shared order desk (demo).
-   Browser localStorage only. Same phone/laptop sees builder → admin.
-   Swap this file later for Firebase; the order shape stays the same. */
+/* Ramos by Julia — local order list for the demo desk. */
 (function () {
   "use strict";
-  var KEY = "ramos_by_julia_orders_v1";
-
-  function now() { return Date.now(); }
+  var KEY = "ramos_by_julia_orders_v4";
 
   function loadRaw() {
     try { return JSON.parse(localStorage.getItem(KEY) || "null"); }
@@ -17,119 +13,80 @@
     return list;
   }
 
-  function nextId(list) {
-    var n = 104;
-    (list || []).forEach(function (o) {
-      var m = String(o.id || "").match(/(\d+)$/);
-      if (m) n = Math.max(n, parseInt(m[1], 10) + 1);
-    });
-    return "RJ-" + n;
+  function digits(phone) {
+    return String(phone || "").replace(/\D/g, "");
+  }
+
+  function bouquetOf(o) {
+    var b = (o && o.bouquet) || {};
+    return {
+      title: b.title || b.size || "Custom ramo",
+      note: b.note || b.orderNotes || (o.customer && o.customer.specialRequests) || "",
+      image: b.image || "",
+      template: b.template || "",
+      size: b.size || ""
+    };
+  }
+
+  function normalize(order) {
+    var o = order || {};
+    var status = o.status === "ready" ? "ready" : "confirmed";
+    return {
+      id: o.id || "RJ-100",
+      createdAt: o.createdAt || Date.now(),
+      status: status,
+      customer: {
+        name: (o.customer && o.customer.name) || "Customer",
+        phone: (o.customer && o.customer.phone) || "",
+        date: (o.customer && o.customer.date) || ""
+      },
+      quote: { total: (o.quote && o.quote.total) || 0 },
+      bouquet: bouquetOf(o)
+    };
   }
 
   function seeds() {
-    var t = now();
+    var t = Date.now();
     return [
       {
+        id: "RJ-105",
+        createdAt: t - 12 * 60 * 1000,
+        status: "confirmed",
+        customer: { name: "Ana R.", phone: "(503) 555-0177", date: "2026-09-19" },
+        quote: { total: 73 },
+        bouquet: {
+          title: "Custom dome · 30 red roses",
+          note: "Built in the studio",
+          image: "assets/bouquets/studio-dome.jpg",
+          template: "dome",
+          size: "30 stems"
+        }
+      },
+      {
+        id: "RJ-104",
+        createdAt: t - 40 * 60 * 1000,
+        status: "confirmed",
+        customer: { name: "Sofia G.", phone: "(503) 555-0144", date: "2026-09-18" },
+        quote: { total: 125 },
+        bouquet: {
+          title: "50 White Roses · Día De Las Madres",
+          note: "Feliz cumpleaños mamá",
+          image: "assets/bouquets/julia_50_madres.jpg"
+        }
+      },
+      {
         id: "RJ-103",
-        createdAt: t - 14 * 60 * 1000,
-        status: "requested",
-        paid: false,
-        customer: {
-          name: "Sofia G.",
-          phone: "(503) 555-0144",
-          area: "Gresham, OR",
-          method: "pickup",
-          date: "2026-09-18",
-          card: "Feliz cumpleaños mamá hermosa"
-        },
-        quote: { total: 125, depositPct: 50, deposit: 65, balance: 60 },
+        createdAt: t - 5 * 60 * 60 * 1000,
+        status: "ready",
+        customer: { name: "Marcus V.", phone: "(503) 555-0190", date: "2026-09-17" },
+        quote: { total: 60 },
         bouquet: {
-          template: "heart",
-          size: "50 Roses",
-          wrap: "kraft",
-          wrapLabel: "Black & Gold Wrap",
-          ribbon: "gold",
-          ribbonLabel: "Gold Satin",
-          noteOn: true,
-          note: "Feliz cumpleaños mamá hermosa",
-          stems: [
-            { id: "rose_red", label: "Red Fresh Rose", count: 50, file: "rose_red.png" },
-            { id: "babys_breath", label: "Baby's Breath Rim", count: 1, file: "babys_breath.png" }
-          ],
-          bu: {
-            rings: 3, wall: "rose_red", fill: "rose_red", center: "rose_white",
-            pattern: "zones", sash: "bday", greens: true, jewel: true, choc: true
-          }
-        },
-        recipe: "Heart Buchón · 50 Red Roses · Gold Crown · Baby's Breath · Custom sash 'Feliz Cumpleaños' · Pickup Gresham (Zelle)"
-      },
-      {
-        id: "RJ-102",
-        createdAt: t - 3 * 60 * 60 * 1000,
-        status: "reviewing",
-        paid: true,
-        customer: {
-          name: "Marcus V.",
-          phone: "(503) 555-0190",
-          area: "Rockwood, OR",
-          method: "pickup",
-          date: "2026-09-17",
-          card: "Happy anniversary mi amor"
-        },
-        quote: { total: 70, depositPct: 50, deposit: 35, balance: 35 },
-        bouquet: {
-          template: "round",
-          size: "25 Roses",
-          wrap: "kraft",
-          wrapLabel: "Frosted Blush",
-          ribbon: "blush",
-          ribbonLabel: "Blush Pink",
-          noteOn: true,
-          note: "Happy anniversary mi amor",
-          stems: [
-            { id: "rose_pink", label: "Pink Fresh Rose", count: 25, file: "rose_pink.png" }
-          ],
-          bu: {
-            rings: 2, wall: "rose_pink", fill: "rose_pink", center: "rose_white",
-            pattern: "zones", sash: "love", greens: false, jewel: false, choc: true
-          }
-        },
-        recipe: "Round Buchón · 25 Pink Roses · 3D Gold Butterflies · Custom sash 'Te Amo' · Pickup Rockwood (Cash App)"
-      },
-      {
-        id: "RJ-101",
-        createdAt: t - 22 * 60 * 60 * 1000,
-        status: "completed",
-        paid: true,
-        customer: {
-          name: "Elena M.",
-          phone: "(503) 555-0162",
-          area: "Portland, OR",
-          method: "pickup",
-          date: "2026-09-15",
-          card: "Para la más hermosa"
-        },
-        quote: { total: 220, depositPct: 50, deposit: 110, balance: 110 },
-        bouquet: {
-          template: "round",
-          size: "100 Roses",
-          wrap: "journal",
-          wrapLabel: "Black Luxury Wrap",
-          ribbon: "gold",
-          ribbonLabel: "Gold Satin",
-          noteOn: false,
+          title: "25 Pink Roses",
           note: "",
-          stems: [
-            { id: "rose_red", label: "100 Grand Roses", count: 100, file: "rose_red.png" }
-          ],
-          bu: {
-            rings: 5, wall: "rose_red", fill: "rose_red", center: "rose_white",
-            pattern: "zones", sash: "love", greens: true, jewel: true, choc: true
-          }
-        },
-        recipe: "Grand 100-Rose Buchón · Luxury Large Crown · Gold Butterflies · Pickup Gresham (Zelle)"
+          image: "assets/bouquets/b4.jpg"
+        }
       }
-    ];
+    ].map(normalize);
   }
 
   function all() {
@@ -138,48 +95,51 @@
       list = seeds();
       save(list);
     }
-    return list;
+    return list.map(normalize);
+  }
+
+  function nextId(list) {
+    var n = 105;
+    (list || []).forEach(function (o) {
+      var m = String(o.id || "").match(/(\d+)$/);
+      if (m) n = Math.max(n, parseInt(m[1], 10) + 1);
+    });
+    return "RJ-" + n;
   }
 
   function add(order) {
     var list = all();
-    if (!order.id) order.id = nextId(list);
-    if (!order.createdAt) order.createdAt = now();
-    list.unshift(order);
+    var row = normalize(order);
+    if (!order.id) row.id = nextId(list);
+    list.unshift(row);
     save(list);
-    return order;
+    return list[0];
   }
 
   function update(id, patch) {
-    var list = all();
-    list.forEach(function (o) {
-      if (o.id === id) {
-        Object.keys(patch).forEach(function (k) { o[k] = patch[k]; });
-      }
+    var list = all().map(function (o) {
+      if (o.id !== id) return o;
+      var next = Object.assign({}, o, patch);
+      if (patch.customer) next.customer = Object.assign({}, o.customer, patch.customer);
+      if (patch.bouquet) next.bouquet = Object.assign({}, o.bouquet, patch.bouquet);
+      if (patch.quote) next.quote = Object.assign({}, o.quote, patch.quote);
+      return normalize(next);
     });
     save(list);
     return list;
   }
 
-  function reset() {
-    localStorage.removeItem(KEY);
-    return all();
-  }
-
-  var LABELS = {
-    requested: "New request",
-    reviewing: "Checking cooler",
-    deposit: "Ask for deposit",
-    confirmed: "Locked in",
-    declined: "Can't make it"
-  };
-
   window.PPOrders = {
+    KEY: KEY,
     all: all,
     add: add,
     update: update,
-    reset: reset,
-    label: function (s) { return LABELS[s] || s; },
-    nextId: function () { return nextId(all()); }
+    digits: digits,
+    tel: function (phone) {
+      var d = digits(phone);
+      if (d.length < 10) return "";
+      if (d.length === 10) return "tel:+1" + d;
+      return "tel:+" + d;
+    }
   };
 })();

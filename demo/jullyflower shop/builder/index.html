@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f7f5ef"><meta name="description" content="Ramos by Julia — Handcrafted luxury ramos buchones and custom floral bouquets in Gresham & Rockwood, Oregon. Design your arrangement online.">
+<meta name="theme-color" content="#f7f5ef"><meta name="description" content="Ramos by Julia — design a custom ramo in Gresham & Rockwood, Oregon.">
 <title>Build Your Ramo — Ramos by Julia</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="app.css?v=6.1">
-<script src="shop-config.js?v=6.1" defer></script><script src="config.js?v=6.1" defer></script><script src="asset-meta.js?v=6.1" defer></script><script src="assets-bundle.js?v=6.1" defer></script><script src="dome-engine-v2.js?v=6.1" defer></script><script src="template-engine.js?v=6.1" defer></script><script src="geometry.js?v=6.1" defer></script><script src="model.js?v=6.1" defer></script><script src="i18n.js?v=6.1" defer></script><script src="i18n-v6.js?v=6.1" defer></script><script src="renderer.js?v=6.1" defer></script><script src="app.js?v=6.1" defer></script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="app.css?v=6.3">
+<script src="shop-config.js?v=6.3" defer></script><script src="config.js?v=6.3" defer></script><script src="asset-meta.js?v=6.3" defer></script><script src="assets-bundle.js?v=6.3" defer></script><script src="dome-engine-v2.js?v=6.3" defer></script><script src="template-engine.js?v=6.3" defer></script><script src="geometry.js?v=6.3" defer></script><script src="model.js?v=6.3" defer></script><script src="i18n.js?v=6.3" defer></script><script src="i18n-v6.js?v=6.3" defer></script><script src="renderer.js?v=6.3" defer></script><script src="app.js?v=6.3" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#controls" data-i18n="skip">Skip to bouquet controls</a>
 <header class="site-header">
- <a class="brand" href="../index.html" aria-label="Ramos by Julia bouquet studio"><span class="brand-chip"><img id="brandLogo" src="assets/brand/butterfly-circle.png" alt="Ramos by Julia" width="44" height="44" style="border-radius:50%;object-fit:cover" decoding="async"></span><span><span id="brandName">Ramos by Julia</span><small data-i18n="studio">LUXURY BOUQUET STUDIO</small></span></a>
- <div class="header-actions"><span class="header-note" style="font-weight:600">Gresham &amp; Rockwood, OR</span><label class="language-label"><span class="sr-only" data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">EN</option><option value="es">ES</option></select></label><a href="../index.html" class="button secondary small" style="text-decoration:none">Storefront</a><button id="orderTop" class="button primary small" style="font-weight:700">🛍️ Order</button><button id="saveTop" class="button secondary small" data-i18n="saveDesign" disabled>Save</button></div>
+ <a class="brand" href="../index.html" aria-label="Ramos by Julia"><span class="brand-chip"><img id="brandLogo" src="assets/brand/butterfly-circle.png" alt="" width="44" height="44" decoding="async"></span><span><span id="brandName">Ramos by Julia</span><small>GRESHAM &amp; ROCKWOOD</small></span></a>
+ <div class="header-actions"><span class="header-note" data-i18n="oneStem">One stem. Endless possibilities.</span><label class="language-label"><span class="sr-only" data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">EN</option><option value="es">ES</option></select></label><button id="saveTop" class="button primary small" data-i18n="saveDesign" disabled>Save design</button></div>
 </header>
 <main id="main">
  <section class="stage-column" aria-labelledby="pageTitle">
-  <div class="stage-heading"><div><p class="eyebrow">JULIA'S BOUQUET ATELIER</p><h1 id="pageTitle" data-i18n="pageTitle">Your bouquet, your way.</h1></div><button class="icon-button" id="helpButton" aria-label="How to use the builder" data-label="howTo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 8.5a2.5 2.5 0 0 1 5 .3c0 2-2.5 2-2.5 4M12 16h.01"/></svg></button></div>
+  <div class="stage-heading"><div><p class="eyebrow" data-i18n="yourAtelier">YOUR OWN LITTLE ATELIER</p><h1 id="pageTitle" data-i18n="pageTitle">Your bouquet, your way.</h1></div><button class="icon-button" id="helpButton" aria-label="How to use the builder" data-label="howTo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 8.5a2.5 2.5 0 0 1 5 .3c0 2-2.5 2-2.5 4M12 16h.01"/></svg></button></div>
   <div id="modeChoices" class="mode-choices" role="group" aria-label="Arrangement type" data-label="type">
    <button data-mode="classic" aria-pressed="true" disabled><span class="mode-number">01</span><span><strong data-i18n="classic">Classic</strong><small data-i18n="classicShort">Naturally gathered</small></span><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M8 14c-7-5 2-12 6-7 0-8 12-8 12 0 6-2 11 8 4 10M7 19l9 12h6l8-12M12 14l5 9m9-9-5 9"/></svg></button>
    <button data-mode="dome" aria-pressed="false" disabled><span class="mode-number">02</span><span><strong data-i18n="dome">Dome</strong><small data-i18n="domeShort">A rounded crown</small></span><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M4 24C4 4 30 4 30 24M4 24q13 6 26 0M10 23C10 4 24 4 24 23M5 16q12 4 24 0"/></svg></button>
@@ -44,7 +44,7 @@
   </div>
   <div id="collarNotice" class="artwork-notice" hidden><span data-i18n="collarNotice">Unwrapped preview. The photographic paper collar has not been supplied.</span><button id="missingInline" class="text-button" data-i18n="artworkDetails">Artwork details</button></div>
   <p class="gesture-hint" id="gestureHint" data-i18n="gestureHint">Choose a flower. Tap to add. Drag to arrange.</p>
-  <div class="design-summary"><div><span id="countLabel">12 flowers</span><small id="capacityLabel"></small></div><div class="summary-price"><span>ESTIMATE · USD</span><strong id="totalPrice">—</strong></div><div style="display:flex;gap:8px;align-items:center"><button id="shareButton" class="button secondary small" data-i18n="shareBouquet" disabled>Share</button><button id="orderSummaryBtn" class="button primary small" style="font-weight:700;white-space:nowrap" disabled>🛍️ Order</button></div></div>
+  <div class="design-summary"><div><span id="countLabel">12 flowers</span><small id="capacityLabel"></small></div><div class="summary-price"><span data-i18n="demoEstimate">DEMO ESTIMATE · USD</span><strong id="totalPrice">—</strong></div><button id="shareButton" class="button primary" data-i18n="shareBouquet" disabled>Share bouquet</button></div>
   <p class="quiet-note" id="shareStatus" role="status"></p>
  </section>
  <aside id="controls" class="controls" aria-label="Bouquet controls" data-label="controls">
@@ -63,9 +63,6 @@
    <section id="panel-wrapping" role="tabpanel" aria-labelledby="tab-wrapping" hidden>
     <div id="classicWrapping"><div class="wrap-preview"><img id="wrapPreview" alt="Photographic ivory wrapping paper" data-alt="wrapAlt"><span><small id="wrapEyebrow" data-i18n="oneOriginal">ONE PHOTOGRAPH, TWO ALIGNED LAYERS</small><h3 id="wrapHeading" data-i18n="ivoryPaper">Soft, folded paper.</h3><p id="wrapCopy" data-i18n="wrapDescription">A real front panel hides the stems. Your flowers stay beautifully visible.</p></span></div><label id="collarToggleLabel" class="collar-toggle" hidden><span data-i18n="showCollar">Show photographic wrapping</span><input id="showCollar" type="checkbox" checked></label><h3 class="section-title" data-i18n="paperTone">Paper tone</h3><div id="paperChoices" class="paper-choices"></div><label id="customTintLabel" class="tint-control" hidden><span data-i18n="customTint">Custom paper color study</span><input type="color" id="customTint" value="#dcc8b7"></label><p class="helper" data-i18n="tintDisclosure">Ivory is the supplied photograph. Other tones are digital color studies of that same paper, not new material photographs.</p></div>
     <div id="missingWrapping" class="missing-wrapping" hidden><span class="eyebrow" data-i18n="artworkPending">ARTWORK STILL NEEDED</span><h3 id="missingWrapTitle"></h3><p data-i18n="noFakeWrap">The layout works without paper. A matching photographic collar is needed to finish this view—no geometric substitute is being used or charged.</p><button id="missingWrapButton" class="button secondary" data-i18n="seeMissing">See missing artwork</button></div>
-    <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
-     <button id="toFinishingBtn" type="button" class="button primary full-width" style="font-weight:700">Next: Finishing Touches &amp; Order →</button>
-    </div>
    </section>
    <section id="panel-finishing" role="tabpanel" aria-labelledby="tab-finishing" hidden>
     <h3 class="section-title" data-i18n="ribbon">Ribbon</h3><div id="ribbonChoices" class="ribbon-choices"></div>
@@ -78,129 +75,33 @@
     <div class="finish-toggles"><label><span><strong data-i18n="butterfly">Gold butterfly</strong><small id="butterflyPrice"></small></span><input type="checkbox" id="butterfly"></label><label id="greenRimLabel" hidden><span><strong data-i18n="greenRim">Eucalyptus collar</strong><small id="greenRimPrice"></small></span><input type="checkbox" id="greenRim"></label></div>
     <label class="field"><span data-i18n="designName">Name your bouquet</span><input id="designName" maxlength="70" placeholder="A bouquet, all yours" data-placeholder="titlePlaceholder" autocomplete="off"></label>
     <label class="field"><span data-i18n="giftNote">A little note</span><textarea id="giftNote" maxlength="180" rows="3" placeholder="For someone, or just for you…" data-placeholder="notePlaceholder"></textarea><small><span data-i18n="noteLocal">Included in your PNG and editable design.</span> <span id="noteCounter">0/180</span></small></label>
-    <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:18px">
-     <button id="finishToOrder" type="button" class="button primary full-width" style="min-height:52px;font-size:16px;font-weight:700">
-       🛍️ Place Order / Checkout →
-     </button>
-     <p class="helper" style="text-align:center;margin-top:8px">Ready to order? Julia will handcraft this exact arrangement for pickup in Gresham/Rockwood.</p>
-    </div>
+    <button id="finishOrder" type="button" class="button primary full-width" disabled>Request this bouquet</button>
+    <p class="helper">Name the bouquet above, then send it. Julia will call you to confirm pickup in Gresham / Rockwood.</p>
    </section>
   </div>
   <input id="importFile" type="file" accept=".json,application/json" hidden>
  </aside>
 </main>
-<footer class="site-footer" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 16px;text-align:center">
-  <div style="display:flex;align-items:center;gap:12px">
-    <img src="assets/brand/julia-full-badge.png" alt="Ramos by Julia" style="height:44px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12)">
-    <div style="text-align:left">
-      <strong style="display:block;font-size:14px;color:var(--text)">Ramos by Julia</strong>
-      <span style="display:block;font-size:12px;color:var(--muted)">Gresham &amp; Rockwood, OR · @ramos_by_juliaaa</span>
-    </div>
-  </div>
-  <div style="font-size:12px;color:var(--muted)">
-    <span>Crafted with love by Julia Reyes</span> <span aria-hidden="true">·</span> <span>Powered by Nebula Atelier</span>
-  </div>
-  <span id="copyLine" class="copy-line" style="font-size:11.5px;color:var(--muted)"></span>
-</footer>
+<footer class="site-footer"><span>Ramos by Julia <span aria-hidden="true">/</span> Bouquet studio</span><span>Pickup in Gresham &amp; Rockwood, Oregon</span><span id="copyLine" class="copy-line"></span></footer>
 <div class="studio-credit" id="studioCredit" hidden><strong id="studioName"></strong><span id="studioPlace"></span><a id="studioSite" rel="noopener noreferrer" target="_blank"></a><a id="studioPhone"></a><span id="studioSocial"></span></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <dialog id="confirmDialog"><div class="dialog-heading"><h2 id="confirmTitle"></h2><button class="icon-button" data-close="confirmDialog" data-label="close" aria-label="Close">×</button></div><p id="confirmText"></p><div class="dialog-actions"><button class="button secondary" id="confirmCancel" data-i18n="keepMine">Keep mine</button><button class="button primary" id="confirmYes" data-i18n="confirm">Confirm</button></div></dialog>
 <dialog id="messageDialog"><div class="dialog-heading"><h2 id="messageTitle"></h2><button class="icon-button" data-close="messageDialog" data-label="close" aria-label="Close">×</button></div><div id="messageContent"></div><button class="button primary full-width" data-close="messageDialog" data-i18n="gotIt">Got it</button></dialog>
 <dialog id="saveDialog" class="save-dialog"><div class="dialog-heading"><div><span class="eyebrow" data-i18n="madeByYouShort">MADE BY YOU</span><h2 data-i18n="saveTitle">Keep something beautiful.</h2></div><button class="icon-button" data-close="saveDialog" data-label="close" aria-label="Close">×</button></div><p class="helper" data-i18n="saveHint">Download an image or an editable copy. Nothing is sent to a florist.</p><div class="save-layout"><div class="save-preview"><canvas id="savePreview" width="360" height="410" aria-label="Bouquet preview"></canvas></div><div class="save-actions"><button id="saveSquare" class="button primary"><span data-i18n="squarePNG">Square PNG</span><small>1080 × 1080</small></button><button id="saveStory" class="button secondary"><span data-i18n="storyPNG">Story PNG</span><small>1080 × 1920</small></button><button id="saveJSON" class="button secondary"><span data-i18n="editableDesign">Editable design</span><small>.json</small></button><button id="loadFromSave" class="text-button" data-i18n="loadDesign">Load design</button><span id="exportStatus" class="helper" role="status"></span></div></div><details class="details-block" open><summary data-i18n="priceBreakdown">Your demo estimate</summary><div id="priceBreakdown" class="price-breakdown"></div></details><p id="saveDisclaimer" class="helper" data-i18n="priceDisclaimer">Sample USD prices only. Availability, physical feasibility, delivery and a real quote must be confirmed with your florist. No payment or order is created.</p></dialog>
 
-<dialog id="checkoutDialog" class="quote-dialog" style="max-width:580px;border-radius:16px;padding:24px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.25)">
-  <div class="dialog-heading" style="margin-bottom:14px">
-    <div>
-      <span class="eyebrow" style="color:var(--accent);font-weight:700;letter-spacing:1.5px">RAMOS BY JULIA · ORDER REQUEST</span>
-      <h2 style="font:28px/1.2 var(--serif);margin:4px 0 0">Confirm Your Bouquet</h2>
-    </div>
-    <button class="icon-button" data-close="checkoutDialog" aria-label="Close">×</button>
-  </div>
-
-  <div style="background:var(--subtle);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;gap:14px;align-items:center;margin-bottom:18px">
-    <canvas id="checkoutThumb" width="160" height="180" style="width:70px;height:80px;border-radius:8px;background:#f0ede4;object-fit:cover;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.08)"></canvas>
-    <div style="flex:1;min-width:0">
-      <strong id="ckoBouquetTitle" style="display:block;font-size:15px;margin-bottom:2px"></strong>
-      <span id="ckoBouquetDetails" style="display:block;font-size:12px;color:var(--muted);line-height:1.4"></span>
-      <span id="ckoBouquetPrice" style="display:block;font-size:18px;font-weight:800;color:var(--accent);margin-top:4px"></span>
-    </div>
-  </div>
-
-  <form id="checkoutForm" onsubmit="return false;" style="display:grid;gap:12px">
-    <label class="field" style="margin-bottom:0">
-      <span style="font-size:13px;font-weight:600">Your Full Name *</span>
-      <input id="ckoCustName" type="text" placeholder="Sofia Garcia" required autocomplete="name">
-    </label>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <label class="field" style="margin-bottom:0">
-        <span style="font-size:13px;font-weight:600">Phone or Instagram *</span>
-        <input id="ckoCustPhone" type="text" placeholder="(503) 555-0144 or @handle" required autocomplete="tel">
-      </label>
-      <label class="field" style="margin-bottom:0">
-        <span style="font-size:13px;font-weight:600">Date Needed *</span>
-        <input id="ckoCustDate" type="date" required>
-      </label>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <label class="field" style="margin-bottom:0">
-        <span style="font-size:13px;font-weight:600">How to get it *</span>
-        <select id="ckoCustMethod">
-          <option value="pickup" selected>Pickup (Gresham / Rockwood)</option>
-          <option value="delivery">Delivery Inquiry (Portland Metro)</option>
-        </select>
-      </label>
-      <label class="field" style="margin-bottom:0">
-        <span style="font-size:13px;font-weight:600">Payment Preference *</span>
-        <select id="ckoCustPayment">
-          <option value="cashapp" selected>Cash App ($)</option>
-          <option value="applepay">Apple Pay</option>
-          <option value="zelle">Zelle</option>
-        </select>
-      </label>
-    </div>
-    <label class="field" style="margin-bottom:0">
-      <span style="font-size:13px;font-weight:600">Special requests or pickup notes (optional)</span>
-      <input id="ckoCustNotes" type="text" placeholder="e.g. Afternoon pickup, custom sash lettering...">
-    </label>
-
-    <p style="font-size:11.5px;color:var(--muted);margin:4px 0 0;line-height:1.5">
-      📍 <em>Orders are pickup in Gresham &amp; Rockwood, OR. Fresh roses require 3–4 days advance notice.</em>
-    </p>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <button id="ckoSubmitOrder" type="button" class="button primary" style="min-height:50px;font-size:15px;font-weight:700">
-        🛍️ Submit Order
-      </button>
-      <button id="ckoOrderInstagram" type="button" class="button secondary" style="min-height:50px;font-size:13.5px;font-weight:600">
-        💬 Order via Instagram DM
-      </button>
-    </div>
-  </form>
+<dialog id="checkoutDialog" class="quote-dialog">
+ <div class="dialog-heading"><div><span class="eyebrow">RAMOS BY JULIA</span><h2>Request this bouquet</h2></div><button class="icon-button" data-close="checkoutDialog" data-label="close" aria-label="Close">×</button></div>
+ <div class="quote-top"><canvas id="checkoutThumb" width="160" height="180" aria-label="Bouquet preview"></canvas><div><strong id="ckoBouquetTitle"></strong><p id="ckoBouquetDetails"></p><p id="ckoBouquetPrice"></p></div></div>
+ <label class="field"><span>Your name</span><input id="ckoCustName" type="text" autocomplete="name" placeholder="Sofia Garcia"></label>
+ <label class="field"><span>Phone</span><input id="ckoCustPhone" type="tel" autocomplete="tel" placeholder="(503) 555-0144"></label>
+ <label class="field"><span>Pickup date</span><input id="ckoCustDate" type="date"></label>
+ <p class="helper">Pickup only, Gresham &amp; Rockwood. Julia will call you to confirm the date and the final price.</p>
+ <button id="ckoSubmitOrder" type="button" class="button primary full-width">Send request</button>
 </dialog>
-
-<dialog id="thankYouDialog" style="max-width:500px;border-radius:18px;padding:28px 24px;border:1.5px solid var(--border);box-shadow:0 24px 64px rgba(0,0,0,0.3);text-align:center">
-  <div style="font-size:52px;line-height:1;margin-bottom:10px">🎉💐</div>
-  <span class="eyebrow" style="color:var(--accent);font-weight:700;letter-spacing:1.5px">ORDER CONFIRMATION</span>
-  <h2 id="tyTitle" style="font:29px/1.2 var(--serif);margin:6px 0 8px">Thank you, Sofia!</h2>
-  <div style="background:var(--subtle);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;text-align:left">
-    <p style="margin:0 0 10px;font-size:14.5px;line-height:1.5;font-weight:600;color:var(--text)">
-      Your order ticket #<span id="tyTicketId">RJ-104</span> has been sent directly to Julia!
-    </p>
-    <p style="margin:0;font-size:13.5px;color:var(--muted);line-height:1.6">
-      ✨ <strong>We will contact you soon</strong> at <strong id="tyContact" style="color:var(--text)"></strong> to confirm your fresh stems, finalize your pickup time in Gresham/Rockwood, and send payment instructions for <strong id="tyPayment" style="color:var(--text)">Cash App</strong>.
-    </p>
-  </div>
-  <div style="display:grid;gap:10px">
-    <a id="tyIgLink" href="https://ig.me/m/ramos_by_juliaaa" target="_blank" rel="noopener" class="button primary full-width" style="margin-top:2px;font-size:14px;font-weight:600;text-decoration:none">
-      💬 Message Julia on Instagram (@ramos_by_juliaaa)
-    </a>
-    <button id="tySaveImage" type="button" class="button secondary full-width" style="margin-top:0;font-size:14px">
-      📸 Save Bouquet Picture (1080×1080)
-    </button>
-    <button type="button" class="text-button" data-close="thankYouDialog" style="justify-content:center;margin-top:4px">
-      Done / Design Another Bouquet
-    </button>
-  </div>
+<dialog id="thankYouDialog">
+ <div class="dialog-heading"><h2 id="tyTitle">Request sent</h2><button class="icon-button" data-close="thankYouDialog" data-label="close" aria-label="Close">×</button></div>
+ <p>Ticket <strong id="tyTicketId"></strong>. Julia will call <strong id="tyContact"></strong> to confirm pickup.</p>
+ <button class="button primary full-width" data-close="thankYouDialog">Done</button>
 </dialog>
 <noscript><p class="noscript">JavaScript is needed to edit and export bouquets. All scripts and artwork are included locally; no account is required.</p></noscript>
 </body></html>

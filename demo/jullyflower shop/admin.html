@@ -3,57 +3,111 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Order Desk — Ramos by Julia</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Orders — Ramos by Julia</title>
 <link rel="icon" href="assets/logo/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/theme.css">
-<link rel="stylesheet" href="css/ink.css">
+<style>
+  body[data-page="admin"]{ background: var(--paper); color: var(--ink); }
+  .desk{ max-width: 720px; margin: 0 auto; padding: 24px 18px 72px; }
+  .desk-nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 26px; }
+  .desk-brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
+  .desk-brand img{ width:38px; height:38px; border-radius:50%; object-fit:cover; }
+  .desk-brand strong{ display:block; font-size:15px; }
+  .desk-brand small{ display:block; color: var(--ink-55); font-size:11px; letter-spacing:.05em; text-transform:uppercase; }
+  .desk-links{ display:flex; gap:14px; }
+  .desk-links a{ color: var(--ink-55); font-size:13px; text-decoration:none; }
+  .desk-links a:hover{ color: var(--ink); }
+  .desk h1{ font-family: var(--font-display); font-size: 2.2rem; margin: 0 0 6px; font-weight: 400; }
+  .lede{ color: var(--ink-55); margin: 0 0 22px; font-size: 14.5px; line-height: 1.55; }
+  .ticket{
+    background: #fff;
+    border: 1.5px solid var(--ink-14);
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .ticket__photo{
+    display:block; width:100%; height: 240px; object-fit: cover; background: var(--paper-2);
+  }
+  .ticket__photo.placeholder{
+    display:grid; place-items:center; color: var(--ink-30); font-size: 13px;
+  }
+  .ticket__body{ padding: 16px 18px 18px; }
+  .ticket__top{ display:flex; justify-content:space-between; gap:8px; font-size:12px; color: var(--ink-55); }
+  .ticket h2{ margin: 8px 0 2px; font-size: 1.35rem; font-family: var(--font-display); font-weight: 400; }
+  .ticket__phone{ margin: 0 0 8px; font-size: 13.5px; color: var(--ink-55); }
+  .ticket__bq{ margin: 0; font-size: 15px; }
+  .ticket__note{ margin: 6px 0 0; font-size: 13px; color: var(--ink-55); font-style: italic; }
+  .ticket__meta{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin: 14px 0 14px; font-size: 13px;
+  }
+  .ticket__meta span{ display:grid; gap:2px; background: var(--paper-2); border-radius: 10px; padding: 8px 10px; }
+  .ticket__meta small{ color: var(--ink-55); font-size: 10.5px; letter-spacing:.04em; text-transform:uppercase; }
+  .ticket__status{ display:flex; gap:8px; margin-bottom: 12px; }
+  .chip{
+    border: 1.4px solid var(--ink-14); background: #fff; border-radius: 999px;
+    padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--ink-55);
+  }
+  .chip.on{ border-color: var(--ink); color: var(--ink); background: var(--paper-2); }
+  .ticket__actions{ display:grid; gap:8px; }
+  .view{
+    display:block; width:100%; text-align:center; border:1.5px solid var(--ink);
+    background:#fff; color: var(--ink); border-radius: 12px;
+    padding: 12px 14px; font-weight: 700; font-size: 14px; cursor:pointer;
+  }
+  .call{
+    display:block; text-align:center; text-decoration:none; color:#fff; background: var(--ink);
+    border-radius: 12px; padding: 12px 14px; font-weight: 700; font-size: 14px;
+  }
+  .empty{ color: var(--ink-55); }
+  .viewer{
+    display:none; position:fixed; inset:0; z-index:50;
+    background: rgba(24,17,25,.72); padding: 18px;
+    align-items:center; justify-content:center;
+  }
+  .viewer.on{ display:flex; }
+  .viewer__card{
+    background:#fff; border-radius:18px; max-width:420px; width:100%;
+    overflow:hidden; position:relative;
+  }
+  .viewer__card img{ display:block; width:100%; height:auto; background: var(--paper-2); }
+  .viewer__card p{ margin:0; padding:14px 16px 16px; font-size:14px; }
+  .viewer__close{
+    position:absolute; top:10px; right:10px; width:36px; height:36px;
+    border:0; border-radius:50%; background:#fff; cursor:pointer; font-size:18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  }
+</style>
 </head>
 <body data-page="admin">
-
-<div class="annc">Julia’s Florist Desk · Orders &amp; Pickup Inbox · Gresham &amp; Rockwood, Oregon</div>
-
-<header class="nav">
-  <div class="wrap nav__inner">
-    <a class="nav__brand" href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
-      <img class="nav__mark" src="assets/logo/butterfly-circle.png" alt="Ramos by Julia" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
-      <span class="nav__name" style="font-weight:700">Ramos by Julia · Orders Desk</span>
-    </a>
-    <nav class="nav__links" style="display:flex;gap:18px;margin-left:auto">
-      <a class="nav__link" href="builder.html">Open builder</a>
-      <a class="nav__link" href="index.html">Storefront</a>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap admin-desk">
-  <div class="admin-lead">
-    <div>
-      <p class="kicker">No charge until you confirm</p>
-      <h1>Today’s tickets</h1>
-      <p class="muted">A client submitted a bouquet request. Review the design, verify pickup slot and payment (Zelle / Cash App), and update status below.</p>
+  <main class="desk">
+    <div class="desk-nav">
+      <a class="desk-brand" href="index.html">
+        <img src="assets/logo/butterfly-circle.png" alt="">
+        <span><strong>Ramos by Julia</strong><small>Order desk</small></span>
+      </a>
+      <nav class="desk-links">
+        <a href="builder/index.html">Studio</a>
+        <a href="index.html">Storefront</a>
+      </nav>
     </div>
-    <div class="admin-actions">
-      <a class="btn-ink btn-ink--sm" href="builder.html"><span class="btn-ink__frame"></span>Place a test order</a>
-      <button type="button" class="btn-ink btn-ink--ghost btn-ink--sm" id="resetDemo"><span class="btn-ink__frame"></span>Reset demo tickets</button>
+    <h1>Orders</h1>
+    <p class="lede">Photo of the ramo, customer phone, pickup date. Call them, then mark it ready.</p>
+    <div id="orderList"></div>
+  </main>
+  <div class="viewer" id="viewer" hidden>
+    <div class="viewer__card">
+      <button type="button" class="viewer__close" id="viewerClose" aria-label="Close">×</button>
+      <img id="viewerImg" alt="">
+      <p id="viewerCap"></p>
     </div>
   </div>
-
-  <p class="admin-banner">Demo inbox — tickets live in this browser. Firebase can replace this file later without changing the ticket shape.</p>
-
-  <div class="admin-grid">
-    <aside class="ticket-list" id="ticketList"></aside>
-    <section class="ticket-detail ink-frame" id="ticketDetail">
-      <p class="muted">Pick a ticket.</p>
-    </section>
-  </div>
-</main>
-
-<script src="brand.config.js"></script>
-<script src="js/orders.js"></script>
-<script src="js/admin.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@ window.NEBULA_SHOP = {
   name: 'Ramos by Julia',
   studio: {
     name: 'Ramos by Julia',
-    site: 'nebulastudio.site/demo/jullyflowershop/',
+    site: 'ramosbyjulia.com',
     phone: '(503) 555-0144',
     instagram: '@ramos_by_juliaaa',
     place: 'Gresham & Rockwood, Oregon',

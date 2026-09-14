@@ -12,6 +12,52 @@ try{
  else{const old=localStorage.getItem(CONFIG.previousKey)||localStorage.getItem(CONFIG.olderKey);if(old){const parsed=JSON.parse(old),studio=M.validatePortfolio(parsed),copied=studio?null:M.validate(parsed);if(studio){banks=studio.bouquets;st=M.clone(banks[studio.activeMode]);}else if(copied){st=copied;banks[st.mode]=M.clone(st);}}}
 }catch(e){storageOK=false;}
 for(const mode of ['classic','dome','heart'])if(!banks[mode])banks[mode]=mode===st.mode?M.clone(st):M.defaultMode(mode);
+
+function parseCatalogHash(){
+ const raw=(location.hash||'').replace(/^#/,'');
+ if(!raw)return null;
+ let p;try{p=new URLSearchParams(raw);}catch(e){return null;}
+ let flower=p.get('flower')||'',size=Number(p.get('size')||'');
+ const stems=p.get('stems')||'';
+ if(stems){const [id,n]=stems.split(':');if(id)flower=flower||id;if(n)size=size||Number(n);}
+ let mode=p.get('mode');
+ if(!mode){if(size>=90)mode='heart';else if(size)mode='dome';else mode='classic';}
+ if(!['classic','dome','heart'].includes(mode))return null;
+ if(!Object.hasOwn(CAT,flower))flower='rose_red';
+ const title=(p.get('title')||'').trim().slice(0,70);
+ return {mode,flower,size:Number.isFinite(size)?size:0,title};
+}
+function nearestSize(mode,n){
+ const list=(SIZES[mode]||[]).map(x=>x[1]);
+ if(!list.length)return n;
+ if(!n)return list[1]||list[0];
+ return list.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a);
+}
+function applyCatalogHash(){
+ const rec=parseCatalogHash();
+ if(!rec)return false;
+ if(rec.mode!==st.mode){
+  banks[st.mode]=M.clone(st);
+  const next=banks[rec.mode]?M.clone(banks[rec.mode]):M.defaultMode(rec.mode);
+  Object.keys(st).forEach(k=>delete st[k]);Object.assign(st,next);
+ }
+ picked=rec.flower;
+ if(st.mode==='classic'){
+  const count=Math.max(8,Math.min(16,rec.size||12));
+  st.items=[];st.nextId=1;
+  for(let i=0;i<count;i++)st.items.push(M.newItem(st,rec.flower));
+  M.arrange(st,'classic',{fresh:true});
+ }else{
+  const n=nearestSize(st.mode,rec.size||st.template.capacity);
+  M.resize(st,n,rec.flower);
+  for(let i=0;i<st.template.capacity;i++)M.paintSlot(st,i,rec.flower);
+ }
+ if(rec.title)st.title=rec.title;
+ banks[st.mode]=M.clone(st);
+ try{persist();}catch(e){}
+ return true;
+}
+applyCatalogHash();
 function toast(str){$('toast').textContent=str;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),4200);}
 function persist(){try{localStorage.setItem(CONFIG.storageKey,JSON.stringify(M.portfolio(st,banks)));storageOK=true;}catch(e){if(storageOK)toast(t('storageWarning'));storageOK=false;}}
 function storeHistory(before){if(before===snap())return false;undoStack.push(before);if(undoStack.length>100)undoStack.shift();redoStack=[];return true;}
@@ -101,7 +147,7 @@ function render(save=true){
  $('gapCheck').hidden=true;$('collarNotice').hidden=true;
  $('gestureHint').textContent=panMode?t('panView'):brush?t(top?'paintHint':'classicBrushHint'):t(top?'topSelectHint':'classicSelectHint');
  $('undo').disabled=!undoStack.length;$('redo').disabled=!redoStack.length;document.querySelectorAll('[data-mode]').forEach(el=>{pressed(el,el.dataset.mode===st.mode);el.disabled=false;});
- $('saveTop').disabled=false;$('shareButton').disabled=st.items.length===0;if($('orderSummaryBtn'))$('orderSummaryBtn').disabled=st.items.length===0;$('arrangeButton').disabled=false;
+ $('saveTop').disabled=false;$('shareButton').disabled=st.items.length===0;if($('finishOrder'))$('finishOrder').disabled=st.items.length===0||!(st.title||'').trim();$('arrangeButton').disabled=false;
  if(!st.items.some(i=>i.uid===selected))selected=null;
  $('pickedFlower').hidden=false;$('pickedName').textContent=name(picked);$('pickedPrice').textContent=M.money(CAT[picked].priceCents,lang)+' '+t('perStem');$('pickedImage').src=R.source(NEBULA_META.flowers[picked].head);
  $('pickedCaption').textContent=t(brush?'brushActive':'selectMode');$('stopBrush').hidden=!brush;$('addOne').hidden=top;$('addOne').disabled=!CAT[picked].classic;
@@ -209,6 +255,12 @@ async function shareBouquet(){
 function openCheckoutModal(){
  if(editFocus)commitTextEdit();
  if(!st.items.length){toast(lang==='es'?'Agrega flores antes de ordenar':'Add flowers before ordering');return;}
+ if(!(st.title||'').trim()){
+  toast(lang==='es'?'Ponle un nombre a tu ramo primero':'Name your bouquet first');
+  setTab('finishing');
+  const input=$('designName');if(input)input.focus();
+  return;
+ }
  const p=M.price(st);
  const thumb=$('checkoutThumb');
  if(thumb&&$('bouquet')){
@@ -216,17 +268,10 @@ function openCheckoutModal(){
   ctx.clearRect(0,0,thumb.width,thumb.height);
   ctx.drawImage($('bouquet'),0,0,thumb.width,thumb.height);
  }
- const title=(st.title||'').trim()||(lang==='es'?'Ramo Personalizado':'Custom Bouquet');
- if($('ckoBouquetTitle'))$('ckoBouquetTitle').textContent=title;
- const modeName=st.mode==='classic'?'Classic Hand-Tied':st.mode==='dome'?'Dome Ramo Buchón':'Heart Ramo';
- const wrapName=st.mode==='classic'?(CONFIG.papers?.[st.finishes.paper]?.name||'Standard Wrap'):'Pleated Floral Paper';
- const extras=[];
- if(st.finishes.butterfly)extras.push('Gold Butterfly');
- if(st.finishes.sash&&st.finishes.sash!=='none')extras.push('Sash ('+st.finishes.sash+')');
- if(st.finishes.greenRim)extras.push('Eucalyptus Collar');
- if($('ckoBouquetDetails'))$('ckoBouquetDetails').textContent=st.items.length+' Stems · '+modeName+' · '+wrapName+(extras.length?' · '+extras.join(', '):'');
+ if($('ckoBouquetTitle'))$('ckoBouquetTitle').textContent=st.title.trim();
+ const modeName=st.mode==='classic'?'Classic':st.mode==='dome'?'Dome ramo':'Heart ramo';
+ if($('ckoBouquetDetails'))$('ckoBouquetDetails').textContent=st.items.length+' stems · '+modeName;
  if($('ckoBouquetPrice'))$('ckoBouquetPrice').textContent=M.money(p.totalCents,lang);
-
  const minDate=new Date(Date.now()+3*86400000).toISOString().split('T')[0];
  if($('ckoCustDate')){
   $('ckoCustDate').min=minDate;
@@ -235,85 +280,48 @@ function openCheckoutModal(){
  $('checkoutDialog').showModal();
 }
 function submitCheckoutOrder(){
- const nameInput=$('ckoCustName'),phoneInput=$('ckoCustPhone'),dateInput=$('ckoCustDate'),methodInput=$('ckoCustMethod'),paymentInput=$('ckoCustPayment'),notesInput=$('ckoCustNotes');
- const custName=nameInput?nameInput.value.trim():'',custPhone=phoneInput?phoneInput.value.trim():'',custDate=dateInput?dateInput.value:'',custMethod=methodInput?methodInput.value:'pickup',custPayment=paymentInput?paymentInput.value:'cashapp',custNotes=notesInput?notesInput.value.trim():'';
- if(!custName){if(nameInput)nameInput.focus();toast(lang==='es'?'Por favor ingresa tu nombre':'Please enter your name');return;}
- if(!custPhone){if(phoneInput)phoneInput.focus();toast(lang==='es'?'Por favor ingresa tu teléfono o Instagram':'Please enter your phone or Instagram');return;}
- if(!custDate){if(dateInput)dateInput.focus();toast(lang==='es'?'Selecciona la fecha requerida':'Please select date needed');return;}
-
- const p=M.price(st),totalDollars=Math.round(p.totalCents/100),depositDollars=Math.round(totalDollars*0.5),balanceDollars=totalDollars-depositDollars;
- const KEY='ramos_by_julia_orders_v1';
+ const nameInput=$('ckoCustName'),phoneInput=$('ckoCustPhone'),dateInput=$('ckoCustDate');
+ const custName=nameInput?nameInput.value.trim():'',custPhone=phoneInput?phoneInput.value.trim():'',custDate=dateInput?dateInput.value:'';
+ if(!custName){if(nameInput)nameInput.focus();toast(lang==='es'?'Escribe tu nombre':'Please enter your name');return;}
+ if(!custPhone){if(phoneInput)phoneInput.focus();toast(lang==='es'?'Escribe tu teléfono':'Please enter your phone');return;}
+ if(!custDate){if(dateInput)dateInput.focus();toast(lang==='es'?'Elige la fecha':'Please select a pickup date');return;}
+ let image='';
+ try{
+  const src=$('bouquet');
+  if(src){
+   const out=document.createElement('canvas');
+   out.width=360;out.height=410;
+   out.getContext('2d').drawImage(src,0,0,360,410);
+   image=out.toDataURL('image/jpeg',0.74);
+  }
+ }catch(e){}
+ const p=M.price(st),totalDollars=Math.round(p.totalCents/100);
+ const KEY='ramos_by_julia_orders_v4';
  let list=[];
  try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){list=[];}
  let nextNum=105;
  (list||[]).forEach(o=>{const m=String(o.id||'').match(/(\d+)$/);if(m)nextNum=Math.max(nextNum,parseInt(m[1],10)+1);});
  const ticketId='RJ-'+nextNum;
- const paymentLabels={cashapp:'Cash App ($)',applepay:'Apple Pay',zelle:'Zelle'};
-
  const orderRecord={
   id:ticketId,
   createdAt:Date.now(),
-  status:'requested',
-  paid:false,
-  customer:{
-   name:custName,
-   phone:custPhone,
-   area:'Gresham, OR',
-   method:custMethod,
-   payment:custPayment,
-   date:custDate,
-   card:st.note||'',
-   specialRequests:custNotes
-  },
-  quote:{total:totalDollars,depositPct:50,deposit:depositDollars,balance:balanceDollars},
-  bouquet:{
-   template:st.mode,
-   title:st.title||'Custom Bouquet',
-   size:st.items.length+' Stems',
-   wrap:st.finishes.paper||'pleated',
-   ribbon:st.finishes.ribbon||'gold',
-   butterfly:!!st.finishes.butterfly,
-   sash:st.finishes.sash||'none',
-   note:st.note||'',
-   orderNotes:custNotes
-  }
+  status:'confirmed',
+  customer:{name:custName,phone:custPhone,date:custDate,method:'pickup'},
+  quote:{total:totalDollars},
+  bouquet:{template:st.mode,title:st.title.trim(),size:st.items.length+' stems',note:st.note||'',image:image}
  };
-
  list.unshift(orderRecord);
- try{localStorage.setItem(KEY,JSON.stringify(list));}catch(e){}
-
+ try{localStorage.setItem(KEY,JSON.stringify(list));}
+ catch(e){
+  orderRecord.bouquet.image='';
+  list[0]=orderRecord;
+  try{localStorage.setItem(KEY,JSON.stringify(list));}catch(err){}
+ }
  $('checkoutDialog').close();
- if($('tyTitle'))$('tyTitle').textContent='Thank you, '+custName.split(' ')[0]+'!';
+ if($('tyTitle'))$('tyTitle').textContent='Thank you, '+custName.split(' ')[0]+'.';
  if($('tyTicketId'))$('tyTicketId').textContent=ticketId;
  if($('tyContact'))$('tyContact').textContent=custPhone;
- if($('tyPayment'))$('tyPayment').textContent=paymentLabels[custPayment]||custPayment;
-
- const igMsg=encodeURIComponent(
-  'Hi Julia! I just placed custom bouquet order #'+ticketId+' on your builder:\n'+
-  '🌸 Bouquet: '+(st.title||'Custom Ramo')+' ('+st.items.length+' stems - $'+totalDollars+')\n'+
-  '📅 Date needed: '+custDate+'\n'+
-  '📍 Fulfillment: '+(custMethod==='pickup'?'Pickup in Gresham/Rockwood':'Delivery Inquiry')+'\n'+
-  '💳 Payment: '+(paymentLabels[custPayment]||custPayment)+'\n'+
-  '👤 Customer: '+custName+' ('+custPhone+')'
- );
- if($('tyIgLink'))$('tyIgLink').href='https://ig.me/m/ramos_by_juliaaa?text='+igMsg;
  $('thankYouDialog').showModal();
-}
-function orderViaInstagram(){
- const p=M.price(st),totalDollars=Math.round(p.totalCents/100);
- const nameVal=$('ckoCustName')?.value.trim()||'Customer';
- const phoneVal=$('ckoCustPhone')?.value.trim()||'DM';
- const dateVal=$('ckoCustDate')?.value||'Upcoming';
- const methodVal=$('ckoCustMethod')?.value==='pickup'?'Pickup (Gresham/Rockwood)':'Delivery Inquiry';
- const paymentVal=$('ckoCustPayment')?.value||'cashapp';
- const summary='Hi Julia! I\'d like to order this custom bouquet built on your atelier studio:\n'+
-  '💐 Arrangement: '+(st.title||'Custom Ramo')+' ('+st.mode+', '+st.items.length+' stems)\n'+
-  '💵 Total: $'+totalDollars+'\n'+
-  '📅 Date needed: '+dateVal+'\n'+
-  '📍 Fulfillment: '+methodVal+'\n'+
-  '💳 Payment: '+paymentVal+'\n'+
-  '👤 Customer: '+nameVal+' ('+phoneVal+')';
- window.open('https://ig.me/m/ramos_by_juliaaa?text='+encodeURIComponent(summary),'_blank');
 }
 function reduced(){return matchMedia('(prefers-reduced-motion: reduce)').matches;}
 function importDesign(raw){
@@ -328,7 +336,7 @@ function importDesign(raw){
 function commitTextEdit(){if(!editFocus)return;storeHistory(editFocus.before);editFocus=null;$('undo').disabled=!undoStack.length;$('redo').disabled=!redoStack.length;persist();}
 function syncText(input,key){
  input.onfocus=()=>{if(editFocus)commitTextEdit();editFocus={before:snap(),key};};
- input.oninput=()=>{st[key]=input.value.slice(0,key==='title'?70:180);if(key==='note')$('noteCounter').textContent=st.note.length+'/180';persist();};
+ input.oninput=()=>{st[key]=input.value.slice(0,key==='title'?70:180);if(key==='note')$('noteCounter').textContent=st.note.length+'/180';if(key==='title'&&$('finishOrder'))$('finishOrder').disabled=st.items.length===0||!st.title.trim();persist();};
  input.onblur=commitTextEdit;
 }
 function canvasPoint(e){const rect=$('bouquet').getBoundingClientRect();return {x:(e.clientX-rect.left)*720/rect.width,y:(e.clientY-rect.top)*820/rect.height};}
@@ -404,13 +412,8 @@ for(const key of ['butterfly','greenRim'])$(key).onchange=()=>change(()=>{st.fin
 syncText($('designName'),'title');syncText($('giftNote'),'note');
 for(const id of ['missingInline','missingWrapButton'])$(id).onclick=showMissing;$('helpButton').onclick=showHelp;$('gapCheck').onclick=showGap;
 $('saveTop').onclick=showSave;$('shareButton').onclick=shareBouquet;$('saveSquare').onclick=()=>exportPNG(false);$('saveStory').onclick=()=>exportPNG(true);$('saveJSON').onclick=()=>{download(new Blob([JSON.stringify({...M.portfolio(st,banks),activeEstimate:M.order(st,lang)},null,2)],{type:'application/json'}),'nebula-three-bouquets.json');$('exportStatus').textContent=t('savedJSON');};
-if($('orderTop'))$('orderTop').onclick=openCheckoutModal;
-if($('orderSummaryBtn'))$('orderSummaryBtn').onclick=openCheckoutModal;
-if($('finishToOrder'))$('finishToOrder').onclick=openCheckoutModal;
-if($('toFinishingBtn'))$('toFinishingBtn').onclick=()=>setTab('finishing');
+if($('finishOrder'))$('finishOrder').onclick=openCheckoutModal;
 if($('ckoSubmitOrder'))$('ckoSubmitOrder').onclick=submitCheckoutOrder;
-if($('ckoOrderInstagram'))$('ckoOrderInstagram').onclick=orderViaInstagram;
-if($('tySaveImage'))$('tySaveImage').onclick=()=>exportPNG(false);
 $('importFile').onchange=async()=>{const file=$('importFile').files[0];if(!file)return;try{if(file.size>1_000_000)throw new Error('oversize');importDesign(JSON.parse(await file.text()));}catch(e){toast(t('invalid'));}finally{$('importFile').value='';}};
 for(const el of document.querySelectorAll('[data-close]'))el.onclick=()=>$(el.dataset.close).close();
 $('confirmCancel').onclick=()=>{$('confirmDialog').close();confirmFn=null;};$('confirmYes').onclick=()=>{const fn=confirmFn;confirmFn=null;$('confirmDialog').close();if(fn)fn();};
@@ -433,6 +436,8 @@ function fitPhoneCanvas(){
 addEventListener('scroll',positionDelete,{passive:true});
 new ResizeObserver(fitPhoneCanvas).observe($('artSurface'));addEventListener('resize',fitPhoneCanvas);fitPhoneCanvas();
 localize();renderStudio();
+addEventListener('hashchange',()=>{if(applyCatalogHash()){render();if(isReady)R.ready([st,...Object.values(banks)]).then(()=>scheduleCanvas());}});
+
 /* Wait only for the artwork the three saved bouquets actually use; the rest of the
    catalogue decodes in the background and each arrival triggers a repaint. */
 R.onAssetReady=()=>{if(isReady)scheduleCanvas();};
