@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nebula-site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "--listen", "8140", "."],
+      "port": 8140
+    }
+  ]
+}

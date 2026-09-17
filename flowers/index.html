@@ -1476,11 +1476,11 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <h2 class="contact-headline" id="contactHeading">Ready to grow something <span>beautiful?</span></h2>
     <p class="contact-desc">Tell us about your shop. We'll show you exactly what your florist website could be — we reply within 24 hours.</p>
     <div class="contact-channels">
-      <a href="mailto:hello@nebulastudio.site" class="contact-ch">
+      <a href="mailto:nebulastudiosite@gmail.com" class="contact-ch">
         <span class="contact-ch-icon" aria-hidden="true">&#9993;</span>
         <div class="contact-ch-info">
           <div class="contact-ch-label">Email</div>
-          <div class="contact-ch-val">hello@nebulastudio.site</div>
+          <div class="contact-ch-val">nebulastudiosite@gmail.com</div>
         </div>
       </a>
       <a href="https://www.instagram.com/nebulaa_studio" class="contact-ch" target="_blank" rel="noopener noreferrer">
@@ -1498,10 +1498,10 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   </div>
 
   <!-- 08. FORMSUBMIT FORM -->
-  <!-- Contact form posts to Formspree (form ID: meajaojg). Every lead is stored in the
-       Formspree dashboard AND emailed to hello@nebulastudio.site, so nothing is ever lost. -->
+  <!-- Contact form posts to Formspree (form ID: xaenyaqa). Every lead is stored in the
+       Formspree dashboard AND emailed to nebulastudiosite@gmail.com, so nothing is ever lost. -->
   <form class="contact-form" id="contactForm"
-        action="https://formspree.io/f/meajaojg"
+        action="https://formspree.io/f/xaenyaqa"
         method="POST" novalidate data-reveal>
     <input type="hidden" name="_subject" value="New lead from nebulastudio.site/flowers">
     <input type="hidden" name="_template" value="table">
@@ -1520,14 +1520,14 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     </div>
     <div class="form-group">
       <label for="fbudget">Budget Range</label>
-      <input type="text" id="fbudget" name="budget" placeholder="e.g. $1,500–$3,000" />
+      <input type="text" id="fbudget" name="budget" placeholder="e.g. $650 setup + $49/mo, or $350 catalog" />
     </div>
     <div class="form-group">
       <label for="fmessage">What do you need?</label>
       <textarea id="fmessage" name="message" rows="4" placeholder="Tell us about your project, your goals, your deadline…" required></textarea>
     </div>
     <!-- Hidden honeypot anti-spam -->
-    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
     <div class="form-status" id="formStatus"></div>
     <button type="submit" class="btn btn-primary btn-full" id="formBtn">Send Message &nbsp;&#10003;</button>
     <p class="form-note">No spam. No obligations. Just a real conversation.</p>
@@ -2210,7 +2210,7 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             const whatsappHint = document.createElement('p')
             whatsappHint.style.cssText = 'font-size:.78rem;color:var(--text-muted);margin-top:.5rem;'
-            whatsappHint.innerHTML = 'You can also reach us directly by <a href="mailto:hello@nebulastudio.site" style="color:var(--accent)">email ↗</a> for a faster reply.'
+            whatsappHint.innerHTML = 'You can also reach us directly by <a href="mailto:nebulastudiosite@gmail.com" style="color:var(--accent)">email ↗</a> for a faster reply.'
             formStat.after(whatsappHint)
             setTimeout(()=>whatsappHint.remove(), 8000)
           }, 1200)
@@ -2236,7 +2236,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Budget: ' + (form.budget.value.trim() || '—') + '\n\n' +
           msg
         )
-        formStat.innerHTML = '✕ Our form service did not respond. <a href="mailto:hello@nebulastudio.site?subject=' + subject + '&body=' + body + '" style="color:var(--accent);text-decoration:underline">Send it by email instead ↗</a> — everything you typed is already filled in.'
+        formStat.innerHTML = '✕ Our form service did not respond. <a href="mailto:nebulastudiosite@gmail.com?subject=' + subject + '&body=' + body + '" style="color:var(--accent);text-decoration:underline">Send it by email instead ↗</a> — everything you typed is already filled in.'
         formStat.className   = 'form-status error'
       } finally {
         formBtn.innerHTML = originalText

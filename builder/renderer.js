@@ -71,7 +71,9 @@ function collarNode(s,f){
 function finishNodes(s,f,nodes){
  const list=[];function add(key,id,x,y,w,rot=0){const m=NEBULA_META.finishes[id];list.push({uid:key,url:m.url,x,y,w,h:w*m.height/m.width,rot,d:w,bright:1,z:500});}
  const a=s.finishes,classic=s.mode==='classic',extent=nodes.length?Math.max(...nodes.map(n=>n.x+n.w*.45))-Math.min(...nodes.map(n=>n.x-n.w*.45)):260;
- if(a.ribbon!=='none')add('ribbon','ribbon_'+a.ribbon,360,classic?f.waist.y+18:f.center.y+f.radius+f.unit*.40,classic?110:G.clamp(f.unit*1.06,80,115));
+ /* A ribbon is tied around the stems. Dome and Heart look straight down, where
+    there is no stem to tie it to, so the ribbon is Classic only. */
+ if(classic&&a.ribbon!=='none')add('ribbon','ribbon_'+a.ribbon,360,f.waist.y+18,110);
  if(a.sash!=='none'){
   /* The sash always spans the bouquet it sits on; there is no width control to
      get wrong. Dome and Heart measure the collar, Classic measures the blooms. */

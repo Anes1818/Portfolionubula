@@ -28,7 +28,9 @@ function price(s){
  /* The eucalyptus collar is 8 real sprigs a florist must supply, so it is priced as
     8 catalogue units rather than hidden as free decoration. */
  if(s.mode==='dome'&&s.finishes.greenRim)extraLines.push({id:'greenRim',quantity:G.GREEN_RIM,totalCents:G.GREEN_RIM*CAT.eucalyptus.priceCents});
- for(const name of ['ribbon','sash'])if(s.finishes[name]!=='none')extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
+ /* The ribbon is Classic only - see finishNodes. A Dome or Heart design saved with
+    one keeps the value so Classic can restore it, but is never charged for it. */
+ for(const name of s.mode==='classic'?['ribbon','sash']:['sash'])if(s.finishes[name]!=='none')extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
  const extrasCents=extraLines.reduce((n,x)=>n+x.totalCents,0);
  return {currency:CONFIG.currency,demo:CONFIG.demo,estimateOnly:true,lines,extraLines,flowersCents,baseCents,laborCents,extrasCents,totalCents:flowersCents+baseCents+laborCents+extrasCents,flowers:s.items.filter(i=>CAT[i.id].kind==='flower').length,texture:s.items.filter(i=>CAT[i.id].kind==='texture').length,chocolates:s.items.filter(i=>CAT[i.id].kind==='chocolate').length,pieces:s.items.length};
 }

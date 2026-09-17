@@ -114,6 +114,7 @@ function render(save=true){
  $('wrapHeading').textContent=t(top?'blackCollar':'ivoryPaper');$('wrapCopy').textContent=t(top?'collarDescription':'wrapDescription');$('wrapEyebrow').textContent=t(top?'realPaper':'oneOriginal');
  $('wrapPreview').src=R.source(top?NEBULA_META.collars[st.mode].url:(NEBULA_META.wraps?.[st.finishes.paper]||NEBULA_META.wrap).back);$('wrapPreview').alt=t(top?'blackCollar':'wrapAlt');$('customTintLabel').hidden=st.finishes.paper!=='custom';$('customTint').value=st.finishes.tint;
  $('sash').value=st.finishes.sash;$('sashSettings').hidden=st.finishes.sash==='none';$('sashPosition').value=st.finishes.sashPlacement||'auto';$('sashOffset').value=st.finishes.sashOffset||0;
+ $('ribbonBlock').hidden=st.mode!=='classic';
  $('greenRimLabel').hidden=st.mode!=='dome';$('greenRim').checked=!!st.finishes.greenRim;
  $('greenRimPrice').textContent=M.money(G.GREEN_RIM*CAT.eucalyptus.priceCents,lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
  for(const key of ['butterfly']){$(key).checked=st.finishes[key];$(key+'Price').textContent=M.money(CONFIG.extrasCents[key],lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');}
@@ -165,6 +166,7 @@ function renderPaper(){
  }));
 }
 function renderRibbons(){
+ if(st.mode!=='classic'){$('ribbonChoices').replaceChildren();return;}
  $('ribbonChoices').replaceChildren(...['none','blush','burgundy','sage'].map(id=>{
   const b=button('','',()=>change(()=>{st.finishes.ribbon=id;}));if(id!=='none'){const im=document.createElement('img');im.src=R.source(NEBULA_META.finishes['ribbon_'+id].url);im.alt='';b.append(im);}else{const n=document.createElement('span');n.className='no-ribbon';n.textContent='—';b.append(n);}const label=document.createElement('span');label.textContent=t(id);b.append(label);pressed(b,st.finishes.ribbon===id);b.dataset.ribbon=id;b.setAttribute('aria-label',t('ribbon')+': '+t(id));return b;
  }));
