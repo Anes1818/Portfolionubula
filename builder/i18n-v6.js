@@ -56,3 +56,35 @@ Object.assign(NebulaI18n.es,{
  sharedTitle:"Este ramo fue diseñado para ti.", sharedText:"Cambia lo que quieras — ahora es tuyo.",
  linkCopied:"Enlace copiado.", shareLinkLabel:"Copiar enlace del diseño"
 });
+
+/* Florist order sheet */
+Object.assign(NebulaI18n.en,{
+ printOrder:"Print", orderLoadingText:"Loading the order…",
+ orderBrokenText:"This order link could not be read. Ask your customer to send it again.",
+ orderSheetEyebrow:"CUSTOMER ORDER", osNoRef:"Order",
+ osCustomer:"Customer", osCardNote:"Card message", osRecipe:"What to make",
+ osEstimate:"Studio estimate", sampleShort:"sample",
+ osDisclaimer:"Prices come from the studio settings. Confirm stock, feasibility and the final price with your customer.",
+ osReply:"Reply on WhatsApp", osOpenStudio:"Open in the studio",
+ osReplyText:"Hi! About your bouquet order {ref} —"
+});
+Object.assign(NebulaI18n.es,{
+ printOrder:"Imprimir", orderLoadingText:"Cargando el pedido…",
+ orderBrokenText:"No se pudo leer este enlace de pedido. Pide a tu clienta que lo envíe de nuevo.",
+ orderSheetEyebrow:"PEDIDO DE CLIENTA", osNoRef:"Pedido",
+ osCustomer:"Clienta", osCardNote:"Mensaje de la tarjeta", osRecipe:"Qué preparar",
+ osEstimate:"Estimado del estudio", sampleShort:"muestra",
+ osDisclaimer:"Los precios vienen de la configuración del estudio. Confirma existencias, viabilidad y el precio final con tu clienta.",
+ osReply:"Responder por WhatsApp", osOpenStudio:"Abrir en el estudio",
+ osReplyText:"¡Hola! Sobre tu pedido de ramo {ref} —"
+});
+
+/* Work-order labels (florist side) */
+Object.assign(NebulaI18n.en,{
+ osName:"Name", osPhone:"Phone", osNeeded:"Needed", osHandover:"Pickup / delivery",
+ osPayBy:"Paying by", osNotes:"Notes"
+});
+Object.assign(NebulaI18n.es,{
+ osName:"Nombre", osPhone:"Teléfono", osNeeded:"Para", osHandover:"Recoger / entrega",
+ osPayBy:"Paga con", osNotes:"Notas"
+});

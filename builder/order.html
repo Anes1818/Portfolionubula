@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5ef"><meta name="robots" content="noindex">
+<title>Order — Nebula</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="app.css">
+<script src="shop-config.js" defer></script><script src="config.js" defer></script><script src="asset-meta.js" defer></script><script src="assets-bundle.js" defer></script><script src="dome-engine-v2.js" defer></script><script src="template-engine.js" defer></script><script src="geometry.js" defer></script><script src="model.js" defer></script><script src="i18n.js" defer></script><script src="i18n-v6.js" defer></script><script src="renderer.js" defer></script><script src="design-link.js" defer></script><script src="order.js" defer></script>
+</head>
+<body class="order-sheet">
+<header class="site-header">
+ <a class="brand" href="https://nebulastudio.site" aria-label="Nebula bouquet studio"><span class="brand-chip"><img src="assets/brand/logo-mark.webp" alt="" width="44" height="44" decoding="async"></span><span><span id="brandName">Nebula</span><small data-i18n="studio">THE BOUQUET STUDIO</small></span></a>
+ <div class="header-actions"><label class="language-label"><span class="sr-only">Language</span><select id="language" aria-label="Language"><option value="en">EN</option><option value="es">ES</option></select></label><button id="printBtn" class="button secondary small" data-i18n="printOrder">Print</button></div>
+</header>
+
+<main class="order-main">
+ <div id="orderLoading" role="status" data-i18n="orderLoadingText">Loading the order…</div>
+
+ <div id="orderBroken" class="broken-notice" hidden data-i18n="orderBrokenText">This order link could not be read. Ask your customer to send it again.</div>
+
+ <article id="orderSheet" hidden>
+  <div class="os-top">
+   <div><p class="eyebrow" data-i18n="orderSheetEyebrow">CUSTOMER ORDER</p><h1 id="osRef">—</h1></div>
+   <span class="os-stamp" id="osWhen">—</span>
+  </div>
+
+  <div class="os-grid">
+   <figure class="os-figure"><canvas id="osCanvas" width="540" height="615" aria-label="Bouquet the customer designed"></canvas><figcaption id="osTitle" class="os-figcap"></figcaption></figure>
+
+   <div class="os-side">
+    <section class="os-card">
+     <h2 data-i18n="osCustomer">Customer</h2>
+     <dl id="osCustomerList"></dl>
+    </section>
+    <section class="os-card os-note" id="osNoteCard" hidden>
+     <h2 data-i18n="osCardNote">Card message</h2>
+     <blockquote id="osNote"></blockquote>
+    </section>
+   </div>
+  </div>
+
+  <section class="os-card os-recipe">
+   <h2 data-i18n="osRecipe">What to make</h2>
+   <ul id="osStems" class="os-stems"></ul>
+   <div id="osFinishes" class="os-finishes"></div>
+   <div class="os-total"><span data-i18n="osEstimate">Studio estimate</span><strong id="osTotal">—</strong></div>
+   <p class="helper" data-i18n="osDisclaimer">Prices come from the studio settings. Confirm stock, feasibility and the final price with your customer.</p>
+  </section>
+
+  <div class="os-actions">
+   <a id="osReply" class="button primary" href="#" data-i18n="osReply">Reply on WhatsApp</a>
+   <a id="osOpenStudio" class="button secondary" href="#" data-i18n="osOpenStudio">Open in the studio</a>
+  </div>
+ </article>
+</main>
+
+<footer class="site-footer"><span id="osFooter"></span></footer>
+<noscript><p class="noscript">JavaScript is needed to read this order.</p></noscript>
+</body></html>

@@ -172,3 +172,38 @@ dialog{background:var(--surface);color:var(--text);border:1px solid var(--border
 .shared-banner{display:flex;flex-direction:column;gap:3px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;margin-bottom:14px}
 .shared-banner strong{font:16px/1.3 var(--serif);color:var(--accent)}
 .shared-banner span{font-size:13px;color:var(--muted)}
+
+/* ── Florist order sheet (order.html) ───────────────────────── */
+.order-main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+.order-sheet .site-header{margin-bottom:8px}
+#orderLoading{padding:40px 0;text-align:center;color:var(--muted)}
+.os-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.os-top h1{font:32px/1.15 var(--serif);letter-spacing:-.6px;margin:4px 0 0}
+.os-stamp{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700}
+.os-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:700px){.os-grid{grid-template-columns:1fr}}
+.os-figure{margin:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.os-figure canvas{width:100%;height:auto;max-width:420px}
+.os-figcap{font:17px/1.3 var(--serif);color:var(--text);margin-top:6px}
+.os-side{display:flex;flex-direction:column;gap:16px}
+.os-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.os-card h2{font:13px/1 var(--sans);font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.os-card dl{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin:0}
+.os-card dt{font-size:13px;color:var(--muted)}
+.os-card dd{margin:0;font-size:15px;font-weight:600;color:var(--text)}
+.os-note blockquote{margin:0;font:17px/1.5 var(--serif);color:var(--text);border-left:3px solid var(--accent);padding-left:12px}
+.os-stems{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
+.os-stems li{display:flex;gap:10px;align-items:baseline;font-size:16px;padding-bottom:7px;border-bottom:1px dashed var(--border)}
+.os-stems strong{min-width:44px;color:var(--accent);font-weight:700}
+.os-finishes{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.os-chip{background:var(--subtle);border:1px solid var(--border);border-radius:99px;padding:5px 11px;font-size:13px;color:var(--text)}
+.os-total{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:2px solid var(--border);font-size:14px;color:var(--muted)}
+.os-total strong{font-size:22px;color:var(--text)}
+.os-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.os-actions .button{flex:1 1 200px}
+@media print{
+ .site-header,.os-actions,.site-footer,#printBtn{display:none!important}
+ .order-main{max-width:none;padding:0}
+ .os-card,.os-figure{break-inside:avoid;border-color:#bbb}
+ body{background:#fff}
+}

@@ -188,62 +188,10 @@ function showSave(){if(editFocus)commitTextEdit();R.paint($('savePreview'),st);$
    Opens WhatsApp with the design written out. Nothing is charged here and no
    order record is created - the florist confirms availability and final price.
    wa.me carries text only, so the bouquet travels as words, not an attachment. */
-/* ── Design links ─────────────────────────────────────────────
-   A bouquet travels as a short code in the URL, so a florist can open the exact
-   design with no server, no database and no image hosting. The recipe is encoded,
-   not the pixel layout: flowers are run-length coded in slot order, which keeps a
-   84-slot dome under ~200 characters. The engine re-arranges from the recipe. */
-function encodeDesign(s){
- /* Dome and Heart keep the design in template.overrides, so the sequence has to be
-    read per slot - an item list alone loses both the pattern and the empty slots. */
- let seq;
- if(s.mode==='classic')seq=s.items.map(it=>it.id);
- else{const cap=(s.template&&s.template.capacity)||0;seq=new Array(cap).fill('-');
-      for(const it of s.items)if(Number.isInteger(it.slot)&&it.slot<cap)seq[it.slot]=it.id;}
- const runs=[];for(const id of seq){const last=runs[runs.length-1];if(last&&last[0]===id)last[1]++;else runs.push([id,1]);}
- const f=s.finishes,payload={v:6,m:s.mode,s:s.seed,f:runs};
- if(s.mode!=='classic'&&s.template&&s.template.capacity)payload.c=s.template.capacity;
- const fin={};for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
- if(f.butterfly)fin.b=1;if(f.greenRim)fin.g=1;if(f.tint&&f.paper==='custom')fin.c=f.tint;
- if(Object.keys(fin).length)payload.fin=fin;
- if((s.title||'').trim())payload.t=s.title.trim().slice(0,70);
- const json=JSON.stringify(payload);
- return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-function decodeDesign(code){
- try{
-  const b64=code.replace(/-/g,'+').replace(/_/g,'/'),json=decodeURIComponent(escape(atob(b64))),p=JSON.parse(json);
-  if(!p||p.v!==6||!['classic','dome','heart'].includes(p.m)||!Array.isArray(p.f))return null;
-  const seq=[];for(const run of p.f){if(!Array.isArray(run))return null;const id=run[0];if(id!=='-'&&!Object.hasOwn(CAT,id))return null;const n=Math.min(Number(run[1])||0,200);for(let i=0;i<n;i++)seq.push(id==='-'?null:id);}
-  if(!seq.length||seq.length>200||!seq.some(Boolean))return null;
-  const s=M.defaultMode(p.m);
-  if(Number.isInteger(p.s)&&p.s>0&&p.s<1e8)s.seed=p.s;
-  if(p.m==='classic'){
-   s.items=[];s.nextId=1;
-   for(const id of seq)if(id)s.items.push(M.newItem(s,id));
-  }else{
-   if(!Number.isInteger(p.c)||p.c<1||p.c>100)return null;
-   M.resize(s,p.c);
-   if(seq.length!==p.c)return null;
-   /* Write the pattern into the template, then rebuild items from it once. */
-   s.template.overrides={};
-   seq.forEach((id,slot)=>{s.template.overrides[slot]=id;});
-   M.syncTemplate(s);
-  }
-  const fin=p.fin||{};
-  for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(fin[k])s.finishes[key]=String(fin[k]);
-  s.finishes.butterfly=fin.b===1;s.finishes.greenRim=fin.g===1;
-  if(fin.c)s.finishes.tint=String(fin.c);
-  if(p.t)s.title=String(p.t).slice(0,70);
-  /* Classic needs a fresh arrangement; the templates are already positioned by syncTemplate. */
-  if(s.mode==='classic'){s.frames={};M.arrange(s,s.mode,{fresh:true});}
-  return M.validate(s);
- }catch(e){return null;}
-}
-function designLink(){
- const base=(window.NEBULA_SHOP&&NEBULA_SHOP.builderUrl)||location.origin+location.pathname.replace(/[^/]*$/,'');
- return base+'#b='+encodeDesign(st);
-}
+/* Links are built by design-link.js so the studio and the florist's order sheet
+   always read and write the same format. */
+function siteBase(){return location.origin+location.pathname.replace(/[^/]*$/,'');}
+function designLink(order){return siteBase()+(order?'order.html':'index.html')+'#b='+NebulaLink.encode(st,order);}
 function shopDigits(){const s=window.NEBULA_SHOP||{};return String(s.whatsapp||(s.studio&&s.studio.phone)||'').replace(/\D/g,'');}
 function orderRef(){return 'NB-'+Date.now().toString(36).slice(-5).toUpperCase();}
 function orderSummary(){
@@ -289,7 +237,12 @@ function orderText(ref){
  L.push('');
  L.push(t('orderMsgEstimate')+': '+s.total);
  L.push('');
- L.push('👉 '+t('orderMsgSeeIt')+': '+designLink());
+ /* The florist's link is the order sheet, not the editor: picture, recipe and who
+    it is for, all on one page she can work from or print. */
+ L.push('👉 '+t('orderMsgSeeIt')+': '+designLink({
+  ref, name:v('ordName'), phone:v('ordPhone'), date:v('ordDate'),
+  method:label('ordMethod'), pay:label('ordPay'), note:v('ordNote')
+ }));
  return L.join('\n');
 }
 function sendOrder(e){
@@ -451,11 +404,11 @@ R.onAssetReady=()=>{if(isReady)scheduleCanvas();};
 /* A shared link wins over saved local work, but never overwrites it: the visitor's
    own bouquets stay in their bank and localStorage is left untouched until they edit. */
 function openSharedDesign(){
- const m=/[#&]b=([A-Za-z0-9\-_]+)/.exec(location.hash||'');
- if(!m)return false;
- const design=decodeDesign(m[1]);
- if(!design){toast(t('linkInvalid'));return false;}
- banks[st.mode]=M.clone(st);st=design;banks[st.mode]=M.clone(st);
+ const code=NebulaLink.readHash(location.hash);
+ if(!code)return false;
+ const parsed=NebulaLink.decode(code);
+ if(!parsed){toast(t('linkInvalid'));return false;}
+ banks[st.mode]=M.clone(st);st=parsed.design;banks[st.mode]=M.clone(st);
  undoStack=[];redoStack=[];selected=null;hover=null;
  $('sharedBanner').hidden=false;
  return true;
