@@ -88,3 +88,19 @@ Object.assign(NebulaI18n.es,{
  osName:"Nombre", osPhone:"Teléfono", osNeeded:"Para", osHandover:"Recoger / entrega",
  osPayBy:"Paga con", osNotes:"Notas"
 });
+
+/* Kraft wrap */
+Object.assign(NebulaI18n.en,{kraft:"Kraft"});
+Object.assign(NebulaI18n.es,{kraft:"Kraft"});
+
+/* Kraft is a second photographed classic wrap, so the tint note is no longer true. */
+Object.assign(NebulaI18n.en,{
+ tintDisclosure:"Classic uses the ivory and kraft photographs; top-view collars use the black photographs. Other paper tones are digital studies, not separate photographed materials."
+});
+Object.assign(NebulaI18n.es,{
+ tintDisclosure:"El clásico usa las fotos de marfil y kraft; los collares de vista superior usan las fotos negras. Los demás tonos son estudios digitales, no materiales fotografiados aparte."
+});
+
+/* Linen wrap */
+Object.assign(NebulaI18n.en,{linen:"Linen"});
+Object.assign(NebulaI18n.es,{linen:"Lino"});
