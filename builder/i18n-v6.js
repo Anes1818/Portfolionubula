@@ -12,3 +12,47 @@ Object.assign(NebulaI18n.en,{free:'Included',artworkCaveat:'Supplied original ph
 Object.assign(NebulaI18n.es,{free:'Incluido',artworkCaveat:'Se conservan las fotos originales. Los cambios de color son simulaciones; las letras forman parte de la foto. El precio y montaje requieren confirmación de la floristería.'});
 
 Object.assign(NebulaI18n.en,{viewControls:'Preview controls'});Object.assign(NebulaI18n.es,{viewControls:'Controles de vista previa'});
+
+/* Order flow — opens WhatsApp with the design written out. No payment is taken. */
+Object.assign(NebulaI18n.en,{
+ orderIt:"Order it", orderEyebrow:"SEND TO THE SHOP", orderTitle:"Send your bouquet.",
+ orderHint:"She receives your design and confirms the details with you. Nothing is charged here.",
+ orderName:"Your name", orderPhone:"Phone or WhatsApp", orderDate:"When do you need it?",
+ orderMethod:"Pickup or delivery?", optPickup:"Pickup", optDelivery:"Delivery",
+ orderPay:"How would you like to pay?", optCash:"Cash", optAsk:"Ask me",
+ orderNote:"Anything else?", optional:"(optional)",
+ orderSend:"Send my order on WhatsApp",
+ orderFine:"Opens WhatsApp with your order written out. She confirms availability and the final price.",
+ orderMissing:"Please add your name, a number and a date.",
+ orderNoShop:"This shop has not added a WhatsApp number yet.",
+ orderOpened:"WhatsApp opened — press send.",
+ orderMsgNew:"New order", orderMsgWhen:"When", orderMsgPay:"Pay by",
+ orderMsgNote:"Note", orderMsgEstimate:"Estimate", estimateLabel:"Estimate", pieces:"pieces"
+});
+Object.assign(NebulaI18n.es,{
+ orderIt:"Pedirlo", orderEyebrow:"ENVIAR A LA FLORISTERÍA", orderTitle:"Envía tu ramo.",
+ orderHint:"Ella recibe tu diseño y confirma los detalles contigo. Aquí no se cobra nada.",
+ orderName:"Tu nombre", orderPhone:"Teléfono o WhatsApp", orderDate:"¿Para cuándo lo necesitas?",
+ orderMethod:"¿Recoger o entrega?", optPickup:"Recoger", optDelivery:"Entrega",
+ orderPay:"¿Cómo prefieres pagar?", optCash:"Efectivo", optAsk:"Pregúntame",
+ orderNote:"¿Algo más?", optional:"(opcional)",
+ orderSend:"Enviar mi pedido por WhatsApp",
+ orderFine:"Abre WhatsApp con tu pedido ya escrito. Ella confirma disponibilidad y el precio final.",
+ orderMissing:"Agrega tu nombre, un número y una fecha.",
+ orderNoShop:"Esta floristería aún no ha agregado un número de WhatsApp.",
+ orderOpened:"WhatsApp abierto — pulsa enviar.",
+ orderMsgNew:"Nuevo pedido", orderMsgWhen:"Cuándo", orderMsgPay:"Pago",
+ orderMsgNote:"Nota", orderMsgEstimate:"Estimado", estimateLabel:"Estimado", pieces:"piezas"
+});
+
+/* Shared-design links */
+Object.assign(NebulaI18n.en,{
+ orderMsgSeeIt:"See it", linkInvalid:"That bouquet link could not be read.",
+ sharedTitle:"This bouquet was designed for you.", sharedText:"Change anything you like — it is yours now.",
+ linkCopied:"Link copied.", shareLinkLabel:"Copy design link"
+});
+Object.assign(NebulaI18n.es,{
+ orderMsgSeeIt:"Míralo", linkInvalid:"No se pudo leer ese enlace de ramo.",
+ sharedTitle:"Este ramo fue diseñado para ti.", sharedText:"Cambia lo que quieras — ahora es tuyo.",
+ linkCopied:"Enlace copiado.", shareLinkLabel:"Copiar enlace del diseño"
+});
