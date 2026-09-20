@@ -145,10 +145,8 @@ function finishNodes(s,f,nodes){
       classic?f.rimY+p.y:390+f.radius*p.cy,
       p.w,p.rot);
  }
- /* A crown is worn: it rides the top edge of the bouquet, centred. A money fan is
-    tucked in at the side, angled out of the blooms the way a florist sets one. */
+ /* A crown is worn: it rides the top edge of the bouquet, centred. */
  if(a.crown)add('crown','extra_crown_gold',360,classic?f.rimY-118:f.center.y-f.radius*.86,classic?230:f.radius*1.05,0);
- if(a.money)add('money','extra_money_fan',classic?252:360-f.radius*.62,classic?f.rimY-92:f.center.y-f.radius*.42,classic?190:f.radius*.86,-.28);
  return list;
 }
 function scene(s){const sc=G.nodes(s);sc.finishes=finishNodes(s,sc.frame,sc.nodes);sc.collar=collarNode(s,sc.frame);return sc;}

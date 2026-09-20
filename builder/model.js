@@ -7,7 +7,7 @@ const live=id=>RETIRED[id]||id;
    before that - a saved file, a shared link - still carries `true`, which meant
    exactly the one butterfly it drew, so that is what it decodes to. */
 const wings=v=>v===true?1:(Number.isInteger(v)?Math.max(0,Math.min(CONFIG.limits.butterflies,v)):0);
-function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],frames:{},finishes:{paper:'ivory',tint:'#dcc8b7',ribbon:'none',sash:'none',sashText:'',sashPlacement:'auto',sashOffset:0,sashScale:1,collar:true,butterfly:0,crown:false,money:false,greenRim:false},title:'',note:''};}
+function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],frames:{},finishes:{paper:'ivory',tint:'#dcc8b7',ribbon:'none',sash:'none',sashText:'',sashPlacement:'auto',sashOffset:0,sashScale:1,collar:true,butterfly:0,crown:false,greenRim:false},title:'',note:''};}
 function newItem(s,id){return {uid:'b'+s.nextId++,id,anchors:{}};}
 function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  if(mode!=='classic'){if(!s.template)migrateTemplate(s);return syncTemplate(s);}
@@ -29,10 +29,10 @@ function price(s){
  const lines=Object.entries(counts(s)).map(([id,quantity])=>({id,quantity,unitCents:CAT[id].priceCents,totalCents:quantity*CAT[id].priceCents}));
  const flowersCents=lines.reduce((n,line)=>n+line.totalCents,0),baseCents=s.items.length?CONFIG.baseCents:0,laborCents=s.items.length?CONFIG.laborCents[s.mode]:0;
  const extraLines=[];
- /* Butterflies are charged per butterfly; the crown and the fan are one each. */
+ /* Butterflies are charged per butterfly; the crown is one. */
  const bf=wings(s.finishes.butterfly);
  if(bf)extraLines.push({id:'butterfly',quantity:bf,totalCents:bf*CONFIG.extrasCents.butterfly});
- for(const name of ['crown','money'])if(s.finishes[name])extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
+ if(s.finishes.crown)extraLines.push({id:'crown',quantity:1,totalCents:CONFIG.extrasCents.crown});
  /* The wrap is real eucalyptus a florist must cut and place, so every sprig is
     priced as a catalogue unit rather than hidden as free decoration. The count is
     no longer a fixed eight - it follows the silhouette, so a bigger bouquet needs
@@ -179,7 +179,7 @@ function migrateV3(raw){
  if(!G.capacity(s.items,s.mode).ok)s.mode='dome';
  for(const k of ['ribbon','sash']){const allowed=k==='ribbon'?['none','blush','burgundy','sage']:['none','love','bday','wed'];if(allowed.includes(raw[k]))s.finishes[k]=raw[k];}
  s.finishes.butterfly=wings(raw.butterfly);
- for(const k of ['crown','money'])s.finishes[k]=raw[k]===true;
+ s.finishes.crown=raw.crown===true;
  s.title=String(raw.title||'').slice(0,70);s.note=String(raw.note||'').slice(0,180);arrange(s,s.mode,{fresh:true});return validate(s);
 }
 function order(s,lang='en'){return {format:'nebula-bouquet',version:6,estimateOnly:true,currency:CONFIG.currency,design:clone(s),pickList:price(s).lines.map(l=>({...l,name:CAT[l.id][lang]})),pricing:price(s),artworkLimitations:[],templateCapacity:s.template?.capacity||null,emptySlots:s.template?s.template.capacity-s.items.length:0,notice:(CONFIG.demo?'Sample prices. ':'')+'Estimate only; florist must confirm price, stock, feasibility and delivery. No order has been placed or sent.'};}

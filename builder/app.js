@@ -118,7 +118,7 @@ function render(save=true){
  $('greenRimLabel').hidden=st.mode==='classic';$('greenRim').checked=!!st.finishes.greenRim;
  const sprigs=G.greenRimStems({...st,finishes:{...st.finishes,greenRim:true}});
  $('greenRimPrice').textContent=M.money(sprigs*CAT.eucalyptus.priceCents,lang)+' · '+sprigs+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
- for(const key of ['crown','money']){$(key).checked=st.finishes[key];$(key+'Price').textContent=M.money(CONFIG.extrasCents[key],lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');}
+ $('crown').checked=!!st.finishes.crown;$('crownPrice').textContent=M.money(CONFIG.extrasCents.crown,lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
   /* Butterflies are a count now, so the price reads "each" and the stepper ends
      disable at the limits instead of silently refusing a press. */
   const bf=st.finishes.butterfly|0,maxBf=CONFIG.limits.butterflies;
@@ -381,7 +381,7 @@ $('resetSash').onclick=()=>change(()=>{st.finishes.sashPlacement='auto';st.finis
 $('showCollar').onchange=()=>change(()=>{st.finishes.collar=$('showCollar').checked;});
 $('focusPreview').onclick=()=>setFocusPreview(!focusPreview);
 $('loadFromSave').onclick=()=>{$('saveDialog').close();$('importFile').click();};
-for(const key of ['crown','money','greenRim'])$(key).onchange=()=>change(()=>{st.finishes[key]=$(key).checked;});
+for(const key of ['crown','greenRim'])$(key).onchange=()=>change(()=>{st.finishes[key]=$(key).checked;});
 for(const [id,step] of [['butterflyLess',-1],['butterflyMore',1]])$(id).onclick=()=>change(()=>{
  st.finishes.butterfly=Math.max(0,Math.min(CONFIG.limits.butterflies,(st.finishes.butterfly|0)+step));});
 syncText($('designName'),'title');syncText($('giftNote'),'note');

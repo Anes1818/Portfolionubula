@@ -107,12 +107,12 @@ Object.assign(NebulaI18n.es,{linen:"Lino"});
 
 /* New accent categories */
 Object.assign(NebulaI18n.en,{
- strawberries:"Strawberries", crowns:"Crowns", moneyFans:"Money fans",
- strawberryNotClassic:"Top view only", crownNotClassic:"Top view only", moneyNotClassic:"Top view only"
+ strawberries:"Strawberries",
+ strawberryNotClassic:"Top view only",
 });
 Object.assign(NebulaI18n.es,{
- strawberries:"Fresas", crowns:"Coronas", moneyFans:"Abanicos de billetes",
- strawberryNotClassic:"Solo vista superior", crownNotClassic:"Solo vista superior", moneyNotClassic:"Solo vista superior"
+ strawberries:"Fresas",
+ strawberryNotClassic:"Solo vista superior",
 });
 
 /* Personalised sashes */
@@ -125,6 +125,6 @@ Object.assign(NebulaI18n.es,{
  sashTextLabel:"¿Qué quieres que diga?", sashTextHint:"Feliz Cumpleaños"
 });
 
-/* Crown and money as finishing touches */
-Object.assign(NebulaI18n.en,{crown:"Gold crown", money:"Money fan"});
-Object.assign(NebulaI18n.es,{crown:"Corona dorada", money:"Abanico de billetes"});
+/* The crown is a finishing touch, placed automatically like the butterflies. */
+Object.assign(NebulaI18n.en,{crown:"Gold crown"});
+Object.assign(NebulaI18n.es,{crown:"Corona dorada"});
