@@ -37,10 +37,11 @@ function capacity(items,mode){
  if(items.length>CONFIG.limits.topItems)return {ok:false,reason:'topCapacity',limit:100};
  return {ok:true,main:main.length,texture:texture.length,area};
 }
-/* Each photographed wrap has its own mouth width, so the bloom envelope cannot
-   use one constant. Measured at rimCenter.y-170: ivory 0.4526 (which reproduces
-   the shipped 0.455) and kraft 0.3672 - the kraft cone is 18.9% narrower, and
-   blooms placed at the ivory limit sat 78.7px outside its paper on each side. */
+/* Each photographed wrap carries its own mouth width, so the bloom envelope reads
+   it per paper rather than using one constant. Only ivory ships now, measured at
+   rimCenter.y-170 as 0.4526 (which reproduces the shipped 0.455). The lookup stays
+   because a narrower cone really does matter: a withdrawn kraft measured 0.3672,
+   18.9% narrower, and blooms placed at the ivory limit sat 78.7px outside it. */
 const MOUTH_FALLBACK=.455;
 function mouthHalf(paper){const w=NEBULA_META.wraps&&NEBULA_META.wraps[paper];return (w&&w.mouthHalf)||MOUTH_FALLBACK;}
 function classicFrame(items,paper){
@@ -87,7 +88,16 @@ function classic(items,seed,paper){
    positions[it.uid]={x:360+x+(rand()-.5)*9+(r===1?9:-3),y:frame.rimY-dy[r]+lift+stagger+(rand()-.5)*13,manual:false};
   });
  });
- tex.forEach((it,i)=>{const side=i%2?-1:1;positions[it.uid]={x:360+side*(Math.max(100,rowWidth(rows[0],seed)*.44)+8),y:frame.rimY-152+(i>1?63:0),manual:false};});
+ /* Greenery goes around the blooms, not among them: a florist tucks sprigs in at
+    the shoulders and lets them break the outline. The old placement was two fixed
+    pairs, which is why the limit was four - a fifth sprig landed exactly on the
+    first. Alternating sides while walking up and out along the shoulder spreads
+    any number of them, so the limit is now a real capacity rather than a bug. */
+ const shoulder=Math.max(100,rowWidth(rows[0],seed)*.44)+8,pairs=Math.max(1,Math.ceil(tex.length/2));
+ tex.forEach((it,i)=>{
+  const side=i%2?-1:1,step=Math.floor(i/2),t=pairs>1?step/(pairs-1):0;
+  positions[it.uid]={x:360+side*(shoulder+t*30),y:frame.rimY-152-t*74+(rand()-.5)*11,manual:false};
+ });
  for(const it of items)positions[it.uid]=constrainClassic(positions[it.uid],frame,it.id);
  return {frame,positions};
 }
@@ -225,23 +235,83 @@ function nodes(s){
 /* Blooms are painted after the front paper panel, so anything reaching past the paper
    mouth lands ON the paper instead of behind it. The old h*.24 let a tall bloom's lower
    half cross the mouth by up to 41px. h*.5 keeps the whole bloom above it. */
-function classicEnvelope(frame,id){const d=CAT[id].classicDiameter,m=NEBULA_META.flowers[id],h=d*m.bloomHeight/m.bloomWidth,half=896*frame.scale*(frame.mouthHalf||MOUTH_FALLBACK),margin=Math.hypot(d,h)*.51;return {xmin:360-half+margin,xmax:360+half-margin,ymin:Math.max(95+h*.52,frame.rimY-210),ymax:frame.rimY-Math.max(24,h*.5)-4};}
+/* How far a bloom's own centre may travel and still keep the whole bloom on the
+   paper. The margin it has to reserve is half of its ROTATED bounding box, taken
+   per axis - and for a stemmed item the rotation is the same +/-0.42 rad the
+   renderer clamps the stem lean to.
+
+   This used to reserve one scalar margin, Math.hypot(width,height)*0.51, on BOTH
+   axes. For a round bloom the diagonal is close enough to the width that nobody
+   noticed. For a tall sprig it is not: eucalyptus is 2.91x taller than it is wide,
+   so its height dominated the diagonal and that whole number was then subtracted
+   from the HORIZONTAL range too. Measured in a 12-rose bouquet, that left the
+   sprig 158x49px to move in, against 346x160px for a rose - vertically it was
+   effectively pinned. Per-axis extents give it 300x105px on the same bouquet,
+   without any part of it crossing the paper, because the reserve is now the real
+   geometry rather than a worst case applied twice.
+
+   Sizes are the DRAWN ones. The old code measured the raw catalogue diameter while
+   the renderer draws at CLASSIC_BLOOM, so it also reserved for a bloom 18% larger
+   than the one on screen. */
+const LEAN=0.42;
+function classicEnvelope(frame,id){
+ const m=NEBULA_META.flowers[id];
+ const w=CAT[id].classicDiameter*CLASSIC_BLOOM,h=w*m.bloomHeight/m.bloomWidth;
+ const lean=m.classicStem?LEAN:0,c=Math.cos(lean),s=Math.sin(lean);
+ const halfW=(w*c+h*s)/2,halfH=(h*c+w*s)/2;
+ const half=896*frame.scale*(frame.mouthHalf||MOUTH_FALLBACK);
+ /* Exactly the half-extent, so the outermost bloom's edge meets the paper edge and
+    never crosses it. Shaving even 4% off let every species hang 2-4px over, which
+    a safety sweep caught; the cap keeps a very large bloom from reserving so much
+    that it has nowhere left to move. */
+ const xm=Math.min(halfW,half*.62);
+ /* Blooms stay inside the three-row band the Classic layout is built around.
+    Greenery is the exception, and deliberately so: a florist sets sprigs to rise
+    ABOVE the flowers and break the outline, which is the whole reason for adding
+    them. Holding them to the bloom band left eucalyptus 65px of vertical travel
+    with 62px of usable canvas sitting unused above it. Only the canvas guard -
+    which keeps the tip of the sprig below the header - limits them now. */
+ const guard=95+halfH*1.04;
+ const ymin=CAT[id].kind==='texture'?guard:Math.max(guard,frame.rimY-210);
+ return {xmin:360-half+xm,xmax:360+half-xm,ymin,
+         ymax:frame.rimY-Math.max(24,halfH)-4};
+}
 function constrainClassic(p,frame,id){const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};if(!NEBULA_META.flowers[id].classicStem){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
-function inside(p,frame,d){
+function inside(p,frame,d,id){
  if(p.x-d/2<20||p.x+d/2>700||p.y-d/2<55||p.y+d/2>740)return false;
  if(frame.mode==='classic'){
+  /* Greenery is allowed above the bloom band - see classicEnvelope. This test has
+     to agree, or the envelope opens room the placement search then refuses, which
+     is what pinned every sprig where it first landed. Above the band the silhouette
+     keeps the width it has at the top of the cone. */
+  const tex=id&&CAT[id]&&CAT[id].kind==='texture';
   const ymin=frame.rimY-210,ymax=frame.rimY+3;
   const half=interp((p.y-ymin)/(ymax-ymin),[274,290,256,182]);
+  if(tex&&p.y<ymin)return p.y>=frame.rimY-320&&Math.abs(p.x-360)<=274;
   return p.y>=ymin&&p.y<=ymax&&Math.abs(p.x-360)<=half;
  }
  if(frame.mode==='dome')return Math.hypot(p.x-frame.center.x,p.y-frame.center.y)<=Math.max(frame.radius+frame.unit*.40,frame.unit*.75);
  const dx=p.x-frame.center.x,dy=(p.y-frame.center.y)/1.08;
  return heartShape(frame.radius).dist(dx,dy)>=-frame.unit*.16;
 }
+/* How close two Classic items may sit. It must not be stricter than the automatic
+   layout, or an item cannot be dragged to a spot the engine itself would have
+   chosen - and it was: measured, the layout packs neighbours 41px apart while this
+   test demanded 45px, so with a full bouquet only 4 of 4416 candidate positions
+   were reachable and a drag simply did nothing.
+   Two things were wrong. The gap was computed from the RAW catalogue diameter
+   while every node carries its DRAWN one, mixing units by 1/CLASSIC_BLOOM; and
+   0.42 of a diameter is more separation than Classic rows ever use, since the
+   rows deliberately overlap. 0.36 of the drawn size clears the layout's own
+   spacing with a little room to spare. */
+const CLASSIC_GAP=0.36;
 function findPlace(s,id,p,ignoreUid=null){
- const {frame,nodes:ns}=nodes(s),d=CAT[id][s.mode==='classic'?'classicDiameter':'topDiameter'];
+ const {frame,nodes:ns}=nodes(s);
+ const classic=s.mode==='classic';
+ const d=classic?CAT[id].classicDiameter*CLASSIC_BLOOM:CAT[id].topDiameter;
  const near=ns.filter(n=>n.uid!==ignoreUid);
- const valid=q=>{const safe=s.mode==='classic'?constrainClassic(q,frame,id):q;return Math.hypot(safe.x-q.x,safe.y-q.y)<.01&&inside(q,frame,d)&&near.every(n=>Math.hypot(q.x-n.x,q.y-n.y)>Math.min(d,n.d)*.42);};
+ const gap=classic?CLASSIC_GAP:.42;
+ const valid=q=>{const safe=classic?constrainClassic(q,frame,id):q;return Math.hypot(safe.x-q.x,safe.y-q.y)<.01&&inside(q,frame,d,id)&&near.every(n=>Math.hypot(q.x-n.x,q.y-n.y)>Math.min(d,n.d)*gap);};
  if(p&&valid(p))return {...p,manual:true,snapped:false};
  const target=p||{x:frame.center.x,y:frame.center.y};let best=null,score=Infinity;
  for(let y=65;y<=745;y+=10)for(let x=45;x<=680;x+=10){

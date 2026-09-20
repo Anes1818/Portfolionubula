@@ -3,10 +3,11 @@
 (function(g){'use strict';
 const G=NebulaGeometry,M=NebulaModel,cache=new Map(),tintCache=new Map(),alphaCache=new Map();
 const makeCanvas=(w=720,h=820)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
-/* Several photographed papers share ONE geometry. Each new wrap is resampled at
-   build time onto the ivory's paper box, so swapping the layers needs no change
-   to classicFrame's measured constants. Tinted tones still recolour the ivory. */
-const PHOTO_PAPERS=['ivory','kraft'];
+/* The ivory photograph is the one real Classic wrap. Every other tone is a digital
+   recolour of it, so only ivory is exempt from tinting. Extra photographed papers
+   are resampled onto the ivory's paper box at build time, which is why adding one
+   back here needs no change to classicFrame's measured constants. */
+const PHOTO_PAPERS=['ivory'];
 const BRAND_LOGO='assets/brand/logo-full.webp';
 function wrapLayers(paper){const W=NEBULA_META.wraps;return (W&&W[paper])||{back:NEBULA_META.wrap.back,front:NEBULA_META.wrap.front};}
 const source=path=>(g.NEBULA_EMBED&&g.NEBULA_EMBED[path])||path;
