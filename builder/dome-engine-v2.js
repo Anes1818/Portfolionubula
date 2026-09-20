@@ -58,6 +58,15 @@
     ranunculus: { cov: 0.45, base: 0.85, spin: 180 },
     alstro:     { cov: 0.44, base: 0.93, spin: 180 },
     choc:       { cov: 0.44, base: 0.84, spin: 16 },
+    /* The supplied berry is a top view: a near-perfect disc, measured 78% solid
+       inside its own box - more solid than a rose (74%) or a hydrangea (68%).
+       Roses are MEANT to interlock; their petals reading into each other is what
+       makes a dome look packed, and the measured centre distance over diameter is
+       0.65. A fruit that overlaps its neighbour just reads as one red surface, so
+       the berry needs the opposite of a rose: its own edge visible all the way
+       round. base is what buys that edge - see the sweep in the session notes.
+       spin stays free: the disc has no up, so rotation only breaks repetition. */
+    berry:      { cov: 0.49, base: 0.62, spin: 180 },
     knot:       { cov: 0.40, base: 0.62, spin: 180 },
     fan:        { cov: 0.34, base: 0.80, spin: 180 },
     euc:        { cov: 0.30, base: 0.55, spin: 180 }
@@ -80,6 +89,7 @@
     if (id === 'limonium') return 'fan';
     if (id === 'eucalyptus') return 'euc';
     if (id.indexOf('choc') >= 0) return 'choc';
+    if (id.indexOf('berry') >= 0) return 'berry';
     return 'rose';
   }
   function spec(id) { return SPEC[specKey(id)] || SPEC.rose; }

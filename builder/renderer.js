@@ -6,7 +6,7 @@ const makeCanvas=(w=720,h=820)=>{const c=document.createElement('canvas');c.widt
 /* Several photographed papers share ONE geometry. Each new wrap is resampled at
    build time onto the ivory's paper box, so swapping the layers needs no change
    to classicFrame's measured constants. Tinted tones still recolour the ivory. */
-const PHOTO_PAPERS=['ivory','kraft','linen'];
+const PHOTO_PAPERS=['ivory','kraft'];
 const BRAND_LOGO='assets/brand/logo-full.webp';
 function wrapLayers(paper){const W=NEBULA_META.wraps;return (W&&W[paper])||{back:NEBULA_META.wrap.back,front:NEBULA_META.wrap.front};}
 const source=path=>(g.NEBULA_EMBED&&g.NEBULA_EMBED[path])||path;
@@ -21,11 +21,49 @@ const source=path=>(g.NEBULA_EMBED&&g.NEBULA_EMBED[path])||path;
    --------------------------------------------------------------------------- */
 let onAssetReady=null,repaintQueued=false;
 function announce(){if(repaintQueued||!onAssetReady)return;repaintQueued=true;requestAnimationFrame(()=>{repaintQueued=false;if(onAssetReady)onAssetReady();});}
-function load(path){if(!cache.has(path)){const im=new Image(),promise=new Promise((resolve,reject)=>{im.onload=()=>{resolve(im);announce();};im.onerror=()=>reject(new Error('Artwork failed to load: '+path));});cache.set(path,{im,promise});im.src=source(path);}return cache.get(path).promise;}
+/* Synthetic keys (a personalised sash) are composed in memory, never fetched.
+   Guarding here rather than at each call site keeps hit-testing and the idle
+   preloader from trying to treat one as a file path. */
+function load(path){if(typeof path==='string'&&path.startsWith('sashtext '))return Promise.resolve(null);
+ if(!cache.has(path)){const im=new Image(),promise=new Promise((resolve,reject)=>{im.onload=()=>{resolve(im);announce();};im.onerror=()=>reject(new Error('Artwork failed to load: '+path));});cache.set(path,{im,promise});im.src=source(path);}return cache.get(path).promise;}
 function decoded(path){const it=cache.get(path);return it&&it.im.complete&&it.im.naturalWidth?it.im:null;}
 /* Returns null instead of throwing when the artwork has not decoded yet; every
    drawing call site treats null as "skip this element and repaint shortly". */
-function image(path){const im=decoded(path);if(im)return im;load(path);return null;}
+/* Personalised sashes are drawn once into an offscreen canvas and cached, then
+   handed back through image() under a synthetic key. Every draw site already
+   treats the result as an image, so nothing downstream has to know. */
+const sashCache=new Map();
+function sashWithText(key){
+ if(sashCache.has(key))return sashCache.get(key);
+ /* Only the first two segments are fixed; the rest is the message, which may
+    itself contain spaces, so it is taken as one remainder. */
+ const rest=key.slice(9),sp=rest.indexOf(' ');
+ const band=sp<0?rest:rest.slice(0,sp),text=sp<0?'':rest.slice(sp+1);
+ const m=NEBULA_META.finishes['sash_blank_'+band];
+ if(!m)return null;
+ const base=decoded(m.url);
+ if(!base){load(m.url);return null;}
+ const cv=makeCanvas(m.width,m.height),ctx=cv.getContext('2d');
+ ctx.drawImage(base,0,0,m.width,m.height);
+ const words=String(text||'').slice(0,28);
+ if(words){
+  /* The bow sits on the left, so the writing is centred on the clear run of satin. */
+  const left=m.width*0.26,right=m.width*0.97,mid=(left+right)/2;
+  let size=Math.round(m.height*0.52);
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  do{ctx.font='italic '+size+'px Georgia, "Times New Roman", serif';size-=1;}
+  while(size>8&&ctx.measureText(words).width>right-left);
+  ctx.fillStyle=band==='champagne'?'#8a6a2f':'#e8c874';
+  ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=2;ctx.shadowOffsetY=1;
+  ctx.fillText(words,mid,m.height*0.5);
+ }
+ sashCache.set(key,cv);
+ return cv;
+}
+function image(path){
+ if(typeof path==='string'&&path.startsWith('sashtext '))return sashWithText(path);
+ const im=decoded(path);if(im)return im;load(path);return null;
+}
 function wrapAssets(){const u=[NEBULA_META.wrap.back,NEBULA_META.wrap.front,BRAND_LOGO];for(const v of Object.values(NEBULA_META.wraps||{})){u.push(v.back,v.front);}return u;}
 function allAssets(){const urls=new Set(wrapAssets());for(const v of Object.values(NEBULA_META.flowers)){urls.add(v.head);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}for(const v of Object.values(NEBULA_META.finishes))urls.add(v.url);for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);return urls;}
 /* Everything a single design can draw: wrap, its collar, finishes and its own flowers. */
@@ -35,7 +73,7 @@ function assetsFor(s){
  for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);
  urls.add(BRAND_LOGO);
  const ids=new Set((s?.items||[]).map(i=>i.id));
- if(s?.mode==='dome'&&s.finishes?.greenRim)ids.add('eucalyptus');
+ if(s?.mode!=='classic'&&s.finishes?.greenRim)ids.add('eucalyptus');
  for(const id of ids){const v=NEBULA_META.flowers[id];if(!v)continue;urls.add(v.head);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}
  return urls;
 }
@@ -83,9 +121,34 @@ function finishNodes(s,f,nodes){
   if(pos==='low'){y=classic?(f.rimY+f.waist.y)*.5:f.center.y+f.radius*.70;rot=0;}
   if(pos==='diagonal'){y=classic?f.rimY-52:f.center.y+f.radius*.14;rot=-.20;}
   y+=(a.sashOffset||0)*f.unit/100;
-  add('sash','sash_'+a.sash,x,y,w,rot);
+  if(a.sash.startsWith('blank_')){
+   const band=a.sash.slice(6),m=NEBULA_META.finishes['sash_blank_'+band];
+   if(m)list.push({uid:'sash',url:'sashtext '+band+' '+(a.sashText||''),
+    x,y,w,h:w*m.height/m.width,rot,d:w,bright:1,z:500});
+  }else add('sash','sash_'+a.sash,x,y,w,rot);
  }
- if(a.butterfly)add('butterfly','extra_butterfly_gold',classic?468:360+f.radius*.68,classic?f.rimY-157:390-f.radius*.48,95,-.17);
+ /* Butterflies are a count. A florist does not stamp them in a row: the first
+    lands high on the right, the second lower on the opposite side, the third
+    smaller and turned further - so each added one reads as another butterfly
+    rather than a repeat. Slot 1 is byte-for-byte the old single placement, so
+    every design saved when this was one on/off switch still draws unmoved.
+    The spots dodge the crown (top centre) and the fan (upper left). */
+ const BUTTERFLIES=[
+  {cx:+.68,cy:-.48,x:468,y:-157,w:95,rot:-.17},
+  {cx:-.70,cy:+.34,x:256,y:-100,w:82,rot:+.24},
+  {cx:+.42,cy:+.62,x:424,y:-46, w:70,rot:-.40}
+ ];
+ for(let i=0;i<Math.min(a.butterfly|0,BUTTERFLIES.length);i++){
+  const p=BUTTERFLIES[i];
+  add('butterfly'+i,'extra_butterfly_gold',
+      classic?p.x:360+f.radius*p.cx,
+      classic?f.rimY+p.y:390+f.radius*p.cy,
+      p.w,p.rot);
+ }
+ /* A crown is worn: it rides the top edge of the bouquet, centred. A money fan is
+    tucked in at the side, angled out of the blooms the way a florist sets one. */
+ if(a.crown)add('crown','extra_crown_gold',360,classic?f.rimY-118:f.center.y-f.radius*.86,classic?230:f.radius*1.05,0);
+ if(a.money)add('money','extra_money_fan',classic?252:360-f.radius*.62,classic?f.rimY-92:f.center.y-f.radius*.42,classic?190:f.radius*.86,-.28);
  return list;
 }
 function scene(s){const sc=G.nodes(s);sc.finishes=finishNodes(s,sc.frame,sc.nodes);sc.collar=collarNode(s,sc.frame);return sc;}

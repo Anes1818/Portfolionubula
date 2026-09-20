@@ -135,17 +135,51 @@ function heart(items,seed){
 const heartShapes=new Map();
 function heartShape(R){if(!heartShapes.has(R)){heartShapes.set(R,DomeEngine.buildShape('heart',R,120));if(heartShapes.size>64)heartShapes.delete(heartShapes.keys().next().value);}return heartShapes.get(R);}
 function arrange(items,mode,seed,paper){return mode==='classic'?classic(items,seed,paper):(mode==='dome'?dome:heart)(items,seed);}
-/* Optional eucalyptus collar for the Dome. Positions come straight from the supplied v2
-   greenery() recipe, whose off/swing pair is measured and coupled — see the engine notes.
+/* Optional greenery wrap for the Dome and the Heart. Positions come straight from
+   the supplied v2 greenery() recipe, whose off/swing pair is measured and coupled —
+   see the engine notes, and note that the rotation there is deliberately NOT radial.
    Sprigs are decorative geometry, not slots: they never occupy or displace a position.
-   Listed as GREEN_RIM real stems in the estimate; nothing is added silently. */
-const GREEN_RIM=8;
+   Every sprig is listed in the estimate; nothing is added silently. */
+const GREEN_SPRIG=0.55;   /* sprig size as a fraction of unit — the engine's own constant */
+/* A fixed eight read as eight separate tufts pinned around the edge, not as a wrap.
+   To close into one continuous collar the sprigs have to overlap, so the count is
+   taken from the silhouette rather than fixed: perimeter divided by a little over
+   half a sprig width. A Mini dome and an XL heart need very different numbers to
+   look equally wrapped — measured, that is 10 sprigs at the small end and about 50
+   at the large one. */
+function greenRimCount(shape,unit){
+ if(!shape||!unit)return 0;
+ return Math.max(10,Math.min(72,Math.round(shape.perimeter/(unit*GREEN_SPRIG*0.60))));
+}
+/* The Heart's layout carries the ROUND shape the Dome path built. That is right for
+   placing blooms, but a wrap has to trace the silhouette the customer actually sees,
+   so the heart outline is rebuilt here at the frame's own radius and stretched by
+   the same 1.08 the heart's bloom points are stretched by. */
+function rimGeometry(s,L){
+ if(s.mode!=='heart')return {shape:L.shape,yScale:1};
+ return {shape:heartShape(L.frame.radius),yScale:1.08};
+}
+/* What is DRAWN and what is BOUGHT are not the same number, and pricing must use
+   the second one. Closing the wrap takes 24-72 sprig images, but a sprig image is
+   one cut tip, not a stem: a real eucalyptus stem carries several and a florist
+   gets roughly four usable tips off each. Charging per image billed a large dome
+   at $118 of greenery, which is not what the florist spends. Four tips to a stem,
+   never fewer than six stems, is what a florist actually pulls from the bucket. */
+const GREEN_TIPS_PER_STEM=4;
+function greenRimStems(s){
+ if(!s||s.mode==='classic'||!s.finishes?.greenRim)return 0;
+ const L=NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1));
+ const {shape}=rimGeometry(s,L);
+ return Math.max(6,Math.round(greenRimCount(shape,L.frame.unit)/GREEN_TIPS_PER_STEM));
+}
 function greenRim(s,L){
- if(s.mode!=='dome'||!s.finishes?.greenRim||!L)return [];
+ if(s.mode==='classic'||!s.finishes?.greenRim||!L)return [];
+ const {shape,yScale}=rimGeometry(s,L);
+ const n=greenRimCount(shape,L.frame.unit);
  const meta=NEBULA_META.flowers.eucalyptus,r=rng(hash('greenRim'+s.seed+L.frame.capacity));
- return DomeEngine.greenery(L.shape,L.frame.unit,r,{count:GREEN_RIM}).filter(g=>g.rim).map((g,i)=>{
+ return DomeEngine.greenery(shape,L.frame.unit,r,{count:n}).filter(g=>g.rim).map((g,i)=>{
   const factor=g.size/Math.max(meta.headWidth,meta.headHeight);
-  return {uid:'green'+i,id:'eucalyptus',slot:null,decorative:true,x:360+g.x,y:390+g.y,
+  return {uid:'green'+i,id:'eucalyptus',slot:null,decorative:true,x:360+g.x,y:390+g.y*yScale,
    w:meta.headWidth*factor,h:meta.headHeight*factor,d:g.size,rot:g.rot*Math.PI/180,
    bright:g.bright,depth:1,core:0,radiusCap:g.size,meta,url:meta.head,z:-9999,manual:false,index:-1-i};
  });
@@ -221,5 +255,5 @@ function findPlace(s,id,p,ignoreUid=null){
  if(p&&score>95)return null;
  return best;
 }
-g.NebulaGeometry={classicEnvelope,mouthHalf,stampPaper,setClassicBloom,get classicBloom(){return CLASSIC_BLOOM;},constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,GREEN_RIM};
+g.NebulaGeometry={classicEnvelope,mouthHalf,stampPaper,setClassicBloom,get classicBloom(){return CLASSIC_BLOOM;},constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,greenRimStems};
 })(typeof window!=='undefined'?window:globalThis);
