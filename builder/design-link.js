@@ -24,7 +24,12 @@ function encode(s,order){
  const f=s.finishes,payload={v:6,m:s.mode,s:s.seed,f:runs};
  if(s.mode!=='classic'&&s.template&&s.template.capacity)payload.c=s.template.capacity;
  const fin={};for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
- if(f.butterfly)fin.b=1;if(f.greenRim)fin.g=1;if(f.tint&&f.paper==='custom')fin.c=f.tint;
+ /* The count, not a flag. This wrote 1 for any number of butterflies back when the
+    finish was a single on/off, so a shared three-butterfly bouquet reopened with
+    one. The crown was never written at all and vanished from every shared link. */
+ if(f.butterfly)fin.b=Math.max(0,Math.min(9,f.butterfly|0))||1;
+ if(f.crown)fin.k=1;
+ if(f.greenRim)fin.g=1;if(f.tint&&f.paper==='custom')fin.c=f.tint;
  if(Object.keys(fin).length)payload.fin=fin;
  if((s.title||'').trim())payload.t=s.title.trim().slice(0,70);
  if((s.note||'').trim())payload.n=s.note.trim().slice(0,180);
@@ -62,7 +67,11 @@ function decode(code){
   }
   const fin=p.fin||{};
   for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(fin[k])s.finishes[key]=String(fin[k]);
-  s.finishes.butterfly=fin.b===1;s.finishes.greenRim=fin.g===1;
+  /* A link written before butterflies were counted carries b:1, which means the one
+     butterfly it drew - the same thing it means now, so old links still open right. */
+  s.finishes.butterfly=Number.isInteger(fin.b)?Math.max(0,Math.min(9,fin.b)):0;
+  s.finishes.crown=fin.k===1;
+  s.finishes.greenRim=fin.g===1;
   if(fin.c)s.finishes.tint=String(fin.c);
   if(p.t)s.title=String(p.t).slice(0,70);
   if(p.n)s.note=String(p.n).slice(0,180);
