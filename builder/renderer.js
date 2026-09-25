@@ -66,7 +66,7 @@ function image(path){
  const im=decoded(path);if(im)return im;load(path);return null;
 }
 function wrapAssets(){const u=[NEBULA_META.wrap.back,NEBULA_META.wrap.front,BRAND_LOGO];for(const v of Object.values(NEBULA_META.wraps||{})){u.push(v.back,v.front);}return u;}
-function allAssets(){const urls=new Set(wrapAssets());for(const v of Object.values(NEBULA_META.flowers)){urls.add(v.head);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}for(const v of Object.values(NEBULA_META.finishes))urls.add(v.url);for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);return urls;}
+function allAssets(){const urls=new Set(wrapAssets());for(const v of Object.values(NEBULA_META.flowers)){urls.add(v.head);for(const h of v.heads||[])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}for(const v of Object.values(NEBULA_META.finishes))urls.add(v.url);for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);return urls;}
 /* Everything a single design can draw: wrap, its collar, finishes and its own flowers. */
 function assetsFor(s){
  const urls=new Set(wrapAssets());
@@ -75,7 +75,7 @@ function assetsFor(s){
  urls.add(BRAND_LOGO);
  const ids=new Set((s?.items||[]).map(i=>i.id));
  if(s?.mode!=='classic'&&s.finishes?.greenRim)ids.add('eucalyptus');
- for(const id of ids){const v=NEBULA_META.flowers[id];if(!v)continue;urls.add(v.head);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}
+ for(const id of ids){const v=NEBULA_META.flowers[id];if(!v)continue;urls.add(v.head);for(const h of v.heads||[])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}
  return urls;
 }
 function warmRest(){

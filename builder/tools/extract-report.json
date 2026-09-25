@@ -5,7 +5,7 @@
   "h": 512,
   "aspect": 0.994,
   "alphaFill": 0.744,
-  "kb": 53.1
+  "kb": 50.1
  },
  "spray_rose": {
   "file": "assets/heads/spray_rose.webp",
@@ -13,7 +13,7 @@
   "h": 512,
   "aspect": 0.99,
   "alphaFill": 0.709,
-  "kb": 85.5
+  "kb": 82.7
  },
  "rose_cream": {
   "file": "assets/heads/rose_cream.webp",
@@ -21,7 +21,7 @@
   "h": 512,
   "aspect": 1.0,
   "alphaFill": 0.784,
-  "kb": 49.1
+  "kb": 47.5
  },
  "stock_yellow": {
   "file": "assets/heads/stock_yellow.webp",
@@ -29,7 +29,7 @@
   "h": 512,
   "aspect": 0.994,
   "alphaFill": 0.745,
-  "kb": 75.0
+  "kb": 74.1
  },
  "statice_purple": {
   "file": "assets/heads/statice_purple.webp",

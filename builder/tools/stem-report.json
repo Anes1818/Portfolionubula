@@ -3,24 +3,24 @@
   "classicBloom": "assets/classic/chrysanthemum_yellow-bloom.webp",
   "classicStem": "assets/classic/chrysanthemum_yellow-stem.webp",
   "bloomWidth": 228,
-  "bloomHeight": 203,
+  "bloomHeight": 204,
   "sourceWidth": 299,
   "sourceHeight": 1200,
   "sourceBloomBox": [
    51,
    0,
    269,
-   193
+   194
   ],
   "bloomCenter": [
    160.0,
-   96.5
+   97.0
   ],
   "stemBase": [
    173.0,
    1199
   ],
-  "stemCutY": 193,
+  "stemCutY": 194,
   "joinOverlap": 8,
   "bloomPadding": 5,
   "classicAvailable": true
@@ -29,24 +29,24 @@
   "classicBloom": "assets/classic/spray_rose-bloom.webp",
   "classicStem": "assets/classic/spray_rose-stem.webp",
   "bloomWidth": 327,
-  "bloomHeight": 305,
+  "bloomHeight": 306,
   "sourceWidth": 317,
   "sourceHeight": 1200,
   "sourceBloomBox": [
    0,
    0,
    317,
-   295
+   296
   ],
   "bloomCenter": [
    158.5,
-   147.5
+   148.0
   ],
   "stemBase": [
    160.0,
    1199
   ],
-  "stemCutY": 295,
+  "stemCutY": 296,
   "joinOverlap": 8,
   "bloomPadding": 5,
   "classicAvailable": true
@@ -107,24 +107,24 @@
   "classicBloom": "assets/classic/rose_cream-bloom.webp",
   "classicStem": "assets/classic/rose_cream-stem.webp",
   "bloomWidth": 319,
-  "bloomHeight": 271,
+  "bloomHeight": 272,
   "sourceWidth": 321,
   "sourceHeight": 1200,
   "sourceBloomBox": [
    1,
    0,
    310,
-   261
+   262
   ],
   "bloomCenter": [
    155.5,
-   130.5
+   131.0
   ],
   "stemBase": [
    163.0,
    1199
   ],
-  "stemCutY": 261,
+  "stemCutY": 262,
   "joinOverlap": 8,
   "bloomPadding": 5,
   "classicAvailable": true
@@ -133,24 +133,24 @@
   "classicBloom": "assets/classic/stock_yellow-bloom.webp",
   "classicStem": "assets/classic/stock_yellow-stem.webp",
   "bloomWidth": 185,
-  "bloomHeight": 434,
+  "bloomHeight": 520,
   "sourceWidth": 193,
   "sourceHeight": 1200,
   "sourceBloomBox": [
    2,
    0,
    177,
-   424
+   510
   ],
   "bloomCenter": [
    89.5,
-   212.0
+   255.0
   ],
   "stemBase": [
    99.0,
    1199
   ],
-  "stemCutY": 424,
+  "stemCutY": 510,
   "joinOverlap": 8,
   "bloomPadding": 5,
   "classicAvailable": true

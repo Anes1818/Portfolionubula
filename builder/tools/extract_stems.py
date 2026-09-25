@@ -31,18 +31,17 @@ def key_distance(rgb):
     return 1.0 - bg, screen
 
 def despill(rgb, screen, alpha):
-    """Fringe-only green correction. Capping the whole subject turns a yellow
-       petal orange (measured: hue 33 deg from a clean lemon source)."""
-    out = rgb.astype(np.float32).copy()
-    if screen[1] > max(screen[0], screen[2]) + 40:      # green screen
-        g = out[..., 1]
-        cap = (out[..., 0] + out[..., 2]) / 2.0 + 12
-        fringe = (alpha > 0.02) & (alpha < 0.92)
-        w = np.zeros_like(g)
-        w[fringe] = 1.0 - alpha[fringe] / 0.92
-        over = g > cap
-        g[over] = g[over] * (1 - w[over]) + cap[over] * w[over]
-    return np.clip(out, 0, 255).astype(np.uint8)
+    """Screen share measured per pixel from its own green excess.
+       See extract_assets.py for why the key's alpha cannot be used here."""
+    out = rgb.astype(np.float32)
+    scr = np.asarray(screen, dtype=np.float32)
+    screen_spill = scr[1] - max(scr[0], scr[2])
+    if screen_spill < 40:
+        return np.clip(out, 0, 255).astype(np.uint8)
+    spill = out[..., 1] - np.maximum(out[..., 0], out[..., 2])
+    beta = np.clip(spill / screen_spill, 0, 0.94)[..., None]
+    fixed = (out - scr.reshape(1, 1, 3) * beta) / (1.0 - beta)
+    return np.clip(np.where(beta > 0.02, fixed, out), 0, 255).astype(np.uint8)
 
 def find_cut(alpha, rgb):
     """Row where the bloom ends and the leafy stalk begins.

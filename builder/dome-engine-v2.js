@@ -58,13 +58,15 @@
     ranunculus: { cov: 0.45, base: 0.85, spin: 180 },
     alstro:     { cov: 0.44, base: 0.93, spin: 180 },
     choc:       { cov: 0.44, base: 0.84, spin: 16 },
-    /* The berry had no entry at all once, so it fell through to the rose row and
-       drew at 1.00. That is the setup the owner picked after seeing every
-       alternative side by side, kept here explicitly rather than by fallback so
-       it cannot drift if the rose is ever retuned. 0.99 is the one deliberate
-       change: a single percent off, enough to open a hairline between neighbours
-       so each berry keeps its own edge, without loosening the packed look. */
-    berry:      { cov: 0.47, base: 0.99, spin: 180 },
+    /* The berry is four real photographs, normalised calyx-up/tip-down, and it is
+       the one item here that is TURNED rather than spun: radial:true points every
+       tip at the bouquet centre - see nodes() in geometry.js for the side-by-side
+       that settled it. spin is then just the hand-set wobble around that heading.
+       cov is measured off the four cut-outs (0.311-0.348, mean 0.337). base compared
+       at 0.95 / 1.10 / 1.25 on a 30-slot dome: 0.95 shows white paper between every
+       berry, 1.25 packs them shoulder to shoulder the way the reference bouquet is,
+       and every berry still reads on its own because the calyx outlines it. */
+    berry:      { cov: 0.34, base: 1.25, spin: 7, radial: true },
     knot:       { cov: 0.40, base: 0.62, spin: 180 },
     fan:        { cov: 0.34, base: 0.80, spin: 180 },
     euc:        { cov: 0.30, base: 0.55, spin: 180 }
