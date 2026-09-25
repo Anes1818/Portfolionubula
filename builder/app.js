@@ -210,6 +210,7 @@ function orderSummary(){
  if(f.ribbon&&f.ribbon!=='none')extras.push(t('ribbon')+': '+f.ribbon);
  if(f.sash&&f.sash!=='none')extras.push(t('sash')+': '+f.sash);
  if(f.butterfly)extras.push(t('butterfly')+(f.butterfly>1?' ×'+f.butterfly:''));
+ if(f.crown)extras.push(t('crown'));
  if(st.mode!=='classic'&&f.greenRim)extras.push(t('greenRim'));
  return {stems,extras,total:M.money(p.totalCents,lang),pieces:st.items.length};
 }

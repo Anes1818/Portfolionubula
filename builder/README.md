@@ -39,8 +39,10 @@ white and All yellow (for 21 September, International Yellow Flowers Day).
 - **In Classic, drag a bloom to move it.** A tap paints, a drag moves. Touch has
   a 12px slop so a finger tap is never mistaken for a drag.
 - **Expand** enlarges the preview; zoom, pan and Fit help on dense templates.
-- **Finishes:** paper tone, ribbon, printed sash, a gold butterfly, and an
-  optional eucalyptus collar on the Dome.
+- **Finishes:** paper tone, printed sash, a gold butterfly, a ribbon in Classic
+  only, and an optional eucalyptus collar on the Dome. The ribbon is tied around
+  the stems, so it is offered only in the view that shows them; Dome and Heart
+  look straight down and neither draw nor charge for one.
 
 ## Estimate
 

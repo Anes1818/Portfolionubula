@@ -23,12 +23,19 @@ function finishLabels(f){
  if(f.paper&&f.paper!=='none')out.push([t('wrapping'),f.paper]);
  if(f.ribbon&&f.ribbon!=='none')out.push([t('ribbon'),f.ribbon]);
  if(f.sash&&f.sash!=='none')out.push([t('sash'),f.sash]);
- if(f.butterfly)out.push([t('butterfly'),'✓']);
- if(state.mode==='dome'&&f.greenRim)out.push([t('greenRim'),'✓']);
+ if(f.butterfly)out.push([t('butterfly'),'× '+(f.butterfly===true?1:f.butterfly)]);
+ if(f.crown)out.push([t('crown'),'✓']);
+ if(state.mode!=='classic'&&f.greenRim)out.push([t('greenRim'),'✓']);
  return out;
 }
 function paintSheet(){
  document.documentElement.lang=lang;
+ /* The same swap the studio page makes: the logo is served from the embedded
+    bundle, not from a file path. Pointed at assets/brand/ it rendered as a broken
+    image wherever that folder was not deployed alongside - and this sheet is the
+    first thing every florist opens. */
+ const mark=NEBULA_META.brand&&NEBULA_META.brand.mark,logo=document.querySelector('.brand-chip img');
+ if(mark&&logo)logo.src=NebulaRenderer.source(mark);
  $('language').value=lang;
  for(const el of document.querySelectorAll('[data-i18n]'))el.textContent=t(el.dataset.i18n);
 

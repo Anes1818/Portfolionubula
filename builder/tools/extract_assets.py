@@ -42,7 +42,7 @@ def key_green(rgb):
         rgb[-k:, :k].reshape(-1, 3), rgb[-k:, -k:].reshape(-1, 3)])
     screen = np.median(corners, axis=0)
     dist = np.linalg.norm(rgb.astype(np.float32) - screen, axis=2)
-    return np.clip((100.0 - dist) / 55.0, 0, 1).astype(np.float32)   # <45 bg, >100 subject
+    return np.clip((100.0 - dist) / 55.0, 0, 1).astype(np.float32), screen   # <45 bg, >100 subject
 
 def key_white_flood(rgb, tol=14):
     """Alpha from a border-connected flood fill, so interior white survives."""
@@ -65,26 +65,41 @@ def key_white_flood(rgb, tol=14):
             ny, nx = y + dy, x + dx
             if 0 <= ny < h and 0 <= nx < w and near_white[ny, nx] and not bg[ny, nx]:
                 bg[ny, nx] = True; stack.append((ny, nx))
-    return bg.astype(np.float32)
+    k = max(8, min(h, w) // 40)
+    corners = np.concatenate([rgb[:k,:k].reshape(-1,3), rgb[:k,-k:].reshape(-1,3),
+                              rgb[-k:,:k].reshape(-1,3), rgb[-k:,-k:].reshape(-1,3)])
+    return bg.astype(np.float32), np.median(corners, axis=0)
 
-def despill_green(rgb, alpha):
-    """Pull green back toward the red/blue average, but ONLY on the soft fringe.
+def despill_green(rgb, alpha, screen):
+    """Remove the screen from the soft edge by UNDOING the composite.
 
-    An earlier version applied the cap across the whole subject. A yellow petal
-    is legitimately green-rich (250,230,40), so capping it at (r+b)/2 turned it
-    into orange: the chrysanthemum measured hue 33 deg (orange) when its source
-    was clean lemon. Spill lives only where the key is partial, so restrict the
-    correction to that band and feather it by how transparent the pixel is.
+    Two earlier attempts both failed, in opposite directions:
+      * capping green across the whole subject turned lemon petals orange
+        (chrysanthemum measured hue 33 deg from a clean lemon source);
+      * feathering that cap by alpha made it a near no-op, leaving a green rim
+        on 99-100% of the soft edge of every new asset.
+
+    Unpremultiplying by the KEY's alpha also failed, because that alpha is wrong
+    at the edge: the distance key was tuned to keep dark leaves (which sit 136+
+    from the screen), so a nearly pure screen pixel 87 away scored alpha 0.83 and
+    was treated as opaque petal.
+
+    So measure the screen's share from the pixel itself. Spill above the pixel's
+    own red/blue is the screen showing through:
+        beta = (g - max(r,b)) / (screen_g - max(screen_r, screen_b))
+        petal = (observed - screen*beta) / (1 - beta)
+    A leaf keeps most of itself (beta ~0.2); a green halo is almost all screen
+    (beta ~0.4-1.0) and dissolves.
     """
-    out = rgb.astype(np.float32).copy()
-    r, g, b = out[..., 0], out[..., 1], out[..., 2]
-    cap = (r + b) / 2.0 + 12
-    fringe = (alpha > 0.02) & (alpha < 0.92)
-    w = np.zeros_like(g)
-    w[fringe] = 1.0 - alpha[fringe] / 0.92      # fully corrected only where nearly clear
-    over = g > cap
-    g[over] = g[over] * (1 - w[over]) + cap[over] * w[over]
-    return np.clip(out, 0, 255).astype(np.uint8)
+    out = rgb.astype(np.float32)
+    scr = np.asarray(screen, dtype=np.float32)
+    screen_spill = scr[1] - max(scr[0], scr[2])
+    if screen_spill < 40:                            # not a green screen
+        return np.clip(out, 0, 255).astype(np.uint8)
+    spill = out[..., 1] - np.maximum(out[..., 0], out[..., 2])
+    beta = np.clip(spill / screen_spill, 0, 0.94)[..., None]
+    fixed = (out - scr.reshape(1, 1, 3) * beta) / (1.0 - beta)
+    return np.clip(np.where(beta > 0.02, fixed, out), 0, 255).astype(np.uint8)
 
 def shoulder(a, lo=0.10, hi=0.90):
     """ImageMagick's -level 10%,90% on the alpha channel."""
@@ -92,9 +107,9 @@ def shoulder(a, lo=0.10, hi=0.90):
 
 def process(name, src, mode, dst):
     rgb = load(src)
-    bg = key_green(rgb) if mode == 'green' else key_white_flood(rgb)
+    bg, screen = key_green(rgb) if mode == 'green' else key_white_flood(rgb)
     alpha = shoulder(1.0 - bg)
-    rgb8 = despill_green(rgb, alpha) if mode == 'green' else rgb.astype(np.uint8)
+    rgb8 = despill_green(rgb, alpha, screen)
 
     ys, xs = np.where(alpha > 0.10)
     if not len(xs):

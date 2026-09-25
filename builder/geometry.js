@@ -176,23 +176,49 @@ function rimGeometry(s,L){
    at $118 of greenery, which is not what the florist spends. Four tips to a stem,
    never fewer than six stems, is what a florist actually pulls from the bucket. */
 const GREEN_TIPS_PER_STEM=4;
+/* Greenery woven BETWEEN berries, the way a berry bouquet is actually finished - in
+   the reference bouquet 30% of everything visible is sprigs tucked among the fruit,
+   against 12% when the only green is each berry's own calyx.
+   It goes only beside berries. Roses interlock at 0.65 of a diameter, so a sprig
+   behind them would never show - and every sprig is charged, so hiding one would
+   bill the customer for greenery she cannot see. Berries leave real gaps; there it
+   shows. Each sprig sits at the midpoint to the berry's nearest neighbour, behind
+   the fruit, so it reads as tucked in rather than laid on top. */
+const WEAVE_SHARE=0.5;
+function berryWeave(s,L){
+ if(!s||s.mode==='classic'||!s.finishes?.greenRim||!L)return [];
+ const pts=L.points,out=[];
+ const r=rng(hash('weave'+s.seed+L.frame.capacity));
+ for(const it of s.items){
+  if(!Number.isInteger(it.slot)||!DomeEngine.spec(it.id).radial)continue;
+  if(r()>WEAVE_SHARE)continue;
+  const p=pts[it.slot];let q=null,best=Infinity;
+  for(const o of pts){if(o===p)continue;const d=(o.x-p.x)**2+(o.y-p.y)**2;if(d<best){best=d;q=o;}}
+  if(!q)continue;
+  const mx=(p.x+q.x)/2,my=(p.y+q.y)/2;
+  out.push({x:mx,y:my,size:L.frame.unit*(.46+r()*.16),rot:Math.atan2(my,mx)+(r()-.5)*1.2});
+ }
+ return out;
+}
 function greenRimStems(s){
  if(!s||s.mode==='classic'||!s.finishes?.greenRim)return 0;
  const L=NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1));
  const {shape}=rimGeometry(s,L);
- return Math.max(6,Math.round(greenRimCount(shape,L.frame.unit)/GREEN_TIPS_PER_STEM));
+ const tips=greenRimCount(shape,L.frame.unit)+berryWeave(s,L).length;
+ return Math.max(6,Math.round(tips/GREEN_TIPS_PER_STEM));
 }
 function greenRim(s,L){
  if(s.mode==='classic'||!s.finishes?.greenRim||!L)return [];
  const {shape,yScale}=rimGeometry(s,L);
  const n=greenRimCount(shape,L.frame.unit);
  const meta=NEBULA_META.flowers.eucalyptus,r=rng(hash('greenRim'+s.seed+L.frame.capacity));
- return DomeEngine.greenery(shape,L.frame.unit,r,{count:n}).filter(g=>g.rim).map((g,i)=>{
-  const factor=g.size/Math.max(meta.headWidth,meta.headHeight);
-  return {uid:'green'+i,id:'eucalyptus',slot:null,decorative:true,x:360+g.x,y:390+g.y*yScale,
-   w:meta.headWidth*factor,h:meta.headHeight*factor,d:g.size,rot:g.rot*Math.PI/180,
-   bright:g.bright,depth:1,core:0,radiusCap:g.size,meta,url:meta.head,z:-9999,manual:false,index:-1-i};
- });
+ const node=(uid,x,y,size,rot,bright,z,index)=>{const factor=size/Math.max(meta.headWidth,meta.headHeight);
+  return {uid,id:'eucalyptus',slot:null,decorative:true,x,y,w:meta.headWidth*factor,h:meta.headHeight*factor,d:size,rot,
+   bright,depth:1,core:0,radiusCap:size,meta,url:meta.head,z,manual:false,index};};
+ const rim=DomeEngine.greenery(shape,L.frame.unit,r,{count:n}).filter(g=>g.rim)
+  .map((g,i)=>node('green'+i,360+g.x,390+g.y*yScale,g.size,g.rot*Math.PI/180,g.bright,-9999,-1-i));
+ const weave=berryWeave(s,L).map((g,i)=>node('weave'+i,360+g.x,390+g.y,g.size,g.rot,.96,-9998,-1000-i));
+ return rim.concat(weave);
 }
 /* One shared bloom size for a Heart template: the median neighbour cap, cached
    per layout+flower. See the note at its call site for why the median. */
@@ -212,10 +238,18 @@ function stampPaper(frame,s){const p=s.finishes&&s.finishes.paper;
  return frame;}
 function nodes(s){
  const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:stampPaper(s.frames.classic||classicFrame(s.items,s.finishes&&s.finishes.paper),s);
+ /* A berry's size depends on what it sits beside. In an all-berry bouquet there is
+    nothing to measure it against, so it fills its slot and the fruit packs shoulder
+    to shoulder. Beside roses the rose becomes the scale: at full size a berry ran
+    1.29x a rose head and sat on top of its neighbours, where a real strawberry is
+    the smaller of the two. So the size is interpolated on the berry share of the
+    bouquet - full at 100%, down to 0.62 of it when a few berries accent roses. */
+ const fruitShare=top&&s.items.length?s.items.filter(it=>DomeEngine.spec(it.id).radial).length/s.items.length:0;
+ const fruitScale=.62+.38*fruitShare;
  const ns=s.items.map((it,i)=>{
   const anchor=top?{x:360+L.points[it.slot??i].x,y:390+L.points[it.slot??i].y}:it.anchors.classic;if(!anchor)return null;
   const meta=NEBULA_META.flowers[it.id];let d=diameter(it,s.mode,s.seed),bright=1,depth=0,slot=null,core=0,cap=0,rot=0;
-  if(top){slot=it.slot??i;const p=L.points[slot];core=p.core;cap=p.radiusCap;depth=clamp(p.r/frame.radius,0,1);const dep=s.mode==='dome'?DomeEngine.depthOf(depth):{scale:1,bright:1},natural=s.mode==='dome'?DomeEngine.spec(it.id).base:CAT[it.id].topDiameter/88;
+  if(top){slot=it.slot??i;const p=L.points[slot];core=p.core;cap=p.radiusCap;depth=clamp(p.r/frame.radius,0,1);const dep=s.mode==='dome'?DomeEngine.depthOf(depth):{scale:1,bright:1},natural=(s.mode==='dome'?DomeEngine.spec(it.id).base:CAT[it.id].topDiameter/88)*(DomeEngine.spec(it.id).radial?fruitScale:1);
    d=frame.unit*natural*(s.mode==='dome'?.92+dep.scale*.10:1)*(.965+rng(hash('slot'+slot)+73)()*.07);
    /* The Heart is FLAT, so it has no depth ramp to justify size variation. Capping
       every bloom to its own neighbour gap made the crowded interior shrink: measured
@@ -225,10 +259,30 @@ function nodes(s){
       The Dome keeps per-slot capping: there the centre really is nearer the camera. */
    if(s.mode==='heart')d=Math.min(d,heartUnit(L,it.id));
    else d=Math.min(d,p.radiusCap/(meta.headRadius||.58));
-   bright=dep.bright;rot=(rng(hash('slot'+slot)+89)()-.5)*(s.mode==='heart'?.22:2*DomeEngine.spec(it.id).spin*Math.PI/180);
+   bright=dep.bright;
+   const sp=DomeEngine.spec(it.id),jitter=rng(hash('slot'+slot)+89)()-.5;
+   /* A rose has no up, so it turns freely. A berry has a tip, and a florist sets
+      every one pointing the same way relative to the bouquet. Tested against free
+      rotation on the same 30 slots: turned at random the calyxes scatter and it
+      reads as fruit tipped onto a plate; turned so each tip faces the centre, the
+      calyxes close into a green ring at the rim and it reads as an arrangement.
+      Tips-outward was tried too and piles the calyxes into a green blot in the
+      middle. The art is normalised calyx-up/tip-down, i.e. the tip starts at +90
+      degrees, hence the -PI/2. A berry sitting on the centre has no "inward", so it
+      simply stands upright. */
+   if(sp.radial){
+    const dx=frame.center.x-anchor.x,dy=frame.center.y-anchor.y;
+    const inward=Math.hypot(dx,dy)<frame.unit*.35?Math.PI/2:Math.atan2(dy,dx);
+    rot=inward-Math.PI/2+jitter*2*sp.spin*Math.PI/180;
+   }else rot=jitter*(s.mode==='heart'?.22:2*sp.spin*Math.PI/180);
   }else{const b=meta.stemBase,c=meta.bloomCenter;rot=meta.classicStem?clamp(Math.atan2(frame.waist.y-anchor.y,frame.waist.x-anchor.x)-Math.atan2(b[1]-c[1],b[0]-c[0]),-.42,.42):0;}
   const mw=top?meta.headWidth:meta.bloomWidth,mh=top?meta.headHeight:meta.bloomHeight,factor=top?d/Math.max(mw,mh):d/mw;
-  return {uid:it.uid,id:it.id,slot,x:anchor.x,y:anchor.y,w:mw*factor,h:mh*factor,d,rot,bright,depth,core,radiusCap:cap,meta,url:top?meta.head:meta.classicBloom,z:top?-Math.hypot(anchor.x-frame.center.x,anchor.y-frame.center.y):anchor.y,manual:anchor.manual||false,index:i};
+  /* Several photographs of one item: each slot keeps its own, chosen from the slot
+     number so painting one berry never reshuffles its neighbours. One image
+     repeated thirty times is what made the berries read as manufactured. */
+  const variants=top&&meta.heads&&meta.heads.length>1?meta.heads:null;
+  const url=!top?meta.classicBloom:variants?variants[Math.floor(rng(hash('variant'+slot)+17)()*variants.length)]:meta.head;
+  return {uid:it.uid,id:it.id,slot,x:anchor.x,y:anchor.y,w:mw*factor,h:mh*factor,d,rot,bright,depth,core,radiusCap:cap,meta,url,z:top?-Math.hypot(anchor.x-frame.center.x,anchor.y-frame.center.y):anchor.y,manual:anchor.manual||false,index:i};
  }).filter(Boolean).sort((a,b)=>a.z-b.z||a.index-b.index);
  return {frame,nodes:greenRim(s,L).concat(ns),slots:L?L.points.map(p=>({...p,x:360+p.x,y:390+p.y,uid:s.items.find(it=>it.slot===p.slot)?.uid||null})):[]};
 }
