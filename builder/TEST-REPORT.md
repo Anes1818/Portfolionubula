@@ -1,3 +1,66 @@
+# Current release — 29 September 2026
+
+## Focused visual follow-up — 30 September 2026
+
+New Dome-only assets are verified by `tests/visual-revision-2026-09-29/review.cjs`
+against a snapshot of the preceding working release. Thirty, 44 and 62 berries
+retain their exact scene geometry, white collar, Fit framing and full price data.
+Heart and existing Classic strawberry images are compared before either context
+renders different Dome images, giving matched resampling-cache histories.
+Classic no longer offers or adds new strawberries, while legacy designs remain
+editable and exportable. Existing behavior suites were rerun with only intentional
+catalog/art expectations updated. No alpha-gap thresholds were relaxed.
+
+Final result: **100 passing checks, zero failures** (57 release, 20 overhead,
+23 focused visual-revision checks). The gallery also decoded all six images at
+their intended dimensions. Previous embedded asset bytes remain unchanged.
+
+Visual approval is outstanding: recognition improves, but gloss, repeated poses
+and a crowded larger bouquet remain. The six requested proof images are in the
+[local review gallery](tests/visual-revision-2026-09-29/index.html).
+
+## Overhead strawberry follow-up
+
+The revised suite in `tests/release-2026-09-29/verify.cjs` passes, including
+saved Classic strawberry recipes, old Dome/Heart links, unchanged pricing,
+editing/Undo, exports and offline loading. Its old berry pixel-equality assertion
+now checks for the deliberately replaced overhead assets. The focused
+`verify-overhead.cjs` adds **20 passing checks, zero failures**, including genuine
+transparent backgrounds, an open paper collar, visible deletion gaps, stable
+remaining berries, five Dome sizes, 320/390/1440px access, link reconstruction and
+offline Dome export. Final results are in `results.json` and `overhead-results.json`.
+
+The first combined run timed out while both browser suites loaded resources;
+both passed when run sequentially. The focused alpha check permits the generated
+berry centre's 253/255 alpha (the outside is 0); desktop order access is verified
+after scrolling, while phone controls stay in the viewport. No product changes
+were made to conceal a failing interaction.
+
+Visual review covered the phone, expanded Dome, exported composition and Heart.
+Only two generated berry shapes are used, so repeated texture remains visible.
+The Classic strawberry preset is withheld from featured choices. This has not
+been approved as a physical florist arrangement. See
+[provenance, saved assets and prompts](artwork/overhead-berries/README.md).
+
+All **118 original embedded assets remain byte-identical**; the bundle now holds
+126 assets (five earlier Classic additions and three overhead additions).
+JavaScript syntax checks and `git diff --check` pass.
+
+## Earlier test record (before overhead asset replacement)
+
+The focused release passes **55 browser checks, zero failures**, eight JavaScript
+syntax checks and `git diff --check`. Fresh phone screenshots were visually
+inspected. See [the release report](../RELEASE-2026-09-29.md) and
+[results](tests/release-2026-09-29/results.json) for exact scope and limitations.
+Dome/Heart berry canvases match the baseline pixels; all 118 original embedded
+assets retain their bytes. Five new Classic cutouts are added.
+
+WhatsApp drafts were intercepted locally. No message was sent, and real phones,
+real florist acceptance and willingness to pay remain unverified. The old reports
+below describe prior versions; removed Auto blend controls are not requirements.
+
+---
+
 # Nebula — what has and has not been verified
 
 This report replaces the earlier v6 report. That one described a build with a

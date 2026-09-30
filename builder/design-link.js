@@ -23,6 +23,12 @@ function encode(s,order){
  const runs=[];for(const id of seq){const last=runs[runs.length-1];if(last&&last[0]===id)last[1]++;else runs.push([id,1]);}
  const f=s.finishes,payload={v:6,m:s.mode,s:s.seed,f:runs};
  if(s.mode!=='classic'&&s.template&&s.template.capacity)payload.c=s.template.capacity;
+ // Optional extension: keep a hand-arranged Classic picture and its variation IDs.
+ // Older recipe-only v6 links still use the original arrange path below.
+ if(s.mode==='classic'){
+  payload.a=s.items.map(it=>[Number(it.uid.slice(1)),it.anchors.classic.x,it.anchors.classic.y,it.anchors.classic.manual?1:0]);
+  payload.g=s.frames.classic;
+ }
  const fin={};for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
  /* The count, not a flag. This wrote 1 for any number of butterflies back when the
     finish was a single on/off, so a shared three-butterfly bouquet reopened with
@@ -30,6 +36,10 @@ function encode(s,order){
  if(f.butterfly)fin.b=Math.max(0,Math.min(9,f.butterfly|0))||1;
  if(f.crown)fin.k=1;
  if(f.greenRim)fin.g=1;if(f.tint&&f.paper==='custom')fin.c=f.tint;
+ if(f.collar===false)fin.w=0;
+ if(f.sashText)fin.t=f.sashText;
+ if(f.sashPlacement)fin.l=f.sashPlacement;
+ if(f.sashOffset)fin.y=f.sashOffset;
  if(Object.keys(fin).length)payload.fin=fin;
  if((s.title||'').trim())payload.t=s.title.trim().slice(0,70);
  if((s.note||'').trim())payload.n=s.note.trim().slice(0,180);
@@ -73,10 +83,22 @@ function decode(code){
   s.finishes.crown=fin.k===1;
   s.finishes.greenRim=fin.g===1;
   if(fin.c)s.finishes.tint=String(fin.c);
+  if(fin.w===0)s.finishes.collar=false;
+  if(fin.t)s.finishes.sashText=String(fin.t).slice(0,28);
+  if(fin.l)s.finishes.sashPlacement=String(fin.l);
+  if(fin.y!==undefined)s.finishes.sashOffset=fin.y;
   if(p.t)s.title=String(p.t).slice(0,70);
   if(p.n)s.note=String(p.n).slice(0,180);
   /* Classic needs a fresh arrangement; the templates are positioned by syncTemplate. */
   if(s.mode==='classic'){s.frames={};M.arrange(s,s.mode,{fresh:true});}
+  if(s.mode==='classic'&&p.a!==undefined){
+   if(!Array.isArray(p.a)||p.a.length!==s.items.length||!p.g)return null;
+   for(let i=0;i<p.a.length;i++){
+    const a=p.a[i];if(!Array.isArray(a)||a.length!==4||!Number.isInteger(a[0])||a[0]<1||a[0]>=1e8||![0,1].includes(a[3]))return null;
+    s.items[i].uid='b'+a[0];s.items[i].anchors.classic={x:a[1],y:a[2],manual:a[3]===1};
+   }
+   s.nextId=Math.max(...p.a.map(a=>a[0]))+1;s.frames.classic=p.g;
+  }
   const design=M.validate(s);
   return design?{design,order:p.o||null}:null;
  }catch(e){return null;}

@@ -30,13 +30,26 @@ put passwords, API keys or other secrets in it.
   downloads instead.
 - **Save design** — PNG artwork plus an editable JSON of all three bouquets.
 
-**There is no order flow.** Nothing is sent, no payment is taken, no stock is
-reserved and there is no backend. A customer who wants to buy has to contact you
-by your normal channels — the picture carries your details.
+**Order it opens a WhatsApp draft.** The customer fills in name, phone, requested
+date and pickup/delivery preference, optionally adding notes and a payment
+preference. The draft includes item quantities, finishes, indicative estimate and
+a link to `order.html` with the design and contact details. The customer must
+press Send in WhatsApp; the app cannot verify delivery. There is no payment,
+confirmed order, stock reservation, database or shared dashboard.
 
-`whatsapp` and `email` remain in the config file but are **not used** by the
-current build; the quote flow that read them was removed. Leave them empty
-unless a future version reinstates it.
+Set `whatsapp` to the shop’s approved international number (digits only). The
+current number belongs to the Nebula demo, not a florist. `email` is not used by
+this flow. Test the complete handoff on team-owned phones before customer use.
+The encoded sheet link contains contact details; it is not encrypted or access
+controlled. Share it only with the intended recipient. The sheet uses current
+shop prices, so an older draft and a newly opened sheet may show different totals.
+
+Strawberry `__berry` remains the same catalog ID in all modes. Classic uses two
+new side-view photos and separately priced `rosemary` sprigs. Review both prices,
+preparation/labor, food suitability and assembly before offering this recipe.
+
+For the bounded $29/month service scope see `../marketing/product-marketing.md`.
+New artwork and custom domains are quoted separately; domain pricing is not set.
 
 ## Your confirmation workflow
 

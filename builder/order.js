@@ -20,12 +20,13 @@ function prettyDate(iso){
 }
 function finishLabels(f){
  const out=[];
- if(f.paper&&f.paper!=='none')out.push([t('wrapping'),f.paper]);
- if(f.ribbon&&f.ribbon!=='none')out.push([t('ribbon'),f.ribbon]);
- if(f.sash&&f.sash!=='none')out.push([t('sash'),f.sash]);
+ if(f.paper&&f.paper!=='none')out.push([t('wrapping'),t(f.paper)]);
+ if(f.ribbon&&f.ribbon!=='none')out.push([t('ribbon'),t(f.ribbon)]);
+ const sashKeys={love:'sashLove',bday:'sashBday',wed:'sashWedding',blank_blackband:'sashBlackband',blank_champagne:'sashChampagne',blank_emerald:'sashEmerald'};
+ if(f.sash&&f.sash!=='none')out.push([t('sash'),t(sashKeys[f.sash]||f.sash)+(f.sashText?' — '+f.sashText:'')]);
  if(f.butterfly)out.push([t('butterfly'),'× '+(f.butterfly===true?1:f.butterfly)]);
  if(f.crown)out.push([t('crown'),'✓']);
- if(state.mode!=='classic'&&f.greenRim)out.push([t('greenRim'),'✓']);
+ if(state.mode!=='classic'&&f.greenRim)out.push([t('greenRim'),NebulaGeometry.greenRimStems(state)+' × '+name('eucalyptus')]);
  return out;
 }
 function paintSheet(){

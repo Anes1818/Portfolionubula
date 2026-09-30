@@ -66,7 +66,7 @@ function image(path){
  const im=decoded(path);if(im)return im;load(path);return null;
 }
 function wrapAssets(){const u=[NEBULA_META.wrap.back,NEBULA_META.wrap.front,BRAND_LOGO];for(const v of Object.values(NEBULA_META.wraps||{})){u.push(v.back,v.front);}return u;}
-function allAssets(){const urls=new Set(wrapAssets());for(const v of Object.values(NEBULA_META.flowers)){urls.add(v.head);for(const h of v.heads||[])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}for(const v of Object.values(NEBULA_META.finishes))urls.add(v.url);for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);return urls;}
+function allAssets(){const urls=new Set(wrapAssets());for(const v of Object.values(NEBULA_META.flowers)){urls.add(v.head);for(const h of v.heads||[])urls.add(h);for(const h of [...(v.domeHeads||[]),...(v.domeEdgeHeads||[])])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);for(const b of v.classicBlooms||[])urls.add(b);if(v.classicStem)urls.add(v.classicStem);}}for(const v of Object.values(NEBULA_META.finishes))urls.add(v.url);for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);return urls;}
 /* Everything a single design can draw: wrap, its collar, finishes and its own flowers. */
 function assetsFor(s){
  const urls=new Set(wrapAssets());
@@ -75,7 +75,7 @@ function assetsFor(s){
  urls.add(BRAND_LOGO);
  const ids=new Set((s?.items||[]).map(i=>i.id));
  if(s?.mode!=='classic'&&s.finishes?.greenRim)ids.add('eucalyptus');
- for(const id of ids){const v=NEBULA_META.flowers[id];if(!v)continue;urls.add(v.head);for(const h of v.heads||[])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);if(v.classicStem)urls.add(v.classicStem);}}
+ for(const id of ids){const v=NEBULA_META.flowers[id];if(!v)continue;urls.add(v.head);for(const h of v.heads||[])urls.add(h);for(const h of [...(v.domeHeads||[]),...(v.domeEdgeHeads||[])])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);for(const b of v.classicBlooms||[])urls.add(b);if(v.classicStem)urls.add(v.classicStem);}}
  return urls;
 }
 function warmRest(){
@@ -97,6 +97,7 @@ async function ready(designs){
 }
 async function awaitAssets(s){await Promise.all([...assetsFor(s)].map(load));}
 function tint(path,paper,color){
+ if(path===NEBULA_META.collars.domeIvory?.url&&paper==='ivory')return image(path);
  const blackSource=path.includes('wrapping/');if((PHOTO_PAPERS.includes(paper)&&!blackSource)||(paper==='black'&&blackSource))return image(path);color=paper==='ivory'?'#e6deca':paper==='black'?'#292826':paper==='blush'?'#dbb3b7':paper==='sage'?'#b1bba1':color;const key=path+color;if(tintCache.has(key))return tintCache.get(key);
  const im=image(path);if(!im)return null;const cv=makeCanvas(im.width,im.height),ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0);const d=ctx.getImageData(0,0,cv.width,cv.height),rgb=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16));
  for(let i=0;i<d.data.length;i+=4){if(!d.data[i+3])continue;const lum=(d.data[i]*.2126+d.data[i+1]*.7152+d.data[i+2]*.0722)/(blackSource?58:224);for(let j=0;j<3;j++)d.data[i+j]=Math.min(255,rgb[j]*lum);}ctx.putImageData(d,0,0);tintCache.set(key,cv);return cv;
@@ -104,7 +105,8 @@ function tint(path,paper,color){
 function nodeDraw(ctx,n,{shadow=true,alpha=false}={}){const im=image(n.url);if(!im)return;ctx.save();ctx.translate(n.x,n.y);ctx.rotate(n.rot);if(!alpha){ctx.filter=n.bright!==1?'brightness('+n.bright+')':'none';if(shadow){ctx.shadowColor='rgba(42,36,24,.20)';ctx.shadowBlur=2.2;ctx.shadowOffsetY=1.5;}}ctx.drawImage(im,-n.w/2,-n.h/2,n.w,n.h);ctx.restore();}
 function collarNode(s,f){
  if(s.mode==='classic'||s.finishes.collar===false)return null;
- const m=NEBULA_META.collars[s.mode],w=Math.min(684,(f.radius+f.unit*(s.mode==='heart'?.83:.78))*2.10);
+ const m=(s.mode==='dome'&&s.finishes.paper==='ivory'&&NEBULA_META.collars.domeIvory)||NEBULA_META.collars[s.mode];
+ const ruffle=m===NEBULA_META.collars.domeIvory,w=Math.min(684,(f.radius+f.unit*(s.mode==='heart'?.83:.78))*2.10*(ruffle?1.16:1));
  return {uid:'paper',url:m.url,x:f.center.x,y:f.center.y,w,h:w*m.height/m.width,rot:0,d:w,bright:1};
 }
 function finishNodes(s,f,nodes){
@@ -178,12 +180,25 @@ function drawArt(ctx,s,opts={}){
  if(opts.ghost){const n=opts.ghost;ctx.save();ctx.globalAlpha=.55;nodeDraw(ctx,n,{shadow:false});ctx.restore();ctx.strokeStyle='#335c50';ctx.lineWidth=2;ctx.beginPath();ctx.arc(n.x,n.y,11,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(n.x-5,n.y);ctx.lineTo(n.x+5,n.y);ctx.moveTo(n.x,n.y-5);ctx.lineTo(n.x,n.y+5);ctx.stroke();}
  ctx.restore();return sc;
 }
-function view(s,camera={}){let v;if(s.mode==='classic')v={scale:1.08,x:-28.8,y:-92};else{const f=s.frames[s.mode],extent=2*(f.radius+f.unit*.94)+48,scale=Math.min(2.6,648/extent);v={scale,x:360-360*scale,y:416-390*scale};}const z=camera.zoom||1;return {scale:v.scale*z,x:360+(v.x-360)*z+(camera.x||0),y:410+(v.y-410)*z+(camera.y||0)};}
+function view(s,camera={}){
+ let v;
+ if(s.mode==='classic'){
+  v={scale:1.30,x:-108,y:-188};
+  // Enlarge compact bouquets, but keep the original framing for tall or wide
+  // manually arranged designs. Fit must not crop a sprig that was visible before.
+  const sc=scene(s),clips=[...sc.nodes,...sc.finishes].some(n=>{
+   const c=Math.abs(Math.cos(n.rot)),sn=Math.abs(Math.sin(n.rot)),hw=(n.w*c+n.h*sn)/2,hh=(n.h*c+n.w*sn)/2;
+   return (n.x-hw)*v.scale+v.x<8||(n.x+hw)*v.scale+v.x>712||(n.y-hh)*v.scale+v.y<8||(n.y+hh)*v.scale+v.y>812;
+  });
+  if(clips)v={scale:1.08,x:-28.8,y:-92};
+ }else{const f=s.frames[s.mode],collar=collarNode(s,f),extent=Math.max(2*(f.radius+f.unit*.94),collar?.w||0,collar?.h||0)+48,scale=Math.min(2.6,648/extent);v={scale,x:360-360*scale,y:416-390*scale};}
+ const z=camera.zoom||1;return {scale:v.scale*z,x:360+(v.x-360)*z+(camera.x||0),y:410+(v.y-410)*z+(camera.y||0)};
+}
 function worldPoint(s,p,camera){const v=view(s,camera);return {x:(p.x-v.x)/v.scale,y:(p.y-v.y)/v.scale};}
 function paint(cv,s,opts={}){const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);ctx.save();ctx.scale(cv.width/720,cv.height/820);const v=view(s,opts.camera);ctx.translate(v.x,v.y);ctx.scale(v.scale,v.scale);const sc=drawArt(ctx,s,opts);ctx.restore();return sc;}
 function alphaFor(path){if(!alphaCache.has(path)){const im=image(path),cv=makeCanvas(im.width,im.height),ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0);alphaCache.set(path,{w:im.width,h:im.height,data:ctx.getImageData(0,0,im.width,im.height).data});}return alphaCache.get(path);}
 function hit(sc,p){if(sc.frame.mode!=='classic'){let best=null,dist=Infinity;for(const n of sc.nodes){if(n.decorative)continue;const d=Math.hypot(p.x-n.x,p.y-n.y),slot=sc.slots?.find(a=>a.slot===n.slot);if(d<dist&&d<(slot?.near||n.d)*.70){dist=d;best=n;}}return best;}for(const n of sc.nodes.slice().reverse()){if(n.decorative)continue;const dx=p.x-n.x,dy=p.y-n.y,x=dx*Math.cos(n.rot)+dy*Math.sin(n.rot),y=-dx*Math.sin(n.rot)+dy*Math.cos(n.rot);if(Math.abs(x)>n.w/2||Math.abs(y)>n.h/2)continue;const a=alphaFor(n.url),ix=Math.floor((x/n.w+.5)*a.w),iy=Math.floor((y/n.h+.5)*a.h);if(ix>=0&&ix<a.w&&iy>=0&&iy<a.h&&a.data[(iy*a.w+ix)*4+3]>60)return n;}return null;}
-function ghost(s,id,p){const m=NEBULA_META.flowers[id],top=s.mode!=='classic';if(!m||(s.mode==='classic'&&!m.classicAvailable))return null;const d=NebulaConfig.CAT[id][top?'topDiameter':'classicDiameter'],mw=top?m.headWidth:m.bloomWidth,mh=top?m.headHeight:m.bloomHeight,f=d/(top?Math.max(mw,mh):mw);return {id,url:top?m.head:m.classicBloom,x:p.x,y:p.y,w:mw*f,h:mh*f,d,rot:0,bright:1};}
+function ghost(s,id,p){const m=NEBULA_META.flowers[id],top=s.mode!=='classic';if(!m||(s.mode==='classic'&&!m.classicAvailable))return null;const d=NebulaConfig.CAT[id][top?'topDiameter':'classicDiameter'],mw=top?m.headWidth:m.bloomWidth,mh=top?m.headHeight:m.bloomHeight,f=d/(top?Math.max(mw,mh):mw);return {id,url:top?(s.mode==='dome'&&m.domeHeads?m.domeHeads[0]:m.head):m.classicBloom,x:p.x,y:p.y,w:mw*f,h:mh*f,d,rot:0,bright:1};}
 function alphaCanvas(s){const cv=makeCanvas();drawArt(cv.getContext('2d'),s,{alphaOnly:true});return cv;}
 function alphaReport(s){const sc=scene(s),cv=alphaCanvas(s),data=cv.getContext('2d',{willReadFrequently:true}).getImageData(0,0,720,820).data,f=sc.frame;if(s.mode==='classic')return {applicable:false,reason:'Open front-facing bouquet: top-view gap coverage is not meaningful.'};let samples=0,open=0,translucent=0;const coreR=Math.max(12,f.radius-f.unit*.43);
  for(let y=0;y<820;y++)for(let x=0;x<720;x++){let within=s.mode==='dome'?Math.hypot(x-f.center.x,y-f.center.y)<coreR:false;if(s.mode==='heart'){const b=f.unit*.32;within=G.inside({x,y},f,0)&&G.inside({x:x-b,y},f,0)&&G.inside({x:x+b,y},f,0)&&G.inside({x,y:y-b},f,0)&&G.inside({x,y:y+b},f,0);}if(!within)continue;samples++;const a=data[(y*720+x)*4+3];if(a<32)open++;if(a<225)translucent++;}

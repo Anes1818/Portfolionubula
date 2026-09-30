@@ -1,3 +1,16 @@
+# 29 September 2026 — focused local release
+
+Classic gains a strawberry starting recipe using two supplied pointed berry photos
+and three rosemary photos, with counted/priced sprigs and preserved __berry IDs.
+Dome and Heart keep their original heads and geometry. Recipes collapse on mobile
+to expose the catalog; preview framing is larger. Order it describes a request,
+shows the exact items, defaults to asking the shop about payment, and opens one
+WhatsApp draft. Classic links now retain manual positions and finish details;
+older v6 links remain readable. Pricing and marketing drafts describe the bounded
+$29 no-domain tier, with custom work quoted separately. Nothing has been deployed.
+
+Earlier notes below describe historical versions, including removed quote flows.
+
 # Changes
 
 ## Current release

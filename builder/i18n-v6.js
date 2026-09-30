@@ -128,3 +128,41 @@ Object.assign(NebulaI18n.es,{
 /* The crown is a finishing touch, placed automatically like the butterflies. */
 Object.assign(NebulaI18n.en,{crown:"Gold crown"});
 Object.assign(NebulaI18n.es,{crown:"Corona dorada"});
+
+/* September release: an estimate and a draft, never an automatically confirmed order. */
+Object.assign(NebulaI18n.en,{
+ startHere:'Start with a bouquet', startHereHint:'Sample estimates. Tap a look, then change any item.',
+ separateHint:'Choose items → see an estimate → ask on WhatsApp',
+ berriesCount:'strawberries', demoEstimate:'DEMO ESTIMATE',
+ aboutPoint2:'Give your customer a visual starting point to discuss with you.',
+ aboutPoint4:'The estimate uses the shop’s configured prices. The florist confirms availability and final price.',
+ orderHint:'WhatsApp will contain the items, estimate, your details and a link to the bouquet sheet. The florist confirms availability and final price.',
+ orderSend:'Open WhatsApp draft', orderFine:'Review the draft in WhatsApp and press Send. No payment or confirmed order is created here.',
+ orderMsgNew:'Bouquet request', orderMsgPay:'Payment preference', orderOpened:'Draft prepared. Send it in WhatsApp to contact the shop.',
+ orderPending:'Request only. The florist must confirm availability and final price.',
+ orderDemo:'DEMO: sample prices and Nebula’s test destination. Availability and final price need florist confirmation.',
+ orderOptions:'Payment preference & notes (optional)', orderPay:'Preferred payment method (arrange with shop)',
+ orderMissing:'Add your name, phone and a date from today onward.',
+ orderPrivacy:'Your contact details are included in the sheet link. Share it only with your florist.',
+ orderSheetEyebrow:'BOUQUET REQUEST · NOT CONFIRMED', osRecipe:'Requested items',
+ osPayBy:'Payment preference', osDisclaimer:'Request only; no payment has been taken. Confirm stock, feasibility and final price personally. This sheet recalculates using current shop settings.',
+ classicNote:'Photographic preview · florist confirms the real bouquet.'
+});
+Object.assign(NebulaI18n.es,{
+ startHere:'Empieza con un ramo', startHereHint:'Estimados de muestra. Elige un estilo y cambia cualquier pieza.',
+ separateHint:'Elige piezas → mira el estimado → consulta por WhatsApp',
+ berriesCount:'fresas', demoEstimate:'ESTIMADO DEMO',
+ aboutPoint2:'Ofrece a tu clienta una idea visual para conversar contigo.',
+ aboutPoint4:'El estimado usa los precios configurados de la tienda. La florista confirma disponibilidad y precio final.',
+ orderHint:'WhatsApp incluirá las piezas, el estimado, tus datos y un enlace a la ficha del ramo. La florista confirma disponibilidad y precio final.',
+ orderSend:'Abrir borrador de WhatsApp', orderFine:'Revisa el borrador en WhatsApp y pulsa Enviar. Aquí no se cobra ni se confirma ningún pedido.',
+ orderMsgNew:'Solicitud de ramo', orderMsgPay:'Preferencia de pago', orderOpened:'Borrador preparado. Envíalo en WhatsApp para contactar con la tienda.',
+ orderPending:'Solo una solicitud. La florista debe confirmar disponibilidad y precio final.',
+ orderDemo:'DEMO: precios de muestra y destino de prueba de Nebula. La florista debe confirmar disponibilidad y precio final.',
+ orderOptions:'Preferencia de pago y notas (opcional)', orderPay:'Forma de pago preferida (acordar con la tienda)',
+ orderMissing:'Añade tu nombre, teléfono y una fecha a partir de hoy.',
+ orderPrivacy:'Tus datos de contacto están en el enlace de la ficha. Compártelo solo con tu florista.',
+ orderSheetEyebrow:'SOLICITUD DE RAMO · SIN CONFIRMAR', osRecipe:'Piezas solicitadas',
+ osPayBy:'Preferencia de pago', osDisclaimer:'Solo una solicitud; no se ha cobrado nada. Confirma existencias, viabilidad y precio final personalmente. La ficha recalcula con los precios actuales de la tienda.',
+ classicNote:'Vista fotográfica · la florista confirma el ramo real.'
+});

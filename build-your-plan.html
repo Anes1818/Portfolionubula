@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Plans &amp; Prices — Nebula Sites Studio</title>
-<meta name="description" content="Two ways to put your flower shop online. The Florist Studio — $650 setup, $49/month. The Catalog — $350 one-time. No upfront payment, 30 days free.">
+<title>Bouquet Builder Pricing — $29/month | Nebula Sites Studio</title>
+<meta name="description" content="Nebula Bouquet Builder: $29/month, no custom domain. Pay after your shop’s version is live. Cancel anytime. Custom work quoted separately.">
 <meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://nebulastudio.site/build-your-plan.html" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Plans &amp; Prices — Nebula Sites Studio" />
-<meta property="og:description" content="The Florist Studio — $650 setup, $49/month. The Catalog — $350 one-time. Nothing upfront, 30 days free." />
+<meta property="og:title" content="Nebula Bouquet Builder — $29/month" />
+<meta property="og:description" content="Nebula Bouquet Builder: $29/month, no custom domain. Pay after your shop’s version is live. Cancel anytime. Custom work quoted separately." />
 <meta property="og:url" content="https://nebulastudio.site/build-your-plan.html" />
 <meta property="og:site_name" content="Nebula Sites Studio" />
 <meta property="og:image" content="https://nebulastudio.site/assets/og.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Plans &amp; Prices — Nebula Sites Studio" />
-<meta name="twitter:description" content="The Florist Studio — $650 setup, $49/month. The Catalog — $350 one-time." />
+<meta name="twitter:title" content="Nebula Bouquet Builder — $29/month" />
+<meta name="twitter:description" content="Nebula Bouquet Builder: $29/month, no custom domain. Pay after your shop’s version is live. Cancel anytime. Custom work quoted separately." />
 <meta name="twitter:image" content="https://nebulastudio.site/assets/og.png" />
 <link rel="icon" type="image/png" href="assets/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,8 +90,7 @@ a{color:inherit}
 
 /* ---------- plan cards ---------- */
 .plans{padding:clamp(30px,5vw,50px) 0 clamp(16px,3vw,24px)}
-.plan-grid{display:grid;gap:20px;grid-template-columns:1fr}
-@media(min-width:860px){.plan-grid{grid-template-columns:1.12fr 1fr;align-items:start}}
+.plan-grid{display:grid;gap:20px;grid-template-columns:1fr;max-width:820px;margin:0 auto}
 .plan{border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3.4vw,30px);
   background:var(--bg);box-shadow:var(--shadow);position:relative}
 .plan.is-main{border-color:var(--accent);background:linear-gradient(180deg,var(--accent-soft),var(--bg) 190px)}
@@ -116,6 +115,13 @@ a{color:inherit}
 .cta-p:hover{transform:translateY(-2px);box-shadow:0 10px 26px var(--accent-dim)}
 .cta-s{border:1.5px solid var(--line);color:var(--ink)}
 .cta-s:hover{border-color:var(--accent);color:var(--accent-ink)}
+.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px auto 0}
+.hero-actions .cta{min-width:190px}
+.custom-scope{max-width:820px;margin:20px auto 0;border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,28px);background:var(--soft)}
+.custom-scope h2{font-family:var(--serif);font-size:1.16rem;font-weight:600;margin-bottom:6px}
+.custom-scope p{color:var(--ink-2);font-size:.91rem;margin-bottom:10px}
+.custom-scope ul{padding-left:20px;color:var(--ink-2);font-size:.89rem;columns:2}
+@media(max-width:640px){.custom-scope ul{columns:1}}
 
 /* ---------- monthly explainer ---------- */
 .covers{background:var(--soft);border-radius:var(--r);padding:clamp(20px,3.4vw,30px);
@@ -241,169 +247,68 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
       <img src="assets/logo.png" alt="" width="26" height="26">
       NEBULA <span>SITES STUDIO</span>
     </a>
-    <a class="hdr-help" href="#plans">See the two plans →</a>
+    <a class="hdr-help" href="#plans">See the $29 plan →</a>
   </div>
 </header>
 
-<!-- ======================= HERO ======================= -->
-<section class="hero">
-  <div class="wrap">
-    <div class="kicker">Websites for florists</div>
-    <h1>Two ways to put your<br>flower shop online</h1>
-    <p>Real prices, written before we talk. Pick the one that fits how you sell — you can move up later and only pay the difference.</p>
-
-    <div class="founding">
-      <h2>✦ Founding Shop terms — first 5 florists</h2>
-      <ul>
-        <li><span class="tick">✓</span><span><b>$0 upfront.</b> You pay nothing to start.</span></li>
-        <li><span class="tick">✓</span><span><b>30 days live and free.</b> Use it with real customers.</span></li>
-        <li><span class="tick">✓</span><span><b>Pay only if you keep it.</b> Don't love it? I take it down, you owe nothing.</span></li>
-        <li><span class="tick">✓</span><span><b>You own every file</b> — forever, even if you leave.</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= PLANS ======================= -->
-<section class="plans" id="plans">
-  <div class="wrap">
-    <div class="plan-grid">
-
-      <article class="plan is-main">
-        <span class="plan-tag">For shops that sell custom</span>
-        <h3>The Florist Studio</h3>
-        <p class="for">For a shop that wants customers designing their own bouquets — and ordering without twenty messages back and forth.</p>
-        <div class="price"><b>$650</b><span class="per">setup</span><span class="per">+ $49/month</span></div>
-        <p class="price-note">One-time setup, then monthly. Cancel any time with 30 days' notice.</p>
-        <ul>
-          <li><span class="tick">✓</span><span><b>Interactive bouquet builder</b> — your customer picks stems, wrap and ribbon and watches the price update live</span></li>
-          <li><span class="tick">✓</span><span><b>Occasion-based catalog</b> — birthdays, anniversaries, sympathy, weddings</span></li>
-          <li><span class="tick">✓</span><span><b>Orders land straight in your WhatsApp</b>, already written out — bouquet, size, note, total</span></li>
-          <li><span class="tick">✓</span><span>Your own domain, hosting and SSL — bought and run by me</span></li>
-          <li><span class="tick">✓</span><span>Built around your shop: your colors, your wrapping, your prices</span></li>
-          <li><span class="tick">✓</span><span>Works on every phone — most of your customers will never see a laptop</span></li>
-          <li><span class="tick">✓</span><span>Changes whenever you want — send a WhatsApp message, I do it</span></li>
-        </ul>
-        <button class="cta cta-p" type="button" data-plan="studio">Start my Studio →</button>
-      </article>
-
-      <article class="plan">
-        <h3>The Catalog</h3>
-        <p class="for">For a shop that just needs a proper place to send people — instead of a Linktree.</p>
-        <div class="price"><b>$350</b><span class="per">one-time</span></div>
-        <p class="price-note">Paid once. No monthly fee.</p>
-        <ul>
-          <li><span class="tick">✓</span><span><b>Mobile storefront</b> with your bouquets and your prices</span></li>
-          <li><span class="tick">✓</span><span><b>WhatsApp ordering</b> on every bouquet, message pre-written</span></li>
-          <li><span class="tick">✓</span><span>Occasion sections so people shop the way they think</span></li>
-          <li><span class="tick">✓</span><span>Domain, hosting and SSL for the first year</span></li>
-          <li><span class="tick">✓</span><span>Built around your brand, never a template</span></li>
-          <li class="off"><span class="tick">✕</span><span>No bouquet builder</span></li>
-          <li class="off"><span class="tick">✕</span><span>No monthly support — changes are billed per request</span></li>
-        </ul>
-        <button class="cta cta-s" type="button" data-plan="catalog">Start my Catalog →</button>
-      </article>
-
-    </div>
-
-    <!-- ---------- what the $49 covers ---------- -->
-    <div class="covers">
-      <h2>What the $49 a month actually covers</h2>
-      <p class="sub">Not a subscription for nothing. Here is exactly what you get every month.</p>
-      <div class="covers-grid">
-        <div><h4>Your site stays alive</h4><p>Domain renewed, hosting paid, SSL valid. You will never wake up to a dead site because a renewal email was missed.</p></div>
-        <div><h4>Changes are free</h4><p>A price, a photo, a sold-out bouquet, Mother's Day copy. Send me a message and it is done.</p></div>
-        <div><h4>New bouquets added</h4><p>Your shop changes every season. Send photos, I put them online for you.</p></div>
-        <div><h4>Anything broken is fixed</h4><p>A button, an image, an order that did not arrive. My responsibility, not yours — at no charge.</p></div>
-        <div><h4>Backups</h4><p>If something goes wrong, your site is back within the hour.</p></div>
-        <div><h4>A real person answers</h4><p>You message me, not a support ticket queue that replies in three days.</p></div>
-      </div>
-    </div>
-
-    <!-- ---------- how it works ---------- -->
-    <div class="process">
-      <h2>How it works, start to finish</h2>
-      <p class="sub">No calls, no contracts to read, no meetings. Four steps and your shop is online.</p>
-      <div class="steps">
-        <div class="step">
-          <span class="n">1</span>
-          <h4>You send me your shop</h4>
-          <p>Photos of your bouquets, your prices and your WhatsApp number. Send them however is easiest — WhatsApp, Instagram, email.</p>
-          <span class="when">About 10 minutes of your time</span>
-        </div>
-        <div class="step">
-          <span class="n">2</span>
-          <h4>I build it</h4>
-          <p>Coded around your shop from scratch — your colors, your wrapping, your bouquets, your prices in the builder. Never a template.</p>
-          <span class="when">5–7 days</span>
-        </div>
-        <div class="step">
-          <span class="n">3</span>
-          <h4>You look and I change</h4>
-          <p>I send you the link. You tell me what to change — a color, a photo, a price, the wording. As many rounds as it takes.</p>
-          <span class="when">2–3 days</span>
-        </div>
-        <div class="step">
-          <span class="n">4</span>
-          <h4>It goes live</h4>
-          <p>On your own domain, with SSL. You use it with real customers for 30 days. Then you decide whether to keep it.</p>
-          <span class="when">Day one of your 30 free days</span>
-        </div>
-      </div>
-
-      <div class="needs">
-        <h3>What I need from you</h3>
-        <p class="sub">That is the whole list. If you are missing something, tell me and I will work around it.</p>
-        <ul>
-          <li><span class="tick">✓</span><span><b>8–15 bouquet photos</b> — phone photos are fine, no studio needed</span></li>
-          <li><span class="tick">✓</span><span><b>Your prices</b> — per bouquet, and per stem if you sell custom</span></li>
-          <li><span class="tick">✓</span><span><b>Your logo</b> — or I design a simple one at no charge</span></li>
-          <li><span class="tick">✓</span><span><b>Your WhatsApp number</b> — where the orders will land</span></li>
-          <li><span class="tick">✓</span><span><b>Your delivery area</b> and any cut-off time</span></li>
-          <li><span class="tick">✓</span><span><b>A few lines about your shop</b> — or I write them and you correct me</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- ---------- faq ---------- -->
-    <div class="faq">
-      <h2>Questions you might have</h2>
-
-      <details>
-        <summary>I already have Instagram. Why do I need this?</summary>
-        <p>This does not replace Instagram — it feeds it. You put one link in your bio, and instead of answering twenty messages about sizes and prices, the customer arrives having already built her bouquet and accepted the price.</p>
-      </details>
-
-      <details>
-        <summary>Where do the orders actually go?</summary>
-        <p>Straight to your WhatsApp, as a message that is already written out — which bouquet, what size, the card note and the total. You reply to confirm, exactly like you do now. Nothing new to learn, no dashboard to check.</p>
-      </details>
-
-      <details>
-        <summary>I am not good with computers.</summary>
-        <p>You do not touch anything. You send me a photo or a message on WhatsApp and I make the change for you. That is what the monthly fee is for.</p>
-      </details>
-
-      <details>
-        <summary>Is $650 worth it for a small shop?</summary>
-        <p>One arranged dome runs $180 to $270. The setup pays for itself in about three orders, and the $49 a month is less than one bouquet.</p>
-      </details>
-
-      <details>
-        <summary>Can I start with the Catalog and add the builder later?</summary>
-        <p>Yes. You pay the difference, not the full price again.</p>
-      </details>
-    </div>
-
-    <!-- ---------- still deciding ---------- -->
-    <div class="deciding" id="start">
-      <h2>Still deciding?</h2>
-      <p>Tell me about your shop and I'll tell you honestly which one fits — or whether you need neither yet.</p>
-      <button class="cta cta-s" type="button" data-plan="unsure">Ask me first →</button>
-    </div>
-
-  </div>
-</section>
+<section class="hero"><div class="wrap">
+ <div class="kicker">Nebula Bouquet Builder · for florists</div>
+ <h1>Let customers show you<br>the bouquet they have in mind.</h1>
+ <p>Customers choose flowers, see an indicative estimate from your shop’s approved prices, and prepare a WhatsApp request with their design details. They press Send; you confirm availability and the final price.</p>
+ <div class="hero-actions"><a class="cta cta-p" href="builder/">Try the live builder →</a><a class="cta cta-s" href="#plans">See what $29 includes →</a></div>
+ <div class="founding"><h2>A simple place to start</h2><ul>
+ <li><span class="tick">✓</span><span><b>$29/month.</b> No custom domain.</span></li>
+ <li><span class="tick">✓</span><span><b>Pay after your shop’s version is live.</b></span></li>
+ <li><span class="tick">✓</span><span><b>Cancel anytime.</b> No setup fee for the basic scope.</span></li>
+ </ul></div>
+</div></section>
+<section class="plans" id="plans"><div class="wrap"><div class="plan-grid">
+ <article class="plan is-main"><span class="plan-tag">The basic tier</span>
+ <h3>Your bouquet builder</h3><p class="for">A visual starting point for the conversation you already have on WhatsApp.</p>
+ <div class="price"><b>$29</b><span class="per">per month</span></div>
+ <p class="price-note">One shop · one Nebula-hosted link · no custom domain</p>
+ <ul>
+ <li><span class="tick">✓</span><span><b>One configured builder</b> using the existing Classic, Dome and Flat Heart layouts and artwork library</span></li>
+ <li><span class="tick">✓</span><span><b>Initial setup:</b> your supplied logo, shop name, contact details, one currency and prices for the existing catalog</span></li>
+ <li><span class="tick">✓</span><span><b>One setup review round</b> for those settings before going live</span></li>
+ <li><span class="tick">✓</span><span><b>EN/ES experience:</b> browser-local and exported editable designs, PNG sharing and an indicative estimate</span></li>
+ <li><span class="tick">✓</span><span><b>WhatsApp draft + bouquet sheet:</b> item quantities, finishes, estimate, customer details, requested date and pickup/delivery preference</span></li>
+ <li><span class="tick">✓</span><span><b>Hosting and HTTPS</b> on a Nebula link while subscribed, plus maintenance of the included builder</span></li>
+ <li><span class="tick">✓</span><span><b>One monthly batch of up to 10 price/text/contact edits</b> and up to 20 minutes of asynchronous setup/use help per month; unused allowances do not roll over</span></li>
+ </ul>
+ <button class="cta cta-p" type="button" data-plan="studio">Ask about my shop’s builder →</button>
+ <p class="price-note">An enquiry, not checkout. No card or payment is collected on this page.</p>
+ </article>
+ </div>
+ <aside class="custom-scope" aria-labelledby="custom-heading"><h2 id="custom-heading">Custom work is quoted separately</h2>
+ <p>The $29 plan covers the existing builder library. Ask for a written scope and quote for:</p>
+ <ul>
+ <li>Custom domain registration, connection or renewal</li>
+ <li>New photos, cutouts, retouching or artwork</li>
+ <li>New species, layouts, pages or languages</li>
+ <li>Extra edits, review rounds, support or urgent work</li>
+ <li>Integrations or bespoke features, if feasible</li>
+ </ul></aside>
+ <div class="covers"><h2>What the customer sends you</h2><p class="sub">A request you review personally.</p><div class="covers-grid">
+ <div><h4>1. A visual choice</h4><p>The customer builds a photographic preview. It is an idea to discuss, not a guarantee of the finished bouquet.</p></div>
+ <div><h4>2. An indicative estimate</h4><p>Items, preparation, labor and extras use the prices you supply. Demo prices are samples. Delivery, tax and any adjustments need your confirmation.</p></div>
+ <div><h4>3. A WhatsApp draft</h4><p>The customer reviews the text and presses Send in WhatsApp. You receive the details and a link to a readable bouquet sheet, then confirm stock and final price.</p></div>
+ </div></div>
+ <div class="process"><h2>From your settings to your shop’s link</h2><div class="steps">
+ <div class="step"><span class="n">1</span><h4>Send the essentials</h4><p>Shop name, supplied logo, WhatsApp number, currency and prices for the existing artwork library.</p></div>
+ <div class="step"><span class="n">2</span><h4>Review the setup</h4><p>One round to check the configured details, estimate and message destination. We agree the launch date after reviewing your inputs.</p></div>
+ <div class="step"><span class="n">3</span><h4>Go live, then pay</h4><p>Your builder gets a Nebula-hosted link. The $29 monthly subscription starts after your shop’s version is live.</p></div>
+ <div class="step"><span class="n">4</span><h4>Use it with customers</h4><p>Share the link, review requests and confirm each bouquet personally. Cancel anytime; hosting ends at the end of the paid period, with no further renewal.</p></div>
+ </div></div>
+ <div class="faq"><h2>Before you decide</h2>
+ <details><summary>Does it take payment or confirm orders?</summary><p>No. It prepares a WhatsApp draft. There is no automated payment, deposit, stock reservation, database or shared dashboard. You arrange payment and confirm the order with your customer.</p></details>
+ <details><summary>Can I use my own flower and wrapping photos?</summary><p>The $29 tier uses the existing artwork library. Preparing new assets, photographing products and matching custom wraps require a separate quote.</p></details>
+ <details><summary>Can I change prices myself?</summary><p>There is no shop dashboard. Basic service includes one monthly batch of up to 10 price/text/contact edits. Extra changes are quoted before work starts.</p></details>
+ <details><summary>Where are designs and customer details stored?</summary><p>Designs save in the customer’s browser or an exported file. A request link contains the submitted contact details, so it should only be shared with the intended florist. There is no shared order database.</p></details>
+ <details><summary>How do I decide if it fits my shop?</summary><p>Try the live builder first. Check that its current flower library represents what you sell, then review the estimate and WhatsApp request flow before asking for your shop’s setup.</p></details>
+ </div>
+ <div class="deciding" id="start"><h2>See the handoff for yourself.</h2><p>Build a bouquet with sample prices. Open “Order it” to see the WhatsApp draft. Nothing is sent until you press Send in WhatsApp.</p><a class="cta cta-p" href="builder/">Try the live builder →</a></div>
+</div></section>
 
 <!-- ======================= CHECKOUT MODAL ======================= -->
 <div class="modal" id="checkout" role="dialog" aria-modal="true" aria-labelledby="ck-title">
@@ -413,19 +318,19 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
     <div class="modal-head">
       <button class="modal-close" type="button" data-close aria-label="Close">✕</button>
       <div class="eyebrow" id="ck-eyebrow">You selected</div>
-      <h3 id="ck-title">The Florist Studio</h3>
+      <h3 id="ck-title">Nebula Bouquet Builder</h3>
       <div class="modal-sum">
-        <b id="ck-price">$650</b><span id="ck-per">setup + $49/month</span>
+        <b id="ck-price">$29</b><span id="ck-per">per month · no custom domain</span>
       </div>
-      <div class="modal-today">✓ <span id="ck-today">$0 today — 30 days free first</span></div>
+      <div class="modal-today">✓ <span id="ck-today">Pay only after your shop’s version is live</span></div>
     </div>
 
     <div class="modal-body" id="ck-body">
-      <!-- Leads go to Formspree (form ID: xaenyaqa) — stored in the dashboard
-           AND emailed, so a lead is never lost even if email delivery fails. -->
+      <!-- Leads post to Formspree (form ID: xaenyaqa). Verify live delivery and
+           notification settings before launch. -->
       <form id="planForm" action="https://formspree.io/f/xaenyaqa" method="POST" novalidate>
         <input type="hidden" name="_subject" value="New florist lead — nebulastudio.site">
-        <input type="hidden" name="plan" id="f-plan" value="The Florist Studio — $650 setup + $49/month">
+        <input type="hidden" name="plan" id="f-plan" value="Nebula Bouquet Builder — $29 per month · no custom domain">
         <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
 
         <div>
@@ -450,23 +355,23 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
         </div>
 
         <div class="status" id="status" role="status"></div>
-        <button class="send" type="submit" id="sendBtn">Send — I reply within 24 hours</button>
-        <p class="fine">Nothing to pay today. No card, no contract.</p>
+        <button class="send" type="submit" id="sendBtn">Send my enquiry</button>
+        <p class="fine">An enquiry only. Payment starts after your shop’s version is live.</p>
       </form>
     </div>
 
     <div class="modal-done" id="ck-done">
       <div class="mark" aria-hidden="true">✓</div>
       <h3 id="ck-done-title">Got it!</h3>
-      <p id="ck-done-sub">I'll get back to you within 24 hours.</p>
+      <p id="ck-done-sub">Thank you. I’ll reply about your shop’s setup.</p>
     </div>
 
   </div>
 </div>
 
 <footer>
-  <span class="fb">Nebula Sites Studio</span> — websites for flower shops
-  <span class="sep">·</span><a href="flowers/index.html">See the live demos</a>
+  <span class="fb">Nebula Sites Studio</span> — bouquet builder for flower shops
+  <span class="sep">·</span><a href="flowers/">Florist page</a>
   <span class="sep">·</span><a href="mailto:nebulastudiosite@gmail.com">nebulastudiosite@gmail.com</a>
 </footer>
 
@@ -485,34 +390,18 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
   var PLANS = {
     studio: {
       eyebrow: "You selected",
-      title:   "The Florist Studio",
-      price:   "$650",
-      per:     "setup + $49/month",
-      today:   "$0 today — 30 days free first",
-      value:   "The Florist Studio — $650 setup + $49/month"
-    },
-    catalog: {
-      eyebrow: "You selected",
-      title:   "The Catalog",
-      price:   "$350",
-      per:     "one-time",
-      today:   "$0 today — 30 days free first",
-      value:   "The Catalog — $350 one-time"
-    },
-    unsure: {
-      eyebrow: "No plan picked yet",
-      title:   "Tell me about your shop",
-      price:   "$0",
-      per:     "today — I'll tell you which one fits",
-      today:   "No obligation, no card, no call",
-      value:   "Not sure yet — help me choose"
+      title:   "Nebula Bouquet Builder",
+      price:   "$29",
+      per:     "per month · no custom domain",
+      today:   "Pay only after your shop’s version is live",
+      value:   "Nebula Bouquet Builder — $29 per month · no custom domain"
     }
   };
 
   function setText(id, txt) { document.getElementById(id).textContent = txt; }
 
   function openModal(key) {
-    var p = PLANS[key] || PLANS.unsure;
+    var p = PLANS[key] || PLANS.studio;
     setText("ck-eyebrow", p.eyebrow);
     setText("ck-title",   p.title);
     setText("ck-price",   p.price);
@@ -522,7 +411,6 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
 
     /* Reset in case the visitor already sent once and reopened. */
     document.getElementById("ck-body").style.display = "";
-    document.getElementById("ck-done").style.display = "";
     document.getElementById("ck-done").style.display = "none";
     form.style.display = "";
     status.className = "status";
@@ -594,12 +482,12 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
       document.getElementById("ck-body").style.display = "none";
       document.getElementById("ck-done-title").textContent = "Got it, " + name + "!";
       document.getElementById("ck-done-sub").textContent =
-        "I'll reply within 24 hours to " + contact +
+        "I'll reply about your enquiry to " + contact +
         ", and I'll tell you exactly what I need from you to start.";
       document.getElementById("ck-done").style.display = "block";
     } catch (err) {
       console.error("[Nebula] Lead NOT sent:", err);
-      var subject = encodeURIComponent("Website enquiry — " + shop);
+      var subject = encodeURIComponent("Bouquet builder enquiry — " + shop);
       var body = encodeURIComponent(
         "Name: " + name + "\nShop: " + shop + "\nCity: " + city +
         "\nContact: " + contact + "\nPlan: " + form.plan.value +

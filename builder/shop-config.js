@@ -35,5 +35,7 @@ window.NEBULA_SHOP={name:'Nebula',
   "spray_rose": 450,
   "stock_yellow": 350,
   "rose_cream": 400,
+  "__berry": 300,
+  "rosemary": 200,
   "__choc": 500
 }};

@@ -30,7 +30,7 @@ function diameter(it,mode,seed=11){const d=CAT[it.id][mode==='classic'?'classicD
 function capacity(items,mode){
  const unavailable=items.filter(it=>mode==='classic'&&!CAT[it.id].classic);
  if(unavailable.length)return {ok:false,reason:'art',ids:[...new Set(unavailable.map(x=>x.id))]};
- const main=items.filter(x=>CAT[x.id].kind==='flower'),texture=items.filter(x=>CAT[x.id].kind==='texture');
+ const main=items.filter(x=>CAT[x.id].kind==='flower'||CAT[x.id].kind==='strawberry'),texture=items.filter(x=>CAT[x.id].kind==='texture');
  const area=main.reduce((sum,it)=>sum+(CAT[it.id].classicDiameter/116)**2,0);
  if(mode==='classic'&&(main.length>CONFIG.limits.classicMain||area>CONFIG.limits.classicArea+.001))return {ok:false,reason:'classicCapacity',main:main.length,area:+area.toFixed(2),limit:20};
  if(mode==='classic'&&texture.length>CONFIG.limits.classicTexture)return {ok:false,reason:'textureCapacity',limit:mode==='classic'?4:8};
@@ -95,6 +95,12 @@ function classic(items,seed,paper){
     any number of them, so the limit is now a real capacity rather than a bug. */
  const shoulder=Math.max(100,rowWidth(rows[0],seed)*.44)+8,pairs=Math.max(1,Math.ceil(tex.length/2));
  tex.forEach((it,i)=>{
+  if(it.id==='rosemary'){
+   // Real, charged sprigs between fruit rows, with two breaking the shoulders.
+   const spots=[[-.92,188],[.92,182],[-.40,172],[.38,160],[-.63,112],[.61,104],[0,204],[0,113]];
+   const [x,lift]=spots[i%spots.length];
+   positions[it.uid]={x:360+x*shoulder,y:frame.rimY-lift+(rand()-.5)*10,manual:false};return;
+  }
   const side=i%2?-1:1,step=Math.floor(i/2),t=pairs>1?step/(pairs-1):0;
   positions[it.uid]={x:360+side*(shoulder+t*30),y:frame.rimY-152-t*74+(rand()-.5)*11,manual:false};
  });
@@ -270,19 +276,43 @@ function nodes(s){
       middle. The art is normalised calyx-up/tip-down, i.e. the tip starts at +90
       degrees, hence the -PI/2. A berry sitting on the centre has no "inward", so it
       simply stands upright. */
-   if(sp.radial){
+   if(meta.headView==='overhead'){
+    // Tip-facing photographs have no calyx axis. Small turns preserve their
+    // shared upper-left lighting instead of spinning the highlights radially.
+    rot=jitter*.48;
+   }else if(sp.radial){
     const dx=frame.center.x-anchor.x,dy=frame.center.y-anchor.y;
     const inward=Math.hypot(dx,dy)<frame.unit*.35?Math.PI/2:Math.atan2(dy,dx);
     rot=inward-Math.PI/2+jitter*2*sp.spin*Math.PI/180;
    }else rot=jitter*(s.mode==='heart'?.22:2*sp.spin*Math.PI/180);
   }else{const b=meta.stemBase,c=meta.bloomCenter;rot=meta.classicStem?clamp(Math.atan2(frame.waist.y-anchor.y,frame.waist.x-anchor.x)-Math.atan2(b[1]-c[1],b[0]-c[0]),-.42,.42):0;}
+  if(!top&&(it.id==='__berry'||it.id==='rosemary')){
+   const r=rng(hash(it.uid+'classic')+s.seed);
+   d*=.90+r()*.20;rot=(r()-.5)*.58;
+  }
   const mw=top?meta.headWidth:meta.bloomWidth,mh=top?meta.headHeight:meta.bloomHeight,factor=top?d/Math.max(mw,mh):d/mw;
   /* Several photographs of one item: each slot keeps its own, chosen from the slot
      number so painting one berry never reshuffles its neighbours. One image
      repeated thirty times is what made the berries read as manufactured. */
   const variants=top&&meta.heads&&meta.heads.length>1?meta.heads:null;
-  const url=!top?meta.classicBloom:variants?variants[Math.floor(rng(hash('variant'+slot)+17)()*variants.length)]:meta.head;
-  return {uid:it.uid,id:it.id,slot,x:anchor.x,y:anchor.y,w:mw*factor,h:mh*factor,d,rot,bright,depth,core,radiusCap:cap,meta,url,z:top?-Math.hypot(anchor.x-frame.center.x,anchor.y-frame.center.y):anchor.y,manual:anchor.manual||false,index:i};
+  const classicVariants=meta.classicBlooms;
+  const variantRoll=rng(hash('variant'+slot)+17)();
+  const variantIndex=meta.headView==='overhead'?(variantRoll<.70?0:1):Math.floor(variantRoll*(variants?.length||1));
+  let url=!top?(classicVariants?classicVariants[(Number(it.uid.slice(1))-1)%classicVariants.length]:meta.classicBloom):variants?variants[variantIndex]:meta.head;
+  if(s.mode==='dome'&&meta.domeHeads?.length){
+   // Art-only selection. Keep every measured position, diameter, depth and turn.
+   // A few outward-facing edge photographs reveal the taper without spinning
+   // their shared upper-left light. Choices depend on slot, never live quantity.
+   const edge=meta.domeEdgeHeads;
+   if(meta.domeStyle==='natural'){
+    url=meta.domeHeads[Math.floor(variantRoll*meta.domeHeads.length)];
+    rot=(rng(hash('slot'+slot)+89)()-.5)*.28+(anchor.x-frame.center.x)/frame.radius*.12;
+   }else if(depth>.82&&variantRoll<.35&&edge?.length===2){
+    url=edge[(anchor.x-frame.center.x)+(anchor.y-frame.center.y)<0?0:1];
+   }else url=meta.domeHeads[depth>.70&&variantRoll>.90?2:variantRoll<.45?0:1];
+  }
+  const naturalDome=s.mode==='dome'&&meta.domeStyle==='natural'&&fruitShare>=.6;
+  return {uid:it.uid,id:it.id,slot,x:anchor.x,y:anchor.y,w:mw*factor,h:mh*factor,d,rot,bright,depth,core,radiusCap:cap,meta,url,z:naturalDome?anchor.y:top?-Math.hypot(anchor.x-frame.center.x,anchor.y-frame.center.y):anchor.y,manual:anchor.manual||false,index:i};
  }).filter(Boolean).sort((a,b)=>a.z-b.z||a.index-b.index);
  return {frame,nodes:greenRim(s,L).concat(ns),slots:L?L.points.map(p=>({...p,x:360+p.x,y:390+p.y,uid:s.items.find(it=>it.slot===p.slot)?.uid||null})):[]};
 }
@@ -311,7 +341,7 @@ const LEAN=0.42;
 function classicEnvelope(frame,id){
  const m=NEBULA_META.flowers[id];
  const w=CAT[id].classicDiameter*CLASSIC_BLOOM,h=w*m.bloomHeight/m.bloomWidth;
- const lean=m.classicStem?LEAN:0,c=Math.cos(lean),s=Math.sin(lean);
+ const lean=m.classicStem?LEAN:(m.classicBlooms?.length ? .29 : 0),c=Math.cos(lean),s=Math.sin(lean);
  const halfW=(w*c+h*s)/2,halfH=(h*c+w*s)/2;
  const half=896*frame.scale*(frame.mouthHalf||MOUTH_FALLBACK);
  /* Exactly the half-extent, so the outermost bloom's edge meets the paper edge and
@@ -330,7 +360,7 @@ function classicEnvelope(frame,id){
  return {xmin:360-half+xm,xmax:360+half-xm,ymin,
          ymax:frame.rimY-Math.max(24,halfH)-4};
 }
-function constrainClassic(p,frame,id){const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};if(!NEBULA_META.flowers[id].classicStem){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
+function constrainClassic(p,frame,id){const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};const m=NEBULA_META.flowers[id];if(!m.classicStem&&!m.classicBlooms){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
 function inside(p,frame,d,id){
  if(p.x-d/2<20||p.x+d/2>700||p.y-d/2<55||p.y+d/2>740)return false;
  if(frame.mode==='classic'){

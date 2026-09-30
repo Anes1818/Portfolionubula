@@ -16,7 +16,7 @@ function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  return s;
 }
 function create(preset='romantic',mode='classic'){
- const s=empty();s.mode=mode;s.items=(PRESETS[preset]||PRESETS.romantic).items.map(id=>newItem(s,id));arrange(s,mode,{fresh:true});return s;
+ const s=empty();s.mode=mode;const recipe=PRESETS[preset]||PRESETS.romantic;s.items=recipe.items.map(id=>newItem(s,id));if(recipe.paper)s.finishes.paper=recipe.paper;arrange(s,mode,{fresh:true});return s;
 }
 /* A narrower paper must not leave blooms hanging outside it. Re-clamp on change. */
 function refitPaper(s){
@@ -92,6 +92,7 @@ function validatePortfolio(raw){
 }
 function add(s,id,p){
  if(!Object.hasOwn(CAT,id))return {ok:false,reason:'invalid'};
+ if(s.mode==='classic'&&CAT[id].classicOffered===false)return {ok:false,reason:'art',ids:[id]};
  if(s.mode!=='classic'){const used=new Set(s.items.map(i=>i.slot)),slot=p?NebulaTemplates.nearest(s.mode,s.template.capacity,p):Array.from({length:s.template.capacity},(_,i)=>i).find(i=>!used.has(i));if(slot==null||used.has(slot))return {ok:false,reason:'templateFull'};return paintSlot(s,slot,id);}
  const it=newItem(s,id),cap=G.capacity(s.items.concat(it),s.mode);
  if(!cap.ok){s.nextId--;return cap;}
@@ -108,6 +109,7 @@ function add(s,id,p){
 }
 function replace(s,uid,id){
  const it=s.items.find(i=>i.uid===uid);if(!it||!CAT[id])return {ok:false,reason:'invalid'};
+ if(s.mode==='classic'&&CAT[id].classicOffered===false&&it.id!==id)return {ok:false,reason:'art',ids:[id]};
  if(s.mode!=='classic')return paintSlot(s,it.slot,id);
  const prev=it.id;it.id=id;const cap=G.capacity(s.items,s.mode);
  if(!cap.ok){it.id=prev;return cap;}

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <meta name="description" content="A bouquet builder for flower shops: customers choose flowers, see a sample estimate and prepare a WhatsApp request. $29/month for one configured shop link; pay after it goes live." />
   <meta name="theme-color" content="#150a10" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nebula Sites Studio — Websites Made for Flower Shops" />
-  <meta property="og:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
-  <title>Nebula Sites Studio — Websites Made for Flower Shops</title>
+  <meta property="og:title" content="Nebula Bouquet Builder for Flower Shops" />
+  <meta property="og:description" content="Let customers show you the bouquet they have in mind. One configured shop builder link for $29/month; pay after it goes live." />
+  <title>Nebula Bouquet Builder for Flower Shops</title>
   <link rel="canonical" href="https://nebulastudio.site/flowers/" />
   <meta property="og:url" content="https://nebulastudio.site/flowers/" />
   <meta property="og:site_name" content="Nebula Sites Studio" />
@@ -16,8 +16,8 @@
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Nebula Sites Studio — Websites for Florists" />
-  <meta name="twitter:description" content="Florist website specialists: bouquet builders, occasion-based catalogs, seasonal event themes. Explore our live florist demo." />
+  <meta name="twitter:title" content="Nebula Bouquet Builder for Flower Shops" />
+  <meta name="twitter:description" content="Let customers show you the bouquet they have in mind. One configured shop builder link for $29/month; pay after it goes live." />
   <meta name="twitter:image" content="https://nebulastudio.site/assets/og.png" />
   <link rel="icon" type="image/png" href="../assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,6 +31,7 @@
        animation libraries so the page - and above all the contact form - keeps working. -->
   <script>
   (function () {
+    var animationFallback = false
     function stub() {
       var o = {}
       ;['to','from','fromTo','set','timeline','registerPlugin','killTweensOf','delayedCall','add','play','pause','reverse','restart','kill','progress','seek','eventCallback','call','addLabel','defaults','config'].forEach(function (k) { o[k] = function () { return o } })
@@ -46,8 +47,9 @@
       o.getProperty = function () { return 0 }
       return o
     }
-    if (typeof window.gsap === 'undefined') window.gsap = stub()
+    if (typeof window.gsap === 'undefined') { window.gsap = stub(); animationFallback = true }
     if (typeof window.ScrollTrigger === 'undefined') {
+      animationFallback = true
       var st = stub()
       st.create = function () { return { kill: function () {}, refresh: function () {}, disable: function () {}, enable: function () {} } }
       st.getAll = function () { return [] }
@@ -72,6 +74,7 @@
         }
       }
     }
+    window.nebulaAnimationFallback = animationFallback
   })()
   </script>
 
@@ -511,7 +514,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 .hero-eyebrow { margin-bottom:2.5rem; opacity:0; transform:translateY(12px); }
 .hero-headline {
   font-family:var(--font-serif);
-  font-size:clamp(3.8rem,10vw,9rem);
+  font-size:clamp(3.8rem,7vw,7rem);
   font-weight:800; letter-spacing:-.025em; line-height:.92; margin-bottom:2.5rem;
 }
 .hero-line { display:block; overflow:hidden; }
@@ -1043,7 +1046,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <div id="scroll-progress"></div>
 
 <!-- 09. RETURNING VISITOR BANNER (shown via JS) -->
-<div id="rv-banner">Welcome back ✦ Ready to take the next step?</div>
+<div id="rv-banner">Welcome back ✦ Try the builder or review the $29 plan.</div>
 
 <!-- VEIL -->
 <div id="veil"><span id="veil-logo">Nebula.</span></div>
@@ -1060,7 +1063,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <a href="#" class="nav-logo" aria-label="Nebula Sites Studio home" style="display:inline-flex;align-items:center;gap:.6rem"><img src="../assets/logo.png" alt="" style="width:36px;height:36px;border-radius:50%;box-shadow:0 0 18px rgba(150,110,255,.4)">Nebula<span>.</span></a>
   <div class="nav-links" role="list">
     <a href="#about" role="listitem">About</a>
-    <a href="#showcase" role="listitem">Work</a>
+    <a href="#showcase" role="listitem">Builder</a>
     <a href="#templates" role="listitem">Demos</a>
     <a href="#services" role="listitem">Services</a>
     <a href="#process" role="listitem">Process</a>
@@ -1069,7 +1072,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 
   </div>
   <div class="nav-right">
-    <a href="../build-your-plan.html" class="btn btn-ghost" aria-label="Book a free consultation">Free Consultation</a>
+    <a href="../build-your-plan.html#plans" class="btn btn-ghost" aria-label="See the bouquet builder plan">See $29 plan</a>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navOverlay">
       <span></span><span></span>
     </button>
@@ -1078,13 +1081,13 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 
 <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true">
   <a href="#about"     class="nav-overlay-link">About</a>
-  <a href="#showcase"  class="nav-overlay-link">Work</a>
+  <a href="#showcase"  class="nav-overlay-link">Builder</a>
   <a href="#templates" class="nav-overlay-link">Demos</a>
   <a href="#services"  class="nav-overlay-link">Services</a>
   <a href="#process"   class="nav-overlay-link">Process</a>
   <a href="../build-your-plan.html#plans" class="nav-overlay-link">Plans</a>
   <a href="#contact"   class="nav-overlay-link">Contact</a>
-  <a href="../build-your-plan.html" class="btn btn-primary nav-overlay-cta">Free Consultation &nbsp;&#8599;</a>
+  <a href="../build-your-plan.html#plans" class="btn btn-primary nav-overlay-cta">See $29 plan &nbsp;&#8599;</a>
   <span class="nav-overlay-foot">Nebula Sites Studio — every business has a story worth telling</span>
 </div>
 
@@ -1097,29 +1100,29 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <div class="hero-orb hero-orb--c" id="orbC" aria-hidden="true"></div>
   <div class="hero-body">
     <div class="hero-eyebrow" id="heroEyebrow">
-      <span class="tag" id="heroTag">Nebula Sites Studio &nbsp;✦&nbsp; Florist Website Specialists &nbsp;✦&nbsp; Virginia, USA</span>
+      <span class="tag" id="heroTag">Nebula Sites Studio &nbsp;✦&nbsp; Bouquet Builder for Florists &nbsp;✦&nbsp; Virginia, USA</span>
     </div>
     <h1 class="hero-headline" id="heroHeadline">
-      <span class="hero-line"><span class="hero-line-inner" id="hl1">Your flowers deserve</span></span>
-      <span class="hero-line"><span class="hero-line-inner" id="hl2">a website as lovely</span></span>
-      <span class="hero-line hero-line--gold"><span class="hero-line-inner" id="hl3">as they are.</span></span>
+      <span class="hero-line"><span class="hero-line-inner" id="hl1">Customers build</span></span>
+      <span class="hero-line"><span class="hero-line-inner" id="hl2">the bouquet</span></span>
+      <span class="hero-line hero-line--gold"><span class="hero-line-inner" id="hl3">they want.</span></span>
     </h1>
     <p class="hero-sub" id="heroSub">
-      I build websites for flower shops — occasion-based catalogs, bouquet builders
-      your customers can play with, and seasonal themes that switch on for Valentine's
-      and Mother's Day. Hand-coded around your shop, your style, your seasons.
+      Your customer chooses flowers, sees an estimate from your shop's approved
+      prices and prepares a WhatsApp request. You confirm availability and the
+      final price. One configured builder link is $29/month.
     </p>
     <div class="hero-actions" id="heroActions">
-      <a href="../build-your-plan.html" class="btn btn-primary btn-lg">
-        Build Your Plan &mdash; Free <span class="btn-arrow-icon">&#8599;</span>
+      <a href="../builder/" class="btn btn-primary btn-lg">
+        Try the live builder <span class="btn-arrow-icon">&#8599;</span>
       </a>
-      <a href="#templates" class="btn btn-ghost btn-lg">See The Live Demos</a>
+      <a href="../build-your-plan.html#plans" class="btn btn-ghost btn-lg">See the $29 plan</a>
     </div>
   </div>
   <div class="hero-stats" id="heroStats">
-    <div><div class="hero-stat-num">100<span>%</span></div><div class="hero-stat-label">Hand-coded, no builders</div></div>
-    <div><div class="hero-stat-num">1<span>:</span>1</div><div class="hero-stat-label">You talk to the person who builds it</div></div>
-    <div><div class="hero-stat-num">24<span>h</span></div><div class="hero-stat-label">Typical reply time</div></div>
+    <div><div class="hero-stat-num">3</div><div class="hero-stat-label">Bouquet styles to explore</div></div>
+    <div><div class="hero-stat-num">$29</div><div class="hero-stat-label">Per month, no custom domain</div></div>
+    <div><div class="hero-stat-num">1<span>:</span>1</div><div class="hero-stat-label">Your shop confirms every request</div></div>
   </div>
   <div class="hero-scroll-hint" id="heroScroll" aria-hidden="true">
     <span>Scroll</span><div class="hero-scroll-line"></div>
@@ -1163,22 +1166,44 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <!-- MARQUEE -->
 <div class="marquee-band" aria-hidden="true">
   <div class="marquee-track">
-    <span class="marquee-item">Bouquet Catalogs <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Bouquet Builders <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Wedding Florals <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Seasonal Countdowns <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Same-Day Ordering <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Occasion Shopping <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Bouquet Catalogs <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Bouquet Builders <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Wedding Florals <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Seasonal Countdowns <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Same-Day Ordering <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Occasion Shopping <span class="marquee-dot">&bull;</span></span>
-    <span class="marquee-item">Florist Branding <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Classic <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Dome <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Flat Heart <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Indicative Estimate <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">WhatsApp Request <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Your Shop Prices <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Nebula Builder <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Classic <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Dome <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Flat Heart <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Indicative Estimate <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">WhatsApp Request <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Your Shop Prices <span class="marquee-dot">&bull;</span></span>
+    <span class="marquee-item">Nebula Builder <span class="marquee-dot">&bull;</span></span>
   </div>
 </div>
+
+<!-- CURRENT BUILDER -->
+<section class="builder-preview z1" id="showcase" aria-label="Current Nebula builder preview">
+  <style>
+    .builder-preview{max-width:var(--maxw);margin:0 auto;padding:clamp(2rem,5vw,4rem) var(--px)}
+    .idea-banner{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
+    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;background:#f4f1ea}
+    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
+    .idea-copy .btn{margin:.25rem .45rem .25rem 0}
+    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
+  </style>
+  <div class="idea-banner">
+    <img src="../assets/builder-current-demo.png" alt="Current Nebula builder preview showing a Classic bouquet made from pink and red roses" loading="lazy">
+    <div class="idea-copy">
+      <p class="section-eyebrow">Current builder demo</p>
+      <h2 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your customer designs it herself</h2>
+      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">Your customer tries a Classic, Dome or Flat Heart bouquet, chooses flowers and finishing, and sees a sample estimate. A configured shop version uses your approved prices and contact details. The customer can share the picture or prepare a WhatsApp request with the bouquet details; you confirm stock and final price.</p>
+      <a href="../builder/" target="_blank" rel="noopener" class="btn btn-primary">Try the live builder &nbsp;&#8599;</a>
+      <a href="../build-your-plan.html#plans" class="btn btn-ghost">See the $29 plan &nbsp;&#8599;</a>
+    </div>
+  </div>
+</section>
 
 <!-- TEMPLATES -->
 <section class="templates z1" id="templates" aria-labelledby="tplHeading">
@@ -1187,7 +1212,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       <p class="section-eyebrow">Templates &amp; Demos</p>
       <h2 class="section-title clip-reveal" id="tplHeading">A florist experience you can explore</h2>
     </div>
-    <p class="section-desc">Before I tell you anything about me, look at the work. All three shops are live and fully clickable — open them, break them, and imagine your shop's name on them.</p>
+    <p class="section-desc">These three clickable florist websites are concept demos, not paying client projects. Full websites are separate custom work; the $29 plan covers the configured bouquet builder.</p>
   </div>
   <div class="templates-grid">
 
@@ -1208,7 +1233,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       </div>
       <div class="tpl-mobile-cta"><a href="../demo/pavon/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
       <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Live Demo</span><span class="tpl-num">01</span></div>
+        <div class="tpl-meta"><span class="tpl-tag">Flower Shop &middot; Concept Demo</span><span class="tpl-num">01</span></div>
         <h3 class="tpl-name">Flowers Pavon &mdash; Florist Experience</h3>
         <p class="tpl-desc">A complete florist experience you can explore right now: bilingual storefront, occasion-based catalog, seasonal event themes with countdowns, and a bouquet builder your customers can play with.</p>
         <ul class="tpl-features">
@@ -1236,9 +1261,9 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       </div>
       <div class="tpl-mobile-cta"><a href="../demo/petalpress/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
       <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">Luxury Boutique &middot; Live Demo</span><span class="tpl-num">02</span></div>
+        <div class="tpl-meta"><span class="tpl-tag">Luxury Boutique &middot; Concept Demo</span><span class="tpl-num">02</span></div>
         <h3 class="tpl-name">Petal Press &mdash; A Quieter, Softer Shop</h3>
-        <p class="tpl-desc">The same engine as Pavon, dressed completely differently — soft ivory, hand-drawn marks, a calmer pace. Proof that nothing here is a template: two shops, one builder, and they look nothing alike.</p>
+        <p class="tpl-desc">A softer website demo with an editorial storefront and WhatsApp ordering. It shows a separate custom-site direction, beyond the basic builder plan.</p>
         <ul class="tpl-features">
           <li>Editorial, gallery-led storefront</li>
           <li>Its own brand system end to end</li>
@@ -1261,9 +1286,9 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       </div>
       <div class="tpl-mobile-cta"><a href="../demo/ashleys/index.html" target="_blank" rel="noopener">View Live Demo &#8599;</a></div>
       <div class="tpl-body">
-        <div class="tpl-meta"><span class="tpl-tag">Ramos Buch&oacute;n &middot; Live Demo</span><span class="tpl-num">03</span></div>
+        <div class="tpl-meta"><span class="tpl-tag">Ramos Buch&oacute;n &middot; Concept Demo</span><span class="tpl-num">03</span></div>
         <h3 class="tpl-name">Ashley&rsquo;s Floral Boutique &mdash; Oklahoma City</h3>
-        <p class="tpl-desc">Built for a shop that sells ramos buch&oacute;n and preserved roses. Bold pink on black, a catalog organised the way her customers actually ask for flowers, and a wedding page of its own.</p>
+        <p class="tpl-desc">A demo concept for a shop selling ramos buch&oacute;n and preserved roses: bold pink on black, a catalog and a wedding page. It is not a paying-customer case study.</p>
         <ul class="tpl-features">
           <li>Ramos buch&oacute;n &amp; preserved roses catalog</li>
           <li>Dedicated weddings experience</li>
@@ -1275,23 +1300,6 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 
   </div>
 
-  <!-- HOW WE BUILD IDEAS -->
-  <style>
-    .idea-banner{margin-top:clamp(2.5rem,5vw,4rem);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);display:grid;grid-template-columns:1.2fr 1fr;align-items:stretch}
-    .idea-banner picture{display:block;height:100%}
-    .idea-banner img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;background:#f4f1ea}
-    .idea-copy{padding:clamp(1.75rem,3.5vw,3rem)}
-    @media(max-width:860px){.idea-banner{grid-template-columns:1fr}.idea-banner img{max-height:280px}}
-  </style>
-  <div class="idea-banner">
-    <img src="../assets/builder-v6-shot.png" alt="A bouquet designed in the Nebula Bouquet Studio" loading="lazy">
-    <div class="idea-copy">
-      <p class="section-eyebrow">The Bouquet Studio</p>
-      <h3 style="font-family:var(--font-serif);font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:1rem">Your customer designs it herself</h3>
-      <p style="color:var(--text-muted);line-height:1.8;margin-bottom:1.75rem">I asked one question: what if choosing flowers felt like a game? So I built a studio where your customer arranges real photographed stems — classic hand-tied, a round buch&oacute;n dome or a flat heart — picks her wrap, ribbon and sash, watches the price update live, and walks away with a picture of her own bouquet carrying your shop's name. Open it. Break it. It is the same studio that ships with every Florist Studio plan.</p>
-      <a href="../builder/" target="_blank" rel="noopener" class="btn btn-ghost">Open the bouquet studio &nbsp;&#8599;</a>
-    </div>
-  </div>
 </section>
 
 <!-- PHILOSOPHY -->
@@ -1299,9 +1307,8 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <div class="philosophy-inner">
     <p class="section-eyebrow" aria-hidden="true">Philosophy</p>
     <p class="philosophy-quote">
-      A bouquet is never just flowers — it's a feeling. Your website should work the
-      same way: I build florist sites that make people feel something before they
-      ever smell the roses.
+      A customer can start with a picture of the bouquet they want. You decide
+      what is available, what can be made, and what the final price should be.
     </p>
   </div>
 </section>
@@ -1331,28 +1338,28 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     <div class="about-content">
       <p class="section-eyebrow">Who You Work With</p>
       <h2 class="section-title" id="aboutHeading">A <em>boutique</em> person — not a faceless agency</h2>
-      <p class="about-lead">Nebula Sites Studio is one person in Virginia, USA, building websites for flower shops. Every build is hand-coded from scratch — no page-builders, no recycled templates — and you deal with me from the first message to launch. No account manager, no handoff, no queue.</p>
-      <p class="about-text">Every project starts with listening. Before colors, features, or designs, I want to understand your story, your customers, and what you hope to achieve. Then we build it together — your ideas and feedback shape every step, from the first message until you're proud of it. I am not just building you a website. I am building something we both stand behind.</p>
+      <p class="about-lead">Nebula Sites Studio is one person building a bouquet builder for flower shops. You work with me directly to configure the shop name, contact details and prices before your link goes live.</p>
+      <p class="about-text">The $29 monthly plan starts with the existing builder and artwork library. We review those settings together before launch. If your shop needs new photography, a custom domain or a full website, I quote that work separately so you can decide what is worth adding.</p>
       <ul class="about-points">
         <li><span>✦</span> People before projects — I listen first</li>
-        <li><span>✦</span> I create, never copy — every build starts from zero</li>
-        <li><span>✦</span> We build together — your feedback shapes every step</li>
-        <li><span>✦</span> I stay by your side — support long after launch</li>
-        <li><span>✦</span> You own 100% of the files, forever</li>
+        <li><span>✦</span> You review your shop settings before launch</li>
+        <li><span>✦</span> Your customers receive an estimate, not an automatic final quote</li>
+        <li><span>✦</span> Monthly edits and help have a clear scope</li>
+        <li><span>✦</span> Custom work is quoted separately</li>
       </ul>
-      <p class="about-honest">My promise: you leave with more than a website — you gain someone who keeps supporting you long after launch. Everything below is real and fully explorable: three live florist shops and the bouquet studio itself. Open them, click everything, judge me on the work.</p>
+      <p class="about-honest">Explore the bouquet studio and the three florist website demos below. They show what is possible; the $29 plan covers the configured builder described on the pricing page.</p>
     </div>
   </div>
 </section>
 
 <!-- SHOWCASE -->
-<section class="showcase z1" id="showcase" aria-labelledby="showcaseHeading">
+<section class="showcase z1" id="benefits" aria-labelledby="showcaseHeading">
   <div class="showcase-header">
     <p class="section-eyebrow">Showcase</p>
-    <h2 class="showcase-heading" id="showcaseHeading">Everything is <em>customizable</em></h2>
+    <h2 class="showcase-heading" id="showcaseHeading">Start with the <em>builder</em></h2>
     <p class="section-desc">
-      Every color, layout, font and feature can be shaped around your shop —
-      your wrapping style, your signature bouquets, your seasons, your neighborhood.
+      Give customers a visual way to explain the bouquet they want. The basic plan
+      uses the existing layouts and artwork; custom design work is quoted separately.
     </p>
   </div>
   <div class="tracks" id="showcaseTracks">
@@ -1398,23 +1405,23 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <div class="feat-grid">
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&loz;</span>
-      <h3>Petal-Perfect Identity</h3>
-      <p>Colors, fonts and imagery matched to your shop — your wrapping paper, your ribbon, your signature style.</p>
+      <h3>A visual starting point</h3>
+      <p>Customers choose flowers in a photo-based preview before they ask you to make the bouquet.</p>
     </div>
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&#9635;</span>
-      <h3>Occasion-First Shopping</h3>
-      <p>Birthdays, anniversaries, sympathy, "just because" — customers shop the way they actually think about flowers.</p>
+      <h3>Prices you approve</h3>
+      <p>The sample estimate becomes a shop-specific estimate after you review the catalog prices.</p>
     </div>
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&#9889;</span>
-      <h3>Florist Features</h3>
-      <p>Bouquet builders, delivery zones, event countdowns, care guides — built for how florists really sell.</p>
+      <h3>WhatsApp handoff</h3>
+      <p>A request draft carries choices and customer details into a conversation you already use.</p>
     </div>
     <div class="feat-card"><div class="feat-card-shine"></div>
       <span class="feat-card-icon" aria-hidden="true">&#8599;</span>
-      <h3>Found Nearby</h3>
-      <p>Speed, mobile and local SEO — so "florist near me" searches end at your door.</p>
+      <h3>Room to grow</h3>
+      <p>Start with one builder link. Ask for a separate quote if your shop needs new artwork or a full website.</p>
     </div>
   </div>
 </section>
@@ -1423,15 +1430,15 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <section class="services z1" id="services" aria-labelledby="svcHeading">
   <div class="services-left">
     <p class="section-eyebrow">What I Build</p>
-    <h2 class="section-title clip-reveal" id="svcHeading" style="margin-bottom:1.5rem">Everything a flower shop needs online</h2>
-    <p class="section-desc">From storefront to back office — built around how florists actually work, sell and deliver.</p>
+    <h2 class="section-title clip-reveal" id="svcHeading" style="margin-bottom:1.5rem">A focused starting point for custom bouquets</h2>
+    <p class="section-desc">The $29 plan includes one configured builder. Full storefronts and extra features are separate projects.</p>
   </div>
   <div class="services-list">
-    <div class="svc-item"><div class="svc-num">01</div><div class="svc-body"><h3>Florist Storefronts</h3><p>Occasion-based catalogs, seasonal collections and best-sellers — a storefront that sells bouquets 24&thinsp;/&thinsp;7, even while you sleep.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">02</div><div class="svc-body"><h3>Bouquet Builders</h3><p>Let customers compose their own bouquet — stems, wrap, ribbon and note — with a live price. Choosing flowers becomes a game.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">03</div><div class="svc-body"><h3>Seasonal Event Engines</h3><p>Valentine's and Mother's Day themes with countdowns that switch on automatically — your site dresses up for every season by itself.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">04</div><div class="svc-body"><h3>Ordering &amp; Delivery</h3><p>Card and WhatsApp ordering, delivery zones, same-day cutoffs — order flows built around how flowers actually move.</p></div><div class="svc-arrow">&#8599;</div></div>
-    <div class="svc-item"><div class="svc-num">05</div><div class="svc-body"><h3>Admin &amp; Order Management</h3><p>A private dashboard to manage bouquets, prices, photos and orders — no developer needed for everyday changes.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">01</div><div class="svc-body"><h3>Three bouquet styles</h3><p>Customers can try Classic, Dome or Flat Heart using the existing flower artwork library.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">02</div><div class="svc-body"><h3>Live estimate</h3><p>Show an estimate from the shop's approved item prices while the bouquet changes. The florist confirms the final price.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">03</div><div class="svc-body"><h3>Shareable design</h3><p>Customers can share a bouquet picture or save an editable design link to continue the conversation.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">04</div><div class="svc-body"><h3>WhatsApp request</h3><p>The customer prepares a draft with quantities, finishes, date and contact details. They press Send; the shop reviews the request.</p></div><div class="svc-arrow">&#8599;</div></div>
+    <div class="svc-item"><div class="svc-num">05</div><div class="svc-body"><h3>One shop link</h3><p>Your logo, name, contact and prices are configured on a Nebula-hosted link. New artwork and custom domains receive separate quotes.</p></div><div class="svc-arrow">&#8599;</div></div>
   </div>
 </section>
 
@@ -1454,20 +1461,20 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
           <div class="step" data-step="1">
             <div class="step-progress-line"></div>
             <div class="step-num"><span class="step-num-circle">02</span></div>
-            <h3>Design</h3>
-            <p>I craft a visual direction — layouts, colors, and flows — that feels unmistakably like your brand. You approve before I build.</p>
+            <h3>Configure</h3>
+            <p>We check the existing flower library against what you sell and configure your shop name, logo, contact and prices.</p>
           </div>
           <div class="step" data-step="2">
             <div class="step-progress-line"></div>
             <div class="step-num"><span class="step-num-circle">03</span></div>
-            <h3>Development</h3>
-            <p>Clean, fast, intentional code. Every interaction is purposeful. Every page loads instantly. Built to last, not to patch.</p>
+            <h3>Review</h3>
+            <p>You review your configured builder and request one round of setting changes before launch.</p>
           </div>
           <div class="step" data-step="3">
             <div class="step-progress-line"></div>
             <div class="step-num"><span class="step-num-circle">04</span></div>
             <h3>Launch</h3>
-            <p>Your website goes live. You own every file. I make sure it runs, ranks, and converts from day one.</p>
+            <p>Your builder goes live on a Nebula link. The $29 monthly subscription begins after launch; you can cancel anytime.</p>
           </div>
         </div>
       </div>
@@ -1484,11 +1491,11 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
 <!-- STATEMENT -->
 <section class="statement z1" aria-label="Closing statement">
   <h2 class="statement-quote wrev" id="stmtText">
-    The website you're looking at right now —
-    its layout, its animations, its feel —
-    can be built for your flower shop.
+    Give customers a way to show you
+    the bouquet they want —
+    before you make it.
   </h2>
-  <a href="../build-your-plan.html" class="btn btn-primary btn-lg" data-reveal>Build Your Plan &mdash; Free Consultation &nbsp;&#8599;</a>
+  <a href="../build-your-plan.html#plans" class="btn btn-primary btn-lg" data-reveal>See the $29 builder plan &nbsp;&#8599;</a>
 </section>
 
 <!-- 08. CONTACT — FormSubmit -->
@@ -1496,7 +1503,7 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
   <div class="contact-left" data-reveal>
     <p class="section-eyebrow">Get In Touch</p>
     <h2 class="contact-headline" id="contactHeading">Ready to grow something <span>beautiful?</span></h2>
-    <p class="contact-desc">Tell me about your shop. I'll show you exactly what your florist website could be — I reply within 24 hours.</p>
+    <p class="contact-desc">Tell me what bouquets your shop sells. We can check whether the existing builder library fits before discussing your own link.</p>
     <div class="contact-channels">
       <a href="mailto:nebulastudiosite@gmail.com" class="contact-ch">
         <span class="contact-ch-icon" aria-hidden="true">&#9993;</span>
@@ -1514,14 +1521,14 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
       </a>
     </div>
     <div class="contact-socials">
-      <a href="../build-your-plan.html" class="contact-social">Build your plan — free consultation &#8599;</a>
+      <a href="../build-your-plan.html#plans" class="contact-social">See the $29 plan &#8599;</a>
       <span class="contact-social" style="pointer-events:none">&#128205; Virginia, USA — serving businesses across the US</span>
     </div>
   </div>
 
   <!-- 08. FORMSUBMIT FORM -->
-  <!-- Contact form posts to Formspree (form ID: xaenyaqa). Every lead is stored in the
-       Formspree dashboard AND emailed to nebulastudiosite@gmail.com, so nothing is ever lost. -->
+  <!-- Contact form posts to Formspree (form ID: xaenyaqa). Delivery and notifications
+       depend on that external service and must be checked before launch. -->
   <form class="contact-form" id="contactForm"
         action="https://formspree.io/f/xaenyaqa"
         method="POST" novalidate data-reveal>
@@ -1538,15 +1545,15 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
     </div>
     <div class="form-group">
       <label for="fbusiness">Business Type</label>
-      <input type="text" id="fbusiness" name="business" placeholder="Flower shop, clothing brand, restaurant…" />
+      <input type="text" id="fbusiness" name="business" placeholder="Flower shop or floral studio" />
     </div>
     <div class="form-group">
       <label for="fbudget">Budget Range</label>
-      <input type="text" id="fbudget" name="budget" placeholder="e.g. $650 setup + $49/mo, or $350 catalog" />
+      <input type="text" id="fbudget" name="budget" placeholder="e.g. $29/month builder, no custom domain" />
     </div>
     <div class="form-group">
       <label for="fmessage">What do you need?</label>
-      <textarea id="fmessage" name="message" rows="4" placeholder="Tell us about your project, your goals, your deadline…" required></textarea>
+      <textarea id="fmessage" name="message" rows="4" placeholder="What bouquets do you sell? Which flowers would customers choose?" required></textarea>
     </div>
     <!-- Hidden honeypot anti-spam -->
     <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
@@ -1560,9 +1567,9 @@ body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: rgba(v
      force all reveal-animated elements visible so the site never shows a blank page. -->
 <script>
 window.addEventListener('DOMContentLoaded', function () {
-  if (typeof gsap === 'undefined') {
+  if (window.nebulaAnimationFallback || typeof gsap === 'undefined') {
     var s = document.createElement('style');
-    s.textContent = '[data-reveal],.tpl-card,.hero-line-inner,.wrev,.clip-reveal,.section-eyebrow,.section-title,.section-desc,#heroSub,#heroActions,#heroStats,#heroEyebrow,#heroScroll,.feat-card,.step,.svc-item,.about-inner,.contact-left,.contact-form,.philosophy-quote,.statement-quote{opacity:1!important;transform:none!important;clip-path:none!important;visibility:visible!important}body{cursor:auto!important}#veil,#cursor-dot,#cursor-ring{display:none!important}';
+    s.textContent = '[data-reveal],.tpl-card,.hero-line-inner,.wrev,.clip-reveal,.section-eyebrow,.section-title,.section-desc,#heroSub,#heroActions,#heroStats,#heroEyebrow,#heroScroll,.feat-card,.step,.svc-item,.about-inner,.contact-left,.contact-form,.philosophy-quote,.statement-quote{opacity:1!important;transform:none!important;clip-path:none!important}body{cursor:auto!important}#veil,#cursor-dot,#cursor-ring{display:none!important}#processPinWrap{height:auto!important}#processSticky{position:relative!important;height:auto!important;display:block!important;overflow:visible!important}.process-track-wrap{display:block!important;overflow:visible!important}.process-track{flex-direction:column!important;transform:none!important;gap:0!important}.process .step{width:100%!important;flex:none!important;transform:none!important;padding:1.5rem 0!important}#processDots{display:none!important}';
     document.head.appendChild(s);
   }
 });
@@ -1574,12 +1581,12 @@ window.addEventListener('DOMContentLoaded', function () {
     <span class="footer-logo" style="display:inline-flex;align-items:center;gap:.6rem"><img src="../assets/logo.png" alt="" style="width:40px;height:40px;border-radius:50%">Nebula Sites Studio</span>
     <nav class="footer-nav" aria-label="Footer navigation">
       <a href="#about">About</a>
-      <a href="#showcase">Work</a>
+      <a href="#showcase">Builder</a>
       <a href="#services">Services</a>
       <a href="#process">Process</a>
       <a href="#contact">Contact</a>
       <a href="../build-your-plan.html#plans">Plans &amp; Prices</a>
-      <a href="../build-your-plan.html">Build Your Plan</a>
+      <a href="../builder/">Try the builder</a>
     </nav>
   </div>
   <div class="footer-bottom">
@@ -1658,13 +1665,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.cookie = `${KEY}=1; expires=${exp}; path=/; SameSite=Lax`
 
     if (isReturning) {
-      // Modify hero tag
-      const tag = document.getElementById('heroTag')
-      if (tag) { tag.innerHTML = '&#9670;&nbsp; Welcome back, good to see you'; }
-      // Modify hero sub
-      const sub = document.getElementById('heroSub')
-      if (sub) sub.textContent = "Good to have you back. Let's build something beautiful for your flower shop — whenever you're ready."
-      // Show returning visitor banner
+      // Preserve the same product and offer message for returning visitors.
+      // Show a greeting banner without replacing the hero's value proposition.
       const banner = document.getElementById('rv-banner')
       if (banner) {
         setTimeout(() => {
@@ -2180,7 +2182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async e => {
       e.preventDefault()
       formStat.className  = 'form-status'
-      formStat.style.display = 'none'
 
       const name  = form.name.value.trim()
       const email = form.email.value.trim()
@@ -2224,7 +2225,7 @@ document.addEventListener('DOMContentLoaded', () => {
           && !(Array.isArray(json.errors) && json.errors.length)
 
         if (accepted) {
-          formStat.textContent = '✓ Message sent! We\'ll get back to you within 24 hours.'
+           formStat.textContent = '✓ Message sent! I\'ll review your shop and reply.'
           formStat.className   = 'form-status success'
           form.reset()
           gsap.from(formStat, {opacity:0, y:8, duration:.5, ease:'power2.out'})

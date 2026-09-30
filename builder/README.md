@@ -1,7 +1,8 @@
 # Nebula — the bouquet studio
 
 A self-contained bouquet design studio for florists. A customer arranges real
-photographed flowers, sees a live price estimate, and saves a picture to share.
+photographed flowers, sees a live price estimate, saves a picture, and prepares a WhatsApp request with a bouquet-sheet link.
+The florist confirms availability and final price; no payment or order is confirmed here.
 
 **Why it exists:** try an idea before a single stem is cut. Redesign as often as
 you like without using a flower, show a customer their bouquet before they
@@ -27,8 +28,10 @@ Each is saved separately; switching never converts one into another.
 | **Flat heart** | Heart shape, fixed slots | 21 / 41 / 67 / 100 |
 
 Classic opens on the **Romantic** starting point; Dome and Heart open filled
-with red roses. Three starting points are offered in Classic: Romantic, Pure
-white and All yellow (for 21 September, International Yellow Flowers Day).
+with red roses. Four starting points are offered in Classic: Strawberry (14 berries + 6 rosemary
+sprigs, $89 sample estimate), Romantic, Pure white and All yellow.
+Open “Try strawberries & more” to choose one. The existing Dome/Heart berry heads
+remain unchanged.
 
 ## How it is used
 
