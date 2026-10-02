@@ -1,0 +1,235 @@
+{
+  "passed": 57,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Classic strawberry is withheld from featured recipes",
+      "pass": true
+    },
+    {
+      "name": "Strawberry recipe has 14 berries, 6 priced herbs, ivory and $89 demo estimate",
+      "pass": true
+    },
+    {
+      "name": "Classic uses both new berry photos and all three rosemary photos",
+      "pass": true
+    },
+    {
+      "name": "Classic catalog excludes new strawberries",
+      "pass": true
+    },
+    {
+      "name": "Classic still adds a priced flower beside legacy strawberries",
+      "pass": true
+    },
+    {
+      "name": "Phone canvas tap selects a berry",
+      "pass": true
+    },
+    {
+      "name": "Delete updates berry quantity and estimate",
+      "pass": true
+    },
+    {
+      "name": "Undo restores the exact recipe price",
+      "pass": true
+    },
+    {
+      "name": "Canvas drag changes a Classic anchor without changing price",
+      "pass": true
+    },
+    {
+      "name": "Design link preserves manual Classic positions, variation IDs and personalized sash",
+      "pass": true
+    },
+    {
+      "name": "Classic berries count toward the 20-main-item capacity",
+      "pass": true
+    },
+    {
+      "name": "Larger preview keeps the original Fit for tall manually placed greenery",
+      "pass": true
+    },
+    {
+      "name": "Reload restores all three mode states",
+      "pass": true
+    },
+    {
+      "name": "Downloaded JSON contains all three independently saved bouquets",
+      "pass": true
+    },
+    {
+      "name": "Real PNG download is 1080 × 1080",
+      "pass": true
+    },
+    {
+      "name": "JSON import restores the saved strawberry design and three banks",
+      "pass": true
+    },
+    {
+      "name": "en empty request is blocked",
+      "pass": true
+    },
+    {
+      "name": "en correcting required fields clears the stale error",
+      "pass": true
+    },
+    {
+      "name": "en complete draft includes quantities, estimate, customer, date and unconfirmed notice",
+      "pass": true
+    },
+    {
+      "name": "en draft contains a real order-sheet link",
+      "pass": true
+    },
+    {
+      "name": "en order sheet reconstructs customer, quantities and price",
+      "pass": true
+    },
+    {
+      "name": "en order sheet scrolls to recipe and actions on mobile",
+      "pass": true
+    },
+    {
+      "name": "en handoff preserves customized design",
+      "pass": true
+    },
+    {
+      "name": "es empty request is blocked",
+      "pass": true
+    },
+    {
+      "name": "es correcting required fields clears the stale error",
+      "pass": true
+    },
+    {
+      "name": "es complete draft includes quantities, estimate, customer, date and unconfirmed notice",
+      "pass": true
+    },
+    {
+      "name": "es draft contains a real order-sheet link",
+      "pass": true
+    },
+    {
+      "name": "es order sheet reconstructs customer, quantities and price",
+      "pass": true
+    },
+    {
+      "name": "es order sheet scrolls to recipe and actions on mobile",
+      "pass": true
+    },
+    {
+      "name": "es handoff preserves customized design",
+      "pass": true
+    },
+    {
+      "name": "dome revised berry artwork replaces the original image",
+      "pass": true
+    },
+    {
+      "name": "dome original price remains unchanged",
+      "pass": true
+    },
+    {
+      "name": "dome old __berry link opens with all fruit and greenery",
+      "pass": true
+    },
+    {
+      "name": "dome catalog selection paints a slot without adding capacity",
+      "pass": true
+    },
+    {
+      "name": "dome Undo restores painted strawberry",
+      "pass": true
+    },
+    {
+      "name": "heart revised berry artwork replaces the original image",
+      "pass": true
+    },
+    {
+      "name": "heart original price remains unchanged",
+      "pass": true
+    },
+    {
+      "name": "heart old __berry link opens with all fruit and greenery",
+      "pass": true
+    },
+    {
+      "name": "heart catalog selection paints a slot without adding capacity",
+      "pass": true
+    },
+    {
+      "name": "heart Undo restores painted strawberry",
+      "pass": true
+    },
+    {
+      "name": "390px es: no horizontal overflow and usable controls",
+      "pass": true
+    },
+    {
+      "name": "390px wrapping reachable",
+      "pass": true
+    },
+    {
+      "name": "390px finishing reachable",
+      "pass": true
+    },
+    {
+      "name": "390px flowers reachable",
+      "pass": true
+    },
+    {
+      "name": "360px en: no horizontal overflow and usable controls",
+      "pass": true
+    },
+    {
+      "name": "360px wrapping reachable",
+      "pass": true
+    },
+    {
+      "name": "360px finishing reachable",
+      "pass": true
+    },
+    {
+      "name": "360px flowers reachable",
+      "pass": true
+    },
+    {
+      "name": "320px es: no horizontal overflow and usable controls",
+      "pass": true
+    },
+    {
+      "name": "320px wrapping reachable",
+      "pass": true
+    },
+    {
+      "name": "320px finishing reachable",
+      "pass": true
+    },
+    {
+      "name": "320px flowers reachable",
+      "pass": true
+    },
+    {
+      "name": "Pricing contains current offer and no retired prices",
+      "pass": true
+    },
+    {
+      "name": "Pricing enquiry stores the $29 no-domain offer",
+      "pass": true
+    },
+    {
+      "name": "Custom domain remains a separate written quote without invented price",
+      "pass": true
+    },
+    {
+      "name": "file:// offline starts and renders all new Classic artwork",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript errors",
+      "pass": true,
+      "detail": []
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Open strawberry preview</title>
+<p>Opening the local Classic strawberry bouquet…</p>
+<script>
+// Review shortcut only. The builder reads this same v6 recipe format from links.
+const recipe={v:6,m:'classic',s:11,f:[['__berry',14],['rosemary',6]],fin:{p:'ivory'}};
+const code=btoa(JSON.stringify(recipe)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+location.replace('../../index.html#b='+code);
+</script></html>

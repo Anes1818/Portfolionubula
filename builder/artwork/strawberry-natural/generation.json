@@ -1,0 +1,24 @@
+{
+  "tool": "built-in imagegen",
+  "transparent_background": true,
+  "sources": [
+    {
+      "file": "berry-1.png",
+      "runtime": "assets/heads/strawberry-natural-1.webp",
+      "prompt": "Create ONE NEW realistic strawberry cutout for a florist bouquet, using the attached bouquet photo solely to understand real fruit shape and subtle surface detail. Do not reproduce the photo, text, wrapping, branding or multiple fruit. Match the reference's actual strawberries, NOT shiny supermarket clipart. This berry stands upright with its leafy base concealed below and a short, rounded tapered end above; camera looking down at it from a high oblique angle. The visible outline is compact plump oval with gently narrower upper third, about 1.18 height to width, not a triangular heart or a ball with a nipple. The top tip and side are a continuous softly curved body. Deep ripe burgundy-crimson red, matte natural skin, hundreds of TINY subdued reddish-gold seed specks (each less than 1 percent of berry width), extremely shallow dimples. No large yellow seeds, no deep holes, no exaggerated surface texture, no wet white shine or bright hard highlights. Soft overcast daylight, neutral shadows gently on lower right. Photographic fruit at ordinary viewing distance, not a macro advertisement or 3D render. Isolate the WHOLE single berry on genuine alpha transparency, no exterior shadow, no greens, no skewer. Square image with fruit taking 85 percent height. Its pointed end leans very slightly left.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-a4ce1b0d-3d22-4f50-ae36-11424c93ae9c.png"
+    },
+    {
+      "file": "berry-2.png",
+      "runtime": "assets/heads/strawberry-natural-2.webp",
+      "prompt": "Generate ONE new realistic strawberry cutout. Reference image 1 is only a guide to actual florist-bouquet fruit. Reference image 2 establishes the soft lighting and fine matte red skin of the matched asset set. Create a DIFFERENT natural specimen, not a rotated duplicate. Upright fruit with its leafy base underneath and hidden, short upper tip toward the camera, photographed looking down from a high oblique angle. Deep ripe crimson, hundreds of tiny subdued red-gold seed specks in shallow dimples, NO big yellow seeds, deep pits, white wet shine, plasticky gloss or central nipple. Soft neutral overcast daylight from upper left, soft shading on right. Exact same lighting/exposure as reference 2. No calyx visible, no stem, no outside shadow. Whole ONE fruit, centred on TRUE alpha transparency, 85% of square canvas height. Do not copy the florist photo, surrounding objects, branding, text or paper. Specimen B: shorter and squatter than reference 2, a broad plump body only 1.1 times as tall as wide, gently flattened lower shoulder, upper end softly tapering to a short BLUNT tip slightly right of centre. Slightly darker crimson with subtle burgundy patch.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-315e43a7-dccd-44cb-9ee8-71922b20c6ec.png"
+    },
+    {
+      "file": "berry-3.png",
+      "runtime": "assets/heads/strawberry-natural-3.webp",
+      "prompt": "Generate ONE new realistic strawberry cutout. Reference image 1 is only a guide to actual florist-bouquet fruit. Reference image 2 establishes the soft lighting and fine matte red skin of the matched asset set. Create a DIFFERENT natural specimen, not a rotated duplicate. Upright fruit with its leafy base underneath and hidden, short upper tip toward the camera, photographed looking down from a high oblique angle. Deep ripe crimson, hundreds of tiny subdued red-gold seed specks in shallow dimples, NO big yellow seeds, deep pits, white wet shine, plasticky gloss or central nipple. Soft neutral overcast daylight from upper left, soft shading on right. Exact same lighting/exposure as reference 2. No calyx visible, no stem, no outside shadow. Whole ONE fruit, centred on TRUE alpha transparency, 85% of square canvas height. Do not copy the florist photo, surrounding objects, branding, text or paper. Specimen C: irregular rounded strawberry with one fuller shoulder and a subtle crease near one side, a very short tapered upper end tilted slightly to the left. Broad body, height 1.15 times width. Mostly ripe deep red with a SMALL faint warm red-orange shoulder patch. Natural asymmetry, not a triangular heart.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-c83d6069-8bf7-416b-a25b-21672b9650ec.png"
+    }
+  ]
+}

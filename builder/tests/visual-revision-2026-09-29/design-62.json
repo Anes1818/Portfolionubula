@@ -1,0 +1,807 @@
+{
+  "version": 6,
+  "mode": "dome",
+  "seed": 11,
+  "nextId": 63,
+  "items": [
+    {
+      "uid": "b1",
+      "id": "__berry",
+      "slot": 0,
+      "anchors": {
+        "dome": {
+          "x": 379.27283311268343,
+          "y": 390.16886243965564,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b2",
+      "id": "__berry",
+      "slot": 1,
+      "anchors": {
+        "dome": {
+          "x": 339.8715971930621,
+          "y": 409.30660560061455,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b3",
+      "id": "__berry",
+      "slot": 2,
+      "anchors": {
+        "dome": {
+          "x": 359.5391048705938,
+          "y": 352.69630046315467,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b4",
+      "id": "__berry",
+      "slot": 3,
+      "anchors": {
+        "dome": {
+          "x": 390.08941049728423,
+          "y": 432.4407598334208,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b5",
+      "id": "__berry",
+      "slot": 4,
+      "anchors": {
+        "dome": {
+          "x": 307.8047904706079,
+          "y": 377.6832759923968,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b6",
+      "id": "__berry",
+      "slot": 5,
+      "anchors": {
+        "dome": {
+          "x": 413.372151572153,
+          "y": 359.3015347606896,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b7",
+      "id": "__berry",
+      "slot": 6,
+      "anchors": {
+        "dome": {
+          "x": 343.12571712392366,
+          "y": 451.92678177616926,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b8",
+      "id": "__berry",
+      "slot": 7,
+      "anchors": {
+        "dome": {
+          "x": 321.48737997250197,
+          "y": 329.81415820148925,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b9",
+      "id": "__berry",
+      "slot": 8,
+      "anchors": {
+        "dome": {
+          "x": 429.9827354455987,
+          "y": 410.33001432579954,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b10",
+      "id": "__berry",
+      "slot": 9,
+      "anchors": {
+        "dome": {
+          "x": 290.9867737533933,
+          "y": 423.19085063895733,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b11",
+      "id": "__berry",
+      "slot": 10,
+      "anchors": {
+        "dome": {
+          "x": 389.66896007935406,
+          "y": 314.61571330287524,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b12",
+      "id": "__berry",
+      "slot": 11,
+      "anchors": {
+        "dome": {
+          "x": 388.2700349755791,
+          "y": 476.15678288298994,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b13",
+      "id": "__berry",
+      "slot": 12,
+      "anchors": {
+        "dome": {
+          "x": 273.4963455222181,
+          "y": 345.82488219261825,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b14",
+      "id": "__berry",
+      "slot": 13,
+      "anchors": {
+        "dome": {
+          "x": 457.47931987078897,
+          "y": 367.339322803875,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b15",
+      "id": "__berry",
+      "slot": 14,
+      "anchors": {
+        "dome": {
+          "x": 301.9820821617854,
+          "y": 471.85003682159714,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b16",
+      "id": "__berry",
+      "slot": 15,
+      "anchors": {
+        "dome": {
+          "x": 346.8164789024239,
+          "y": 290.28341835518694,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b17",
+      "id": "__berry",
+      "slot": 16,
+      "anchors": {
+        "dome": {
+          "x": 439.56476513825913,
+          "y": 457.8585775358541,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b18",
+      "id": "__berry",
+      "slot": 17,
+      "anchors": {
+        "dome": {
+          "x": 251.12753937950566,
+          "y": 392.6029156238793,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b19",
+      "id": "__berry",
+      "slot": 18,
+      "anchors": {
+        "dome": {
+          "x": 440.61097335512096,
+          "y": 314.2948608376821,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b20",
+      "id": "__berry",
+      "slot": 19,
+      "anchors": {
+        "dome": {
+          "x": 350.17717255439163,
+          "y": 504.88771298798173,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b21",
+      "id": "__berry",
+      "slot": 20,
+      "anchors": {
+        "dome": {
+          "x": 288.9645381792656,
+          "y": 295.32445883313846,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b22",
+      "id": "__berry",
+      "slot": 21,
+      "anchors": {
+        "dome": {
+          "x": 483.6252569700744,
+          "y": 413.99976439644587,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b23",
+      "id": "__berry",
+      "slot": 22,
+      "anchors": {
+        "dome": {
+          "x": 250.90695330968538,
+          "y": 457.2346340812196,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b24",
+      "id": "__berry",
+      "slot": 23,
+      "anchors": {
+        "dome": {
+          "x": 392.8841691576435,
+          "y": 265.64560580277436,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b25",
+      "id": "__berry",
+      "slot": 24,
+      "anchors": {
+        "dome": {
+          "x": 423.4745869596546,
+          "y": 508.9274039288164,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b26",
+      "id": "__berry",
+      "slot": 25,
+      "anchors": {
+        "dome": {
+          "x": 223.69568197877925,
+          "y": 348.48004560675224,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b27",
+      "id": "__berry",
+      "slot": 26,
+      "anchors": {
+        "dome": {
+          "x": 489.2037625778977,
+          "y": 325.60860426083246,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b28",
+      "id": "__berry",
+      "slot": 27,
+      "anchors": {
+        "dome": {
+          "x": 308.60859274017207,
+          "y": 523.1714867849964,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b29",
+      "id": "__berry",
+      "slot": 28,
+      "anchors": {
+        "dome": {
+          "x": 310.6490138860096,
+          "y": 254.28932245573927,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b30",
+      "id": "__berry",
+      "slot": 29,
+      "anchors": {
+        "dome": {
+          "x": 490.84620684389694,
+          "y": 457.59795231386477,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b31",
+      "id": "__berry",
+      "slot": 30,
+      "anchors": {
+        "dome": {
+          "x": 217.33375348303966,
+          "y": 424.27907525007066,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b32",
+      "id": "__berry",
+      "slot": 31,
+      "anchors": {
+        "dome": {
+          "x": 441.5223421172732,
+          "y": 268.6915933506275,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b33",
+      "id": "__berry",
+      "slot": 32,
+      "anchors": {
+        "dome": {
+          "x": 385.4644559000525,
+          "y": 537.1435134883982,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b34",
+      "id": "__berry",
+      "slot": 33,
+      "anchors": {
+        "dome": {
+          "x": 244.7305433547177,
+          "y": 298.6332498804426,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b35",
+      "id": "__berry",
+      "slot": 34,
+      "anchors": {
+        "dome": {
+          "x": 507.8897246503045,
+          "y": 375.5010073872251,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b36",
+      "id": "__berry",
+      "slot": 35,
+      "anchors": {
+        "dome": {
+          "x": 261.06059694777616,
+          "y": 503.5710775961935,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b37",
+      "id": "__berry",
+      "slot": 36,
+      "anchors": {
+        "dome": {
+          "x": 358.60988081935204,
+          "y": 238.7192270453876,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b38",
+      "id": "__berry",
+      "slot": 37,
+      "anchors": {
+        "dome": {
+          "x": 469.3767755226211,
+          "y": 500.6418366330404,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b39",
+      "id": "__berry",
+      "slot": 38,
+      "anchors": {
+        "dome": {
+          "x": 178.83449010694414,
+          "y": 381.91794160770706,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b40",
+      "id": "__berry",
+      "slot": 39,
+      "anchors": {
+        "dome": {
+          "x": 499.7280400669544,
+          "y": 269.1652133736829,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b41",
+      "id": "__berry",
+      "slot": 40,
+      "anchors": {
+        "dome": {
+          "x": 343.7491791407073,
+          "y": 570.1011731392598,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b42",
+      "id": "__berry",
+      "slot": 41,
+      "anchors": {
+        "dome": {
+          "x": 269.6083479120091,
+          "y": 226.44780356876905,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b43",
+      "id": "__berry",
+      "slot": 42,
+      "anchors": {
+        "dome": {
+          "x": 540.1383320284198,
+          "y": 446.6142218415801,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b44",
+      "id": "__berry",
+      "slot": 43,
+      "anchors": {
+        "dome": {
+          "x": 192.7690735419322,
+          "y": 472.69179941277196,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b45",
+      "id": "__berry",
+      "slot": 44,
+      "anchors": {
+        "dome": {
+          "x": 424.3748126346287,
+          "y": 215.22606594537672,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b46",
+      "id": "__berry",
+      "slot": 45,
+      "anchors": {
+        "dome": {
+          "x": 433.99339126051274,
+          "y": 564.4394640138728,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b47",
+      "id": "__berry",
+      "slot": 46,
+      "anchors": {
+        "dome": {
+          "x": 194.43691943569524,
+          "y": 292.4568399254749,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b48",
+      "id": "__berry",
+      "slot": 47,
+      "anchors": {
+        "dome": {
+          "x": 547.7912937244607,
+          "y": 347.46855478231987,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b49",
+      "id": "__berry",
+      "slot": 48,
+      "anchors": {
+        "dome": {
+          "x": 257.4426034355032,
+          "y": 552.30092771462,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b50",
+      "id": "__berry",
+      "slot": 49,
+      "anchors": {
+        "dome": {
+          "x": 319.77284827796603,
+          "y": 201.7636843410759,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b51",
+      "id": "__berry",
+      "slot": 50,
+      "anchors": {
+        "dome": {
+          "x": 519.697569881131,
+          "y": 498.27459444686326,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b52",
+      "id": "__berry",
+      "slot": 51,
+      "anchors": {
+        "dome": {
+          "x": 170.54477031644268,
+          "y": 426.5159906632968,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b53",
+      "id": "__berry",
+      "slot": 52,
+      "anchors": {
+        "dome": {
+          "x": 471.67605868279566,
+          "y": 232.66227551649217,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b54",
+      "id": "__berry",
+      "slot": 53,
+      "anchors": {
+        "dome": {
+          "x": 388.6236882160908,
+          "y": 580.8071961469993,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b55",
+      "id": "__berry",
+      "slot": 54,
+      "anchors": {
+        "dome": {
+          "x": 229.74810529666175,
+          "y": 251.9386618374352,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b56",
+      "id": "__berry",
+      "slot": 55,
+      "anchors": {
+        "dome": {
+          "x": 552.1346463389922,
+          "y": 399.06376551098367,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b57",
+      "id": "__berry",
+      "slot": 56,
+      "anchors": {
+        "dome": {
+          "x": 215.5339973954291,
+          "y": 517.7826822203486,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b58",
+      "id": "__berry",
+      "slot": 57,
+      "anchors": {
+        "dome": {
+          "x": 378.2019870193592,
+          "y": 197.9182744321613,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b59",
+      "id": "__berry",
+      "slot": 58,
+      "anchors": {
+        "dome": {
+          "x": 478.3936605886814,
+          "y": 542.3471127425247,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b60",
+      "id": "__berry",
+      "slot": 59,
+      "anchors": {
+        "dome": {
+          "x": 174.28443051051346,
+          "y": 337.68911320033726,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b61",
+      "id": "__berry",
+      "slot": 60,
+      "anchors": {
+        "dome": {
+          "x": 531.423773072153,
+          "y": 301.45288455133954,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b62",
+      "id": "__berry",
+      "slot": 61,
+      "anchors": {
+        "dome": {
+          "x": 300.23613554010564,
+          "y": 573.4529425585505,
+          "manual": false
+        }
+      }
+    }
+  ],
+  "frames": {
+    "dome": {
+      "mode": "dome",
+      "engine": "v2-fixed-slots",
+      "center": {
+        "x": 360,
+        "y": 390
+      },
+      "radius": 195.8804300004032,
+      "unit": 75.25813410692531,
+      "scale": 1,
+      "capacity": 62,
+      "rings": 0,
+      "top": 167.81502078939116,
+      "tip": 610.9104497897695,
+      "halfWidth": 229.7637133924548
+    }
+  },
+  "finishes": {
+    "paper": "ivory",
+    "tint": "#dcc8b7",
+    "ribbon": "none",
+    "sash": "none",
+    "sashText": "",
+    "sashPlacement": "auto",
+    "sashOffset": 0,
+    "sashScale": 1,
+    "collar": true,
+    "butterfly": 0,
+    "crown": false,
+    "greenRim": false
+  },
+  "title": "",
+  "note": "",
+  "template": {
+    "capacity": 62,
+    "palette": [
+      "__berry"
+    ],
+    "formation": "patches",
+    "accent": {
+      "id": "lily",
+      "count": 0,
+      "pattern": "cluster",
+      "angle": 340
+    },
+    "zones": {
+      "wall": "rose_red",
+      "fill": "rose_red",
+      "center": "rose_red",
+      "formation": "zones",
+      "doubleWall": false
+    },
+    "overrides": {}
+  }
+}

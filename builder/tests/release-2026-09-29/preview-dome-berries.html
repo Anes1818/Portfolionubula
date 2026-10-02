@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Strawberry Dome preview</title>
+<p>Opening the local strawberry Dome preview…</p>
+<script>
+const recipe={v:6,m:'dome',s:11,c:44,f:[['__berry',44]],fin:{p:'ivory'},t:'Strawberry bouquet'};
+const code=btoa(JSON.stringify(recipe)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+location.replace('../../index.html#b='+code);
+</script></html>

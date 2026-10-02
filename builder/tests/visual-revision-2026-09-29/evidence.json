@@ -1,0 +1,80 @@
+[
+  {
+    "n": 30,
+    "url": "http://127.0.0.1:8765/builder/index.html#b=eyJ2Ijo2LCJtIjoiZG9tZSIsInMiOjExLCJmIjpbWyJfX2JlcnJ5IiwzMF1dLCJjIjozMCwiZmluIjp7InAiOiJpdm9yeSIsImwiOiJhdXRvIn19",
+    "variants": [
+      "assets/heads/strawberry-natural-1.webp",
+      "assets/heads/strawberry-natural-2.webp",
+      "assets/heads/strawberry-natural-3.webp"
+    ],
+    "alpha": {
+      "applicable": true,
+      "method": "Actual composited head alpha in central disc R - 0.43 * RMS head diameter.",
+      "threshold": 32,
+      "opaqueThreshold": 225,
+      "pixels": 33453,
+      "openPixels": 194,
+      "openPercent": 0.5799,
+      "belowOpaquePercent": 0.825,
+      "excludes": [
+        "paper",
+        "shadows",
+        "ribbons and finishing overlays",
+        "outer boundary band"
+      ],
+      "explicitItems": 30
+    }
+  },
+  {
+    "n": 44,
+    "url": "http://127.0.0.1:8765/builder/index.html#b=eyJ2Ijo2LCJtIjoiZG9tZSIsInMiOjExLCJmIjpbWyJfX2JlcnJ5Iiw0NF1dLCJjIjo0NCwiZmluIjp7InAiOiJpdm9yeSIsImwiOiJhdXRvIn19",
+    "variants": [
+      "assets/heads/strawberry-natural-1.webp",
+      "assets/heads/strawberry-natural-2.webp",
+      "assets/heads/strawberry-natural-3.webp"
+    ],
+    "alpha": {
+      "applicable": true,
+      "method": "Actual composited head alpha in central disc R - 0.43 * RMS head diameter.",
+      "threshold": 32,
+      "opaqueThreshold": 225,
+      "pixels": 54473,
+      "openPixels": 271,
+      "openPercent": 0.4975,
+      "belowOpaquePercent": 0.6994,
+      "excludes": [
+        "paper",
+        "shadows",
+        "ribbons and finishing overlays",
+        "outer boundary band"
+      ],
+      "explicitItems": 44
+    }
+  },
+  {
+    "n": 62,
+    "url": "http://127.0.0.1:8765/builder/index.html#b=eyJ2Ijo2LCJtIjoiZG9tZSIsInMiOjExLCJmIjpbWyJfX2JlcnJ5Iiw2Ml1dLCJjIjo2MiwiZmluIjp7InAiOiJpdm9yeSIsImwiOiJhdXRvIn19",
+    "variants": [
+      "assets/heads/strawberry-natural-2.webp",
+      "assets/heads/strawberry-natural-1.webp",
+      "assets/heads/strawberry-natural-3.webp"
+    ],
+    "alpha": {
+      "applicable": true,
+      "method": "Actual composited head alpha in central disc R - 0.43 * RMS head diameter.",
+      "threshold": 32,
+      "opaqueThreshold": 225,
+      "pixels": 84033,
+      "openPixels": 742,
+      "openPercent": 0.883,
+      "belowOpaquePercent": 1.1543,
+      "excludes": [
+        "paper",
+        "shadows",
+        "ribbons and finishing overlays",
+        "outer boundary band"
+      ],
+      "explicitItems": 62
+    }
+  }
+]

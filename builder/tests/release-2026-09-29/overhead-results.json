@@ -1,0 +1,118 @@
+{
+  "passed": 20,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Preview has exactly 44 individually priced berries and ivory paper",
+      "pass": true
+    },
+    {
+      "name": "Three Dome berry cutouts and the white ruffled collar render",
+      "pass": true
+    },
+    {
+      "name": "Each cutout has real alpha; collar centre is open",
+      "pass": true
+    },
+    {
+      "name": "Visible fruit can be selected",
+      "pass": true
+    },
+    {
+      "name": "Deleting one berry leaves an empty slot and deducts $3",
+      "pass": true
+    },
+    {
+      "name": "Deletion preserves the remaining berry positions and variants",
+      "pass": true
+    },
+    {
+      "name": "An empty slot remains visibly empty",
+      "pass": true,
+      "detail": 2.6252
+    },
+    {
+      "name": "Undo restores the exact design and price",
+      "pass": true
+    },
+    {
+      "name": "15-berry Dome fits, keeps its count, and has no large interior gaps",
+      "pass": true,
+      "detail": {
+        "fits": true,
+        "open": 0.6209,
+        "count": 15,
+        "rot": true
+      }
+    },
+    {
+      "name": "30-berry Dome fits, keeps its count, and has no large interior gaps",
+      "pass": true,
+      "detail": {
+        "fits": true,
+        "open": 0.6457,
+        "count": 30,
+        "rot": true
+      }
+    },
+    {
+      "name": "44-berry Dome fits, keeps its count, and has no large interior gaps",
+      "pass": true,
+      "detail": {
+        "fits": true,
+        "open": 0.5434,
+        "count": 44,
+        "rot": true
+      }
+    },
+    {
+      "name": "62-berry Dome fits, keeps its count, and has no large interior gaps",
+      "pass": true,
+      "detail": {
+        "fits": true,
+        "open": 0.9425,
+        "count": 62,
+        "rot": true
+      }
+    },
+    {
+      "name": "84-berry Dome fits, keeps its count, and has no large interior gaps",
+      "pass": true,
+      "detail": {
+        "fits": true,
+        "open": 1.0361,
+        "count": 84,
+        "rot": true
+      }
+    },
+    {
+      "name": "Shared link retains all quantities, mode and paper",
+      "pass": true
+    },
+    {
+      "name": "320px has no horizontal overflow and an accessible order control",
+      "pass": true
+    },
+    {
+      "name": "390px has no horizontal overflow and an accessible order control",
+      "pass": true
+    },
+    {
+      "name": "1440px has no horizontal overflow and an accessible order control",
+      "pass": true
+    },
+    {
+      "name": "Export is a complete 1080px PNG",
+      "pass": true
+    },
+    {
+      "name": "Offline file preview/export includes the berries and white paper",
+      "pass": true
+    },
+    {
+      "name": "No browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ]
+}

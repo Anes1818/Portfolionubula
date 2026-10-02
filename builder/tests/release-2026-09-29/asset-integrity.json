@@ -1,0 +1,30 @@
+{
+  "oldAssets": 118,
+  "oldBytesUnchanged": true,
+  "newAssets": [
+    "assets/classic/rosemary-1.webp",
+    "assets/classic/rosemary-2.webp",
+    "assets/classic/rosemary-3.webp",
+    "assets/classic/strawberry-new-2.webp",
+    "assets/classic/strawberry-new-3.webp"
+  ],
+  "runtimeHashes": {
+    "app.css": "1d3c4eefc18cb1544f5b78dd50dc996e9020c6f53cb90547cf75277a5dafb0bf",
+    "app.js": "136b841104984c5736319b02a8adfb361c02c4ccba682cfea8751798f7502494",
+    "asset-meta.js": "5566d5bcc18c4369a70eea5be493eb9e373f932222d0062f1bece2c90ce64c9d",
+    "assets-bundle.js": "7841006e2b51f333589d625dfbd9de4b59bcdef6f82c2d0421797c335142cdc9",
+    "config.js": "aa14c6e183bc0201598ecc308fd0a7a93184beaf4739d897596ee3f1be1ea39e",
+    "design-link.js": "bebf7b656c8357be6f2acd4b23d9dd3611a827959af34773428cc13934d55ff9",
+    "dome-engine-v2.js": "fb608fa6eb5cce3d77b1404861e60151c219685f5b0edad0cd1cfac1cc8bea3d",
+    "geometry.js": "525b68383b346b7a8afdf35f46682ee087a2439fcf6c6573bce2607fe2c5354e",
+    "i18n-v6.js": "8309595fe726a60c95dce848cba16581ad9b3cc6877c11e3bc66abd8a4b51ffe",
+    "i18n.js": "22ca49d42051d4551f93ead4b4ecd8a15d03bf763e168a8fa5198dd6858eb3dc",
+    "index.html": "aea58fbd4c97ee0f0bf432fcef7be660795b13bd2259d305df7b116d813be473",
+    "model.js": "9ea5fea1770904ffb03e88ee5bca0671bfc9234f32ede146ef22cb0dfa2c10c7",
+    "order.html": "313c7b7fb064e540c2bc18ad373fc8a7ccd22dbff4e1a2f6b6eb3f12dab396ec",
+    "order.js": "cca1efeddacd3e822b7f65950be1cc29b2a108dcb4184e3586c2e37e96e5f6db",
+    "renderer.js": "32de4be7379ed8ad20898955e760103841b504e5d338351c02bef23aaa63764a",
+    "shop-config.js": "c382010648f093f6ecafaa6efab29914d03ff9189c63be75793f87db10880e61",
+    "template-engine.js": "33b15bd102684e1a7ab1f01cc74475399f7a2c5291947abf180423d03224aaae"
+  }
+}

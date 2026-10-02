@@ -1,0 +1,36 @@
+{
+  "tool": "built-in imagegen",
+  "transparent_background": true,
+  "sources": [
+    {
+      "file": "berry-1.png",
+      "runtime": "assets/heads/strawberry-dome-v2-1.webp",
+      "prompt": "Photorealistic food photography cutout, ONE fresh ripe strawberry for compositing into an overhead florist bouquet. A naturally tapered heart-shaped berry with broad asymmetrical shoulders and a distinct soft pointed end. Camera looking down from above at a fruit tilted 35 degrees away from the camera axis, so its taper is recognisable in its OUTLINE, not a central nipple. Short plump conical body; broad end at image top, soft point at image bottom slightly right. No leaves visible: calyx hidden behind broad end. Rich natural ruby red skin, tiny straw-coloured achenes resting in VERY SHALLOW fine dimples, subtle irregular spacing. Smooth fresh living fruit skin with delicate satin sheen, no giant dark pits, no craters, no pebbled texture, no ring on the surface, no plastic or wet gloss. Soft broad diffuse daylight from upper left with gentle neutral shading, full depth of field. One entire berry centred, occupy 80% of square canvas, TRUE TRANSPARENT background and no outside shadow. No other fruit, no text, no ground. Recognizable natural strawberry silhouette at thumbnail size. This specimen is broad-shouldered with a gentle notch and a short rounded point.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-e13a9872-1ef4-4631-b55a-fbc4a5bbd0f3.png"
+    },
+    {
+      "file": "berry-2.png",
+      "runtime": "assets/heads/strawberry-dome-v2-2.webp",
+      "prompt": "ONE photorealistic ripe strawberry cutout, genuine alpha transparency. Individual fresh natural fruit, full depth of field, soft broad diffuse light from upper left. This specimen is a squat broad conical strawberry, irregular sloping shoulders, one shoulder slightly flattened, smoothly narrowing to a small blunt point at lower left. Camera is above, looking down at a berry leaning 25 degrees: strongly foreshortened but still a recognisable broad teardrop outline, not a sphere or disc. The stem end is behind the fruit and hidden; no foliage. Deep ripe crimson red with gentle colour variation, extremely fine small golden-tan achenes in shallow dimples, natural smooth taut skin with restrained highlights. Ordinary fresh fruit seen at life size rather than exaggerated macro craters. No central nipple, round raised button, rough pits, plastic surface or oversized seeds. Keep point blended smoothly into body. Distinct plump berry approximately 1.12 times as long as wide. Center fruit occupying 80 percent square canvas. Transparent background, no ground, no cast shadow, no text or other objects.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-e39a7791-e15a-4ad8-b8e7-ec523d3c0b96.png"
+    },
+    {
+      "file": "berry-3.png",
+      "runtime": "assets/heads/strawberry-dome-v2-3.webp",
+      "prompt": "Photorealistic single strawberry cutout for a florist bouquet seen from above. One naturally small, narrow Alpine-like garden strawberry: elongated gently asymmetric conical silhouette, widest above midpoint, smoothly tapering to a blunt point toward the lower right. Not heart-shaped, no paired shoulders, not perfectly symmetrical. Camera at elevated 60-degree angle above the ground plane, viewing the body foreshortened as it leans toward the camera in an overhead arrangement. Calyx is underneath and not visible. Deep wine-crimson red skin with slight natural darker red variation, fine small pale tan seeds in shallow dimples, soft natural satin surface. Delicate soft diffuse daylight from upper left, no harsh specular hotspots. All parts sharply in focus. Looks like a real freshly picked strawberry, not a 3D render or toy. AVOID cratered texture, enlarged pits, central raised nipple, thick grooves, oversaturated neon scarlet. Whole single fruit with modest margin on transparent alpha background. No outside shadow, foliage, stems, other objects, lettering or collage. Its visible body is about 1.35 times as long as wide.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-af8ddaf4-d572-47ea-ac5c-c6150f80e5c1.png"
+    },
+    {
+      "file": "berry-4.png",
+      "runtime": "assets/heads/strawberry-dome-v2-4.webp",
+      "prompt": "A single real fresh strawberry, photorealistic product cutout on true transparent alpha. This fruit is for the outer edge of a bouquet photographed from above: it leans diagonally outward, its gently curved conical pointed tip aiming toward the TOP LEFT of the image and its broad rounded shoulders toward the bottom right. Seen from above at about 45 degrees to the fruit's long axis, a credible foreshortened three-quarter view. Its silhouette clearly narrows to a real strawberry point; no circular mound. Small specimen, not a huge perfect heart. Dark ruby-red ripe skin, small pale golden seeds shallowly seated in fine dimples, soft natural surface detail, no deep pits or craters. A tiny muted green calyx may peek only behind the bottom-right base, mostly hidden by the fruit, no long stem. Broad soft diffuse daylight from upper left, restrained satin reflections, full fruit in focus. Isolated ONE complete fruit with 12% margin, no ground shadow, no background, no additional objects or text. Should read as a freshly picked strawberry at small thumbnail size, not a glossy candy.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-1c00bba2-daa5-4fbe-9d41-fd752a077e1f.png"
+    },
+    {
+      "file": "berry-5.png",
+      "runtime": "assets/heads/strawberry-dome-v2-5.webp",
+      "prompt": "Single photorealistic fresh strawberry cutout for the lower-right rim of an overhead florist bouquet. A DIFFERENT specimen: slender long tapered berry with a slightly bent rounded point, one shoulder fuller than the other. Broad end toward UPPER LEFT, tip toward LOWER RIGHT. The berry leans outward on a dome; viewed from above at 40 degrees to its own long axis, foreshortened but with the characteristic strawberry taper clearly visible. Tiny mostly concealed dull green calyx at upper-left base only. Deep ripe warm red, natural uneven red coloration, very small tan-gold seeds in shallow fine dimples, no craters or deep holes. Soft diffused daylight from upper left; smooth natural satin skin, restrained highlights, no candy gloss. Full depth of field. Truly photographic, slightly imperfect individual fruit. Transparent alpha background, complete fruit centred with generous margin, no ground shadow, no text, no other objects or foliage. No central nipple or circular raised ring. Visible shape about 1.4 times as long as wide.",
+      "source": "C:\\Users\\laptops zone\\.codex\\generated_images\\01a0ee77-3ad9-71b0-8daa-6186a7cdb324\\exec-2ffa74e2-801f-4a26-940c-de3b662ce6ab.png"
+    }
+  ]
+}

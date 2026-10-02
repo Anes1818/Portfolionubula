@@ -1,0 +1,128 @@
+{
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "30 positions, dimensions, paper, framing and price unchanged",
+      "pass": true
+    },
+    {
+      "name": "30 uses three natural strawberry assets with small rotations",
+      "pass": true,
+      "detail": {
+        "variants": 3,
+        "openPercent": 0.5799
+      }
+    },
+    {
+      "name": "30 picture changed, with every paid berry still represented",
+      "pass": true
+    },
+    {
+      "name": "30 phone is normal view and has no strawberry title",
+      "pass": true
+    },
+    {
+      "name": "44 positions, dimensions, paper, framing and price unchanged",
+      "pass": true
+    },
+    {
+      "name": "44 uses three natural strawberry assets with small rotations",
+      "pass": true,
+      "detail": {
+        "variants": 3,
+        "openPercent": 0.4975
+      }
+    },
+    {
+      "name": "44 picture changed, with every paid berry still represented",
+      "pass": true
+    },
+    {
+      "name": "44 phone is normal view and has no strawberry title",
+      "pass": true
+    },
+    {
+      "name": "62 positions, dimensions, paper, framing and price unchanged",
+      "pass": true
+    },
+    {
+      "name": "62 uses three natural strawberry assets with small rotations",
+      "pass": true,
+      "detail": {
+        "variants": 3,
+        "openPercent": 0.883
+      }
+    },
+    {
+      "name": "62 picture changed, with every paid berry still represented",
+      "pass": true
+    },
+    {
+      "name": "62 phone is normal view and has no strawberry title",
+      "pass": true
+    },
+    {
+      "name": "heart saved berry artwork and pricing preserved exactly",
+      "pass": true,
+      "detail": {
+        "sameGeometry": true,
+        "sameUrls": true,
+        "samePrice": true
+      }
+    },
+    {
+      "name": "classic saved berry artwork and pricing preserved exactly",
+      "pass": true,
+      "detail": {
+        "sameGeometry": true,
+        "sameUrls": true,
+        "samePrice": true
+      }
+    },
+    {
+      "name": "No Classic strawberry card, family option or featured recipe",
+      "pass": true,
+      "detail": {
+        "mode": "classic",
+        "cards": 0,
+        "recipes": 0,
+        "disabled": true,
+        "offered": false
+      }
+    },
+    {
+      "name": "Model blocks new Classic berries without mutating a design",
+      "pass": true
+    },
+    {
+      "name": "Existing Classic berry link keeps quantities and price",
+      "pass": true
+    },
+    {
+      "name": "Legacy Classic berry delete and Undo remain available",
+      "pass": true
+    },
+    {
+      "name": "Dome deletion updates count and deducts $3",
+      "pass": true
+    },
+    {
+      "name": "Dome Undo restores the exact state",
+      "pass": true
+    },
+    {
+      "name": "PNG download can include all new assets",
+      "pass": true
+    },
+    {
+      "name": "No browser errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "Offline file preview/export includes new Dome artwork",
+      "pass": true
+    }
+  ]
+}
