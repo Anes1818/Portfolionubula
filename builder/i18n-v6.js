@@ -166,3 +166,45 @@ Object.assign(NebulaI18n.es,{
  osPayBy:'Preferencia de pago', osDisclaimer:'Solo una solicitud; no se ha cobrado nada. Confirma existencias, viabilidad y precio final personalmente. La ficha recalcula con los precios actuales de la tienda.',
  classicNote:'Vista fotográfica · la florista confirma el ramo real.'
 });
+
+Object.assign(NebulaI18n.en,{"browseTemplates":"Templates","fallCollection":"THE AUTUMN COLLECTION","galleryTitle":"Fall for a little something personal.","galleryIntro":"Start with a bouquet you love. Make the flowers, ribbon and little details yours.","resumeBuilder":"Continue my bouquet →","autumnLooks":"Warm colors. Your words.","editableLooks":"4 editable bouquets","galleryFine":"Preview your idea with sample prices. Your florist confirms the finished bouquet.","exploreBuilder":"Explore the full builder →","customizeTemplate":"Make it yours →","fallFlowers":"Autumn flowers","cocoa":"Cocoa brown paper","sashCocoa":"Cocoa — your words","autumnDetails":"Autumn details","pumpkin":"Pumpkin plush","bow":"Satin bow","pumpkinPosition":"Plush position","positionLeft":"Top left","positionCenter":"Top center","positionRight":"Top right","pumpkinSize":"Plush size","fallPreview":"Autumn bouquet · made personal by you","fallPaintHint":"Choose a flower, then tap the bloom you want to replace. Larger flowers take more room; your stem count stays the same.","artLoadError":"Artwork unavailable — reload to retry"});
+
+Object.assign(NebulaI18n.es,{"browseTemplates":"Plantillas","fallCollection":"LA COLECCIÓN DE OTOÑO","galleryTitle":"Un detalle de otoño, muy tuyo.","galleryIntro":"Empieza con un ramo que te encante. Personaliza las flores, la cinta y los pequeños detalles.","resumeBuilder":"Continuar mi ramo →","autumnLooks":"Colores cálidos. Tus palabras.","editableLooks":"4 ramos editables","galleryFine":"Prueba tu idea con precios de muestra. Tu florista confirma el ramo final.","exploreBuilder":"Explorar el editor completo →","customizeTemplate":"Personalizar →","fallFlowers":"Flores de otoño","cocoa":"Papel marrón cacao","sashCocoa":"Cacao — tus palabras","autumnDetails":"Detalles de otoño","pumpkin":"Peluche de calabaza","bow":"Lazo de satén","pumpkinPosition":"Posición del peluche","positionLeft":"Arriba a la izquierda","positionCenter":"Arriba en el centro","positionRight":"Arriba a la derecha","pumpkinSize":"Tamaño del peluche","fallPreview":"Ramo de otoño · personalizado por ti","fallPaintHint":"Elige una flor y toca la que quieres cambiar. Las flores grandes ocupan más espacio; se mantiene la cantidad.","artLoadError":"Imagen no disponible — recarga para reintentar"});
+
+Object.assign(NebulaI18n.en,{sashLanguage:'Choose a printed ribbon or write your own message.',shareShort:'Share',fallCountHint:'Flowers and extras are listed separately.'});
+Object.assign(NebulaI18n.es,{sashLanguage:'Elige una cinta impresa o escribe tu propio mensaje.',shareShort:'Compartir',fallCountHint:'Las flores y los extras se detallan por separado.'});
+Object.assign(NebulaI18n.en,{
+ filler:'Baby’s breath sprigs',fillerLess:'Remove one baby’s breath sprig',fillerMore:'Add one baby’s breath sprig',perSprig:'per sprig',
+ fillerHint:'A little air between the flowers. Each tap adds one sprig.',
+ snoopy:'Snoopy plush',kitty:'Hello Kitty plush',snoopy_topper:'Snoopy pumpkin topper',
+ detailHeading:'Plush toys & toppers',detailHint:'Choose a detail, then drag it on the bouquet. Use the arrows for small adjustments.',
+ detailDragHint:'Drag your detail · arrow keys move it · Delete removes it',detailSize:'Size',detailRotation:'Rotation',detailLayer:'Placement',
+ tucked:'Tucked into flowers',front:'On top',removeDetail:'Remove detail',addDetail:'Add +',editDetail:'Edit',
+ moveLeft:'Move left',moveRight:'Move right',moveUp:'Move up',moveDown:'Move down'
+});
+Object.assign(NebulaI18n.es,{
+ filler:'Ramitas de paniculata',fillerLess:'Quitar una ramita de paniculata',fillerMore:'Añadir una ramita de paniculata',perSprig:'por ramita',
+ fillerHint:'Un toque ligero entre las flores. Cada toque añade una ramita.',
+ snoopy:'Peluche Snoopy',kitty:'Peluche Hello Kitty',snoopy_topper:'Adorno Snoopy calabaza',
+ detailHeading:'Peluches y adornos',detailHint:'Elige un detalle y arrástralo sobre el ramo. Usa las flechas para ajustes pequeños.',
+ detailDragHint:'Arrastra el detalle · muévelo con las flechas · Suprimir lo elimina',detailSize:'Tamaño',detailRotation:'Rotación',detailLayer:'Colocación',
+ tucked:'Entre las flores',front:'Encima',removeDetail:'Quitar detalle',addDetail:'Añadir +',editDetail:'Editar',
+ moveLeft:'Mover a la izquierda',moveRight:'Mover a la derecha',moveUp:'Subir',moveDown:'Bajar'
+});
+Object.assign(NebulaI18n.en,{
+ collectionsEyebrow:'THE BOUQUET COLLECTIONS',loveCollection:'For Love',loveCount:'3 editable bouquets',
+ loveCollectionIntro:'Anniversaries, little surprises, or no occasion at all.',romanceFlowers:'For Love flowers',
+ fillerPlacement:'Baby’s breath placement',scatter:'Between the flowers',border:'Around the edge',
+ interiorGreenery:'Eucalyptus between roses',greeneryLess:'Remove one eucalyptus sprig',greeneryMore:'Add one eucalyptus sprig',
+ floralInitial:'Floral initial',initialLetter:'Their initial',initialHint:'One letter, A–Z. Your florist confirms the floral lettering and final price.'
+});
+Object.assign(NebulaI18n.es,{
+ collectionsEyebrow:'LAS COLECCIONES DE RAMOS',loveCollection:'Por amor',loveCount:'3 ramos editables',
+ loveCollectionIntro:'Aniversarios, pequeñas sorpresas o simplemente porque sí.',romanceFlowers:'Flores para el amor',
+ fillerPlacement:'Colocación de la paniculata',scatter:'Entre las flores',border:'Alrededor del borde',
+ interiorGreenery:'Eucalipto entre las rosas',greeneryLess:'Quitar una rama de eucalipto',greeneryMore:'Añadir una rama de eucalipto',
+ floralInitial:'Inicial floral',initialLetter:'Su inicial',initialHint:'Una letra, de la A a la Z. Tu florista confirma las letras florales y el precio final.'
+});
+
+Object.assign(NebulaI18n.en,{galleryTitle:'Start with a bouquet you love.',galleryIntro:'For love, for the season, for someone special. Make every little detail yours.',autumnLooks:'Autumn',autumnDetails:'Bouquet details',fallPreview:'Your bouquet · made personal by you'});
+Object.assign(NebulaI18n.es,{galleryTitle:'Empieza con un ramo que te encante.',galleryIntro:'Por amor, por la temporada, por alguien especial. Personaliza cada detalle.',autumnLooks:'Otoño',autumnDetails:'Detalles del ramo',fallPreview:'Tu ramo · personalizado por ti'});

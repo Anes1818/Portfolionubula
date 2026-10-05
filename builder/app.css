@@ -239,6 +239,49 @@ dialog{background:var(--surface);color:var(--text);border:1px solid var(--border
 @media(max-width:820px) and (max-height:700px){.art-surface{height:192px}.separate-hint{display:block}.about-block summary{padding-block:6px}}
 @media(orientation:landscape) and (max-height:520px){.art-surface{height:calc(100% - 49px)}.about-block,.separate-hint{display:none}}
 .order-document{height:auto;overflow:auto;overscroll-behavior:auto}
+/* Seasonal entry: real editable recipes, rendered by the same canvas as the editor. */
+[hidden]{display:none!important}
+body.gallery-open{display:block;height:auto;min-height:100dvh;overflow:auto;background:#f8f3eb}
+body.gallery-open #saveTop{display:none}
+body.gallery-open .site-header{position:relative}
+.template-gallery{max-width:1220px;margin:0 auto;padding:56px 36px 48px;color:#48372c}
+.gallery-intro{max-width:690px;margin:0 auto 50px;text-align:center}
+.gallery-intro .eyebrow{color:#925737;letter-spacing:.2em}
+.gallery-intro h1{font:normal clamp(36px,5vw,64px)/1.08 Georgia,serif;letter-spacing:-.04em;margin:18px 0}
+.gallery-intro>p:not(.eyebrow){font-size:16px;line-height:1.7;max-width:480px;margin:20px auto;color:#786758}
+.collection-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px}
+.collection-heading h2{font:normal 25px Georgia,serif;margin:0}
+.collection-heading>span{font-size:12px;color:#786758}
+.fall-template-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.fall-template-card{min-width:0;background:#fffdf9;border:1px solid #e9ded0;border-radius:22px;overflow:hidden}
+.fall-template-card canvas{display:block;width:100%;height:auto;background:radial-gradient(ellipse at center,#f5eadb,#eee0cd)}
+.fall-card-info{padding:20px}
+.fall-card-info h3{font:normal 26px Georgia,serif;margin:0 0 10px}
+.fall-description{font-size:13px;line-height:1.6;min-height:42px;color:#786758;margin:0}
+.fall-price{font-size:12px;color:#786758;margin:16px 0}
+.fall-card-info .button{width:100%;min-height:46px;background:#684530;border-color:#684530;color:#fffaf3}
+.fall-card-info .button:hover{background:#513323}
+.gallery-fine{text-align:center;font-size:12px;line-height:1.6;color:#786758;margin:28px 0 12px}
+#openClassicBuilder{display:block;margin:0 auto;color:#684530}
+.autumn-finishes{padding:16px;border:1px solid #e5d4c1;border-radius:12px;background:#faf3e9;margin-bottom:20px}
+.autumn-toggle{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0;font-size:14px}
+.autumn-toggle small{display:block;font-size:11px;font-weight:normal;color:#786758;margin-top:4px}
+.autumn-toggle input{width:20px;height:20px;accent-color:#684530}
+#pumpkinSettings{border-top:1px solid #e5d4c1;margin-top:8px;padding-top:14px}
+@media(max-width:820px){
+ .template-gallery{padding:30px 18px 40px}
+ .gallery-intro{margin-bottom:32px}
+ .gallery-intro h1{max-width:350px;margin:14px auto}
+ .gallery-intro>p:not(.eyebrow){font-size:14px;margin:16px auto}
+ .collection-heading h2{font-size:22px}
+ .collection-heading>span{font-size:10px;white-space:nowrap}
+ .fall-template-cards{grid-template-columns:1fr;gap:22px;max-width:480px;margin:auto}
+ .fall-template-card canvas{aspect-ratio:1;max-height:410px;object-fit:contain}
+ .fall-card-info{padding:18px}
+ .fall-description{min-height:0}
+ body.gallery-open .site-footer{display:flex}
+ #browseTemplates{font-size:12px;padding-inline:8px}
+}
 @media(min-height:701px) and (max-width:820px){
  body[data-berry-dome="true"]:not(.preview-focus) .art-surface{height:clamp(300px,40dvh,350px)}
  body[data-berry-dome="true"] .about-block{display:none}
@@ -247,3 +290,37 @@ dialog{background:var(--surface);color:var(--text);border:1px solid var(--border
  .art-surface{height:150px}.about-block{display:none}.starting-panel summary{font-size:12px}
  .site-header{height:50px;min-height:50px}.brand small{display:none}
 }
+
+html.gallery-open{height:auto;overflow:auto;scroll-behavior:auto}
+body.gallery-open .skip-link:not(:focus){top:-100px}
+@media(prefers-color-scheme:dark){.template-gallery{color:#48372c}.gallery-open .site-header{color:#48372c}.autumn-finishes{color:#48372c}.autumn-finishes select{background:#fffdf9;color:#48372c}}
+
+@media(max-width:820px){
+ body[data-organic="true"]:not(.preview-focus) .art-surface{height:clamp(280px,36dvh,330px)}
+ body[data-organic="true"] .about-block,body[data-organic="true"] .separate-hint{display:none}
+}
+@media(max-width:420px){
+ .header-actions{gap:4px}.site-header{padding-inline:12px}.site-header .brand small{display:none}
+ .site-header .brand{gap:7px;max-width:none;flex:1}.site-header .brand>span{font-size:24px}.site-header .brand-chip{width:34px;height:34px;min-width:34px}
+ .language-label select{min-width:40px;width:40px;padding-inline:2px}
+ #saveTop{min-width:62px;padding-inline:9px;white-space:nowrap}#browseTemplates{padding-inline:5px;font-size:11px}
+}
+@media(max-height:700px) and (max-width:820px){body[data-organic="true"]:not(.preview-focus) .art-surface{height:240px}}
+@media(orientation:landscape) and (max-height:520px){body[data-organic="true"]:not(.preview-focus) .art-surface{height:calc(100% - 49px)}}
+/* Autumn details keep large touch targets and show controls only for the selection. */
+.autumn-finishes>.toggle-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:14px 0}
+.autumn-finishes>.toggle-row>span:first-child{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.autumn-finishes>.toggle-row small{font-size:12px;color:#596253}
+.autumn-finishes .stepper button{min-width:44px;min-height:44px}
+.detail-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.detail-choices button{display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid #d6cec0;border-radius:12px;background:#faf7f0;padding:10px 5px;min-width:0;color:#344c40;font:inherit;cursor:pointer}
+.detail-choices button[aria-pressed=true]{border:2px solid #416953;background:#edf1e8;padding:9px 4px}
+.detail-choices img{height:78px;width:100%;object-fit:contain;pointer-events:none}
+.detail-choices strong{font-size:12px;line-height:1.3}.detail-choices small{font-size:11px}
+.detail-editor{padding:14px;border:1px solid #d6cec0;border-radius:12px;background:#f3efe5;margin-bottom:18px}
+.detail-editor[hidden]{display:none}.detail-nudges{display:flex;gap:8px;margin:12px 0}
+.detail-nudges button{flex:1;min-width:40px;min-height:44px;border:1px solid #c7cbbb;border-radius:8px;background:#fffdf7;color:#344c40;font-size:22px;cursor:pointer}
+.detail-actions{display:flex;justify-content:space-between;gap:12px}.detail-editor output{font-size:12px;min-width:40px}
+.collection-description{color:var(--muted);font-size:14px;margin:-12px 0 24px}
+#loveTemplateCards{margin-bottom:60px}
+#initialLetter{max-width:90px;text-align:center;text-transform:uppercase;font-size:28px}

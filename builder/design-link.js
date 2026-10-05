@@ -29,12 +29,19 @@ function encode(s,order){
   payload.a=s.items.map(it=>[Number(it.uid.slice(1)),it.anchors.classic.x,it.anchors.classic.y,it.anchors.classic.manual?1:0]);
   payload.g=s.frames.classic;
  }
+ if(s.template?.layout==='organic')payload.layout='organic';
  const fin={};for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
  /* The count, not a flag. This wrote 1 for any number of butterflies back when the
     finish was a single on/off, so a shared three-butterfly bouquet reopened with
     one. The crown was never written at all and vanished from every shared link. */
  if(f.butterfly)fin.b=Math.max(0,Math.min(9,f.butterfly|0))||1;
  if(f.crown)fin.k=1;
+ if(f.fillerCount)fin.fc=f.fillerCount;
+ if(f.fillerPattern==='border')fin.fp='border';
+ if(f.greeneryCount)fin.gc=f.greeneryCount;
+ if(f.initial){fin.il=f.initial;fin.is=f.initialScale;fin.io=f.initialOffset;}
+ if(f.decorations?.length)fin.dc=f.decorations.map(d=>[d.id,d.x,d.y,d.scale,d.rotation,d.layer]);
+ if(f.pumpkin){fin.q=1;fin.j=f.pumpkinPosition;fin.z=f.pumpkinScale;}if(f.bow)fin.d=1;
  if(f.greenRim)fin.g=1;if(f.tint&&f.paper==='custom')fin.c=f.tint;
  if(f.collar===false)fin.w=0;
  if(f.sashText)fin.t=f.sashText;
@@ -73,6 +80,7 @@ function decode(code){
    M.resize(s,p.c);
    s.template.overrides={};
    seq.forEach((id,slot)=>{s.template.overrides[slot]=id;});
+   if(p.layout!==undefined){if(p.layout!=='organic'||p.m!=='dome')return null;s.template.layout=p.layout;}
    M.syncTemplate(s);
   }
   const fin=p.fin||{};
@@ -81,6 +89,13 @@ function decode(code){
      butterfly it drew - the same thing it means now, so old links still open right. */
   s.finishes.butterfly=Number.isInteger(fin.b)?Math.max(0,Math.min(9,fin.b)):0;
   s.finishes.crown=fin.k===1;
+  if(fin.fc!==undefined)s.finishes.fillerCount=fin.fc;
+  for(const [short,key] of [['fp','fillerPattern'],['gc','greeneryCount'],['il','initial'],['is','initialScale'],['io','initialOffset']])if(fin[short]!==undefined)s.finishes[key]=fin[short];
+  if(fin.dc!==undefined){if(!Array.isArray(fin.dc)||fin.dc.some(a=>!Array.isArray(a)||a.length!==6))return null;
+   s.finishes.decorations=fin.dc.map(a=>({id:a[0],x:a[1],y:a[2],scale:a[3],rotation:a[4],layer:a[5]}));}
+  s.finishes.bow=fin.d===1;s.finishes.pumpkin=fin.q===1;
+  if(fin.j!==undefined)s.finishes.pumpkinPosition=fin.j;
+  if(fin.z!==undefined)s.finishes.pumpkinScale=fin.z;
   s.finishes.greenRim=fin.g===1;
   if(fin.c)s.finishes.tint=String(fin.c);
   if(fin.w===0)s.finishes.collar=false;

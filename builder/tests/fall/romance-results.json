@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "For Love and Autumn have separate groups",
+    "pink-promise opens with correct counts and validates",
+    "written-in-roses opens with correct counts and validates",
+    "always-you opens with correct counts and validates",
+    "Border mode keeps all 12 sprigs and same price without moving roses",
+    "Border selection is undoable",
+    "Greenery costs one eucalyptus sprig and adds no flower slot",
+    "Initial entry uppercases the letter",
+    "Initial scales and moves independently of roses",
+    "Removing initial removes exactly its price",
+    "Initial undo restores exact lettering and transforms",
+    "All 26 initial textures draw with transparent margins",
+    "Shared link retains exact romantic scene and pricing",
+    "Invalid pattern, counts, letters and transforms are rejected",
+    "Reload preserves romantic details",
+    "Florist sheet lists letter, greenery and filler placement",
+    "Spanish collection title is translated",
+    "No desktop runtime errors",
+    "320px mobile collection and initial controls work",
+    "390px mobile collection and initial controls work",
+    "Offline romantic design exports without missing assets"
+  ]
+}

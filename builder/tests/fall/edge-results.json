@@ -1,0 +1,174 @@
+{
+  "checks": [
+    "Lossless pixels and alpha: rose-ivory-a",
+    "Lossless pixels and alpha: rose-ivory-b",
+    "Lossless pixels and alpha: orange-flower",
+    "Lossless pixels and alpha: wrap-cocoa",
+    "Lossless pixels and alpha: brown-bow",
+    "Lossless pixels and alpha: brown-ribbon",
+    "Lossless pixels and alpha: pumpkin",
+    "Lossless pixels and alpha: breath-airy",
+    "Lossless pixels and alpha: breath-wide",
+    "Lossless pixels and alpha: plush-snoopy",
+    "Lossless pixels and alpha: topper-snoopy",
+    "Lossless pixels and alpha: mum-burgundy",
+    "Lossless pixels and alpha: rose-caramel",
+    "Lossless pixels and alpha: plush-kitty",
+    "Offline export uses transparent assets without taint",
+    "All 21 dense / sparse size cases validate and share",
+    "Deletion leaves an editable empty position; undo restores it",
+    "Successive keyboard size changes each undo",
+    "Classic rejects unsupported overhead-only assets",
+    "No file-mode runtime errors"
+  ],
+  "stress": [
+    {
+      "count": 1,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 1,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 1,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 15,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 15,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 15,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 30,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 30,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 30,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 44,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 44,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 44,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 62,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 62,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 62,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 84,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 84,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 84,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 100,
+      "species": "rose_ivory",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 100,
+      "species": "sunflower",
+      "valid": true,
+      "link": true,
+      "finite": true
+    },
+    {
+      "count": 100,
+      "species": "lily",
+      "valid": true,
+      "link": true,
+      "finite": true
+    }
+  ],
+  "errors": []
+}

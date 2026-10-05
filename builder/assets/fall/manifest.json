@@ -1,0 +1,114 @@
+[
+  {
+    "name": "rose-ivory-a",
+    "inputBytes": 1370901,
+    "webBytes": 934120,
+    "width": 1415,
+    "height": 1112,
+    "alpha": true
+  },
+  {
+    "name": "rose-ivory-b",
+    "inputBytes": 1306216,
+    "webBytes": 854096,
+    "width": 1374,
+    "height": 1145,
+    "alpha": true
+  },
+  {
+    "name": "orange-flower",
+    "inputBytes": 537815,
+    "webBytes": 339650,
+    "width": 1408,
+    "height": 768,
+    "alpha": true
+  },
+  {
+    "name": "wrap-cocoa",
+    "inputBytes": 1030311,
+    "webBytes": 680692,
+    "width": 1254,
+    "height": 1254,
+    "alpha": true
+  },
+  {
+    "name": "brown-bow",
+    "inputBytes": 780710,
+    "webBytes": 432256,
+    "width": 1408,
+    "height": 768,
+    "alpha": true
+  },
+  {
+    "name": "brown-ribbon",
+    "inputBytes": 601675,
+    "webBytes": 361126,
+    "width": 1408,
+    "height": 768,
+    "alpha": true
+  },
+  {
+    "name": "pumpkin",
+    "inputBytes": 511151,
+    "webBytes": 307912,
+    "width": 1408,
+    "height": 768,
+    "alpha": true
+  },
+  {
+    "name": "breath-airy",
+    "inputBytes": 385805,
+    "webBytes": 169966,
+    "width": 1408,
+    "height": 768,
+    "alpha": true
+  },
+  {
+    "name": "breath-wide",
+    "inputBytes": 656965,
+    "webBytes": 297306,
+    "width": 1408,
+    "height": 768,
+    "alpha": true
+  },
+  {
+    "name": "plush-snoopy",
+    "inputBytes": 192837,
+    "webBytes": 99754,
+    "width": 407,
+    "height": 595,
+    "alpha": true
+  },
+  {
+    "name": "topper-snoopy",
+    "inputBytes": 186433,
+    "webBytes": 106348,
+    "width": 348,
+    "height": 495,
+    "alpha": true
+  },
+  {
+    "name": "mum-burgundy",
+    "inputBytes": 756310,
+    "webBytes": 410626,
+    "width": 921,
+    "height": 953,
+    "alpha": true
+  },
+  {
+    "name": "rose-caramel",
+    "inputBytes": 726087,
+    "webBytes": 394350,
+    "width": 905,
+    "height": 849,
+    "alpha": true
+  },
+  {
+    "name": "plush-kitty",
+    "inputBytes": 218246,
+    "webBytes": 119792,
+    "width": 371,
+    "height": 593,
+    "alpha": true
+  }
+]

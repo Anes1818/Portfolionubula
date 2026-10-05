@@ -10,42 +10,24 @@ commit, and send them away with a picture that carries the shop's name.
 
 ## Open it
 
+The entry screen offers three **For Love** templates and four autumn templates.
+Pink Promise, Written in Roses and Always You add a year-round collection with
+editable floral initials, filler placement and counted interior eucalyptus.
+See [For Love notes and the next asset prompt](docs/FOR-LOVE-2026-10-05.md).
+Autumn Latte adds
+caramel roses, burgundy chrysanthemums, scattered baby’s breath and Snoopy.
+The Dome Finishing tab has movable Snoopy/Hello Kitty plushes and a pumpkin
+topper, with size, rotation and layering controls. All fourteen supplied autumn
+assets preserve their transparency. Template selection opens the existing builder.
+See [the autumn implementation notes](docs/FALL-IMPLEMENTATION-2026-10-05.md)
+for scope, asset provenance, demo prices and validation.
+
 1. Extract the complete ZIP into a new folder.
 2. On a computer, open `index.html`. No npm install or build step.
 3. On a phone, open the deployed URL. An iOS Files preview is not a supported
    way to run it.
 4. Keep `shop-config.js`, every script, the stylesheet and `assets/` together.
    Read **SHOP-SETUP.md** before customer use.
-
-## 3D studio
-
-Open **`3d.html`**, or select **Explore 3D** in the photo studio. It also opens
-directly from disk, with no installation or external network requests.
-
-- Real WebGL geometry: curved petals, stems, leaves, folded paper and a ribbon bow.
-- Drag to orbit; scroll or pinch to zoom. Front, top and side views, automatic
-  rotation and reset are available below the bouquet.
-- Fifteen catalogue choices, three starting bouquets and up to 36 individual
-  stems. Gathered, dome and heart arrangements; four paper tones and three ribbons.
-- Select a stem in the scene to remove it, or edit quantities under **Details**.
-  Keyboard users can use catalogue buttons and the quantity list; arrow keys
-  rotate the focused canvas, `+`/`-` zoom, `0` resets, and Escape clears selection.
-- Undo/redo, local autosave, a 1600×1600 PNG and validated editable 3D JSON files.
-  `Ctrl/Cmd+Z` undoes; add Shift to redo.
-
-The 3D page reads the same catalogue and approved shop pricing configuration.
-Its storage key (`nebulaBouquet3D_v1`) and JSON format are independent of the
-photo studio, so switching studios does not change an existing photo design.
-There is no automatic conversion between their designs or ordering from 3D.
-
-These are stylized flower models for exploring shape and color, with catalogue
-photographs as selection references. Sample prices remain clearly labeled.
-Your florist confirms availability, materials and the final price. WebGL is
-required; unsupported browsers get a link back to the photo studio.
-
-Implementation: `studio-3d-model.js`, `studio-3d-scene.js`, `studio-3d.js` and
-`studio-3d.css`. Three.js r160 is included under its MIT license in `vendor/`.
-Verification instructions and coverage are in `tests/3d/README.md`.
 
 ## The three bouquets
 
@@ -54,7 +36,7 @@ Each is saved separately; switching never converts one into another.
 | Mode | What it is | Sizes |
 |---|---|---|
 | **Classic** | Hand-gathered, in a real photographed paper wrap | ~20 rose-sized units |
-| **Dome** | Top-view *ramo buchón*, fixed slots | 15 / 30 / 44 / 62 / 84 |
+| **Dome** | Top-view *ramo buchón*; autumn templates use mixed-size spacing | 15 / 30 / 44 / 62 / 84 |
 | **Flat heart** | Heart shape, fixed slots | 21 / 41 / 67 / 100 |
 
 Classic opens on the **Romantic** starting point; Dome and Heart open filled

@@ -22,10 +22,18 @@ function finishLabels(f){
  const out=[];
  if(f.paper&&f.paper!=='none')out.push([t('wrapping'),t(f.paper)]);
  if(f.ribbon&&f.ribbon!=='none')out.push([t('ribbon'),t(f.ribbon)]);
- const sashKeys={love:'sashLove',bday:'sashBday',wed:'sashWedding',blank_blackband:'sashBlackband',blank_champagne:'sashChampagne',blank_emerald:'sashEmerald'};
+ const sashKeys={love:'sashLove',bday:'sashBday',wed:'sashWedding',blank_blackband:'sashBlackband',blank_champagne:'sashChampagne',blank_emerald:'sashEmerald',blank_cocoa:'sashCocoa'};
  if(f.sash&&f.sash!=='none')out.push([t('sash'),t(sashKeys[f.sash]||f.sash)+(f.sashText?' — '+f.sashText:'')]);
  if(f.butterfly)out.push([t('butterfly'),'× '+(f.butterfly===true?1:f.butterfly)]);
  if(f.crown)out.push([t('crown'),'✓']);
+ if(state.mode==='dome'){
+  if(f.fillerCount)out.push([t('filler'),'× '+f.fillerCount+' · '+t(f.fillerPattern)]);
+  if(f.greeneryCount)out.push([t('interiorGreenery'),'× '+f.greeneryCount]);
+  if(f.initial)out.push([t('floralInitial'),f.initial+' · '+Math.round(f.initialScale*100)+'%']);
+  for(const d of f.decorations||[])out.push([t(d.id),'× 1 · '+Math.round(d.scale*100)+'% · '+d.rotation+'° · '+t(d.layer)]);
+ }
+ if(state.mode==='dome'&&f.pumpkin)out.push([t('pumpkin'),t('position'+f.pumpkinPosition[0].toUpperCase()+f.pumpkinPosition.slice(1))+' · '+Math.round(f.pumpkinScale*100)+'%']);
+ if(state.mode==='dome'&&f.bow&&f.sash==='blank_cocoa')out.push([t('bow'),'✓']);
  if(state.mode!=='classic'&&f.greenRim)out.push([t('greenRim'),NebulaGeometry.greenRimStems(state)+' × '+name('eucalyptus')]);
  return out;
 }

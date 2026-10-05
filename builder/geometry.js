@@ -243,6 +243,7 @@ function stampPaper(frame,s){const p=s.finishes&&s.finishes.paper;
  if(frame&&p&&frame.paper!==p){frame.paper=p;frame.mouthHalf=mouthHalf(p);}
  return frame;}
 function nodes(s){
+ if(g.NebulaFall?.active(s))return g.NebulaFall.nodes(s);
  const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:stampPaper(s.frames.classic||classicFrame(s.items,s.finishes&&s.finishes.paper),s);
  /* A berry's size depends on what it sits beside. In an all-berry bouquet there is
     nothing to measure it against, so it fills its slot and the fruit packs shoulder

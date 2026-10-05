@@ -1,0 +1,33 @@
+{
+  "checks": [
+    "Latte opens with new flowers, six sprigs and Snoopy",
+    "One new sprig costs exactly one unit",
+    "Adding filler preserves flowers and existing sprigs",
+    "Filler undo restores count and total",
+    "All three new details are independent",
+    "Selecting an existing detail does not duplicate or recharge it",
+    "Size, rotation, layer and nudge update selected topper only",
+    "Dragging moves topper without repainting flowers",
+    "Drag is one undo step",
+    "Keyboard arrows move selected plush",
+    "Remove affects only selected plush",
+    "Text changes do not move filler",
+    "All sprigs are counted and charged",
+    "Malformed and non-dome detail states rejected",
+    "Share preserves exact detail/filler geometry and price",
+    "JSON portfolio validates with all new details",
+    "Twelve paid sprigs remain visible nodes across sparse, dense and empty designs",
+    "Reload restores all details and transforms",
+    "Florist sheet lists all extras and exact filler count",
+    "Detailed PNG export succeeds",
+    "Spanish detail controls translate",
+    "No desktop runtime errors",
+    "390px detail controls fit and work by touch",
+    "390px real touch drag moves plush without replacing flowers",
+    "390px touch drag undo restores position",
+    "320px detail controls fit and work by touch",
+    "320px real touch drag moves plush without replacing flowers",
+    "320px touch drag undo restores position",
+    "Offline share opens and exports all new artwork"
+  ]
+}

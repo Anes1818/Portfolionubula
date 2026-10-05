@@ -1,0 +1,32 @@
+{
+  "checks": [
+    "Seven working template cards in two collections",
+    "Template opens as 44 editable flowers",
+    "Template contains exactly 24 ivory roses and 20 rust mums",
+    "Removing pumpkin removes only its price",
+    "Undo restores pumpkin",
+    "Ribbon text edit is undoable",
+    "Text editing never reshuffles flowers",
+    "Shared link preserves exact rendering and finishes",
+    "Reload preserves every design property",
+    "PNG export succeeds",
+    "Order sheet lists pumpkin and bow",
+    "Sunflowers are 1.85 times rose diameter",
+    "Mixed sizes keep exact paid stem count",
+    "All gallery recipes validate and share",
+    "Malformed seasonal values rejected",
+    "Legacy classic/dome/heart designs remain valid",
+    "Spanish gallery and customizer labels",
+    "No desktop runtime errors",
+    "Mobile gallery fits 390",
+    "Mobile editor fits 390",
+    "Mobile finish change updates scene 390",
+    "Real touch replaces a flower without changing count 390",
+    "Mobile gallery fits 320",
+    "Mobile editor fits 320",
+    "Mobile finish change updates scene 320",
+    "Real touch replaces a flower without changing count 320",
+    "No runtime errors on any tested screen"
+  ],
+  "errors": []
+}
