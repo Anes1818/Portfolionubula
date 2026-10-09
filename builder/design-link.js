@@ -29,8 +29,9 @@ function encode(s,order){
   payload.a=s.items.map(it=>[Number(it.uid.slice(1)),it.anchors.classic.x,it.anchors.classic.y,it.anchors.classic.manual?1:0]);
   payload.g=s.frames.classic;
  }
- if(s.template?.layout==='organic')payload.layout='organic';
- const fin={};for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
+ if(['organic','garden','halloween'].includes(s.template?.layout))payload.layout=s.template.layout;
+ if(s.template?.layout==='halloween')payload.hr=s.template.halloweenRecipe;
+ const fin={};for(const key of ['spookyMask','spookyBow','ghostCount','thistleCount'])if(f[key])fin[key]=f[key];for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
  /* The count, not a flag. This wrote 1 for any number of butterflies back when the
     finish was a single on/off, so a shared three-butterfly bouquet reopened with
     one. The crown was never written at all and vanished from every shared link. */
@@ -60,13 +61,14 @@ function encode(s,order){
 
 function decode(code){
  try{
+  if(typeof code!=='string'||code.length>24000)return null;
   const p=JSON.parse(unb64url(code));
-  if(!p||p.v!==6||!['classic','dome','heart'].includes(p.m)||!Array.isArray(p.f))return null;
+  if(!p||p.v!==6||!['classic','dome','heart'].includes(p.m)||!Array.isArray(p.f)||p.f.length>100)return null;
   const seq=[];
   for(const run of p.f){
-   if(!Array.isArray(run))return null;
+   if(!Array.isArray(run)||run.length!==2)return null;
    const id=run[0];if(id!=='-'&&!Object.hasOwn(CAT,id))return null;
-   const n=Math.min(Number(run[1])||0,200);
+   const n=run[1];if(!Number.isInteger(n)||n<1||n>100||seq.length+n>100)return null;
    for(let i=0;i<n;i++)seq.push(id==='-'?null:id);
   }
   if(!seq.length||seq.length>200||!seq.some(Boolean))return null;
@@ -80,10 +82,10 @@ function decode(code){
    M.resize(s,p.c);
    s.template.overrides={};
    seq.forEach((id,slot)=>{s.template.overrides[slot]=id;});
-   if(p.layout!==undefined){if(p.layout!=='organic'||p.m!=='dome')return null;s.template.layout=p.layout;}
+   if(p.layout!==undefined){if(!['organic','garden','halloween'].includes(p.layout)||p.m!=='dome')return null;s.template.layout=p.layout;if(p.layout==='halloween'){s.template.halloweenRecipe=p.hr;if(!NebulaSpooky.validTemplate(s.template))return null;}}
    M.syncTemplate(s);
   }
-  const fin=p.fin||{};
+  const fin=p.fin||{};for(const key of ['spookyMask','spookyBow','ghostCount','thistleCount'])if(fin[key]!==undefined)s.finishes[key]=fin[key];
   for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(fin[k])s.finishes[key]=String(fin[k]);
   /* A link written before butterflies were counted carries b:1, which means the one
      butterfly it drew - the same thing it means now, so old links still open right. */

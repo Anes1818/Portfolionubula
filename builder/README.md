@@ -10,7 +10,15 @@ commit, and send them away with a picture that carries the shop's name.
 
 ## Open it
 
-The entry screen offers three **For Love** templates and four autumn templates.
+The entry screen offers ten templates: three **For Love**, three **Spooky
+Bouquets**, and four **Autumn** designs. Scream for You, Forever My Boo and
+Midnight Blooms use supplied photographic cutouts with fixed flower positions,
+counted extras and editable finishes. See [Halloween logic](docs/HALLOWEEN-LAYOUT.md).
+
+The final launch pass adds recoverable image-loading errors, matching image/link
+snapshots, accessible gallery names and strict shared-quantity validation. See
+[release notes](docs/LAUNCH-2026-10-07.md).
+
 Pink Promise, Written in Roses and Always You add a year-round collection with
 editable floral initials, filler placement and counted interior eucalyptus.
 See [For Love notes and the next asset prompt](docs/FOR-LOVE-2026-10-05.md).
@@ -113,3 +121,21 @@ All shop contact details and prices must be approved by the owner before launch.
 ---
 
 © 2026 Nebula Sites Studio. All rights reserved.
+
+Spooky customization supports ten rose colors, individual replacement, one-step
+rose recoloring, five paper tones, recipe extras and personal messages. See
+`docs/HALLOWEEN-LAYOUT.md` for exact fit, recoloring and paper-rendering rules.
+
+Saved bouquets: keep up to 20 named design copies in this browser. Open them from
+Templates, then edit and save a new copy. Download editable designs for backups;
+local copies do not sync between devices. The demo includes a florist walkthrough,
+and Review request prepares the existing WhatsApp handoff. Evaluation notes:
+`docs/FLORIST-WALKTHROUGH-2026-10-08.md`.
+
+The collection screen renders all ten actual recipes at 1080 × 1240. Select View
+bouquet to inspect its ingredients and estimate, then open that exact design.
+For Love / Spooky / Autumn filters only change the displayed collection. See
+`docs/COLLECTION-PREVIEWS-2026-10-08.md` for rendering and validation details.
+
+
+9 October update: collection photos, mask-off flower reflow and shared toy/finishing controls are documented in [Connected builder](docs/CONNECTED-BUILDER-2026-10-09.md). Local build token: 20261009a.

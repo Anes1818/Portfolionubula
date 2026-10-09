@@ -7,8 +7,8 @@ function check(name,value){assert.ok(value,name);checks.push(name);console.log('
  const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true}),page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base);await page.waitForFunction(()=>window.NebulaApp?.ready);
- await page.waitForFunction(()=>document.querySelectorAll('[data-template]').length===7&&[...document.querySelectorAll('[data-template]')].every(b=>!b.disabled));
- check('Seven working template cards in two collections',await page.locator('[data-template]').count()===7);
+ await page.waitForFunction(()=>document.querySelectorAll('[data-template]').length===10&&[...document.querySelectorAll('[data-template]')].every(b=>!b.disabled));
+ check('Ten working template cards in three collections',await page.locator('[data-template]').count()===10);
  await page.screenshot({path:path.join(out,'gallery-desktop.png'),fullPage:true});
  await page.locator('[data-template="october-cream"]').click();
  check('Template opens as 44 editable flowers',await page.evaluate(()=>NebulaApp.state.items.length===44&&NebulaFall.active(NebulaApp.state)&&NebulaApp.scene().nodes.length===44));

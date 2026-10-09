@@ -4,6 +4,12 @@
     "pink-promise opens with correct counts and validates",
     "written-in-roses opens with correct counts and validates",
     "always-you opens with correct counts and validates",
+    "Garden uses both supplied rose heads and separately counted foliage",
+    "Garden share link preserves arrangement, foliage and price",
+    "Each charged eucalyptus sprig contributes visible artwork",
+    "Garden resizing keeps all requested flowers and sprigs",
+    "Garden flower edit is undoable without changing layout",
+    "Garden undo restores red rose",
     "Border mode keeps all 12 sprigs and same price without moving roses",
     "Border selection is undoable",
     "Greenery costs one eucalyptus sprig and adds no flower slot",
@@ -19,7 +25,9 @@
     "Spanish collection title is translated",
     "No desktop runtime errors",
     "320px mobile collection and initial controls work",
+    "320px garden loads both new rose variants",
     "390px mobile collection and initial controls work",
+    "390px garden loads both new rose variants",
     "Offline romantic design exports without missing assets"
   ]
 }

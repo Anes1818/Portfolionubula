@@ -33,14 +33,15 @@ function filler(s,f,flowers){
  }
  // A fixed candidate field + greedy spacing gives a stable prefix: adding a
  // sprig never shuffles existing ones. Text, toys and ribbon are not inputs.
- const key=JSON.stringify([s.seed,f.radius,f.unit,flowers.map(n=>[n.x,n.y,n.d])]);
+ const key=JSON.stringify([s.seed,f.engine,f.radius,f.unit,s.finishes.spookyMask,flowers.map(n=>[n.x,n.y,n.d])]);
  if(!fillerCache.has(key)){
   const candidates=[];
   for(let i=0;i<500;i++){
    const angle=i*2.3999632297+s.seed*.13,r=f.radius*Math.sqrt((i+.5)/500)*.99;
    const x=f.center.x+Math.cos(angle)*r,y=f.center.y+Math.sin(angle)*r;
    const clearance=Math.min(...flowers.map(n=>Math.hypot(x-n.x,y-n.y)/n.d));
-   if(clearance>.29)candidates.push({x,y,clearance});
+   const maskClear=!s.finishes.spookyMask||((x-f.center.x)/(f.radius*.43))**2+((y-f.center.y)/(f.radius*.85))**2>1;
+   if(clearance>.29&&maskClear)candidates.push({x,y,clearance});
   }
   const placed=[];
   for(let i=0;i<12&&candidates.length;i++){
@@ -48,7 +49,7 @@ function filler(s,f,flowers){
    candidates.forEach((p,j)=>{const spacing=placed.length?Math.min(...placed.map(q=>Math.hypot(p.x-q.x,p.y-q.y)))/f.unit:1;
     const value=Math.min(p.clearance,.62)+Math.min(spacing,2)*.55;
     if(value>score){score=value;best=j;}});
-   const p=candidates.splice(best,1)[0],m=meta.finishes[i%2?'breath-wide':'breath-airy'],w=f.unit*(i%2?.98:.72);
+   const p=candidates.splice(best,1)[0],m=meta.finishes[i%2?'breath-wide':'breath-airy'],w=f.unit*(f.engine==='garden-v1'?(i%2?1.2:1.05):(i%2?.98:.72));
    placed.push({...p,uid:'filler-'+i,url:m.url,w,h:w*m.height/m.width,d:w,rot:Math.sin(i*2.4+s.seed)*1.2,bright:1,decorative:true});
   }
   fillerCache.set(key,placed);if(fillerCache.size>80)fillerCache.delete(fillerCache.keys().next().value);

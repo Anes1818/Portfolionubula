@@ -4,12 +4,22 @@ function check(name,ok){assert.ok(ok,name);checks.push(name);console.log('PASS',
 (async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});
 try{
  const ctx=await browser.newContext({viewport:{width:1440,height:1000}}),p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
- await p.goto(base);await p.waitForFunction(()=>window.NebulaApp?.ready);await p.waitForFunction(()=>[...document.querySelectorAll('[data-template]')].length===7&&[...document.querySelectorAll('[data-template]')].every(b=>!b.disabled));
+ await p.goto(base);await p.waitForFunction(()=>window.NebulaApp?.ready);await p.waitForFunction(()=>[...document.querySelectorAll('[data-template]')].length===10&&[...document.querySelectorAll('[data-template]')].every(b=>!b.disabled));
  check('For Love and Autumn have separate groups',await p.locator('#loveTemplateCards [data-template]').count()===3&&await p.locator('#fallTemplateCards [data-template]').count()===4);
  await p.screenshot({path:path.join(__dirname,'love-gallery.png'),fullPage:true});
  for(const id of ['pink-promise','written-in-roses','always-you']){
   await p.locator('[data-template="'+id+'"]').click();await p.evaluate(()=>NebulaRenderer.awaitAssets(NebulaApp.state));
-  check(id+' opens with correct counts and validates',await p.evaluate(id=>{const s=NebulaApp.state;return s.items.length===(id==='always-you'?30:44)&&!!NebulaModel.validate(s)&&document.getElementById('family').value==='romance';},id));
+  check(id+' opens with correct counts and validates',await p.evaluate(id=>{const s=NebulaApp.state;return s.items.length===(id==='always-you'?16:44)&&!!NebulaModel.validate(s)&&document.getElementById('family').value==='romance';},id));
+  if(id==='always-you'){
+   check('Garden uses both supplied rose heads and separately counted foliage',await p.evaluate(()=>{const s=NebulaApp.state,sc=NebulaApp.scene(),price=NebulaModel.price(s);return s.template.layout==='garden'&&sc.nodes.length===16&&sc.nodes.every(n=>NEBULA_META.flowers.rose_red.romanceHeads.includes(n.url))&&new Set(sc.nodes.map(n=>n.url)).size===2&&sc.greenery.every(n=>n.url.includes("assets/romance/eucalyptus-sparse-"))&&new Set(sc.greenery.map(n=>n.url)).size===2&&sc.greenery.length===5&&sc.filler.length===6&&price.extraLines.find(l=>l.id==='interiorGreenery').quantity===5&&price.extraLines.find(l=>l.id==='filler').quantity===6;}));
+   check('Garden share link preserves arrangement, foliage and price',await p.evaluate(()=>{const s=NebulaApp.state,d=NebulaLink.decode(NebulaLink.encode(s)).design;return d.template.layout==='garden'&&JSON.stringify(NebulaRenderer.scene(s))===JSON.stringify(NebulaRenderer.scene(d))&&JSON.stringify(NebulaModel.price(s))===JSON.stringify(NebulaModel.price(d));}));
+   check('Each charged eucalyptus sprig contributes visible artwork',await p.evaluate(()=>{const s=NebulaApp.state,sc=NebulaApp.scene(),R=NebulaRenderer;function pixels(scene){const cv=R.makeCanvas(),ctx=cv.getContext('2d');R.drawArt(ctx,s,{scene});return ctx.getImageData(0,0,720,820).data;}const full=pixels(sc);return sc.greenery.every(g=>{const partial=pixels({...sc,greenery:sc.greenery.filter(n=>n.uid!==g.uid)});let changed=0;for(let i=0;i<full.length;i+=4)if(Math.abs(full[i]-partial[i])+Math.abs(full[i+1]-partial[i+1])+Math.abs(full[i+2]-partial[i+2])>24)changed++;return changed>100;});}));
+   check('Garden resizing keeps all requested flowers and sprigs',await p.evaluate(()=>[1,15,16,30,60,100].every(n=>{const s=NebulaApp.state;NebulaModel.resize(s,n);const sc=NebulaRenderer.scene(s);return !!NebulaModel.validate(s)&&sc.nodes.length===n&&sc.greenery.length===5&&sc.filler.length===6&&sc.nodes.every(p=>Number.isFinite(p.x+p.y+p.w+p.h));})));
+   await p.evaluate(()=>NebulaApp.paintSlot(8,'rose_pink'));
+   check('Garden flower edit is undoable without changing layout',await p.evaluate(()=>NebulaApp.state.items.find(it=>it.slot===8).id==='rose_pink'&&NebulaApp.state.template.layout==='garden'));
+   await p.locator('#undo').click();
+   check('Garden undo restores red rose',await p.evaluate(()=>NebulaApp.state.items.find(it=>it.slot===8).id==='rose_red'));
+  }
   const png=await p.evaluate(async()=>Array.from(new Uint8Array(await(await NebulaApp.exportBlob(1080,1080)).arrayBuffer())));fs.writeFileSync(path.join(__dirname,id+'.png'),Buffer.from(png));
   await p.locator('#browseTemplates').click();
  }
@@ -41,7 +51,7 @@ try{
   const m=await browser.newContext({viewport:{width,height:844},isMobile:true,hasTouch:true}),mp=await m.newPage();await mp.goto(base);await mp.waitForFunction(()=>window.NebulaApp?.ready);
   await mp.locator('[data-template="written-in-roses"]').tap();await mp.locator('#tab-finishing').tap();await mp.locator('#initialLetter').fill('B');await mp.locator('#initialLetter').blur();
   check(width+'px mobile collection and initial controls work',await mp.evaluate(()=>innerWidth>=document.documentElement.scrollWidth&&NebulaApp.state.finishes.initial==='B'));
-  await mp.screenshot({path:path.join(__dirname,'love-mobile-'+width+'.png'),fullPage:true});await m.close();
+  await mp.screenshot({path:path.join(__dirname,'love-mobile-'+width+'.png'),fullPage:true});await mp.evaluate(()=>NebulaApp.applyFallTemplate('always-you'));await mp.evaluate(()=>NebulaRenderer.awaitAssets(NebulaApp.state));check(width+'px garden loads both new rose variants',await mp.evaluate(()=>innerWidth>=document.documentElement.scrollWidth&&new Set(NebulaApp.scene().nodes.map(n=>n.url)).size===2));await mp.screenshot({path:path.join(__dirname,'garden-mobile-'+width+'.png'),fullPage:true});await m.close();
  }
  const file=await browser.newPage();await file.goto(require('node:url').pathToFileURL(path.resolve(__dirname,'../../index.html')).href+'#b='+link);await file.waitForFunction(()=>window.NebulaApp?.ready);
  check('Offline romantic design exports without missing assets',await file.evaluate(async()=>{await NebulaRenderer.awaitAssets(NebulaApp.state);return (await NebulaApp.exportBlob(1080,1080)).size>20000&&NebulaApp.state.finishes.initial==='E';}));await file.close();

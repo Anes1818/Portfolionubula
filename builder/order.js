@@ -20,7 +20,7 @@ function prettyDate(iso){
 }
 function finishLabels(f){
  const out=[];
- if(f.paper&&f.paper!=='none')out.push([t('wrapping'),t(f.paper)]);
+ if(f.paper&&f.paper!=='none'&&(state.mode==='classic'||f.collar!==false))out.push([t('wrapping'),t(f.paper)]);
  if(f.ribbon&&f.ribbon!=='none')out.push([t('ribbon'),t(f.ribbon)]);
  const sashKeys={love:'sashLove',bday:'sashBday',wed:'sashWedding',blank_blackband:'sashBlackband',blank_champagne:'sashChampagne',blank_emerald:'sashEmerald',blank_cocoa:'sashCocoa'};
  if(f.sash&&f.sash!=='none')out.push([t('sash'),t(sashKeys[f.sash]||f.sash)+(f.sashText?' — '+f.sashText:'')]);
@@ -35,6 +35,7 @@ function finishLabels(f){
  if(state.mode==='dome'&&f.pumpkin)out.push([t('pumpkin'),t('position'+f.pumpkinPosition[0].toUpperCase()+f.pumpkinPosition.slice(1))+' · '+Math.round(f.pumpkinScale*100)+'%']);
  if(state.mode==='dome'&&f.bow&&f.sash==='blank_cocoa')out.push([t('bow'),'✓']);
  if(state.mode!=='classic'&&f.greenRim)out.push([t('greenRim'),NebulaGeometry.greenRimStems(state)+' × '+name('eucalyptus')]);
+ for(const line of NebulaSpooky.extras(state))out.push([t(line.id),'× '+line.quantity]);
  return out;
 }
 function paintSheet(){

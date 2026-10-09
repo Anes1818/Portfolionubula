@@ -1,5 +1,9 @@
 # Architecture
 
+The completed Halloween collection uses three fixed compositions and supplied
+cutouts. See [HALLOWEEN-LAYOUT.md](HALLOWEEN-LAYOUT.md) for its formulas, asset
+mapping, editing limits, accounting, persistence and validation checks.
+
 ## Layers
 
 `shop-config.js` → validated catalogue/configuration → artwork metadata and

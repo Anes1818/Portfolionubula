@@ -1,8 +1,9 @@
 /* Direct manipulation, complete history, safe local persistence. No network services or checkout. */
 (function(){'use strict';
 const $=id=>document.getElementById(id),M=NebulaModel,G=NebulaGeometry,R=NebulaRenderer,{CAT,CONFIG,PRESETS,MISSING,SIZES}=NebulaConfig;
-let selectedDetail=null;
-let galleryBuilt=false,galleryRevision=0;
+let selectedDetail=null,moveMode=false,moveOpenedFocus=false;
+const catalogPhotos={"harvest-sunshine":"assets/catalog/harvest-sunshine.jpg","october-cream":"assets/catalog/october-cream.jpg","autumn-latte":"assets/catalog/autumn-latte.jpg","midnight-blooms":"assets/catalog/midnight-blooms.jpg","forever-my-boo":"assets/catalog/forever-my-boo.jpg","scream-for-you":"assets/catalog/scream-for-you.jpg","always-you":"assets/catalog/always-you.jpg","written-in-roses":"assets/catalog/written-in-roses.jpg","pink-promise":"assets/catalog/pink-promise.jpg"};
+let galleryBuilt=false,galleryRevision=0,galleryFilter='all';
 let banks={},histories={},picks={},focusPreview=false,brush=null,selectedSlot=null,camera={zoom:1,x:0,y:0},panMode=false;
 let lang='en',st=M.create(),undoStack=[],redoStack=[],selected=null,picked='rose_pink',tab='flowers',sc=null,gesture=null,hover=null,raf=0,isReady=false,storageOK=true,editFocus=null,exporting=false;
 window.__errors=[];addEventListener('error',e=>window.__errors.push(String(e.message)));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason)));
@@ -31,7 +32,7 @@ function showFailure(result){
   openMessage(t('capacityTitle'),[paragraph(text),paragraph(t('capacityFooter'),'helper')]);
  }else toast(t(result.reason)||t('placement'));
 }
-function switchBouquet(mode){
+function switchBouquet(mode){moveMode=false;
  if(editFocus)commitTextEdit();if(gesture)endPointer({pointerId:gesture.pointerId},true);
  if(mode===st.mode)return {ok:true};
  histories[st.mode]={undo:undoStack,redo:redoStack};picks[st.mode]=picked;
@@ -44,10 +45,10 @@ function resizeBouquet(n){
  const choice=Object.hasOwn(CAT,picked)?picked:'rose_red',trial=M.clone(st),r=M.resize(trial,n,choice);if(!r.ok)return;
  confirm(t('sizeTitle'),t('sizeText',{old:st.template.capacity,n,flower:name(choice),price:M.money(M.price(trial).totalCents,lang)}),t('sizeConfirm'),()=>change(()=>{const result=M.resize(st,n,choice);selected=null;selectedSlot=null;camera={zoom:1,x:0,y:0};return result;}));
 }
-function stopBrush(){brush=null;selected=null;selectedSlot=null;panMode=false;render(false);toast(t('brushStopped'));}
+function stopBrush(){moveMode=false;brush=null;selected=null;selectedSlot=null;panMode=false;render(false);toast(t('brushStopped'));}
 function positionDelete(){
- const b=$('inlineDelete'),n=sc?.nodes.find(n=>n.uid===selected);b.hidden=!n||!!gesture||!!brush;
- if(!n||brush)return;const r=$('bouquet').getBoundingClientRect(),a=$('artSurface').getBoundingClientRect(),v=R.view(st,camera),unit=r.width/720;
+ const b=$('inlineDelete'),n=sc?.nodes.find(n=>n.uid===selected);b.hidden=!n||!!gesture||!!brush||moveMode;
+ if(!n||brush||moveMode)return;const r=$('bouquet').getBoundingClientRect(),a=$('artSurface').getBoundingClientRect(),v=R.view(st,camera),unit=r.width/720;
  /* On a phone the 44px target is wider than the bloom itself, so offsetting by a
     fraction of the bloom still buried its face. Clear the bloom box in SCREEN pixels
     instead: the button hangs off the top-right corner and leaves the bloom draggable. */
@@ -85,9 +86,9 @@ function renderStudio(){
  if(S.phone)tel.href='tel:'+S.phone.replace(/[^\d+]/g,'');
  $('studioSocial').textContent=S.instagram;
 }
-function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera});positionDelete();}});}
+function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera,moveTargets:moveTargets()});positionDelete();}});}
 /* Some catalogue entries only read correctly from one camera angle. */
-function offered(id){return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
+function offered(id){if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
 function fillChoices(el,current,{empty=false,classic=false}={}){
  const ids=Object.keys(CAT).filter(id=>offered(id)&&(!classic||CAT[id].classic)),sig=lang+':'+classic+':'+empty+':'+st.mode;
  if(el.dataset.choiceSignature!==sig){el.replaceChildren();if(empty){const o=document.createElement('option');o.value='';o.textContent=t('emptySlot');el.append(o);}for(const id of ids){const o=document.createElement('option');o.value=id;o.textContent=name(id)+' · '+M.money(CAT[id].priceCents,lang);el.append(o);}el.dataset.choiceSignature=sig;}
@@ -97,41 +98,103 @@ function showGallery(on){
  if(editFocus)commitTextEdit();if(on&&focusPreview)setFocusPreview(false);
  document.body.classList.toggle('gallery-open',on);document.documentElement.classList.toggle('gallery-open',on);$('templateGallery').hidden=!on;$('main').hidden=on;
  $('resumeBuilder').hidden=!isReady;$('browseTemplates').hidden=on;
- if(on)renderGallery();else{fitPhoneCanvas();scheduleCanvas();}
+ if(on){renderGallery();renderSavedBouquets();}else{fitPhoneCanvas();scheduleCanvas();}
+}
+function renderSavedBouquets(){
+ $('floristGuide').hidden=!CONFIG.demo;$('saveCurrentBouquet').disabled=!isReady;
+ let entries;try{entries=NebulaSaved.read();}catch{$('savedBouquetList').replaceChildren();$('savedBouquetsStatus').textContent=t('shelfUnavailable');return;}
+ $('savedBouquetsStatus').textContent=entries.length?t('shelfCount',{n:entries.length,max:NebulaSaved.limit}):t('shelfEmpty');
+ $('savedBouquetList').replaceChildren(...entries.map(entry=>{
+  const card=document.createElement('article'),title=document.createElement('h3'),actions=document.createElement('div');card.className='saved-bouquet-card';
+  const label=entry.design.title||t('untitledBouquet');title.textContent=label;
+  const details=paragraph(entry.design.items.length+' '+t('pieces')+' · '+M.money(M.price(entry.design).totalCents,lang)+(CONFIG.demo?' · '+t('sampleShort'):''),'helper');
+  const open=button(t('openSaved'),'button secondary small',async()=>{
+   open.disabled=true;
+   try{await R.awaitAssets(entry.design);confirm(t('openSaved'),t('openSavedHint'),t('openSaved'),()=>{
+    if(st.mode!==entry.design.mode)switchBouquet(entry.design.mode);
+    change(()=>{st=M.clone(entry.design);selected=null;selectedSlot=null;brush=null;hover=null;camera={zoom:1,x:0,y:0};$('family').value='all';});
+    showGallery(false);setTab('flowers');$('bouquet').focus({preventScroll:true});
+   });}catch{toast(t('previewUnavailable'));}finally{open.disabled=false;}
+  });open.setAttribute('aria-label',t('openSaved')+' — '+label);open.dataset.savedId=entry.id;
+  const remove=button(t('removeSaved'),'text-button',()=>confirm(t('removeSaved'),t('removeSavedHint',{name:label}),t('removeSaved'),()=>{
+   try{NebulaSaved.remove(entry.id);renderSavedBouquets();}catch{toast(t('shelfUnavailable'));}
+  }));remove.setAttribute('aria-label',t('removeSaved')+' — '+label);remove.dataset.removeSaved=entry.id;
+  actions.className='saved-bouquet-actions';actions.append(open,remove);card.append(title,details,actions);return card;
+ }));
+}
+function saveToShelf(){
+ if(editFocus)commitTextEdit();
+ try{const design=M.clone(st);design.title=$('savedBouquetName').value.trim().slice(0,70)||st.title||t('untitledBouquet');NebulaSaved.save(design);$('exportStatus').textContent=t('shelfSaved');toast(t('shelfSaved'));renderSavedBouquets();}
+ catch(e){$('exportStatus').textContent=t(e.message==='full'?'shelfFull':'shelfUnavailable');}
+}
+function filterCollections(key=galleryFilter){
+ galleryFilter=key;
+ for(const el of document.querySelectorAll('[data-collection]'))el.hidden=key!=='all'&&el.dataset.collection!==key;
+ for(const el of document.querySelectorAll('[data-collection-filter]'))pressed(el,el.dataset.collectionFilter===key);
+ $('collectionResult').textContent=t('collectionResult',{n:key==='all'?10:key==='fall'?4:3});
+}
+function drawCollectionPreview(cv,design){
+ const ctx=cv.getContext('2d'),sc=R.scene(design),b=R.artBounds(design,sc),pad=54,scale=Math.min((cv.width-2*pad)/b.w,(cv.height-2*pad)/b.h);
+ ctx.clearRect(0,0,cv.width,cv.height);ctx.save();ctx.translate(cv.width/2-(b.x+b.w/2)*scale,cv.height/2-(b.y+b.h/2)*scale);ctx.scale(scale,scale);R.drawArt(ctx,design,{scene:sc});ctx.restore();
+}
+function showCollectionPreview(recipe,design,picture,photo){
+ $('collectionPreviewTitle').textContent=recipe[lang];$('collectionPreviewCopy').textContent=lang==='es'?recipe.descriptionEs:recipe.description;
+ // Reuse the selected card's full-resolution raster; no second render can drift.
+ $('collectionPreviewImage').alt=recipe[lang];
+ const usePhoto=()=>{ $('collectionPreviewImage').src=photo.src;$('collectionPreviewLabel').textContent=t('catalogStyle');pressed($('collectionPreviewPhoto'),true);pressed($('collectionPreviewDesign'),false);};
+ const useDesign=()=>{ $('collectionPreviewImage').src=picture.toDataURL('image/png');$('collectionPreviewLabel').textContent=t('designPreviewLabel');pressed($('collectionPreviewPhoto'),false);pressed($('collectionPreviewDesign'),true);};
+ $('collectionPreviewPhoto').hidden=!photo;$('collectionPreviewPhoto').onclick=usePhoto;$('collectionPreviewDesign').onclick=useDesign;
+ if(photo)usePhoto();else useDesign();
+ const price=M.price(design);$('collectionPreviewPrice').textContent=M.money(price.totalCents,lang)+' · '+t(CONFIG.demo?'sampleShort':'requestPrice');
+ $('collectionPreviewItems').replaceChildren(...price.lines.map(line=>{const li=document.createElement('li');li.textContent=line.quantity+' × '+name(line.id);return li;}),...price.extraLines.map(line=>{const li=document.createElement('li');li.textContent=line.quantity+' × '+t(line.id);return li;}));
+ $('collectionPreviewCustomize').onclick=()=>{$('collectionPreviewDialog').close();applyFallTemplate(recipe.id);};
+ $('collectionPreviewDialog').showModal();
 }
 async function renderGallery(){
+ filterCollections();
  if(galleryBuilt&&$('fallTemplateCards').dataset.lang===lang)return;const revision=++galleryRevision;
  galleryBuilt=true;$('fallTemplateCards').dataset.lang=lang;const jobs=[];
- for(const [container,collection] of [['loveTemplateCards',NebulaRomance],['fallTemplateCards',NebulaFall]]){
+ for(const [container,collection] of [['loveTemplateCards',NebulaRomance],['fallTemplateCards',NebulaFall],['halloweenTemplateCards',NebulaSpooky]]){
   $(container).replaceChildren(...collection.recipes.map(recipe=>{
    const design=collection.create(recipe.id),el=document.createElement('article'),cv=document.createElement('canvas'),info=document.createElement('div'),h=document.createElement('h3');
-   el.className='fall-template-card';cv.width=540;cv.height=540;cv.setAttribute('aria-label',recipe[lang]);info.className='fall-card-info';h.textContent=recipe[lang];
+   el.className='fall-template-card';cv.width=1080;cv.height=1240;cv.setAttribute('role','img');cv.setAttribute('aria-label',recipe[lang]);info.className='fall-card-info';h.textContent=recipe[lang];
+   const picture=button('','collection-picture'),view=document.createElement('span');picture.dataset.preview=recipe.id;picture.setAttribute('aria-label',t('viewBouquet')+' — '+recipe[lang]);view.className='collection-view-label';view.textContent=t('viewBouquet');picture.append(cv,view);picture.disabled=true;
+   let photo=null;
+   if(catalogPhotos[recipe.id]){photo=document.createElement('img');photo.className='catalog-photo';photo.alt=recipe[lang]+' — '+t('catalogStyle');photo.loading='lazy';photo.decoding='async';photo.width=928;photo.height=1152;photo.src=catalogPhotos[recipe.id];cv.hidden=true;picture.insertBefore(photo,view);
+    const label=document.createElement('span');label.className='catalog-style-label';label.textContent=t('catalogStyle');picture.append(label);
+    photo.onerror=()=>{photo.remove();photo=null;cv.hidden=false;label.remove();};
+   }
    const details=paragraph(lang==='es'?recipe.descriptionEs:recipe.description,'fall-description'),cost=paragraph(M.money(M.price(design).totalCents,lang)+' · '+t(CONFIG.demo?'sampleShort':'requestPrice'),'fall-price');
-   const action=button(t('customizeTemplate'),'button primary',()=>applyFallTemplate(recipe.id));action.dataset.template=recipe.id;action.disabled=true;
-   info.append(h,details,cost,action);el.append(cv,info);
-   jobs.push(R.awaitAssets(design).then(()=>{if(revision!==galleryRevision)return;const ctx=cv.getContext('2d'),sc=R.scene(design),bounds=R.artBounds(design,sc),scale=Math.min(492/bounds.w,488/bounds.h);ctx.clearRect(0,0,540,540);ctx.save();ctx.translate(270-(bounds.x+bounds.w/2)*scale,270-(bounds.y+bounds.h/2)*scale);ctx.scale(scale,scale);R.drawArt(ctx,design);ctx.restore();action.disabled=false;}).catch(()=>{action.textContent=t('artLoadError');}));
+   const action=button('','button primary'),status=paragraph('','helper');action.dataset.template=recipe.id;status.setAttribute('role','status');status.hidden=true;
+   const count=paragraph(t('previewItems',{n:design.items.length}),'collection-piece-count');info.append(count,h,details,cost,status,action);el.append(picture,info);
+   async function preview(){
+    el.setAttribute('aria-busy','true');action.disabled=true;picture.disabled=true;action.textContent=t('loadingPreview');status.hidden=true;delete action.dataset.retry;
+    try{await R.awaitAssets(design);if(revision!==galleryRevision)return;drawCollectionPreview(cv,design);picture.disabled=false;picture.onclick=()=>showCollectionPreview(recipe,design,cv,photo);action.textContent=t('customizeTemplate');action.setAttribute('aria-label',t('customizeTemplate')+' — '+recipe[lang]);action.onclick=()=>applyFallTemplate(recipe.id);}
+    catch{if(revision!==galleryRevision)return;status.textContent=t('previewUnavailable');status.hidden=false;action.textContent=t('retryPreview');action.setAttribute('aria-label',t('retryPreview')+' — '+recipe[lang]);action.dataset.retry='true';action.onclick=preview;}
+    finally{if(revision===galleryRevision){el.setAttribute('aria-busy','false');action.disabled=false;}}
+   }jobs.push(preview());
    return el;
   }));
  }await Promise.all(jobs);
 }
-function applyFallTemplate(id){
+function applyFallTemplate(id){moveMode=false;
  if(editFocus)commitTextEdit();if(st.mode!=='dome')switchBouquet('dome');
- const romantic=NebulaRomance.recipes.some(r=>r.id===id);
- change(()=>{st=(romantic?NebulaRomance:NebulaFall).create(id);picked=st.template.palette[0];selected=null;selectedSlot=null;brush=null;hover=null;camera={zoom:1,x:0,y:0};$('family').value=romantic?'romance':'fall';});
+ const spooky=NebulaSpooky.recipes.some(r=>r.id===id);const romantic=NebulaRomance.recipes.some(r=>r.id===id);
+ change(()=>{st=(spooky?NebulaSpooky:romantic?NebulaRomance:NebulaFall).create(id);picked=st.template.palette[0];selected=null;selectedSlot=null;brush=null;hover=null;camera={zoom:1,x:0,y:0};$('family').value=spooky?'halloween':romantic?'romance':'fall';});
  showGallery(false);setTab('flowers');$('bouquet').focus({preventScroll:true});
 }
 function render(save=true){
  localize();if(!isReady)return;
  if(st.mode!=='dome'||!st.finishes.decorations.some(d=>d.id===selectedDetail))selectedDetail=null;
- if(!$('templateGallery').hidden)renderGallery();
+ if(!$('templateGallery').hidden){renderGallery();renderSavedBouquets();}
  if(!offered(picked)){picked='rose_pink';brush=null;}
  const berryFamily=$('family').querySelector('[value="strawberry"]');
  berryFamily.hidden=berryFamily.disabled=st.mode==='classic';
- if(st.mode==='classic'&&['strawberry','fall','romance'].includes($('family').value))$('family').value='rose';
+ if(st.mode==='classic'&&['strawberry','fall','romance','halloween'].includes($('family').value))$('family').value='rose';
  const top=st.mode!=='classic',p=M.price(st),cap=G.capacity(st.items,st.mode);
  document.body.dataset.organic=String(NebulaFall.active(st));
  document.body.dataset.bouquetMode=st.mode;document.body.classList.toggle('is-painting',!!brush);document.body.classList.toggle('is-panning',panMode);
- sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera});
+ sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera,moveTargets:moveTargets()});
  $('loading').hidden=true;$('emptyHint').hidden=top||st.items.length>0;
  const berries=st.items.filter(i=>i.id==='__berry').length;
  document.body.dataset.berryDome=String(st.mode==='dome'&&berries>=st.items.length*.6&&berries>0);
@@ -140,6 +203,8 @@ function render(save=true){
  $('totalPrice').textContent=M.money(p.totalCents,lang);document.querySelector('.summary-price>span').textContent=t(CONFIG.demo?'demoEstimate':'requestPrice')+' · '+CONFIG.currency;
  $('compositionLabel').textContent=t(st.mode==='classic'?'classicNote':st.mode==='dome'?'domeNote':'heartNote');$('bouquet').setAttribute('aria-label',t('stageLabel',{mode:t(st.mode),n:p.pieces}));
  $('gapCheck').hidden=true;$('collarNotice').hidden=true;
+ $('moveFlowers').textContent=t(moveMode?'moveFinish':'moveFlowers');pressed($('moveFlowers'),moveMode);$('moveHelp').textContent=moveMode?t(selected?(top?'movePickTarget':'movePickAnywhere'):'movePickFlower'):'';
+ $('gestureHint').hidden=moveMode;
  $('gestureHint').textContent=panMode?t('panView'):brush?t(top?'paintHint':'classicBrushHint'):t(top?'topSelectHint':'classicSelectHint');
  $('undo').disabled=!undoStack.length;$('redo').disabled=!redoStack.length;document.querySelectorAll('[data-mode]').forEach(el=>{pressed(el,el.dataset.mode===st.mode);el.disabled=false;});
  $('saveTop').disabled=false;$('shareButton').disabled=st.items.length===0;$('orderButton').disabled=st.items.length===0;$('arrangeButton').disabled=false;
@@ -177,12 +242,36 @@ function render(save=true){
  $('sizeChoices').replaceChildren(...(SIZES[st.mode]||[]).map(([label,n])=>{const b=button('','size-chip',()=>resizeBouquet(n)),l=document.createElement('strong'),c=document.createElement('small');l.textContent=label;c.textContent=n+' '+(NebulaFall.active(st)?t('pieces'):(lang==='es'?'pos.':'slots'));b.append(l,c);b.dataset.size=label;pressed(b,st.template?.capacity===n);return b;}));
  if(NebulaFall.active(st))$('sizePanel').querySelector('.size-label').textContent=t('bouquetSize');
  $('zoomOut').disabled=camera.zoom<=1;$('zoomIn').disabled=camera.zoom>=3;$('panView').disabled=camera.zoom<=1;pressed($('panView'),panMode);$('artSurface').classList.toggle('zoomed',camera.zoom>1);
- renderCatalog();renderStarting();renderPaper();renderRibbons();positionDelete();
+ renderCatalog();renderStarting();renderPaper();renderRibbons();renderSpooky();positionDelete();
  if(save)persist();
+}
+function renderSpooky(){
+ const on=NebulaSpooky.active(st),id=st.template?.halloweenRecipe;
+ $('finishShortcuts').hidden=st.mode!=='dome';$('halloweenFinishes').hidden=st.mode!=='dome';$('family').querySelector('[value=halloween]').hidden=st.mode==='classic';
+ $('spookyCustomize').hidden=!on;
+ document.querySelector('[data-i18n=tintDisclosure]').textContent=t(on?'spookyTint':'tintDisclosure');
+ $('showCollar').disabled=st.finishes.ghostCount>0;
+ document.querySelector('.finish-toggles').hidden=false;
+ $('sash').closest('label').hidden=false;
+ if(on){
+  $('autumnFinishes').hidden=false;$('sizePanel').hidden=true;$('capacityLabel').textContent=t('slotLimit',{cap:st.template.capacity});$('catalogueNote').textContent=t('spookyFixed');$('compositionLabel').textContent=t('halloweenCollection');
+  const path=NebulaSpooky.collar({...st,finishes:{...st.finishes,collar:true}},st.frames.dome).url;
+  $('wrapPreview').src=R.paperPreview(path,st.finishes.paper,st.finishes.tint);$('wrapPreview').alt=t('paperTone')+': '+t(st.finishes.paper);
+  $('wrapHeading').textContent=t(st.finishes.paper);$('wrapCopy').textContent=t(st.finishes.ghostCount?'spookyGhostWrap':'spookyWrapHint');
+  const count=brush?Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,brush)).filter(Boolean).length:0;
+  $('spookyFitCount').textContent=brush?t('spookyFits',{name:name(brush),n:count,cap:st.template.capacity}):t('chooseBrush');
+  const roses=st.items.filter(it=>CAT[it.id].family==='rose'),canRecolor=brush&&CAT[brush].family==='rose';
+  $('recolorRoses').disabled=!isReady||!canRecolor||!roses.some(it=>it.id!==brush);
+  $('recolorRoses').textContent=canRecolor?t('spookyRecolor',{n:roses.length,name:name(brush)}):t('spookyChooseRose');
+ }
+ for(const key of ['spookyMask','spookyBow']){$(key+'Row').hidden=false;$(key).checked=!!st.finishes[key];}
+ for(const key of ['ghostCount','thistleCount']){$(key+'Row').hidden=false;$(key).value=st.finishes[key];}
+ for(const key of ['spookyMask','spookyBow','ghostCount','thistleCount','spookyFiller'])$(key+'Price').textContent=M.money(CONFIG.extrasCents[key==='spookyFiller'?'filler':key],lang)+' · '+(lang==='es'?'cada uno':'each')+(CONFIG.demo?' · '+t('sampleShort'):'');
+ $('spookyFillerRow').hidden=true;$('spookyFiller').value=st.finishes.fillerCount;
 }
 function renderCatalog(){
  const query=$('flowerSearch').value.toLocaleLowerCase(lang).trim(),family=$('family').value;
- const ids=Object.keys(CAT).filter(id=>offered(id)&&(family==='all'||CAT[id].family===family||(family==='romance'&&['rose_pink','rose_red','rose_white','rose_ivory','rose_cream','lily','carnation_white'].includes(id))||(family==='fall'&&['rose_ivory','rose_caramel','mum_rust','mum_burgundy','sunflower','gerbera_daisy','rose_cream','carnation_white','chrysanthemum_yellow'].includes(id)))&&(name(id).toLocaleLowerCase(lang).includes(query)||id.includes(query)));
+ const ids=Object.keys(CAT).filter(id=>offered(id)&&(family==='all'||CAT[id].family===family||(family==='halloween'&&NebulaSpooky.catalogue.includes(id))||(family==='romance'&&['rose_pink','rose_red','rose_white','rose_ivory','rose_cream','lily','carnation_white'].includes(id))||(family==='fall'&&['rose_ivory','rose_caramel','mum_rust','mum_burgundy','sunflower','gerbera_daisy','rose_cream','carnation_white','chrysanthemum_yellow'].includes(id)))&&(name(id).toLocaleLowerCase(lang).includes(query)||id.includes(query)));
  $('flowerGrid').replaceChildren(...ids.map(id=>flowerCard(id,()=>chooseFlower(id),brush===id)));
  if(!ids.length)$('flowerGrid').append(paragraph(t('noMatches'),'no-results'));
 }
@@ -193,7 +282,7 @@ function flowerCard(id,fn,isPicked){
  el.setAttribute('aria-label',name(id)+', '+price.textContent);if(isPicked!==undefined)pressed(el,isPicked);return el;
 }
 function catalogImage(id){const m=NEBULA_META.flowers[id];return st.mode==='classic'&&m.classicBlooms?m.classicBloom:st.mode==='dome'&&m.domeHeads?m.domeHeads[0]:m.head;}
-function chooseFlower(id){
+function chooseFlower(id){moveMode=false;
  if(!Object.hasOwn(CAT,id)||!offered(id))return;
  selectedDetail=null;picked=id;selected=null;selectedSlot=null;hover=null;panMode=false;
  brush=brush===id?null:id;render(false);
@@ -217,7 +306,7 @@ function renderStarting(){
  }));
 }
 function renderPaper(){
- $('paperChoices').replaceChildren(...(st.mode==='classic'?[['ivory','#e6deca'],['sage','#b1bba1'],['custom',st.finishes.tint]]:[...(st.mode==='dome'?[['cocoa','#694532']]:[]),['black','#292826'],['ivory','#e6deca'],['custom',st.finishes.tint]]).map(([id,col])=>{
+ $('paperChoices').replaceChildren(...(NebulaSpooky.active(st)?[['cocoa','#694532'],['black','#292826'],['ivory','#e6deca'],['blush','#dbb3b7'],['sage','#b1bba1'],['custom',st.finishes.tint]]:st.mode==='classic'?[['ivory','#e6deca'],['sage','#b1bba1'],['custom',st.finishes.tint]]:[...(st.mode==='dome'?[['cocoa','#694532']]:[]),['black','#292826'],['ivory','#e6deca'],['custom',st.finishes.tint]]).map(([id,col])=>{
   const b=button('','',()=>change(()=>{st.finishes.paper=id;M.refitPaper(st);})),dot=document.createElement('span'),label=document.createElement('span');dot.className='swatch';dot.style.setProperty('--swatch',col);label.textContent=t(id);b.append(dot,label);pressed(b,st.finishes.paper===id);b.dataset.paper=id;return b;
  }));
 }
@@ -242,7 +331,7 @@ function showMissing(){openMessage(t('missingTitle'),[paragraph(t('allArtworkRea
 function showHelp(){const ol=document.createElement('ol');ol.className='inventory-list';for(let i=1;i<=5;i++){const li=document.createElement('li');li.textContent=t('help'+i);ol.append(li);}openMessage(t('helpTitle'),[ol]);}
 function showGap(){const report=R.alphaReport(st);if(!report.applicable)return;const p=paragraph(t('gapResult',{p:report.openPercent.toFixed(2)}),'notice-block');openMessage(t('gapTitle'),[paragraph(t('gapIntro')),p,paragraph(t(report.openPercent<.6?'gapOK':'gapOpen')),paragraph(t('gapFoot'),'helper')]);}
 function priceRows(target='priceBreakdown'){const p=M.price(st),nodes=[];function row(label,amount,strong=false){const a=document.createElement(strong?'strong':'span'),b=document.createElement(strong?'strong':'span');a.textContent=label;b.textContent=M.money(amount,lang);nodes.push(a,b);}for(const line of p.lines)row(line.quantity+' × '+name(line.id),line.totalCents);row(t('base'),p.baseCents);row(t('labor'),p.laborCents);for(const line of p.extraLines)row(line.quantity+' × '+t(line.id),line.totalCents);row(t('total'),p.totalCents,true);$(target).replaceChildren(...nodes);}
-function showSave(){if(editFocus)commitTextEdit();R.paint($('savePreview'),st);$('exportStatus').textContent='';priceRows();$('saveDialog').showModal();}
+function showSave(){if(editFocus)commitTextEdit();R.paint($('savePreview'),st);$('savedBouquetName').value=st.title;$('exportStatus').textContent='';priceRows();$('saveDialog').showModal();}
 /* ── Order flow ───────────────────────────────────────────────
    Opens WhatsApp with the design written out. Nothing is charged here and no
    order record is created - the florist confirms availability and final price.
@@ -250,7 +339,7 @@ function showSave(){if(editFocus)commitTextEdit();R.paint($('savePreview'),st);$
 /* Links are built by design-link.js so the studio and the florist's order sheet
    always read and write the same format. */
 function siteBase(){return location.origin+location.pathname.replace(/[^/]*$/,'');}
-function designLink(order){return siteBase()+(order?'order.html':'index.html')+'#b='+NebulaLink.encode(st,order);}
+function designLink(order,design=st){return siteBase()+(order?'order.html':'index.html')+'#b='+NebulaLink.encode(design,order);}
 function shopDigits(){const s=window.NEBULA_SHOP||{};return String(s.whatsapp||(s.studio&&s.studio.phone)||'').replace(/\D/g,'');}
 function orderRef(){return 'NB-'+Date.now().toString(36).slice(-5).toUpperCase();}
 function orderSummary(){
@@ -258,7 +347,7 @@ function orderSummary(){
  /* The wrapping buttons already carry translated labels - reuse them rather than
     duplicating every paper colour in the dictionary. */
  const chip=document.querySelector('[data-paper="'+f.paper+'"]');
- if(f.paper&&f.paper!=='none')extras.push(t('wrapping')+': '+((chip&&chip.textContent.trim())||f.paper));
+ if(f.paper&&f.paper!=='none'&&(st.mode==='classic'||f.collar!==false))extras.push(t('wrapping')+': '+((chip&&chip.textContent.trim())||f.paper));
  if(f.ribbon&&f.ribbon!=='none')extras.push(t('ribbon')+': '+t(f.ribbon));
  if(f.sash&&f.sash!=='none')extras.push(t('sash')+': '+$('sash').selectedOptions[0].textContent+(f.sashText?' — '+f.sashText:''));
  if(f.butterfly)extras.push(t('butterfly')+(f.butterfly>1?' ×'+f.butterfly:''));
@@ -272,6 +361,7 @@ function orderSummary(){
  if(st.mode==='dome'&&f.pumpkin)extras.push(t('pumpkin')+' · '+t('position'+f.pumpkinPosition[0].toUpperCase()+f.pumpkinPosition.slice(1)));
  if(st.mode==='dome'&&f.bow&&f.sash==='blank_cocoa')extras.push(t('bow'));
  if(st.mode!=='classic'&&f.greenRim)extras.push(t('greenRim')+': '+G.greenRimStems(st)+' × '+name('eucalyptus'));
+ for(const line of NebulaSpooky.extras(st))extras.push(line.quantity+' × '+t(line.id));
  return {stems,extras,total:M.money(p.totalCents,lang),pieces:st.items.length};
 }
 function showOrder(){
@@ -347,14 +437,14 @@ async function exportPNG(story){
 /* Share the bouquet as a real picture. Native sheet when the device supports files,
    otherwise a plain download. Nothing leaves the device until the person picks a target. */
 async function shareBouquet(){
- if(exporting)return;exporting=true;const saved=M.clone(st),savedLang=lang,btn=$('shareButton');
+ if(exporting)return;exporting=true;const saved=M.clone(st),savedLang=lang,savedLink=designLink(null,saved),btn=$('shareButton');
  btn.disabled=true;$('shareStatus').textContent=t('sharePreparing');
  try{
   const blob=await R.blob(saved,1080,1080,savedLang);
   const file=new File([blob],'nebula-'+saved.mode+'.png',{type:'image/png'});
   /* The link rides along with the picture: whoever receives it can open the exact
      bouquet and change it, instead of only looking at a flat image. */
-  const payload={files:[file],title:saved.title||t('shareTitle'),text:designLink()};
+  const payload={files:[file],title:saved.title||NebulaI18n.text(savedLang,'shareTitle'),text:savedLink};
   if(navigator.canShare?.(payload)&&typeof navigator.share==='function'){
    $('shareStatus').textContent=t('shareOpened');
    try{await navigator.share(payload);$('shareStatus').textContent=t('shareDone');}
@@ -420,6 +510,28 @@ function renderDetails(){
 }
 function nudgeDetail(dx,dy){const d=currentDetail();if(d)change(()=>{d.x=G.clamp(+(d.x+dx).toFixed(3),-1,1);d.y=G.clamp(+(d.y+dy).toFixed(3),-1.15,1);});}
 function deleteDetail(){if(!currentDetail())return;change(()=>{st.finishes.decorations=st.finishes.decorations.filter(d=>d.id!==selectedDetail);selectedDetail=null;});}
+function moveTargets(){
+ if(!moveMode||st.mode==='classic'||!selected)return [];
+ const it=st.items.find(i=>i.uid===selected);if(!it)return [];
+ const scale=$('bouquet').getBoundingClientRect().width/720*R.view(st,camera).scale;
+ return R.scene(st).slots.filter(p=>p.slot!==it.slot&&(!NebulaSpooky.active(st)||(NebulaSpooky.allowed(st,p.slot,it.id)&&NebulaSpooky.allowed(st,it.slot,st.items.find(i=>i.slot===p.slot)?.id||null)))).map(p=>({...p,markerRadius:12/Math.max(.1,scale)}));
+}
+function setMoveMode(on){
+ moveMode=on;brush=null;panMode=false;selectedDetail=null;hover=null;
+ if(on&&matchMedia('(max-width:820px)').matches&&!focusPreview){moveOpenedFocus=true;setFocusPreview(true);}
+ if(!on&&moveOpenedFocus){moveOpenedFocus=false;setFocusPreview(false);}
+ render(false);
+}
+function tapMove(p){
+ if(st.mode!=='classic'){
+  const v=R.view(st,camera),scale=$('bouquet').getBoundingClientRect().width/720*v.scale;
+  const target=moveTargets().map(n=>({...n,dist:Math.hypot(n.x-p.x,n.y-p.y)})).sort((a,b)=>a.dist-b.dist)[0];
+  if(!target||target.dist*scale>28){if(R.hit(sc,p)?.uid===selected){selected=null;selectedSlot=null;render(false);}else toast(t('movePickTarget'));return;}
+  p={x:target.x,y:target.y};
+ }
+ const result=change(()=>{const r=M.move(st,selected,p);if(r.ok){selected=r.uid||selected;selectedSlot=r.slot??selectedSlot;}return r;});
+ if(result.ok){selected=null;selectedSlot=null;render(false);toast(t('moveDone'));}
+}
 function beginPointer(e){
  if(!isReady||e.button!==0||gesture)return;const p=point(e),detail=!panMode&&!brush&&tab==='finishing'?R.detailHit(sc,p):null,node=detail?null:R.hit(sc,p);hover=null;
  if(detail){selectedDetail=detail.detailId;selected=null;renderDetails();}else selectedDetail=null;
@@ -430,7 +542,8 @@ function beginPointer(e){
     whether this gesture is a tap or a drag. Dome/Heart keep instant brush strokes. */
  const holdPaint=!!brush&&st.mode==='classic'&&!!node;
  gesture={detailId:detail?.detailId,pointerId:e.pointerId,start:p,screenStart:canvasPoint(e),cameraBefore:{...camera},before:snap(),uid:node?.uid||null,moved:false,changed:false,touched:new Set(),pan:panMode,offset:detail?{x:p.x-detail.x,y:p.y-detail.y}:node?{x:p.x-node.x,y:p.y-node.y}:{x:0,y:0},painting:!!brush&&!holdPaint,pendingPaint:holdPaint,slop,rawStart:{x:e.clientX,y:e.clientY}};
- if(!panMode){if(gesture.painting)paintAt(p);else if(!brush){selected=node?.uid||null;selectedSlot=node?.slot??null;}}
+ gesture.moveSelection=moveMode?selected:null;
+ if(!panMode){if(gesture.painting)paintAt(p);else if(!brush&&!(moveMode&&selected)){selected=node?.uid||null;selectedSlot=node?.slot??null;}}
  $('bouquet').setPointerCapture(e.pointerId);$('bouquet').focus({preventScroll:true});e.preventDefault();scheduleCanvas();
 }
 function movePointer(e){
@@ -446,6 +559,7 @@ function movePointer(e){
  /* Past the slop it is a drag, not a tap: drop the pending paint and move the bloom. */
  if(gesture.pendingPaint&&gesture.moved)gesture.pendingPaint=false;
  if(gesture.painting){paintAt(p);return;}
+ if(gesture.moved&&gesture.uid&&st.mode!=='classic'){selected=gesture.uid;const n=sc.nodes.find(n=>n.uid===gesture.uid);if(n)hover={...n,x:p.x-gesture.offset.x,y:p.y-gesture.offset.y};scheduleCanvas();}
  if(gesture.moved&&gesture.uid&&st.mode==='classic'){
   const r=M.move(st,gesture.uid,{x:p.x-gesture.offset.x,y:p.y-gesture.offset.y});gesture.invalid=!r.ok;gesture.changed||=r.ok;scheduleCanvas();
  }
@@ -455,13 +569,14 @@ function endPointer(e,canceled=false){
  if(canceled){st=JSON.parse(g.before);camera=g.cameraBefore;selected=null;render(false);return;}
  if(g.pan){render(false);return;}
  if(g.detailId){storeHistory(g.before);render();return;}
+ if(moveMode&&!g.moved&&g.moveSelection&&!g.pan){selected=g.moveSelection;tapMove(point(e));return;}
  /* A held paint that never became a drag was a tap after all: paint it now. */
  if(g.pendingPaint&&!g.moved&&brush&&g.uid){
   const r=change(()=>M.replace(st,g.uid,brush));if(r.ok){selected=g.uid;render();}else showFailure(r);return;
  }
  if(g.painting&&!g.changed&&!g.moved&&st.mode==='classic'&&!g.uid){addItem(brush,point(e));return;}
  if(!g.painting&&g.moved&&g.uid&&st.mode!=='classic'){
-  const r=M.move(st,g.uid,point(e));if(r.ok){selected=r.uid;selectedSlot=r.slot;}else toast(t('placement'));
+  const r=M.move(st,g.uid,point(e));if(r.ok){selected=r.uid;selectedSlot=r.slot;}else showFailure(r);
  }
  storeHistory(g.before);render();if(g.lastFailure){if(g.changed)toast(t('partialPaint'));else showFailure(g.lastFailure);}else if(g.invalid)toast(t('placement'));
 }
@@ -475,7 +590,9 @@ for(const [id,key] of [['detailScale','scale'],['detailRotation','rotation']]){
 $('detailLayer').onchange=()=>change(()=>{if(currentDetail())currentDetail().layer=$('detailLayer').value;});
 $('detailReset').onclick=()=>change(()=>{if(currentDetail())Object.assign(currentDetail(),NebulaDetails.create(selectedDetail));});
 $('detailRemove').onclick=deleteDetail;
-$('fillerPattern').onchange=()=>change(()=>{st.finishes.fillerPattern=$('fillerPattern').value;});
+for(const key of ['spookyMask','spookyBow'])$(key).onchange=()=>change(()=>{st.finishes[key]=$(key).checked;M.syncTemplate(st);});
+ for(const [key,field,max] of [['ghostCount','ghostCount',6],['thistleCount','thistleCount',3],['spookyFiller','fillerCount',12]])$(key).onchange=()=>{const n=Number($(key).value);if(!Number.isInteger(n)||n<0||n>max){toast(t('invalidCount'));render(false);return;}change(()=>{st.finishes[field]=n;if(field==='ghostCount'&&n)st.finishes.collar=true;});};
+ $('fillerPattern').onchange=()=>change(()=>{st.finishes.fillerPattern=$('fillerPattern').value;});
  for(const [id,step] of [['greeneryLess',-1],['greeneryMore',1]])$(id).onclick=()=>change(()=>{st.finishes.greeneryCount=G.clamp(st.finishes.greeneryCount+step,0,12);});
  $('initialEnabled').onchange=()=>change(()=>{st.finishes.initial=$('initialEnabled').checked?'A':'';});
  $('initialLetter').oninput=()=>{const letter=$('initialLetter').value.toUpperCase().replace(/[^A-Z]/g,'').slice(-1);if(letter)change(()=>{st.finishes.initial=letter;});$('initialLetter').value=st.finishes.initial;};
@@ -485,12 +602,16 @@ $('fillerPattern').onchange=()=>change(()=>{st.finishes.fillerPattern=$('fillerP
   input.onchange=()=>{commitTextEdit();render();};input.onblur=commitTextEdit;
  }
  // Wiring remains stable; render never attaches duplicate handlers.
+for(const b of document.querySelectorAll('[data-finish-jump]'))b.onclick=()=>{const el=$(b.dataset.finishJump);el.scrollIntoView({block:'start',behavior:'instant'});el.setAttribute('tabindex','-1');el.focus({preventScroll:true});};
 $('language').onchange=e=>setLanguage(e.target.value);
-$('family').onchange=()=>{renderCatalog();$('catalogueNote').textContent=t($('family').value==='texture'?'textureNote':st.mode==='classic'?'classicCatalogueNote':'topCatalogueNote');};$('flowerSearch').oninput=renderCatalog;
+$('recolorRoses').onclick=()=>{if(!NebulaSpooky.active(st)||!brush)return;change(()=>NebulaSpooky.recolorRoses(st,brush));};
+$('spookyWrap').onclick=()=>{setTab('wrapping');$('tab-wrapping').focus();};
+$('spookyDetails').onclick=()=>{setTab('finishing');$('tab-finishing').focus();};
+$('family').onchange=()=>{renderCatalog();$('catalogueNote').textContent=t(NebulaSpooky.active(st)?'spookyFixed':$('family').value==='texture'?'textureNote':st.mode==='classic'?'classicCatalogueNote':'topCatalogueNote');};$('flowerSearch').oninput=renderCatalog;
 $('addOne').onclick=()=>addItem();$('undo').onclick=()=>history('undo');$('redo').onclick=()=>history('redo');
 let deleteArmed=false;
-$('inlineDelete').onpointerdown=()=>{deleteArmed=true;};$('inlineDelete').onpointercancel=()=>{deleteArmed=false;};$('inlineDelete').onclick=e=>{const allowed=deleteArmed||e.detail===0;deleteArmed=false;if(allowed)removeItem();};$('stopBrush').onclick=stopBrush;
-$('zoomIn').onclick=()=>setZoom(camera.zoom+.5);$('zoomOut').onclick=()=>setZoom(camera.zoom-.5);$('resetView').onclick=()=>setZoom(1);$('panView').onclick=()=>{panMode=!panMode;render(false);};
+$('inlineDelete').onpointerdown=()=>{deleteArmed=true;};$('inlineDelete').onpointercancel=()=>{deleteArmed=false;};$('inlineDelete').onclick=e=>{const allowed=deleteArmed||e.detail===0;deleteArmed=false;if(allowed)removeItem();};$('stopBrush').onclick=stopBrush;$('moveFlowers').onclick=()=>setMoveMode(!moveMode);
+$('zoomIn').onclick=()=>setZoom(camera.zoom+.5);$('zoomOut').onclick=()=>setZoom(camera.zoom-.5);$('resetView').onclick=()=>setZoom(1);$('panView').onclick=()=>{moveMode=false;panMode=!panMode;render(false);};
 for(const el of document.querySelectorAll('[data-tab]')){el.onclick=()=>setTab(el.dataset.tab);el.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const keys=['flowers','wrapping','finishing'];const i=e.key==='Home'?0:e.key==='End'?2:(keys.indexOf(tab)+(e.key==='ArrowRight'?1:2))%3;setTab(keys[i]);$('tab-'+keys[i]).focus();};}
 for(const el of document.querySelectorAll('[data-mode]'))el.onclick=()=>switchBouquet(el.dataset.mode);
 $('arrangeButton').onclick=()=>confirm(t('arrangeTitle'),t('arrangeText'),t('arrangeConfirm'),()=>{change(()=>{st.seed=st.seed%99999990+1;M.arrange(st,st.mode,{fresh:true});selected=null;hover=null;});toast(t('arranged'));});
@@ -525,13 +646,16 @@ for(const [id,step] of [['butterflyLess',-1],['butterflyMore',1]])$(id).onclick=
  st.finishes.butterfly=Math.max(0,Math.min(CONFIG.limits.butterflies,(st.finishes.butterfly|0)+step));});
 syncText($('designName'),'title');syncText($('giftNote'),'note');
 for(const id of ['missingInline','missingWrapButton'])$(id).onclick=showMissing;$('helpButton').onclick=showHelp;$('gapCheck').onclick=showGap;
+for(const el of document.querySelectorAll('[data-collection-filter]'))el.onclick=()=>filterCollections(el.dataset.collectionFilter);
+$('browseSaved').onclick=()=>{$('savedBouquets').scrollIntoView({behavior:'auto',block:'start'});$('savedBouquetsTitle').focus({preventScroll:true});};
+$('saveCurrentBouquet').onclick=showSave;$('saveShelf').onclick=saveToShelf;
 $('saveTop').onclick=showSave;$('shareButton').onclick=shareBouquet;$('orderButton').onclick=showOrder;$('orderForm').onsubmit=sendOrder;$('saveSquare').onclick=()=>exportPNG(false);$('saveStory').onclick=()=>exportPNG(true);$('saveJSON').onclick=()=>{download(new Blob([JSON.stringify({...M.portfolio(st,banks),activeEstimate:M.order(st,lang)},null,2)],{type:'application/json'}),'nebula-three-bouquets.json');$('exportStatus').textContent=t('savedJSON');};
 $('importFile').onchange=async()=>{const file=$('importFile').files[0];if(!file)return;try{if(file.size>1_000_000)throw new Error('oversize');importDesign(JSON.parse(await file.text()));}catch(e){toast(t('invalid'));}finally{$('importFile').value='';}};
 for(const el of document.querySelectorAll('[data-close]'))el.onclick=()=>$(el.dataset.close).close();
 $('confirmCancel').onclick=()=>{$('confirmDialog').close();confirmFn=null;};$('confirmYes').onclick=()=>{const fn=confirmFn;confirmFn=null;$('confirmDialog').close();if(fn)fn();};
 $('bouquet').onpointerdown=beginPointer;$('bouquet').onpointermove=movePointer;$('bouquet').onpointerup=e=>endPointer(e);$('bouquet').onpointercancel=e=>endPointer(e,true);$('bouquet').onpointerleave=()=>{if(!gesture){hover=null;scheduleCanvas();}};
 $('bouquet').onkeydown=e=>{
- if(e.key==='Escape'){selectedDetail=null;if(focusPreview)setFocusPreview(false);brush=null;panMode=false;selected=null;hover=null;render(false);return;}
+ if(e.key==='Escape'){moveMode=false;moveOpenedFocus=false;selectedDetail=null;if(focusPreview)setFocusPreview(false);brush=null;panMode=false;selected=null;hover=null;render(false);return;}
  if(currentDetail()){
   if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();deleteDetail();return;}
   const dir={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
@@ -569,7 +693,11 @@ function openSharedDesign(){
  return true;
 }
 const sharedOnBoot=openSharedDesign();
-R.ready([st]).then(()=>{isReady=true;render();showGallery(!sharedOnBoot);window.__ready=true;}).catch(e=>{window.__errors.push(String(e));$('loading').textContent=t('missingRuntime');$('loading').className='broken-notice';window.__ready=false;});
+function loadStudio(){
+ $('retryStartup').disabled=true;
+ R.ready([st]).then(()=>{isReady=true;$('startupError').hidden=true;render();showGallery(!sharedOnBoot);window.__ready=true;}).catch(e=>{window.__errors.push(String(e));$('startupError').hidden=false;$('retryStartup').disabled=false;window.__ready=false;});
+}
+$('retryStartup').onclick=loadStudio;loadStudio();
 // Small, documented diagnostic surface for reproducible local tests (no persistence bypass in the UI).
 window.NebulaApp={showGallery,applyFallTemplate,chooseFlower,stopBrush,paintSlot,setZoom,get camera(){return {...camera};},get brush(){return brush;},get state(){return M.clone(st);},get lang(){return lang;},get ready(){return isReady;},get selected(){return selected;},get history(){return {undo:undoStack.length,redo:redoStack.length};},setState(raw){const valid=M.validate(raw);if(!valid)throw new Error('Invalid test design');return change(()=>{st=valid;selected=null;hover=null;});},createScenario(mode,ids,seed=11){const s=M.empty();s.mode=mode;s.seed=seed;s.items=ids.map(id=>M.newItem(s,id));if(!G.capacity(s.items,mode).ok)throw new Error('Scenario exceeds capacity');M.arrange(s,mode,{fresh:true});return s;},add:addItem,remove:removeItem,select:selectItem,replace:(uid,id)=>change(()=>M.replace(st,uid,id)),move:(uid,p)=>change(()=>M.move(st,uid,p)),switchMode:switchBouquet,resize:resizeBouquet,get portfolio(){return M.portfolio(st,banks);},setFocusPreview,undo:()=>history('undo'),redo:()=>history('redo'),setLanguage,setTab,importDesign,showSave,showMissing,showGap,render,scene:()=>sc,alphaReport:()=>R.alphaReport(st),exportCanvas:(w,h)=>R.exportCanvas(st,w,h,lang),exportBlob:(w,h)=>R.blob(st,w,h,lang)};
 })();

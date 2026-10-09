@@ -15,11 +15,12 @@ meta.finishes.sash_blank_cocoa={url:root+'brown-ribbon.webp',width:1408,height:2
 meta.finishes.bow_cocoa={url:root+'brown-bow.webp',width:1289,height:616};
 meta.finishes.plush_pumpkin={url:root+'pumpkin.webp',width:634,height:576};
 const cache=new Map();
-const active=s=>s.mode==='dome'&&s.template?.layout==='organic';
+const active=s=>s.mode==='dome'&&['organic','garden','halloween'].includes(s.template?.layout);
 function ratio(id){return ({sunflower:1.85,gerbera_daisy:1.5,lily:1.8,hydrangea:1.65,mum_burgundy:1.1,mum_rust:1.1,chrysanthemum_yellow:1.05})[id]||1;}
 function layout(s){
+ if(g.NebulaSpooky?.active(s))return NebulaSpooky.layout(s);
  const n=s.template.capacity,ids=NebulaTemplates.recipe('dome',s.template,s.seed).map((id,i)=>Object.hasOwn(s.template.overrides,i)?s.template.overrides[i]:id);
- const key=JSON.stringify([s.seed,n,ids]);if(cache.has(key))return cache.get(key);
+ const garden=s.template.layout==='garden',key=JSON.stringify([s.seed,n,ids,garden]);if(cache.has(key))return cache.get(key);
  const base=NebulaTemplates.layout('dome',n),sizes=ids.map(id=>ratio(id)),area=sizes.reduce((a,r)=>a+r*r,0)/n;
  // Normalize the whole composition into the persisted world bounds, preserving
  // every species ratio. This is a uniform view scale, not per-flower capping.
@@ -37,15 +38,26 @@ function layout(s){
   }
   for(let i=0;i<n;i++){const p=points[i];p.x+=(home[i].x-p.x)*.015;p.y+=(home[i].y-p.y)*.015;const dist=Math.hypot(p.x,p.y),limit=R-(p.d-diameter)*.24;if(dist>limit){p.x*=limit/dist;p.y*=limit/dist;}}
  }
+ if(garden){
+  // A loose, oblique rose gathering: stagger the visible cups, leave pockets
+  // for filler, and allow an uneven perimeter instead of a packed round disc.
+  const garden16=[[-.18,-.82],[.38,-.72],[-.63,-.48],[.77,-.35],[-.13,-.38],[.37,-.24],[-.90,-.05],[-.53,.12],[.04,.05],[.72,.15],[-.94,.47],[-.35,.49],[.22,.46],[.76,.59],[-.55,.86],[.08,.85]];
+  for(const [i,p] of points.entries()){
+   if(n===16){p.x=garden16[i][0]*R;p.y=garden16[i][1]*R;p.d=R*.80*sizes[i]*(.96+.06*Math.sin(i*2.4));}
+   else{p.x*=1.06;p.y*=.98;p.d*=.94;}
+  }
+ }
  for(const p of points){p.near=n>1?Math.min(...points.filter(q=>q!==p).map(q=>Math.hypot(q.x-p.x,q.y-p.y))):p.d;p.r=Math.hypot(p.x,p.y);}
- const frame={...base.frame,radius:R,unit:diameter,engine:'fall-mixed-size-v1'};
+ const frame={...base.frame,radius:R,unit:garden&&n===16?R*.80:diameter,engine:garden?'garden-v1':'fall-mixed-size-v1'};
  const result={frame,points};cache.set(key,result);if(cache.size>120)cache.delete(cache.keys().next().value);return result;
 }
 function nodes(s){
+ if(g.NebulaSpooky?.active(s))return NebulaSpooky.nodes(s);
  const L=layout(s),f=L.frame;
- const ns=s.items.map((it,i)=>{const p=L.points[it.slot],m=meta.flowers[it.id],urls=m.heads||[m.head],url=urls[it.slot%urls.length],crop=meta.crops[url];
-  const mw=crop?.[2]||m.headWidth,mh=crop?.[3]||m.headHeight,scale=p.d/Math.max(mw,mh);
-  return {uid:it.uid,id:it.id,slot:it.slot,x:360+p.x,y:390+p.y,w:mw*scale,h:mh*scale,d:p.d,rot:Math.sin(it.slot*2.399+s.seed)*.14,bright:1,meta:m,url,z:p.d,index:i};
+ const garden=s.template.layout==='garden';
+ const ns=s.items.map((it,i)=>{const p=L.points[it.slot],m=meta.flowers[it.id],cup=garden&&it.id.startsWith('rose_')&&m.classicBloom,urls=m.romanceHeads||(cup?[m.classicBloom]:m.heads||[m.head]),url=urls[it.slot%urls.length],crop=meta.crops[url];
+  const mw=crop?.[2]||(cup?m.bloomWidth:m.headWidth),mh=crop?.[3]||(cup?m.bloomHeight:m.headHeight),scale=p.d/Math.max(mw,mh);
+  return {uid:it.uid,id:it.id,slot:it.slot,x:360+p.x,y:390+p.y,w:mw*scale,h:mh*scale,d:p.d,rot:Math.sin(it.slot*2.399+s.seed)*(garden?.26:.14),bright:1,meta:m,url,z:garden?390+p.y:p.d,index:i};
  }).sort((a,b)=>a.z-b.z||b.y-a.y);
  return {frame:f,nodes:ns,slots:L.points.map(p=>({...p,x:360+p.x,y:390+p.y,uid:s.items.find(it=>it.slot===p.slot)?.uid||null}))};
 }
@@ -72,6 +84,7 @@ function create(id){
   s.template.palette=['rose_ivory','rose_caramel'];s.template.accent={id:'mum_burgundy',count:8,pattern:'scatter',angle:0};
   Object.assign(s.finishes,{pumpkin:false,fillerCount:6,decorations:[NebulaDetails.create('snoopy')],sashText:'I love you a latte'});
  }
+ if(r.id==='harvest-sunshine')s.finishes.sashOffset=-60;
  s.title=r.en;M.syncTemplate(s);return s;
 }
 // File URLs taint canvas image reads in some browsers. Only local-file sessions

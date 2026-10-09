@@ -1,0 +1,58 @@
+[
+  {
+    "name": "rose-black-a",
+    "source": "IMG_20261005_234823_755.png",
+    "width": 661,
+    "height": 613,
+    "transparentPixels": 135678,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "rose-black-b",
+    "source": "IMG_20261005_234824_130.png",
+    "width": 670,
+    "height": 601,
+    "transparentPixels": 83185,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "black-bow-tails",
+    "source": "IMG_20261005_234823_567.png",
+    "width": 422,
+    "height": 1019,
+    "transparentPixels": 181885,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "pink-dark-daisy",
+    "source": "IMG_20261005_234823_903.png",
+    "width": 638,
+    "height": 647,
+    "transparentPixels": 124390,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "blue-thistle",
+    "source": "IMG_20261005_234824_174.png",
+    "width": 531,
+    "height": 550,
+    "transparentPixels": 201155,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "black-fan-wrap",
+    "source": "IMG_20261005_234824_381.png",
+    "width": 754,
+    "height": 1042,
+    "transparentPixels": 366823,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "scream-mask",
+    "source": "IMG_20261005_234824_467.png",
+    "width": 520,
+    "height": 1104,
+    "transparentPixels": 145022,
+    "visiblePixelsAndAlphaExact": true
+  }
+]
