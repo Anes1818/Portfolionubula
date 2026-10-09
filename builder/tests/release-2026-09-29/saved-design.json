@@ -1,0 +1,1586 @@
+{
+  "format": "nebula-bouquet-studio",
+  "version": 6,
+  "activeMode": "classic",
+  "bouquets": {
+    "classic": {
+      "version": 6,
+      "mode": "classic",
+      "seed": 11,
+      "nextId": 21,
+      "items": [
+        {
+          "uid": "b1",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 231.65858317134752,
+              "y": 360.67832300522525,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b2",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 283.3718670015503,
+              "y": 340.2071000972956,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b3",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 336.0786855989015,
+              "y": 357.7977928114487,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b4",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 379.6718402492913,
+              "y": 343.0059529175473,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b5",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 434.09642279451083,
+              "y": 346.8377632787908,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b6",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 482.4937901879699,
+              "y": 366.4628963255589,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b7",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 270.6207054638312,
+              "y": 408.9049375978277,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b8",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 322.5296396013659,
+              "y": 405.7004148994205,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b9",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 367.54046711177693,
+              "y": 413.0904840390707,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b10",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 418.3217320173176,
+              "y": 398.09688820799045,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b11",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 468.31370880132226,
+              "y": 418.37957576857895,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b12",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 308.8667165820733,
+              "y": 454.36808003313433,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b13",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 356.0474623591998,
+              "y": 454.36808003313433,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b14",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 435,
+              "y": 425,
+              "manual": true
+            }
+          }
+        },
+        {
+          "uid": "b15",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 215.58587106066227,
+              "y": 329.179735252294,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b16",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 504.41412893933773,
+              "y": 338.2347018063397,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b17",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 297.2112482872445,
+              "y": 344.52041852300545,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b18",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 419.64931412711775,
+              "y": 354.5659620041356,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b19",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 261.10771605241007,
+              "y": 409.41273091606354,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b20",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 455.75284636195215,
+              "y": 419.78032514186134,
+              "manual": false
+            }
+          }
+        }
+      ],
+      "frames": {
+        "classic": {
+          "mode": "classic",
+          "center": {
+            "x": 360,
+            "y": 411.00362663495844
+          },
+          "radius": 230,
+          "unit": 116,
+          "scale": 0.5879854934601665,
+          "yScale": 0.5879854934601665,
+          "origin": {
+            "x": 96.58249892984543,
+            "y": 166.21233055885847
+          },
+          "waist": {
+            "x": 360,
+            "y": 666
+          },
+          "rimY": 519.0036266349584,
+          "paper": "ivory",
+          "mouthHalf": 0.4526
+        }
+      },
+      "finishes": {
+        "paper": "ivory",
+        "tint": "#dcc8b7",
+        "ribbon": "none",
+        "sash": "blank_champagne",
+        "sashText": "Para ti",
+        "sashPlacement": "low",
+        "sashOffset": 8,
+        "sashScale": 1,
+        "collar": true,
+        "butterfly": 0,
+        "crown": false,
+        "greenRim": false
+      },
+      "title": "",
+      "note": ""
+    },
+    "dome": {
+      "version": 6,
+      "mode": "dome",
+      "seed": 11,
+      "nextId": 31,
+      "items": [
+        {
+          "uid": "b1",
+          "id": "__berry",
+          "slot": 0,
+          "anchors": {
+            "dome": {
+              "x": 393.05533521106827,
+              "y": 386.6510177962444,
+              "manual": true
+            }
+          }
+        },
+        {
+          "uid": "b2",
+          "id": "rose_red",
+          "slot": 1,
+          "anchors": {
+            "dome": {
+              "x": 340.2735579475224,
+              "y": 412.44849388917515,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b3",
+          "id": "rose_red",
+          "slot": 2,
+          "anchors": {
+            "dome": {
+              "x": 357.53524010459535,
+              "y": 355.84485943079954,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b4",
+          "id": "rose_red",
+          "slot": 3,
+          "anchors": {
+            "dome": {
+              "x": 381.92550628071774,
+              "y": 431.55445274912694,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b5",
+          "id": "rose_red",
+          "slot": 4,
+          "anchors": {
+            "dome": {
+              "x": 312.867467004557,
+              "y": 375.5050521635911,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b6",
+          "id": "rose_red",
+          "slot": 5,
+          "anchors": {
+            "dome": {
+              "x": 416.0399190951413,
+              "y": 341.5900488691913,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b7",
+          "id": "rose_red",
+          "slot": 6,
+          "anchors": {
+            "dome": {
+              "x": 348.75888706838623,
+              "y": 469.0771801437196,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b8",
+          "id": "rose_red",
+          "slot": 7,
+          "anchors": {
+            "dome": {
+              "x": 326.04355608559763,
+              "y": 317.79962612310595,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b9",
+          "id": "rose_red",
+          "slot": 8,
+          "anchors": {
+            "dome": {
+              "x": 433.22501655335935,
+              "y": 422.5500588449191,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b10",
+          "id": "rose_red",
+          "slot": 9,
+          "anchors": {
+            "dome": {
+              "x": 283.88380392854305,
+              "y": 413.2157007050529,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b11",
+          "id": "rose_red",
+          "slot": 10,
+          "anchors": {
+            "dome": {
+              "x": 380.67894045117947,
+              "y": 311.24342583658233,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b12",
+          "id": "rose_red",
+          "slot": 11,
+          "anchors": {
+            "dome": {
+              "x": 402.80875949923615,
+              "y": 468.13330973685225,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b13",
+          "id": "rose_red",
+          "slot": 12,
+          "anchors": {
+            "dome": {
+              "x": 282.8933049192217,
+              "y": 348.4622379790346,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b14",
+          "id": "rose_red",
+          "slot": 13,
+          "anchors": {
+            "dome": {
+              "x": 446.7596539898972,
+              "y": 375.57288695854294,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b15",
+          "id": "rose_red",
+          "slot": 14,
+          "anchors": {
+            "dome": {
+              "x": 305.6876168889993,
+              "y": 455.31484003427136,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b16",
+          "id": "rose_red",
+          "slot": 15,
+          "anchors": {
+            "dome": {
+              "x": 359.79721271326133,
+              "y": 266.7113869307673,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b17",
+          "id": "rose_red",
+          "slot": 16,
+          "anchors": {
+            "dome": {
+              "x": 463.20340407266826,
+              "y": 462.5114621656347,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b18",
+          "id": "rose_red",
+          "slot": 17,
+          "anchors": {
+            "dome": {
+              "x": 237.42332996976137,
+              "y": 388.7599503178135,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b19",
+          "id": "rose_red",
+          "slot": 18,
+          "anchors": {
+            "dome": {
+              "x": 450.6237891084144,
+              "y": 304.48000485305397,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b20",
+          "id": "rose_red",
+          "slot": 19,
+          "anchors": {
+            "dome": {
+              "x": 370.30505700625906,
+              "y": 514.5413634967781,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b21",
+          "id": "rose_red",
+          "slot": 20,
+          "anchors": {
+            "dome": {
+              "x": 270.52518630522724,
+              "y": 300.6765819290764,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b22",
+          "id": "rose_red",
+          "slot": 21,
+          "anchors": {
+            "dome": {
+              "x": 486.05021529171023,
+              "y": 408.7686045448128,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b23",
+          "id": "rose_red",
+          "slot": 22,
+          "anchors": {
+            "dome": {
+              "x": 268.324667071922,
+              "y": 479.9895649354414,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b24",
+          "id": "rose_red",
+          "slot": 23,
+          "anchors": {
+            "dome": {
+              "x": 411.0498313084289,
+              "y": 272.4040450453723,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b25",
+          "id": "rose_red",
+          "slot": 24,
+          "anchors": {
+            "dome": {
+              "x": 424.46781888488664,
+              "y": 503.39643546603514,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b26",
+          "id": "rose_red",
+          "slot": 25,
+          "anchors": {
+            "dome": {
+              "x": 239.0486597831622,
+              "y": 343.06735660680283,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b27",
+          "id": "rose_red",
+          "slot": 26,
+          "anchors": {
+            "dome": {
+              "x": 482.6334045831414,
+              "y": 348.3268799028427,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b28",
+          "id": "rose_red",
+          "slot": 27,
+          "anchors": {
+            "dome": {
+              "x": 314.02522570392165,
+              "y": 509.6753328401817,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b29",
+          "id": "rose_red",
+          "slot": 28,
+          "anchors": {
+            "dome": {
+              "x": 311.8561916160106,
+              "y": 271.6680990022902,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b30",
+          "id": "rose_red",
+          "slot": 29,
+          "anchors": {
+            "dome": {
+              "x": 240.89748918451505,
+              "y": 436.7300717838211,
+              "manual": false
+            }
+          }
+        }
+      ],
+      "frames": {
+        "dome": {
+          "mode": "dome",
+          "engine": "v2-fixed-slots",
+          "center": {
+            "x": 360,
+            "y": 390
+          },
+          "radius": 136.25606146412088,
+          "unit": 76.88568615832592,
+          "scale": 1,
+          "capacity": 30,
+          "rings": 0,
+          "top": 235.9571124674369,
+          "tip": 545.2956379601085,
+          "halfWidth": 164.49305837087317
+        }
+      },
+      "finishes": {
+        "paper": "black",
+        "tint": "#dcc8b7",
+        "ribbon": "none",
+        "sash": "none",
+        "sashText": "",
+        "sashPlacement": "auto",
+        "sashOffset": 0,
+        "sashScale": 1,
+        "collar": true,
+        "butterfly": 0,
+        "crown": false,
+        "greenRim": false
+      },
+      "title": "",
+      "note": "",
+      "template": {
+        "capacity": 30,
+        "palette": [
+          "rose_red"
+        ],
+        "formation": "patches",
+        "accent": {
+          "id": "lily",
+          "count": 0,
+          "pattern": "cluster",
+          "angle": 340
+        },
+        "zones": {
+          "wall": "rose_red",
+          "fill": "rose_red",
+          "center": "rose_red",
+          "formation": "zones",
+          "doubleWall": false
+        },
+        "overrides": {
+          "0": "__berry"
+        }
+      }
+    },
+    "heart": {
+      "version": 6,
+      "mode": "heart",
+      "seed": 11,
+      "nextId": 42,
+      "items": [
+        {
+          "uid": "b1",
+          "id": "__berry",
+          "slot": 0,
+          "anchors": {
+            "heart": {
+              "x": 360,
+              "y": 372.5030417678048,
+              "manual": true
+            }
+          }
+        },
+        {
+          "uid": "b2",
+          "id": "rose_red",
+          "slot": 1,
+          "anchors": {
+            "heart": {
+              "x": 384.4289690350341,
+              "y": 337.99669444693495,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b3",
+          "id": "rose_red",
+          "slot": 2,
+          "anchors": {
+            "heart": {
+              "x": 424.1176089033089,
+              "y": 333.4594048305537,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b4",
+          "id": "rose_red",
+          "slot": 3,
+          "anchors": {
+            "heart": {
+              "x": 404.9803188985288,
+              "y": 375.3984625035293,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b5",
+          "id": "rose_red",
+          "slot": 4,
+          "anchors": {
+            "heart": {
+              "x": 376.4840491383112,
+              "y": 408.74467276339305,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b6",
+          "id": "rose_red",
+          "slot": 5,
+          "anchors": {
+            "heart": {
+              "x": 338.98895723723786,
+              "y": 407.06673148599816,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b7",
+          "id": "rose_red",
+          "slot": 6,
+          "anchors": {
+            "heart": {
+              "x": 315.07446311786725,
+              "y": 370.1625583990836,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b8",
+          "id": "rose_red",
+          "slot": 7,
+          "anchors": {
+            "heart": {
+              "x": 291.1072939540894,
+              "y": 331.8150876321665,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b9",
+          "id": "rose_red",
+          "slot": 8,
+          "anchors": {
+            "heart": {
+              "x": 332.0358448413115,
+              "y": 334.39616786084065,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b10",
+          "id": "rose_red",
+          "slot": 9,
+          "anchors": {
+            "heart": {
+              "x": 409.21643598930154,
+              "y": 293.99279116462463,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b11",
+          "id": "rose_red",
+          "slot": 10,
+          "anchors": {
+            "heart": {
+              "x": 452.07710242069203,
+              "y": 291.0229680636937,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b12",
+          "id": "rose_red",
+          "slot": 11,
+          "anchors": {
+            "heart": {
+              "x": 466.990330232236,
+              "y": 334.24495237561143,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b13",
+          "id": "rose_red",
+          "slot": 12,
+          "anchors": {
+            "heart": {
+              "x": 444.60865209246276,
+              "y": 376.29369471358524,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b14",
+          "id": "rose_red",
+          "slot": 13,
+          "anchors": {
+            "heart": {
+              "x": 413.89294542578523,
+              "y": 416.4376312741435,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b15",
+          "id": "rose_red",
+          "slot": 14,
+          "anchors": {
+            "heart": {
+              "x": 376.16648635147357,
+              "y": 451.3404279023068,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b16",
+          "id": "rose_red",
+          "slot": 15,
+          "anchors": {
+            "heart": {
+              "x": 338.54276817878036,
+              "y": 448.2890231242375,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b17",
+          "id": "rose_red",
+          "slot": 16,
+          "anchors": {
+            "heart": {
+              "x": 302.722152829492,
+              "y": 414.2252771926248,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b18",
+          "id": "rose_red",
+          "slot": 17,
+          "anchors": {
+            "heart": {
+              "x": 274.19087915625624,
+              "y": 374.52431340049765,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b19",
+          "id": "rose_red",
+          "slot": 18,
+          "anchors": {
+            "heart": {
+              "x": 250.12729329855415,
+              "y": 332.3038635578149,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b20",
+          "id": "rose_red",
+          "slot": 19,
+          "anchors": {
+            "heart": {
+              "x": 269.7297794629699,
+              "y": 290.166235818935,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b21",
+          "id": "rose_red",
+          "slot": 20,
+          "anchors": {
+            "heart": {
+              "x": 311.95447659517004,
+              "y": 293.4392533985762,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b22",
+          "id": "rose_red",
+          "slot": 21,
+          "anchors": {
+            "heart": {
+              "x": 360,
+              "y": 313.3035698697849,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b23",
+          "id": "rose_red",
+          "slot": 22,
+          "anchors": {
+            "heart": {
+              "x": 381.3852089984105,
+              "y": 267.16772050596046,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b24",
+          "id": "rose_red",
+          "slot": 23,
+          "anchors": {
+            "heart": {
+              "x": 422.98347536019907,
+              "y": 244.06593752227698,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b25",
+          "id": "rose_red",
+          "slot": 24,
+          "anchors": {
+            "heart": {
+              "x": 468.8525868666168,
+              "y": 252.83561639665476,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b26",
+          "id": "rose_red",
+          "slot": 25,
+          "anchors": {
+            "heart": {
+              "x": 502.51368233970913,
+              "y": 289.6357599684972,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b27",
+          "id": "rose_red",
+          "slot": 26,
+          "anchors": {
+            "heart": {
+              "x": 508.21456088185346,
+              "y": 340.2855416186006,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b28",
+          "id": "rose_red",
+          "slot": 27,
+          "anchors": {
+            "heart": {
+              "x": 486.72677700771095,
+              "y": 386.2817974952779,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b29",
+          "id": "rose_red",
+          "slot": 28,
+          "anchors": {
+            "heart": {
+              "x": 454.4180396445639,
+              "y": 422.4552862253906,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b30",
+          "id": "rose_red",
+          "slot": 29,
+          "anchors": {
+            "heart": {
+              "x": 417.2195996141252,
+              "y": 457.1352113223928,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b31",
+          "id": "rose_red",
+          "slot": 30,
+          "anchors": {
+            "heart": {
+              "x": 383.2545406686291,
+              "y": 492.3738248849602,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b32",
+          "id": "rose_red",
+          "slot": 31,
+          "anchors": {
+            "heart": {
+              "x": 360,
+              "y": 535.934062477723,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b33",
+          "id": "rose_red",
+          "slot": 32,
+          "anchors": {
+            "heart": {
+              "x": 335.7794228675235,
+              "y": 491.2069784337813,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b34",
+          "id": "rose_red",
+          "slot": 33,
+          "anchors": {
+            "heart": {
+              "x": 301.3537043907914,
+              "y": 455.7994326941593,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b35",
+          "id": "rose_red",
+          "slot": 34,
+          "anchors": {
+            "heart": {
+              "x": 264.09983393827815,
+              "y": 421.0096318533822,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b36",
+          "id": "rose_red",
+          "slot": 35,
+          "anchors": {
+            "heart": {
+              "x": 232.14198870812567,
+              "y": 384.7039286181339,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b37",
+          "id": "rose_red",
+          "slot": 36,
+          "anchors": {
+            "heart": {
+              "x": 211.4626623450384,
+              "y": 338.5971644209209,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b38",
+          "id": "rose_red",
+          "slot": 37,
+          "anchors": {
+            "heart": {
+              "x": 218.1929171881552,
+              "y": 288.14253460482746,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b39",
+          "id": "rose_red",
+          "slot": 38,
+          "anchors": {
+            "heart": {
+              "x": 252.54373432042556,
+              "y": 252.06203134364227,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b40",
+          "id": "rose_red",
+          "slot": 39,
+          "anchors": {
+            "heart": {
+              "x": 298.4711825825484,
+              "y": 244.31319559086492,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b41",
+          "id": "rose_red",
+          "slot": 40,
+          "anchors": {
+            "heart": {
+              "x": 339.5178189003431,
+              "y": 268.1735161990999,
+              "manual": false
+            }
+          }
+        }
+      ],
+      "frames": {
+        "heart": {
+          "mode": "heart",
+          "engine": "v1-fixed-rings",
+          "center": {
+            "x": 360,
+            "y": 390
+          },
+          "radius": 159.28949386931598,
+          "unit": 65.69362004621803,
+          "scale": 1,
+          "capacity": 41,
+          "rings": 3,
+          "top": 217.78848950378978,
+          "tip": 562.2115104962103,
+          "halfWidth": 181.3841476780706
+        }
+      },
+      "finishes": {
+        "paper": "black",
+        "tint": "#dcc8b7",
+        "ribbon": "none",
+        "sash": "none",
+        "sashText": "",
+        "sashPlacement": "auto",
+        "sashOffset": 0,
+        "sashScale": 1,
+        "collar": true,
+        "butterfly": 0,
+        "crown": false,
+        "greenRim": false
+      },
+      "title": "",
+      "note": "",
+      "template": {
+        "capacity": 41,
+        "palette": [
+          "rose_red"
+        ],
+        "formation": "patches",
+        "accent": {
+          "id": "lily",
+          "count": 0,
+          "pattern": "cluster",
+          "angle": 340
+        },
+        "zones": {
+          "wall": "rose_red",
+          "fill": "rose_red",
+          "center": "rose_red",
+          "formation": "zones",
+          "doubleWall": false
+        },
+        "overrides": {
+          "0": "__berry"
+        }
+      }
+    }
+  },
+  "activeEstimate": {
+    "format": "nebula-bouquet",
+    "version": 6,
+    "estimateOnly": true,
+    "currency": "USD",
+    "design": {
+      "version": 6,
+      "mode": "classic",
+      "seed": 11,
+      "nextId": 21,
+      "items": [
+        {
+          "uid": "b1",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 231.65858317134752,
+              "y": 360.67832300522525,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b2",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 283.3718670015503,
+              "y": 340.2071000972956,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b3",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 336.0786855989015,
+              "y": 357.7977928114487,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b4",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 379.6718402492913,
+              "y": 343.0059529175473,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b5",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 434.09642279451083,
+              "y": 346.8377632787908,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b6",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 482.4937901879699,
+              "y": 366.4628963255589,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b7",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 270.6207054638312,
+              "y": 408.9049375978277,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b8",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 322.5296396013659,
+              "y": 405.7004148994205,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b9",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 367.54046711177693,
+              "y": 413.0904840390707,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b10",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 418.3217320173176,
+              "y": 398.09688820799045,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b11",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 468.31370880132226,
+              "y": 418.37957576857895,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b12",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 308.8667165820733,
+              "y": 454.36808003313433,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b13",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 356.0474623591998,
+              "y": 454.36808003313433,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b14",
+          "id": "__berry",
+          "anchors": {
+            "classic": {
+              "x": 435,
+              "y": 425,
+              "manual": true
+            }
+          }
+        },
+        {
+          "uid": "b15",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 215.58587106066227,
+              "y": 329.179735252294,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b16",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 504.41412893933773,
+              "y": 338.2347018063397,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b17",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 297.2112482872445,
+              "y": 344.52041852300545,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b18",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 419.64931412711775,
+              "y": 354.5659620041356,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b19",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 261.10771605241007,
+              "y": 409.41273091606354,
+              "manual": false
+            }
+          }
+        },
+        {
+          "uid": "b20",
+          "id": "rosemary",
+          "anchors": {
+            "classic": {
+              "x": 455.75284636195215,
+              "y": 419.78032514186134,
+              "manual": false
+            }
+          }
+        }
+      ],
+      "frames": {
+        "classic": {
+          "mode": "classic",
+          "center": {
+            "x": 360,
+            "y": 411.00362663495844
+          },
+          "radius": 230,
+          "unit": 116,
+          "scale": 0.5879854934601665,
+          "yScale": 0.5879854934601665,
+          "origin": {
+            "x": 96.58249892984543,
+            "y": 166.21233055885847
+          },
+          "waist": {
+            "x": 360,
+            "y": 666
+          },
+          "rimY": 519.0036266349584,
+          "paper": "ivory",
+          "mouthHalf": 0.4526
+        }
+      },
+      "finishes": {
+        "paper": "ivory",
+        "tint": "#dcc8b7",
+        "ribbon": "none",
+        "sash": "blank_champagne",
+        "sashText": "Para ti",
+        "sashPlacement": "low",
+        "sashOffset": 8,
+        "sashScale": 1,
+        "collar": true,
+        "butterfly": 0,
+        "crown": false,
+        "greenRim": false
+      },
+      "title": "",
+      "note": ""
+    },
+    "pickList": [
+      {
+        "id": "__berry",
+        "quantity": 14,
+        "unitCents": 300,
+        "totalCents": 4200,
+        "name": "Strawberry"
+      },
+      {
+        "id": "rosemary",
+        "quantity": 6,
+        "unitCents": 200,
+        "totalCents": 1200,
+        "name": "Rosemary sprig"
+      }
+    ],
+    "pricing": {
+      "currency": "USD",
+      "demo": true,
+      "estimateOnly": true,
+      "lines": [
+        {
+          "id": "__berry",
+          "quantity": 14,
+          "unitCents": 300,
+          "totalCents": 4200
+        },
+        {
+          "id": "rosemary",
+          "quantity": 6,
+          "unitCents": 200,
+          "totalCents": 1200
+        }
+      ],
+      "extraLines": [
+        {
+          "id": "sash",
+          "quantity": 1,
+          "totalCents": 0
+        }
+      ],
+      "flowersCents": 5400,
+      "baseCents": 2500,
+      "laborCents": 1000,
+      "extrasCents": 0,
+      "totalCents": 8900,
+      "flowers": 0,
+      "texture": 6,
+      "chocolates": 0,
+      "pieces": 20
+    },
+    "artworkLimitations": [],
+    "templateCapacity": null,
+    "emptySlots": 0,
+    "notice": "Sample prices. Estimate only; florist must confirm price, stock, feasibility and delivery. No order has been placed or sent."
+  }
+}

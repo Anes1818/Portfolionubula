@@ -1,0 +1,20 @@
+{
+  "files": 216,
+  "checks": [
+    "Extracted ZIP exactly matches all delivery-file hashes",
+    "http: ten complete previews in a clean extraction",
+    "http: packaged style photograph loads",
+    "http: enlarged bouquet preview uses packaged artwork and exact ingredients",
+    "http: all recipes retain exact scenes and prices through links",
+    "http: legacy Classic, Dome and Heart still validate and export",
+    "http: new Halloween square and story PNGs export",
+    "http: no missing resources, external dependencies or uncaught errors",
+    "file: ten complete previews in a clean extraction",
+    "file: packaged style photograph loads",
+    "file: enlarged bouquet preview uses packaged artwork and exact ingredients",
+    "file: all recipes retain exact scenes and prices through links",
+    "file: legacy Classic, Dome and Heart still validate and export",
+    "file: new Halloween square and story PNGs export",
+    "file: no missing resources, external dependencies or uncaught errors"
+  ]
+}

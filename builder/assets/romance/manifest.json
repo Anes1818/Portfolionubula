@@ -1,0 +1,38 @@
+[
+  {
+    "name": "eucalyptus-sparse-a",
+    "width": 1081,
+    "height": 587,
+    "sourceBytes": 394906,
+    "webBytes": 214236,
+    "transparentPixels": 352640,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "eucalyptus-sparse-b",
+    "width": 1099,
+    "height": 571,
+    "sourceBytes": 320759,
+    "webBytes": 174124,
+    "transparentPixels": 390866,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "rose-red-cup-a",
+    "width": 598,
+    "height": 599,
+    "sourceBytes": 351189,
+    "webBytes": 210886,
+    "transparentPixels": 69723,
+    "visiblePixelsAndAlphaExact": true
+  },
+  {
+    "name": "rose-red-cup-b",
+    "width": 669,
+    "height": 601,
+    "sourceBytes": 387025,
+    "webBytes": 227088,
+    "transparentPixels": 82815,
+    "visiblePixelsAndAlphaExact": true
+  }
+]

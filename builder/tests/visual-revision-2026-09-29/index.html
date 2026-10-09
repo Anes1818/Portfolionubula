@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visual review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:32px 24px 70px;background:#f5f2eb;color:#263d34;font:16px/1.5 system-ui,sans-serif}main{max-width:1180px;margin:auto}h1{font:36px Georgia,serif;margin:0 0 8px}p{max-width:750px;margin:0 0 24px;color:#5b655d}section{padding:24px 0 40px;border-top:1px solid #cfd5cb}h2{font:28px Georgia,serif;margin:0 0 16px}.pair{display:grid;grid-template-columns:390px minmax(0,1fr);gap:32px;align-items:start}.phone{display:block;width:390px;max-width:100%;height:auto}.export{display:block;width:100%;height:auto}figure{margin:0}figcaption{margin:0 0 12px;font-size:13px;color:#657065}a{color:#245746;text-underline-offset:4px}.actions{margin-top:16px;display:flex;gap:24px;flex-wrap:wrap}img{border:1px solid #d8ddd4;border-radius:8px}@media(max-width:860px){.pair{grid-template-columns:1fr}.phone{margin:auto}body{padding:20px 12px}.export{max-width:600px;margin:auto}}
+</style>
+<main>
+<h1>Visual review</h1>
+<p>Fresh normal-view phone captures and unlabelled art exports. The phone captures use a 390 × 844 viewport at Fit, with no expanded view or added zoom. Open either image to inspect its original resolution.</p>
+<div id="proofs"></div>
+<script>
+fetch('evidence.json').then(r=>r.json()).then(rows=>{
+ for(const {n,url} of rows){
+  const section=document.createElement('section');
+  section.innerHTML='<h2>'+n+' pieces</h2><div class="pair"><figure><figcaption>Normal view · 390 px</figcaption><a href="phone-'+n+'.png"><img class="phone" src="phone-'+n+'.png" alt="Normal phone preview with '+n+' pieces" width="390" height="844"></a></figure><figure><figcaption>Unlabelled export · 1080 × 1080</figcaption><a href="export-'+n+'.png"><img class="export" src="export-'+n+'.png" alt="Unlabelled composition with '+n+' pieces" width="1080" height="1080"></a></figure></div>';
+  const links=document.createElement('div');links.className='actions';
+  for(const [label,href] of [['Open editable design',url],['Download export','export-'+n+'.png']]){const a=document.createElement('a');a.textContent=label;a.href=href;if(label.startsWith('Download'))a.download='composition-'+n+'.png';links.append(a);}
+  section.append(links);document.getElementById('proofs').append(section);
+ }
+});
+</script>
+</main></html>

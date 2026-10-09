@@ -7,7 +7,7 @@ const live=id=>RETIRED[id]||id;
    before that - a saved file, a shared link - still carries `true`, which meant
    exactly the one butterfly it drew, so that is what it decodes to. */
 const wings=v=>v===true?1:(Number.isInteger(v)?Math.max(0,Math.min(CONFIG.limits.butterflies,v)):0);
-function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],frames:{},finishes:{paper:'ivory',tint:'#dcc8b7',ribbon:'none',sash:'none',sashText:'',sashPlacement:'auto',sashOffset:0,sashScale:1,collar:true,butterfly:0,crown:false,greenRim:false},title:'',note:''};}
+function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],frames:{},finishes:{paper:'ivory',tint:'#dcc8b7',ribbon:'none',sash:'none',sashText:'',sashPlacement:'auto',sashOffset:0,sashScale:1,collar:true,butterfly:0,crown:false,greenRim:false,bow:false,pumpkin:false,pumpkinPosition:'right',pumpkinScale:1,fillerCount:0,fillerPattern:'scatter',greeneryCount:0,initial:'',initialScale:1,initialOffset:0,decorations:[],spookyMask:false,spookyBow:false,ghostCount:0,thistleCount:0},title:'',note:''};}
 function newItem(s,id){return {uid:'b'+s.nextId++,id,anchors:{}};}
 function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  if(mode!=='classic'){if(!s.template)migrateTemplate(s);return syncTemplate(s);}
@@ -29,9 +29,16 @@ function price(s){
  const lines=Object.entries(counts(s)).map(([id,quantity])=>({id,quantity,unitCents:CAT[id].priceCents,totalCents:quantity*CAT[id].priceCents}));
  const flowersCents=lines.reduce((n,line)=>n+line.totalCents,0),baseCents=s.items.length?CONFIG.baseCents:0,laborCents=s.items.length?CONFIG.laborCents[s.mode]:0;
  const extraLines=[];
+ if(s.mode==='dome'){
+  const green=s.finishes.greeneryCount||0;if(green)extraLines.push({id:'interiorGreenery',quantity:green,totalCents:green*CAT.eucalyptus.priceCents});
+  if(s.finishes.initial)extraLines.push({id:'floralInitial',quantity:1,totalCents:CONFIG.extrasCents.floralInitial});
+  const count=s.finishes.fillerCount||0;if(count)extraLines.push({id:'filler',quantity:count,totalCents:count*CONFIG.extrasCents.filler});
+  for(const d of s.finishes.decorations||[])extraLines.push({id:d.id,quantity:1,totalCents:CONFIG.extrasCents[d.id]});
+ }
  /* Butterflies are charged per butterfly; the crown is one. */
  const bf=wings(s.finishes.butterfly);
  if(bf)extraLines.push({id:'butterfly',quantity:bf,totalCents:bf*CONFIG.extrasCents.butterfly});
+ for(const key of ['pumpkin','bow'])if(s.mode==='dome'&&s.finishes[key]&&(key!=='bow'||s.finishes.sash==='blank_cocoa'))extraLines.push({id:key,quantity:1,totalCents:CONFIG.extrasCents[key]});
  if(s.finishes.crown)extraLines.push({id:'crown',quantity:1,totalCents:CONFIG.extrasCents.crown});
  /* The wrap is real eucalyptus a florist must cut and place, so every sprig is
     priced as a catalogue unit rather than hidden as free decoration. The count is
@@ -42,6 +49,7 @@ function price(s){
  /* The ribbon is Classic only - see finishNodes. A Dome or Heart design saved with
     one keeps the value so Classic can restore it, but is never charged for it. */
  for(const name of s.mode==='classic'?['ribbon','sash']:['sash'])if(s.finishes[name]!=='none')extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
+ extraLines.push(...(g.NebulaSpooky?.extras(s)||[]));
  const extrasCents=extraLines.reduce((n,x)=>n+x.totalCents,0);
  return {currency:CONFIG.currency,demo:CONFIG.demo,estimateOnly:true,lines,extraLines,flowersCents,baseCents,laborCents,extrasCents,totalCents:flowersCents+baseCents+laborCents+extrasCents,flowers:s.items.filter(i=>CAT[i.id].kind==='flower').length,texture:s.items.filter(i=>CAT[i.id].kind==='texture').length,chocolates:s.items.filter(i=>CAT[i.id].kind==='chocolate').length,pieces:s.items.length};
 }
@@ -55,10 +63,12 @@ function migrateTemplate(s){
 function syncTemplate(s){
  if(s.mode==='classic')return s;const T=NebulaTemplates,L=T.layout(s.mode,s.template.capacity),ids=T.recipe(s.mode,s.template,s.seed);s.items=[];s.frames={[s.mode]:clone(L.frame)};
  for(let slot=0;slot<ids.length;slot++){const id=Object.hasOwn(s.template.overrides,slot)?s.template.overrides[slot]:ids[slot];if(id===null)continue;const p=L.points[slot];s.items.push({uid:'b'+(slot+1),id,slot,anchors:{[s.mode]:{x:L.frame.center.x+p.x,y:L.frame.center.y+p.y,manual:Object.hasOwn(s.template.overrides,slot)}}});}
+ if(g.NebulaFall?.active(s)){const organic=NebulaFall.layout(s);s.frames[s.mode]=clone(organic.frame);for(const it of s.items){const p=organic.points[it.slot];it.anchors[s.mode]={x:360+p.x,y:390+p.y,manual:Object.hasOwn(s.template.overrides,it.slot)};}}
  s.nextId=Math.max(s.template.capacity+1,s.nextId);return s;
 }
-function paintSlot(s,slot,id){if(s.mode==='classic'||!Number.isInteger(slot)||slot<0||slot>=s.template.capacity||(id!==null&&!Object.hasOwn(CAT,id)))return {ok:false,reason:'invalid'};s.template.overrides[slot]=id;syncTemplate(s);return {ok:true,uid:id===null?null:'b'+(slot+1),slot};}
+function paintSlot(s,slot,id){if(s.mode==='classic'||!Number.isInteger(slot)||slot<0||slot>=s.template.capacity||(id!==null&&!Object.hasOwn(CAT,id)))return {ok:false,reason:'invalid'};if(g.NebulaSpooky?.active(s)&&!NebulaSpooky.allowed(s,slot,id))return {ok:false,reason:'spookyFit'};s.template.overrides[slot]=id;syncTemplate(s);return {ok:true,uid:id===null?null:'b'+(slot+1),slot};}
 function resize(s,n,id='rose_red'){
+ if(g.NebulaSpooky?.active(s))return {ok:n===s.template.capacity,reason:'placement'};
  if(s.mode==='classic'||!Number.isInteger(n)||n<1||n>100||!Object.hasOwn(CAT,id))return {ok:false,reason:'invalid'};
  const old=s.template,from=NebulaTemplates.layout(s.mode,old.capacity),to=NebulaTemplates.layout(s.mode,n),t=clone(old),used=new Set();t.capacity=n;t.accent.count=Math.min(t.accent.count,n);t.overrides={};
  // Reapply automatic recipes. Preserve only intentional edits by normalized position.
@@ -71,6 +81,8 @@ function resize(s,n,id='rose_red'){
 }
 function updateTemplate(s,update){if(s.mode==='classic')return {ok:false,reason:'invalid'};const t=clone(s.template);Object.assign(t,update);if(!validTemplate(t))return {ok:false,reason:'invalid'};s.template=t;syncTemplate(s);return {ok:true};}
 function validTemplate(t){
+ if(t?.layout==='halloween'&&!g.NebulaSpooky?.validTemplate(t))return false;
+ if(t?.layout!==undefined&&!['organic','garden','halloween'].includes(t.layout))return false;
  if(!t||!Number.isInteger(t.capacity)||t.capacity<1||t.capacity>100||!Array.isArray(t.palette)||!t.palette.length||t.palette.length>3||t.palette.some(id=>!Object.hasOwn(CAT,id))||new Set(t.palette).size!==t.palette.length||!['patches','half','border','rings'].includes(t.formation))return false;
  const a=t.accent,z=t.zones;if(!a||!Object.hasOwn(CAT,a.id)||!Number.isInteger(a.count)||a.count<0||a.count>t.capacity||!['cluster','border','half','scatter','ring'].includes(a.pattern)||!Number.isFinite(a.angle)||a.angle<0||a.angle>360)return false;
  if(!z||['wall','fill','center'].some(k=>!Object.hasOwn(CAT,z[k]))||!['zones','rings','checker'].includes(z.formation)||typeof z.doubleWall!=='boolean')return false;
@@ -93,7 +105,7 @@ function validatePortfolio(raw){
 function add(s,id,p){
  if(!Object.hasOwn(CAT,id))return {ok:false,reason:'invalid'};
  if(s.mode==='classic'&&CAT[id].classicOffered===false)return {ok:false,reason:'art',ids:[id]};
- if(s.mode!=='classic'){const used=new Set(s.items.map(i=>i.slot)),slot=p?NebulaTemplates.nearest(s.mode,s.template.capacity,p):Array.from({length:s.template.capacity},(_,i)=>i).find(i=>!used.has(i));if(slot==null||used.has(slot))return {ok:false,reason:'templateFull'};return paintSlot(s,slot,id);}
+ if(s.mode!=='classic'){const used=new Set(s.items.map(i=>i.slot)),slot=p?(g.NebulaFall?.active(s)?NebulaFall.nearest(s,p):NebulaTemplates.nearest(s.mode,s.template.capacity,p)):Array.from({length:s.template.capacity},(_,i)=>i).find(i=>!used.has(i));if(slot==null||used.has(slot))return {ok:false,reason:'templateFull'};return paintSlot(s,slot,id);}
  const it=newItem(s,id),cap=G.capacity(s.items.concat(it),s.mode);
  if(!cap.ok){s.nextId--;return cap;}
  if(s.items.length===0){s.items.push(it);arrange(s,s.mode,{fresh:true});return {ok:true,uid:it.uid};}
@@ -119,7 +131,7 @@ function replace(s,uid,id){
  it.anchors[s.mode]={x:pos.x,y:pos.y,manual:true};return {ok:true,snapped:pos.snapped};
 }
 function remove(s,uid){if(s.mode!=='classic'){const it=s.items.find(i=>i.uid===uid);return it?paintSlot(s,it.slot,null):{ok:false,reason:'invalid'};}const before=s.items.length;s.items=s.items.filter(it=>it.uid!==uid);return {ok:s.items.length!==before};}
-function move(s,uid,p){const it=s.items.find(i=>i.uid===uid);if(!it)return {ok:false,reason:'invalid'};if(s.mode!=='classic'){const slot=NebulaTemplates.nearest(s.mode,s.template.capacity,p);if(slot===null)return {ok:false,reason:'placement'};const other=s.items.find(i=>i.slot===slot);s.template.overrides[it.slot]=other?.id||null;s.template.overrides[slot]=it.id;syncTemplate(s);return {ok:true,uid:'b'+(slot+1),slot};}const pos=G.findPlace(s,it.id,p,uid);if(!pos)return {ok:false,reason:'placement'};it.anchors[s.mode]={x:pos.x,y:pos.y,manual:true};return {ok:true,snapped:pos.snapped};}
+function move(s,uid,p){const it=s.items.find(i=>i.uid===uid);if(!it)return {ok:false,reason:'invalid'};if(s.mode!=='classic'){const slot=(g.NebulaFall?.active(s)?NebulaFall.nearest(s,p):NebulaTemplates.nearest(s.mode,s.template.capacity,p));if(slot===null)return {ok:false,reason:'placement'};const other=s.items.find(i=>i.slot===slot);if(g.NebulaSpooky?.active(s)&&(!NebulaSpooky.allowed(s,slot,it.id)||!NebulaSpooky.allowed(s,it.slot,other?.id||null)))return {ok:false,reason:'spookyFit'};s.template.overrides[it.slot]=other?.id||null;s.template.overrides[slot]=it.id;syncTemplate(s);return {ok:true,uid:'b'+(slot+1),slot};}const pos=G.findPlace(s,it.id,p,uid);if(!pos)return {ok:false,reason:'placement'};it.anchors[s.mode]={x:pos.x,y:pos.y,manual:true};return {ok:true,snapped:pos.snapped};}
 function validateV4(raw){
  if(!raw||raw.version!==4||!['classic','dome','heart'].includes(raw.mode)||!Array.isArray(raw.items)||raw.items.length>100)return null;
  if(!Number.isInteger(raw.seed)||raw.seed<1||raw.seed>99999999||!Number.isInteger(raw.nextId)||raw.nextId<1||raw.nextId>1e8)return null;
@@ -129,18 +141,37 @@ function validateV4(raw){
     all - failed the whitelist below, so a linen design could not be saved,
     shared or reopened. Both are now first-class papers like ivory. */
  if(f)f.butterfly=wings(f.butterfly);
- if(!f||!['ivory','kraft','linen','blush','sage','custom','black'].includes(f.paper)||!/^#[0-9a-f]{6}$/i.test(f.tint)||!['none','blush','burgundy','sage'].includes(f.ribbon)||!['none','love','bday','wed','blank_blackband','blank_champagne','blank_emerald'].includes(f.sash)||!Number.isInteger(f.butterfly))return null;
+ if(!f||!['ivory','kraft','linen','blush','sage','custom','black','cocoa'].includes(f.paper)||!/^#[0-9a-f]{6}$/i.test(f.tint)||!['none','blush','burgundy','sage'].includes(f.ribbon)||!['none','love','bday','wed','blank_blackband','blank_champagne','blank_emerald','blank_cocoa'].includes(f.sash)||!Number.isInteger(f.butterfly))return null;
+ for(const key of ['spookyMask','spookyBow'])if(f[key]!==undefined&&typeof f[key]!=='boolean')return null;
+ for(const [key,max] of [['ghostCount',6],['thistleCount',3]])if(f[key]!==undefined&&(!Number.isInteger(f[key])||f[key]<0||f[key]>max))return null;
+ if(f.fillerCount!==undefined&&(!Number.isInteger(f.fillerCount)||f.fillerCount<0||f.fillerCount>12))return null;
+ if(f.fillerPattern!==undefined&&!['scatter','border'].includes(f.fillerPattern))return null;
+ if(f.greeneryCount!==undefined&&(!Number.isInteger(f.greeneryCount)||f.greeneryCount<0||f.greeneryCount>12))return null;
+ if(f.initial!==undefined&&(typeof f.initial!=='string'||!/^([A-Z])?$/.test(f.initial)))return null;
+ if(f.initialScale!==undefined&&(!Number.isFinite(f.initialScale)||f.initialScale<.7||f.initialScale>1.3))return null;
+ if(f.initialOffset!==undefined&&(!Number.isFinite(f.initialOffset)||Math.abs(f.initialOffset)>.35))return null;
+ if(raw.mode!=='dome'&&((f.greeneryCount||0)>0||f.initial))return null;
+ if(f.decorations!==undefined&&!NebulaDetails.valid(f.decorations))return null;
+ if(raw.mode!=='dome'&&((f.fillerCount||0)>0||(f.decorations||[]).length))return null;
+ if(f.paper==='cocoa'&&raw.mode!=='dome')return null;
+ for(const key of ['bow','pumpkin'])if(f[key]!==undefined&&typeof f[key]!=='boolean')return null;
+ if(f.pumpkinPosition!==undefined&&!['left','center','right'].includes(f.pumpkinPosition))return null;
+ if(f.pumpkinScale!==undefined&&(!Number.isFinite(f.pumpkinScale)||f.pumpkinScale<.65||f.pumpkinScale>1.3))return null;
+ if(f.sashText!==undefined&&(typeof f.sashText!=='string'||f.sashText.length>28))return null;
  if(f.greenRim!==undefined&&typeof f.greenRim!=='boolean')return null;
  if(typeof raw.title!=='string'||raw.title.length>70||typeof raw.note!=='string'||raw.note.length>180)return null;
  if(f.sashPlacement!==undefined&&!['auto','low','diagonal'].includes(f.sashPlacement))return null;
  if(f.sashOffset!==undefined&&(!Number.isFinite(f.sashOffset)||Math.abs(f.sashOffset)>60))return null;
  if(f.sashScale!==undefined&&(!Number.isFinite(f.sashScale)||f.sashScale<.65||f.sashScale>1.25))return null;
  if(f.collar!==undefined&&typeof f.collar!=='boolean')return null;
- const s=empty();Object.assign(s,{mode:raw.mode,seed:raw.seed,nextId:raw.nextId,finishes:{...s.finishes,...clone(f)},title:raw.title,note:raw.note});
+ const s=empty(),finishes={...s.finishes};
+ for(const key of Object.keys(finishes))if(Object.hasOwn(f,key))finishes[key]=clone(f[key]);
+ Object.assign(s,{mode:raw.mode,seed:raw.seed,nextId:raw.nextId,finishes,title:raw.title,note:raw.note});
  const used=new Set();
  for(const it of raw.items){
   if(it&&typeof it.id==='string')it.id=live(it.id);
   if(!it||typeof it.uid!=='string'||!/^b\d{1,8}$/.test(it.uid)||used.has(it.uid)||!Object.hasOwn(CAT,it.id)||!it.anchors||typeof it.anchors!=='object')return null;
+  if(raw.mode==='classic'&&['rose_ivory','mum_rust','rose_caramel','mum_burgundy'].includes(it.id))return null;
   if(+it.uid.slice(1)>=raw.nextId)return null;used.add(it.uid);
   const anchors={};for(const mode of ['classic','dome','heart'])if(it.anchors[mode]){
    const a=it.anchors[mode];if(!Number.isFinite(a.x)||!Number.isFinite(a.y)||a.x<0||a.x>720||a.y<0||a.y>820||typeof a.manual!=='boolean')return null;
@@ -170,8 +201,9 @@ function validateV4(raw){
 }
 function validate(raw){
  if(!raw||![4,6].includes(raw.version))return null;const out=validateV4({...raw,version:4});if(!out)return null;
+ if(out.mode==='classic'&&g.NebulaSpooky&&!g.NebulaSpooky.validFinishes(out))return null;
  if(out.mode==='classic'){out.items.forEach(it=>{it.anchors.classic=G.constrainClassic(it.anchors.classic,out.frames.classic,it.id);});return out;}
- if(raw.version===4)return migrateTemplate(out);if(!validTemplate(raw.template))return null;out.template=clone(raw.template);syncTemplate(out);
+ if(raw.version===4)return migrateTemplate(out);if(!validTemplate(raw.template))return null;out.template=clone(raw.template);if(['organic','garden','halloween'].includes(out.template.layout)&&out.mode!=='dome')return null;syncTemplate(out);if(g.NebulaSpooky&&!g.NebulaSpooky.validFinishes(out))return null;
  if(out.items.length!==raw.items.length||out.items.some(it=>!raw.items.some(i=>i.uid===it.uid&&i.id===it.id&&i.slot===it.slot)))return null;return out;
 }
 function migrateV3(raw){

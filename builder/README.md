@@ -10,6 +10,26 @@ commit, and send them away with a picture that carries the shop's name.
 
 ## Open it
 
+The entry screen offers ten templates: three **For Love**, three **Spooky
+Bouquets**, and four **Autumn** designs. Scream for You, Forever My Boo and
+Midnight Blooms use supplied photographic cutouts with fixed flower positions,
+counted extras and editable finishes. See [Halloween logic](docs/HALLOWEEN-LAYOUT.md).
+
+The final launch pass adds recoverable image-loading errors, matching image/link
+snapshots, accessible gallery names and strict shared-quantity validation. See
+[release notes](docs/LAUNCH-2026-10-07.md).
+
+Pink Promise, Written in Roses and Always You add a year-round collection with
+editable floral initials, filler placement and counted interior eucalyptus.
+See [For Love notes and the next asset prompt](docs/FOR-LOVE-2026-10-05.md).
+Autumn Latte adds
+caramel roses, burgundy chrysanthemums, scattered baby’s breath and Snoopy.
+The Dome Finishing tab has movable Snoopy/Hello Kitty plushes and a pumpkin
+topper, with size, rotation and layering controls. All fourteen supplied autumn
+assets preserve their transparency. Template selection opens the existing builder.
+See [the autumn implementation notes](docs/FALL-IMPLEMENTATION-2026-10-05.md)
+for scope, asset provenance, demo prices and validation.
+
 1. Extract the complete ZIP into a new folder.
 2. On a computer, open `index.html`. No npm install or build step.
 3. On a phone, open the deployed URL. An iOS Files preview is not a supported
@@ -24,7 +44,7 @@ Each is saved separately; switching never converts one into another.
 | Mode | What it is | Sizes |
 |---|---|---|
 | **Classic** | Hand-gathered, in a real photographed paper wrap | ~20 rose-sized units |
-| **Dome** | Top-view *ramo buchón*, fixed slots | 15 / 30 / 44 / 62 / 84 |
+| **Dome** | Top-view *ramo buchón*; autumn templates use mixed-size spacing | 15 / 30 / 44 / 62 / 84 |
 | **Flat heart** | Heart shape, fixed slots | 21 / 41 / 67 / 100 |
 
 Classic opens on the **Romantic** starting point; Dome and Heart open filled
@@ -84,7 +104,7 @@ every exported picture, so a shared bouquet leads back to the shop.
 
 ## Honest limits
 
-This is a photographed 2D preview, not a 3D floral simulator or a certified
+The original `index.html` studio is a photographed 2D preview, not a 3D floral simulator or a certified
 assembly recipe. Natural petal overlap remains. Digital paper tints are colour
 studies of the one photographed ivory wrap, not proof of a stocked material.
 Sash lettering is baked into the supplied artwork and is English only.
@@ -101,3 +121,21 @@ All shop contact details and prices must be approved by the owner before launch.
 ---
 
 © 2026 Nebula Sites Studio. All rights reserved.
+
+Spooky customization supports ten rose colors, individual replacement, one-step
+rose recoloring, five paper tones, recipe extras and personal messages. See
+`docs/HALLOWEEN-LAYOUT.md` for exact fit, recoloring and paper-rendering rules.
+
+Saved bouquets: keep up to 20 named design copies in this browser. Open them from
+Templates, then edit and save a new copy. Download editable designs for backups;
+local copies do not sync between devices. The demo includes a florist walkthrough,
+and Review request prepares the existing WhatsApp handoff. Evaluation notes:
+`docs/FLORIST-WALKTHROUGH-2026-10-08.md`.
+
+The collection screen renders all ten actual recipes at 1080 × 1240. Select View
+bouquet to inspect its ingredients and estimate, then open that exact design.
+For Love / Spooky / Autumn filters only change the displayed collection. See
+`docs/COLLECTION-PREVIEWS-2026-10-08.md` for rendering and validation details.
+
+
+9 October update: collection photos, mask-off flower reflow and shared toy/finishing controls are documented in [Connected builder](docs/CONNECTED-BUILDER-2026-10-09.md). Local build token: 20261009a.

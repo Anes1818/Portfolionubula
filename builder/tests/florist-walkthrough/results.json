@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "Demo explains branding, sample prices and the request workflow",
+    "Larger mask fills the central opening without stretching the source",
+    "Named snapshot saved with exact flowers and extras",
+    "Saved bouquet reopens with exact snapshot and estimate",
+    "Opening saved bouquet can be undone",
+    "Saved copy survives reload independently of current bouquet",
+    "Editing reopened bouquet leaves saved snapshot unchanged",
+    "Request is clearly a review, not confirmed checkout",
+    "Removing a saved copy requires confirmation",
+    "Removing snapshot leaves open bouquet intact",
+    "Storage-full failure preserves all 20 saved designs",
+    "Malformed saved data is preserved instead of silently overwritten",
+    "Saved titles render as text, not executable markup",
+    "320px gallery and saved controls fit",
+    "320px review request button fits",
+    "390px gallery and saved controls fit",
+    "390px review request button fits",
+    "Saved library and buyer guide translate to Spanish",
+    "Buyer evaluation guide is hidden on configured non-demo storefront",
+    "No runtime errors"
+  ],
+  "errors": []
+}

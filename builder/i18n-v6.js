@@ -166,3 +166,136 @@ Object.assign(NebulaI18n.es,{
  osPayBy:'Preferencia de pago', osDisclaimer:'Solo una solicitud; no se ha cobrado nada. Confirma existencias, viabilidad y precio final personalmente. La ficha recalcula con los precios actuales de la tienda.',
  classicNote:'Vista fotográfica · la florista confirma el ramo real.'
 });
+
+Object.assign(NebulaI18n.en,{"browseTemplates":"Templates","fallCollection":"THE AUTUMN COLLECTION","galleryTitle":"Fall for a little something personal.","galleryIntro":"Start with a bouquet you love. Make the flowers, ribbon and little details yours.","resumeBuilder":"Continue my bouquet →","autumnLooks":"Warm colors. Your words.","editableLooks":"4 editable bouquets","galleryFine":"Preview your idea with sample prices. Your florist confirms the finished bouquet.","exploreBuilder":"Explore the full builder →","customizeTemplate":"Make it yours →","fallFlowers":"Autumn flowers","cocoa":"Cocoa brown paper","sashCocoa":"Cocoa — your words","autumnDetails":"Autumn details","pumpkin":"Pumpkin plush","bow":"Satin bow","pumpkinPosition":"Plush position","positionLeft":"Top left","positionCenter":"Top center","positionRight":"Top right","pumpkinSize":"Plush size","fallPreview":"Autumn bouquet · made personal by you","fallPaintHint":"Choose a flower, then tap the bloom you want to replace. Larger flowers take more room; your stem count stays the same.","artLoadError":"Artwork unavailable — reload to retry"});
+
+Object.assign(NebulaI18n.es,{"browseTemplates":"Plantillas","fallCollection":"LA COLECCIÓN DE OTOÑO","galleryTitle":"Un detalle de otoño, muy tuyo.","galleryIntro":"Empieza con un ramo que te encante. Personaliza las flores, la cinta y los pequeños detalles.","resumeBuilder":"Continuar mi ramo →","autumnLooks":"Colores cálidos. Tus palabras.","editableLooks":"4 ramos editables","galleryFine":"Prueba tu idea con precios de muestra. Tu florista confirma el ramo final.","exploreBuilder":"Explorar el editor completo →","customizeTemplate":"Personalizar →","fallFlowers":"Flores de otoño","cocoa":"Papel marrón cacao","sashCocoa":"Cacao — tus palabras","autumnDetails":"Detalles de otoño","pumpkin":"Peluche de calabaza","bow":"Lazo de satén","pumpkinPosition":"Posición del peluche","positionLeft":"Arriba a la izquierda","positionCenter":"Arriba en el centro","positionRight":"Arriba a la derecha","pumpkinSize":"Tamaño del peluche","fallPreview":"Ramo de otoño · personalizado por ti","fallPaintHint":"Elige una flor y toca la que quieres cambiar. Las flores grandes ocupan más espacio; se mantiene la cantidad.","artLoadError":"Imagen no disponible — recarga para reintentar"});
+
+Object.assign(NebulaI18n.en,{sashLanguage:'Choose a printed ribbon or write your own message.',shareShort:'Share',fallCountHint:'Flowers and extras are listed separately.'});
+Object.assign(NebulaI18n.es,{sashLanguage:'Elige una cinta impresa o escribe tu propio mensaje.',shareShort:'Compartir',fallCountHint:'Las flores y los extras se detallan por separado.'});
+Object.assign(NebulaI18n.en,{
+ filler:'Baby’s breath sprigs',fillerLess:'Remove one baby’s breath sprig',fillerMore:'Add one baby’s breath sprig',perSprig:'per sprig',
+ fillerHint:'A little air between the flowers. Each tap adds one sprig.',
+ snoopy:'Snoopy plush',kitty:'Hello Kitty plush',snoopy_topper:'Snoopy pumpkin topper',
+ detailHeading:'Plush toys & toppers',detailHint:'Choose a detail, then drag it on the bouquet. Use the arrows for small adjustments.',
+ detailDragHint:'Drag your detail · arrow keys move it · Delete removes it',detailSize:'Size',detailRotation:'Rotation',detailLayer:'Placement',
+ tucked:'Tucked into flowers',front:'On top',removeDetail:'Remove detail',addDetail:'Add +',editDetail:'Edit',
+ moveLeft:'Move left',moveRight:'Move right',moveUp:'Move up',moveDown:'Move down'
+});
+Object.assign(NebulaI18n.es,{
+ filler:'Ramitas de paniculata',fillerLess:'Quitar una ramita de paniculata',fillerMore:'Añadir una ramita de paniculata',perSprig:'por ramita',
+ fillerHint:'Un toque ligero entre las flores. Cada toque añade una ramita.',
+ snoopy:'Peluche Snoopy',kitty:'Peluche Hello Kitty',snoopy_topper:'Adorno Snoopy calabaza',
+ detailHeading:'Peluches y adornos',detailHint:'Elige un detalle y arrástralo sobre el ramo. Usa las flechas para ajustes pequeños.',
+ detailDragHint:'Arrastra el detalle · muévelo con las flechas · Suprimir lo elimina',detailSize:'Tamaño',detailRotation:'Rotación',detailLayer:'Colocación',
+ tucked:'Entre las flores',front:'Encima',removeDetail:'Quitar detalle',addDetail:'Añadir +',editDetail:'Editar',
+ moveLeft:'Mover a la izquierda',moveRight:'Mover a la derecha',moveUp:'Subir',moveDown:'Bajar'
+});
+Object.assign(NebulaI18n.en,{
+ collectionsEyebrow:'THE BOUQUET COLLECTIONS',loveCollection:'For Love',loveCount:'3 editable bouquets',
+ loveCollectionIntro:'Anniversaries, little surprises, or no occasion at all.',romanceFlowers:'For Love flowers',
+ fillerPlacement:'Baby’s breath placement',scatter:'Between the flowers',border:'Around the edge',
+ interiorGreenery:'Eucalyptus between roses',greeneryLess:'Remove one eucalyptus sprig',greeneryMore:'Add one eucalyptus sprig',
+ floralInitial:'Floral initial',initialLetter:'Their initial',initialHint:'One letter, A–Z. Your florist confirms the floral lettering and final price.'
+});
+Object.assign(NebulaI18n.es,{
+ collectionsEyebrow:'LAS COLECCIONES DE RAMOS',loveCollection:'Por amor',loveCount:'3 ramos editables',
+ loveCollectionIntro:'Aniversarios, pequeñas sorpresas o simplemente porque sí.',romanceFlowers:'Flores para el amor',
+ fillerPlacement:'Colocación de la paniculata',scatter:'Entre las flores',border:'Alrededor del borde',
+ interiorGreenery:'Eucalipto entre las rosas',greeneryLess:'Quitar una rama de eucalipto',greeneryMore:'Añadir una rama de eucalipto',
+ floralInitial:'Inicial floral',initialLetter:'Su inicial',initialHint:'Una letra, de la A a la Z. Tu florista confirma las letras florales y el precio final.'
+});
+
+Object.assign(NebulaI18n.en,{galleryTitle:'Start with a bouquet you love.',galleryIntro:'For love, for the season, for someone special. Make every little detail yours.',autumnLooks:'Autumn',autumnDetails:'Bouquet details',fallPreview:'Your bouquet · made personal by you'});
+Object.assign(NebulaI18n.es,{galleryTitle:'Empieza con un ramo que te encante.',galleryIntro:'Por amor, por la temporada, por alguien especial. Personaliza cada detalle.',autumnLooks:'Otoño',autumnDetails:'Detalles del ramo',fallPreview:'Tu ramo · personalizado por ti'});
+
+Object.assign(NebulaI18n.en,{halloweenCollection:'Spooky Bouquets',halloweenIntro:'A little dark romance. Three ways to say boo.',halloweenFlowers:'Halloween flowers',spookyMask:'Scream mask',spookyBow:'Long black satin bow',ghostCount:'Ghost decals',thistleCount:'Blue thistle accents',spookyFixed:'Fixed flower positions. Replace or remove blooms; large flowers need a larger reserved position.'});
+Object.assign(NebulaI18n.es,{halloweenCollection:'Ramos de Halloween',halloweenIntro:'Un poco de romance oscuro. Tres formas de decir bu.',halloweenFlowers:'Flores de Halloween',spookyMask:'Máscara de grito',spookyBow:'Lazo largo de satén negro',ghostCount:'Fantasmas decorativos',thistleCount:'Cardos azules',spookyFixed:'Posiciones fijas. Cambia o quita flores; las flores grandes necesitan una posición más amplia.'});
+
+Object.assign(NebulaI18n.en,{loadingPreview:'Loading preview…',retryPreview:'Retry preview',previewUnavailable:'The picture could not load. Check your connection and try again.'});
+Object.assign(NebulaI18n.es,{loadingPreview:'Cargando vista…',retryPreview:'Reintentar vista',previewUnavailable:'No se pudo cargar la imagen. Comprueba la conexión e inténtalo de nuevo.'});
+
+/* Spooky customization: keep the recipe geometry while editing its appearance. */
+Object.assign(NebulaI18n.en,{
+ spookyCustomize:'Make this Spooky bouquet yours',
+ spookyCustomizeHint:'Choose a flower, then tap a bloom to replace it. Choose a rose to change all the roses at once.',
+ spookyFits:'{name} fits {n} of {cap} positions. Tap a compatible bloom to replace it.',
+ spookyRecolor:'Change all {n} roses to {name}',
+ spookyChooseRose:'Choose a rose to recolor the roses',
+ spookyWrap:'Change wrapping',spookyDetails:'Extras & message',
+ spookyFit:'This flower is too large for that position. Lilies need a lily position; gerberas need a lily or gerbera position. Roses fit any position.',
+ spookyWrapHint:'Choose a paper tone. The folds and flower positions stay the same.',
+ spookyGhostWrap:'Choose a paper tone. To hide the wrapping, first remove the ghost decals in Finishing.',
+ spookyTint:'Black is the supplied paper photograph. Other tones are digital color previews of the same folds; confirm material availability with your florist.'
+});
+Object.assign(NebulaI18n.es,{
+ spookyCustomize:'Haz tuyo este ramo de Halloween',
+ spookyCustomizeHint:'Elige una flor y toca otra para sustituirla. Elige una rosa para cambiar todas las rosas a la vez.',
+ spookyFits:'{name} cabe en {n} de {cap} posiciones. Toca una flor compatible para sustituirla.',
+ spookyRecolor:'Cambiar las {n} rosas por {name}',
+ spookyChooseRose:'Elige una rosa para cambiar el color',
+ spookyWrap:'Cambiar envoltura',spookyDetails:'Extras y mensaje',
+ spookyFit:'Esta flor es demasiado grande para esa posición. Los lirios necesitan una posición de lirio; las gerberas, una de lirio o gerbera. Las rosas caben en cualquier posición.',
+ spookyWrapHint:'Elige el tono del papel. Los pliegues y las posiciones de las flores se mantienen.',
+ spookyGhostWrap:'Elige el tono del papel. Para ocultarlo, elimina primero los fantasmas en Acabados.',
+ spookyTint:'Negro es la fotografía original del papel. Los demás tonos son vistas digitales de los mismos pliegues; confirma su disponibilidad con tu florista.'
+});
+
+/* A florist can evaluate the workflow without mistaking the demo for checkout. */
+Object.assign(NebulaI18n.en,{
+ floristGuideTitle:'For flower shops: try the customer experience',
+ floristGuideIntro:'Pick a look, make a customer’s changes, then review exactly what your shop would receive.',
+ floristStep1:'Choose a bouquet below and change its flowers, paper or message.',
+ floristStep2:'Save a picture for your customer and keep an editable copy in Saved bouquets.',
+ floristStep3:'Open Review request to see the flowers, extras and estimate before preparing a WhatsApp draft.',
+ floristBrand:'Your shop’s version can use your name, logo, contact details, currency and catalogue prices.',
+ floristLimits:'This demo uses sample prices. Your shop confirms stock, delivery and the final quote. It does not take payments or reserve flowers.',
+ savedBouquets:'Saved bouquets',saveToShelf:'Save a copy on this device',savedName:'Name this saved copy',
+ savedLocalHint:'Kept in this browser on this device. Download an editable copy for a backup or another device.',
+ shelfEmpty:'Keep a favorite here after customizing it. Find Save a copy under Share bouquet.',
+ shelfCount:'{n} of {max} saved copies · estimates use the current catalogue prices',
+ shelfSaved:'Copy saved. Find it in Templates → Saved bouquets.',
+ shelfFull:'Your 20 saved spaces are full. Download a backup, then remove a saved copy to make room.',
+ shelfUnavailable:'Saved bouquets could not be accessed. Existing saved data has not been replaced. Download an editable copy to keep this design.',
+ untitledBouquet:'My bouquet',openSaved:'Open bouquet',openSavedHint:'Open this saved copy? Your current bouquet can be restored with Undo. The saved copy stays unchanged.',
+ removeSaved:'Remove saved copy',removeSavedHint:'Remove “{name}” from this device? Your open bouquet and downloaded copies stay unchanged.',
+ orderIt:'Review request',orderTitle:'Review your bouquet request',orderHint:'Check your flowers, extras and estimate. Your florist confirms availability and the final price.',
+ orderSend:'Prepare WhatsApp request',orderFine:'Opens a WhatsApp draft for you to review and send. No payment is taken and no order is confirmed here.',
+ aboutPoint2:'Show your customer a visual starting point and discuss the final arrangement together.',
+ aboutPoint4:'The itemized estimate updates as flowers and extras change. Your shop confirms the final quote.'
+});
+Object.assign(NebulaI18n.es,{
+ floristGuideTitle:'Para floristerías: prueba la experiencia del cliente',
+ floristGuideIntro:'Elige un diseño, haz los cambios del cliente y revisa lo que recibiría tu tienda.',
+ floristStep1:'Elige un ramo y cambia sus flores, papel o mensaje.',
+ floristStep2:'Guarda una imagen para tu cliente y una copia editable en Ramos guardados.',
+ floristStep3:'Abre Revisar solicitud para ver flores, extras y estimado antes de preparar el mensaje de WhatsApp.',
+ floristBrand:'La versión de tu tienda puede usar tu nombre, logo, datos de contacto, moneda y precios del catálogo.',
+ floristLimits:'Esta demo usa precios de muestra. Tu tienda confirma existencias, entrega y precio final. No cobra pagos ni reserva flores.',
+ savedBouquets:'Ramos guardados',saveToShelf:'Guardar copia en este dispositivo',savedName:'Nombre de esta copia',
+ savedLocalHint:'Se guardan en este navegador y dispositivo. Descarga una copia editable como respaldo o para otro dispositivo.',
+ shelfEmpty:'Guarda aquí un favorito después de personalizarlo. Busca Guardar copia en Compartir ramo.',
+ shelfCount:'{n} de {max} copias guardadas · los estimados usan los precios actuales del catálogo',
+ shelfSaved:'Copia guardada. Encuéntrala en Plantillas → Ramos guardados.',
+ shelfFull:'Ya tienes 20 copias guardadas. Descarga un respaldo y elimina una copia para hacer espacio.',
+ shelfUnavailable:'No se pudo acceder a los ramos guardados. Los datos existentes no se han sustituido. Descarga una copia editable para conservar este diseño.',
+ untitledBouquet:'Mi ramo',openSaved:'Abrir ramo',openSavedHint:'¿Abrir esta copia? Puedes recuperar el ramo actual con Deshacer. La copia guardada no cambia.',
+ removeSaved:'Eliminar copia guardada',removeSavedHint:'¿Eliminar «{name}» de este dispositivo? El ramo abierto y las copias descargadas se conservan.',
+ orderIt:'Revisar solicitud',orderTitle:'Revisa tu solicitud de ramo',orderHint:'Revisa flores, extras y estimado. Tu florista confirma disponibilidad y precio final.',
+ orderSend:'Preparar solicitud de WhatsApp',orderFine:'Abre un borrador de WhatsApp para que lo revises y envíes. Aquí no se cobra ni se confirma un pedido.',
+ aboutPoint2:'Muestra a tu cliente una idea visual y acuerda los detalles del arreglo final.',
+ aboutPoint4:'El estimado detallado cambia con las flores y los extras. Tu tienda confirma el precio final.'
+});
+
+/* Collection previews show the live recipe, with room to inspect its ingredients. */
+Object.assign(NebulaI18n.en,{galleryIntro:'See the full bouquet. Find your favorite, then make its flowers and details yours.',allCollections:'All bouquets',autumnCollection:'Autumn',browseCollections:'Browse collections',collectionResult:'{n} editable bouquets',viewBouquet:'View bouquet',previewItems:'{n} flowers & feature pieces',shownInBouquet:'Included in this design',designPreviewLabel:'Editable design preview',collectionPreviewHint:'The same flowers and details open in the builder. Customize them before requesting your florist’s quote.'});
+Object.assign(NebulaI18n.es,{galleryIntro:'Mira el ramo completo. Elige tu favorito y personaliza sus flores y detalles.',allCollections:'Todos los ramos',autumnCollection:'Otoño',browseCollections:'Explorar colecciones',collectionResult:'{n} ramos editables',viewBouquet:'Ver ramo',previewItems:'{n} flores y piezas principales',shownInBouquet:'Incluido en este diseño',designPreviewLabel:'Vista previa del diseño editable',collectionPreviewHint:'Las mismas flores y detalles se abren en el creador. Personalízalos antes de pedir el presupuesto a tu florista.'});
+
+Object.assign(NebulaI18n.en,{moveFlowers:'Move flowers',moveFinish:'Done moving',movePickFlower:'Tap a flower to move it. You can also drag.',movePickTarget:'Tap a highlighted position to swap or move there.',movePickAnywhere:'Tap where you want this flower.',moveDone:'Flower moved. Undo is available.'});
+Object.assign(NebulaI18n.es,{moveFlowers:'Mover flores',moveFinish:'Terminar',movePickFlower:'Toca una flor para moverla. También puedes arrastrar.',movePickTarget:'Toca una posición resaltada para mover o intercambiar.',movePickAnywhere:'Toca donde quieras colocar esta flor.',moveDone:'Flor movida. Puedes deshacer.'});
+
+Object.assign(NebulaI18n.en,{autumnDetails:'Flowers & personal touches',halloweenExtras:'Halloween extras',catalogStyle:'AI-generated style image',stylePhoto:'Style image',shownInBouquet:'Starting recipe',collectionPreviewHint:'The style image shows the overall look. Switch to Editable design preview for the exact flowers and details that open in the builder.',spookyFixed:'Choose compatible flowers, then mix toys, greenery, ribbons and seasonal extras in Finishing.',spookyWrapHint:'Choose a paper tone, or cocoa wrapping. Add toys and finishing touches to make this design yours.'});
+Object.assign(NebulaI18n.es,{autumnDetails:'Flores y detalles personales',halloweenExtras:'Extras de Halloween',catalogStyle:'Imagen de estilo generada con IA',stylePhoto:'Imagen de estilo',shownInBouquet:'Receta inicial',collectionPreviewHint:'La imagen de estilo muestra el aspecto general. Cambia a la vista editable para ver las flores y detalles exactos del constructor.',spookyFixed:'Elige flores compatibles y combina peluches, follaje, cintas y extras en Acabados.',spookyWrapHint:'Elige un tono de papel o envoltura cacao. Añade peluches y detalles personales.'});
+
+Object.assign(NebulaI18n.en,{greeneryAndFiller:'Greenery & filler',spookyTint:'Black and cocoa use original wrapper photos. Other tones are digital color previews; confirm availability with your florist.'});
+Object.assign(NebulaI18n.es,{greeneryAndFiller:'Follaje y relleno',spookyTint:'Negro y cacao usan fotos originales de envoltura. Los otros tonos son vistas digitales; confirma su disponibilidad.'});

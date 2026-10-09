@@ -1,0 +1,32 @@
+{
+  "checks": [
+    "Ten sharp portrait previews include every collection",
+    "love: filter displays correct count and selected state",
+    "halloween: filter displays correct count and selected state",
+    "fall: filter displays correct count and selected state",
+    "all: filter displays correct count and selected state",
+    "Browsing collections leaves current bouquet unchanged",
+    "always-you: enlarged preview exactly matches card artwork",
+    "always-you: displayed estimate matches the editable recipe",
+    "always-you: Customize opens the exact displayed design",
+    "scream-for-you: enlarged preview exactly matches card artwork",
+    "scream-for-you: displayed estimate matches the editable recipe",
+    "scream-for-you: Customize opens the exact displayed design",
+    "midnight-blooms: enlarged preview exactly matches card artwork",
+    "midnight-blooms: displayed estimate matches the editable recipe",
+    "midnight-blooms: Customize opens the exact displayed design",
+    "pink-promise: enlarged preview exactly matches card artwork",
+    "pink-promise: displayed estimate matches the editable recipe",
+    "pink-promise: Customize opens the exact displayed design",
+    "320px: gallery fits screen",
+    "320px: preview dialog fits screen",
+    "320px: Escape returns focus to preview button",
+    "390px: gallery fits screen",
+    "390px: preview dialog fits screen",
+    "390px: Escape returns focus to preview button",
+    "Filter and preview actions translate to Spanish",
+    "Spanish preview includes translated ingredients and instructions",
+    "No runtime errors"
+  ],
+  "errors": []
+}

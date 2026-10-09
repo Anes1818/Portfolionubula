@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "Failed preview offers an enabled retry",
+    "One failed optional asset does not block unrelated bouquets",
+    "Retry restores artwork without accidentally opening a different design",
+    "Recovered card opens its bouquet",
+    "Gallery buttons and previews have specific accessible names",
+    "Shared links reject fractional, zero, coerced and excessive quantities",
+    "Image and link retain the same snapshot while a design changes",
+    "Halloween detail controls display their unit prices",
+    "Florist sheet does not list wrapping removed by the customer",
+    "A shared design that cannot load has a visible retry control",
+    "Startup retry restores the original shared design",
+    "320px finishing controls fit and retain translated prices",
+    "Handled download failures produce no uncaught runtime errors"
+  ],
+  "errors": []
+}

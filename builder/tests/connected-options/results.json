@@ -1,0 +1,112 @@
+[
+  {
+    "id": "pink-promise",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "written-in-roses",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "always-you",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "scream-for-you",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "forever-my-boo",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "midnight-blooms",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "autumn-latte",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "october-cream",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "pumpkin-patch",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  },
+  {
+    "id": "harvest-sunshine",
+    "valid": true,
+    "shared": true,
+    "fits": true,
+    "kitty": true,
+    "thistles": 2,
+    "greenery": 2,
+    "rim": true,
+    "priced": true
+  }
+]

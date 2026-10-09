@@ -1,0 +1,423 @@
+{
+  "version": 6,
+  "mode": "dome",
+  "seed": 11,
+  "nextId": 31,
+  "items": [
+    {
+      "uid": "b1",
+      "id": "__berry",
+      "slot": 0,
+      "anchors": {
+        "dome": {
+          "x": 393.05533521106827,
+          "y": 386.6510177962444,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b2",
+      "id": "__berry",
+      "slot": 1,
+      "anchors": {
+        "dome": {
+          "x": 340.2735579475224,
+          "y": 412.44849388917515,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b3",
+      "id": "__berry",
+      "slot": 2,
+      "anchors": {
+        "dome": {
+          "x": 357.53524010459535,
+          "y": 355.84485943079954,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b4",
+      "id": "__berry",
+      "slot": 3,
+      "anchors": {
+        "dome": {
+          "x": 381.92550628071774,
+          "y": 431.55445274912694,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b5",
+      "id": "__berry",
+      "slot": 4,
+      "anchors": {
+        "dome": {
+          "x": 312.867467004557,
+          "y": 375.5050521635911,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b6",
+      "id": "__berry",
+      "slot": 5,
+      "anchors": {
+        "dome": {
+          "x": 416.0399190951413,
+          "y": 341.5900488691913,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b7",
+      "id": "__berry",
+      "slot": 6,
+      "anchors": {
+        "dome": {
+          "x": 348.75888706838623,
+          "y": 469.0771801437196,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b8",
+      "id": "__berry",
+      "slot": 7,
+      "anchors": {
+        "dome": {
+          "x": 326.04355608559763,
+          "y": 317.79962612310595,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b9",
+      "id": "__berry",
+      "slot": 8,
+      "anchors": {
+        "dome": {
+          "x": 433.22501655335935,
+          "y": 422.5500588449191,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b10",
+      "id": "__berry",
+      "slot": 9,
+      "anchors": {
+        "dome": {
+          "x": 283.88380392854305,
+          "y": 413.2157007050529,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b11",
+      "id": "__berry",
+      "slot": 10,
+      "anchors": {
+        "dome": {
+          "x": 380.67894045117947,
+          "y": 311.24342583658233,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b12",
+      "id": "__berry",
+      "slot": 11,
+      "anchors": {
+        "dome": {
+          "x": 402.80875949923615,
+          "y": 468.13330973685225,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b13",
+      "id": "__berry",
+      "slot": 12,
+      "anchors": {
+        "dome": {
+          "x": 282.8933049192217,
+          "y": 348.4622379790346,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b14",
+      "id": "__berry",
+      "slot": 13,
+      "anchors": {
+        "dome": {
+          "x": 446.7596539898972,
+          "y": 375.57288695854294,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b15",
+      "id": "__berry",
+      "slot": 14,
+      "anchors": {
+        "dome": {
+          "x": 305.6876168889993,
+          "y": 455.31484003427136,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b16",
+      "id": "__berry",
+      "slot": 15,
+      "anchors": {
+        "dome": {
+          "x": 359.79721271326133,
+          "y": 266.7113869307673,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b17",
+      "id": "__berry",
+      "slot": 16,
+      "anchors": {
+        "dome": {
+          "x": 463.20340407266826,
+          "y": 462.5114621656347,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b18",
+      "id": "__berry",
+      "slot": 17,
+      "anchors": {
+        "dome": {
+          "x": 237.42332996976137,
+          "y": 388.7599503178135,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b19",
+      "id": "__berry",
+      "slot": 18,
+      "anchors": {
+        "dome": {
+          "x": 450.6237891084144,
+          "y": 304.48000485305397,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b20",
+      "id": "__berry",
+      "slot": 19,
+      "anchors": {
+        "dome": {
+          "x": 370.30505700625906,
+          "y": 514.5413634967781,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b21",
+      "id": "__berry",
+      "slot": 20,
+      "anchors": {
+        "dome": {
+          "x": 270.52518630522724,
+          "y": 300.6765819290764,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b22",
+      "id": "__berry",
+      "slot": 21,
+      "anchors": {
+        "dome": {
+          "x": 486.05021529171023,
+          "y": 408.7686045448128,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b23",
+      "id": "__berry",
+      "slot": 22,
+      "anchors": {
+        "dome": {
+          "x": 268.324667071922,
+          "y": 479.9895649354414,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b24",
+      "id": "__berry",
+      "slot": 23,
+      "anchors": {
+        "dome": {
+          "x": 411.0498313084289,
+          "y": 272.4040450453723,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b25",
+      "id": "__berry",
+      "slot": 24,
+      "anchors": {
+        "dome": {
+          "x": 424.46781888488664,
+          "y": 503.39643546603514,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b26",
+      "id": "__berry",
+      "slot": 25,
+      "anchors": {
+        "dome": {
+          "x": 239.0486597831622,
+          "y": 343.06735660680283,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b27",
+      "id": "__berry",
+      "slot": 26,
+      "anchors": {
+        "dome": {
+          "x": 482.6334045831414,
+          "y": 348.3268799028427,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b28",
+      "id": "__berry",
+      "slot": 27,
+      "anchors": {
+        "dome": {
+          "x": 314.02522570392165,
+          "y": 509.6753328401817,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b29",
+      "id": "__berry",
+      "slot": 28,
+      "anchors": {
+        "dome": {
+          "x": 311.8561916160106,
+          "y": 271.6680990022902,
+          "manual": false
+        }
+      }
+    },
+    {
+      "uid": "b30",
+      "id": "__berry",
+      "slot": 29,
+      "anchors": {
+        "dome": {
+          "x": 240.89748918451505,
+          "y": 436.7300717838211,
+          "manual": false
+        }
+      }
+    }
+  ],
+  "frames": {
+    "dome": {
+      "mode": "dome",
+      "engine": "v2-fixed-slots",
+      "center": {
+        "x": 360,
+        "y": 390
+      },
+      "radius": 136.25606146412088,
+      "unit": 76.88568615832592,
+      "scale": 1,
+      "capacity": 30,
+      "rings": 0,
+      "top": 235.9571124674369,
+      "tip": 545.2956379601085,
+      "halfWidth": 164.49305837087317
+    }
+  },
+  "finishes": {
+    "paper": "ivory",
+    "tint": "#dcc8b7",
+    "ribbon": "none",
+    "sash": "none",
+    "sashText": "",
+    "sashPlacement": "auto",
+    "sashOffset": 0,
+    "sashScale": 1,
+    "collar": true,
+    "butterfly": 0,
+    "crown": false,
+    "greenRim": false
+  },
+  "title": "",
+  "note": "",
+  "template": {
+    "capacity": 30,
+    "palette": [
+      "__berry"
+    ],
+    "formation": "patches",
+    "accent": {
+      "id": "lily",
+      "count": 0,
+      "pattern": "cluster",
+      "angle": 340
+    },
+    "zones": {
+      "wall": "rose_red",
+      "fill": "rose_red",
+      "center": "rose_red",
+      "formation": "zones",
+      "doubleWall": false
+    },
+    "overrides": {}
+  }
+}

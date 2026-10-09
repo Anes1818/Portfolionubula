@@ -29,12 +29,20 @@ function encode(s,order){
   payload.a=s.items.map(it=>[Number(it.uid.slice(1)),it.anchors.classic.x,it.anchors.classic.y,it.anchors.classic.manual?1:0]);
   payload.g=s.frames.classic;
  }
- const fin={};for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
+ if(['organic','garden','halloween'].includes(s.template?.layout))payload.layout=s.template.layout;
+ if(s.template?.layout==='halloween')payload.hr=s.template.halloweenRecipe;
+ const fin={};for(const key of ['spookyMask','spookyBow','ghostCount','thistleCount'])if(f[key])fin[key]=f[key];for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(f[key]&&f[key]!=='none')fin[k]=f[key];
  /* The count, not a flag. This wrote 1 for any number of butterflies back when the
     finish was a single on/off, so a shared three-butterfly bouquet reopened with
     one. The crown was never written at all and vanished from every shared link. */
  if(f.butterfly)fin.b=Math.max(0,Math.min(9,f.butterfly|0))||1;
  if(f.crown)fin.k=1;
+ if(f.fillerCount)fin.fc=f.fillerCount;
+ if(f.fillerPattern==='border')fin.fp='border';
+ if(f.greeneryCount)fin.gc=f.greeneryCount;
+ if(f.initial){fin.il=f.initial;fin.is=f.initialScale;fin.io=f.initialOffset;}
+ if(f.decorations?.length)fin.dc=f.decorations.map(d=>[d.id,d.x,d.y,d.scale,d.rotation,d.layer]);
+ if(f.pumpkin){fin.q=1;fin.j=f.pumpkinPosition;fin.z=f.pumpkinScale;}if(f.bow)fin.d=1;
  if(f.greenRim)fin.g=1;if(f.tint&&f.paper==='custom')fin.c=f.tint;
  if(f.collar===false)fin.w=0;
  if(f.sashText)fin.t=f.sashText;
@@ -53,13 +61,14 @@ function encode(s,order){
 
 function decode(code){
  try{
+  if(typeof code!=='string'||code.length>24000)return null;
   const p=JSON.parse(unb64url(code));
-  if(!p||p.v!==6||!['classic','dome','heart'].includes(p.m)||!Array.isArray(p.f))return null;
+  if(!p||p.v!==6||!['classic','dome','heart'].includes(p.m)||!Array.isArray(p.f)||p.f.length>100)return null;
   const seq=[];
   for(const run of p.f){
-   if(!Array.isArray(run))return null;
+   if(!Array.isArray(run)||run.length!==2)return null;
    const id=run[0];if(id!=='-'&&!Object.hasOwn(CAT,id))return null;
-   const n=Math.min(Number(run[1])||0,200);
+   const n=run[1];if(!Number.isInteger(n)||n<1||n>100||seq.length+n>100)return null;
    for(let i=0;i<n;i++)seq.push(id==='-'?null:id);
   }
   if(!seq.length||seq.length>200||!seq.some(Boolean))return null;
@@ -73,14 +82,22 @@ function decode(code){
    M.resize(s,p.c);
    s.template.overrides={};
    seq.forEach((id,slot)=>{s.template.overrides[slot]=id;});
+   if(p.layout!==undefined){if(!['organic','garden','halloween'].includes(p.layout)||p.m!=='dome')return null;s.template.layout=p.layout;if(p.layout==='halloween'){s.template.halloweenRecipe=p.hr;if(!NebulaSpooky.validTemplate(s.template))return null;}}
    M.syncTemplate(s);
   }
-  const fin=p.fin||{};
+  const fin=p.fin||{};for(const key of ['spookyMask','spookyBow','ghostCount','thistleCount'])if(fin[key]!==undefined)s.finishes[key]=fin[key];
   for(const[k,key]of[['p','paper'],['r','ribbon'],['h','sash']])if(fin[k])s.finishes[key]=String(fin[k]);
   /* A link written before butterflies were counted carries b:1, which means the one
      butterfly it drew - the same thing it means now, so old links still open right. */
   s.finishes.butterfly=Number.isInteger(fin.b)?Math.max(0,Math.min(9,fin.b)):0;
   s.finishes.crown=fin.k===1;
+  if(fin.fc!==undefined)s.finishes.fillerCount=fin.fc;
+  for(const [short,key] of [['fp','fillerPattern'],['gc','greeneryCount'],['il','initial'],['is','initialScale'],['io','initialOffset']])if(fin[short]!==undefined)s.finishes[key]=fin[short];
+  if(fin.dc!==undefined){if(!Array.isArray(fin.dc)||fin.dc.some(a=>!Array.isArray(a)||a.length!==6))return null;
+   s.finishes.decorations=fin.dc.map(a=>({id:a[0],x:a[1],y:a[2],scale:a[3],rotation:a[4],layer:a[5]}));}
+  s.finishes.bow=fin.d===1;s.finishes.pumpkin=fin.q===1;
+  if(fin.j!==undefined)s.finishes.pumpkinPosition=fin.j;
+  if(fin.z!==undefined)s.finishes.pumpkinScale=fin.z;
   s.finishes.greenRim=fin.g===1;
   if(fin.c)s.finishes.tint=String(fin.c);
   if(fin.w===0)s.finishes.collar=false;

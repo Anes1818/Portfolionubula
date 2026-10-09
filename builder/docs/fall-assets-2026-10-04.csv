@@ -1,0 +1,29 @@
+id,priority,asset,variants,source_or_action,view,master_size,requirements,reference_files
+rose-ivory-semiopen,P0,Cream rose partly open,2,New coherent photos or generation,Round bouquet face angle A,1024x1024,One isolated complete head per file; restrained opening; alpha; soft upper-left light,photo_2 photo_3 photo_6
+mum-rust,P0,Rust orange autumn flower head,1,New photo or generation; exact variety confirmed later,Round bouquet face angle A,1024x1024,One complete head; visible center; alpha; no unrelated flowers,photo_1 photo_2 photo_5
+wrap-round-cocoa,P0,Chocolate brown folded round wrap master,1,New master then derive aligned layers,Match round bouquet angle A,2048x2048,Empty central opening; complete perimeter; no flowers or text; do not generate front/back separately,photo_1 photo_4 photo_5
+bow-front-cocoa,P0,Brown satin bow with tails,1,New photo or generation,Front attached to bouquet face,1024x1024,Complete tails; alpha; no lettering; no full bouquet,photo_4 photo_5
+band-cocoa-blank,P0,Brown blank satin message band,1,New photo or generation,Nearly frontal horizontal band,2048x512,Blank clear central span; no bow or text; alpha; internal folds only,photo_2 photo_4 photo_5
+plush-pumpkin,P0,Small pumpkin plush,1,Merchant product photo or approved generated study,Fixed frontal pose compatible with rim,1024x1024,Complete body; face unobscured; alpha; no hand or external floor shadow,photo_5
+sunflower-proof,REUSE,Existing sunflower,1,Existing artwork for geometry experiment,Existing supported view,Existing source,Measure opaque head not canvas; no claim of final view compatibility,photo_1 photo_4
+gerbera-proof,REUSE,Existing white gerbera,1,Existing artwork for geometry experiment,Existing supported view,Existing source,Preserve large head size; rephotograph only if needed,photo_3
+carnation-proof,REUSE,Existing white carnation,1,Inspect existing compact head,Existing supported view,Existing source,Validate crinkled silhouette and relative size,photo_1
+rose-caramel,P1,Caramel tan rose,2,New photos or generation,Round bouquet face angle A,1024x1024,Semiopen and more open in separate files; match ivory rose view and light,photo_3 photo_7
+mum-burgundy,P1,Burgundy autumn flower head,2,New photos or generation; species provisional,Round bouquet face angle A,1024x1024,Distinct petal geometry; not color-only duplicates,photo_2 photo_4 photo_5
+mum-ochre,P1,Golden yellow autumn flower head,2,New photos or generation; species provisional,Round bouquet face angle A,1024x1024,Compact and medium head; relative size recorded,photo_1 photo_4 photo_5
+large-head-variants,P1,Additional sunflower and gerbera heads,2,One additional variant each after camera validation,Round bouquet face angle A,1024x1024,Maintain identity and light; recorded size ratio,photo_1 photo_3 photo_4
+mini-daisy-sprig,P1,White flowers with yellow centers,2,New photos or generation; species unconfirmed,Face angle A with alternate lean,1024x1024,Coherent small sprigs; price unit confirmed by shop,photo_6
+white-berry-sprig,P1,White berry-like decorative sprig,1,Merchant identifies exact item,Face angle A,1024x1024,Connected twig and round berries; distinct from babys breath,photo_4
+babys-breath-optional,P1,Optional babys breath clusters,3,Compact alpha clusters if offered,Face angle A with alternate branching,1024x1024,Sparse medium and airy forms; unit is approved sprig or bunch,Earlier references
+wrap-round-kraft,P1,Tan brown layered wrap,1,New master then derive layers,Match round bouquet angle A,2048x2048,Empty opening; full folds and edges; confirm material name,photo_2 photo_6
+plush-snoopy,P1,Snoopy plush product,1,Merchant-supplied or approved product asset,Fixed frontal pose for top rim,1024x1024,Complete visible body; face protection and base anchor; no screenshot chrome,photo_4
+plush-kitty-pumpkin,P1,Hello Kitty seasonal plush product,1,Merchant-supplied or approved product asset,Fixed frontal pose for side rim,1024x1024,Complete body; attachment point; library lighting; no unseen-side promise,photo_2
+topper-snoopy,P1,Printed seasonal Snoopy topper,1,Merchant-supplied approved print artwork,Frontal flat,1024x1024,Clean alpha silhouette; different object class from plush,photo_6
+decor-pumpkin,P1,Dimensional decorative pumpkins,2,Product photo or generation; merchant confirms material,Face angle A,1024x1024,Orange and muted rust variants; clear base; no external shadow,photo_2
+band-ivory-orange,P1,Blank ivory and orange satin bands,2,Match P0 band geometry,Nearly frontal horizontal band,2048x512,One file per color; no text; same writing zone,photo_3 photo_6
+bow-pearl-orange,P1,Ivory pearl-edged and orange bows,2,New photos or generation,Front attached to bouquet face,1024x1024,Complete tails; one file each; pearls part of bow unless separately editable,photo_3 photo_6
+wrap-handtied-taupe,P2,Taupe and cocoa hand-tied wrap,1,New master and aligned masks,Oblique presentation B defined after pilot,2048x2048,Visible waist and front lip; empty opening; cannot reuse camera A blindly,photo_7
+rose-oblique,P2,Upright partly open roses with neck,3,Cream peach caramel after camera B is fixed,Oblique presentation B,1024x1536,Connected head and neck; aligned layer extraction by developer,photo_7
+sprig-tall-oblique,P2,Tall pale flowering sprig,2,Shop confirms type then photograph or generate,Oblique presentation B,1024x1536,Complete branching; footprint and height separate,photo_7
+ribbon-handle-plaid,P2,Long plaid ribbon bow for handle,1,New photo or generation,Oblique presentation B,1024x1536,Complete hanging tails; distinct from sash bow,photo_7
+back-message-card,P2,Blank tall card or panel,1,Simple code shape or supplied material photo,Oblique presentation B,1024x1024,Editable text; behind bouquet; no baked message,photo_7
