@@ -97,7 +97,10 @@ function fillChoices(el,current,{empty=false,classic=false}={}){
 function showGallery(on){
  if(editFocus)commitTextEdit();if(on&&focusPreview)setFocusPreview(false);
  document.body.classList.toggle('gallery-open',on);document.documentElement.classList.toggle('gallery-open',on);$('templateGallery').hidden=!on;$('main').hidden=on;
- $('resumeBuilder').hidden=!isReady;$('browseTemplates').hidden=on;
+ $('resumeBuilder').hidden=!isReady;
+ const browse=$('browseTemplates');browse.hidden=false;browse.disabled=!isReady;
+ browse.dataset.i18n=on?'backToBouquet':'browseTemplates';browse.textContent=t(browse.dataset.i18n);
+ browse.setAttribute('aria-controls',on?'main':'templateGallery');
  if(on){renderGallery();renderSavedBouquets();}else{fitPhoneCanvas();scheduleCanvas();}
 }
 function renderSavedBouquets(){
@@ -629,7 +632,11 @@ for(const [id,key,factor] of [['sashOffset','sashOffset',1]]){
  input.onchange=()=>{if(before!==null)storeHistory(before);before=null;render();};
  input.onblur=()=>{if(before!==null){storeHistory(before);before=null;persist();}};
 }
-$('browseTemplates').onclick=()=>showGallery(true);
+$('browseTemplates').onclick=()=>{
+ const on=$('templateGallery').hidden;showGallery(on);
+ if(on){window.scrollTo(0,0);$('galleryTitle').focus({preventScroll:true});}
+ else $('bouquet').focus({preventScroll:true});
+};
  $('resumeBuilder').onclick=()=>showGallery(false);$('openClassicBuilder').onclick=()=>showGallery(false);
  $('pumpkin').onchange=()=>change(()=>{st.finishes.pumpkin=$('pumpkin').checked;});
  $('cocoaBow').onchange=()=>change(()=>{st.finishes.bow=$('cocoaBow').checked;});

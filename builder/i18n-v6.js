@@ -299,3 +299,6 @@ Object.assign(NebulaI18n.es,{autumnDetails:'Flores y detalles personales',hallow
 
 Object.assign(NebulaI18n.en,{greeneryAndFiller:'Greenery & filler',spookyTint:'Black and cocoa use original wrapper photos. Other tones are digital color previews; confirm availability with your florist.'});
 Object.assign(NebulaI18n.es,{greeneryAndFiller:'Follaje y relleno',spookyTint:'Negro y cacao usan fotos originales de envoltura. Los otros tonos son vistas digitales; confirma su disponibilidad.'});
+
+Object.assign(NebulaI18n.en,{browseTemplates:'Catalog',backToBouquet:'My bouquet'});
+Object.assign(NebulaI18n.es,{browseTemplates:'Catálogo',backToBouquet:'Mi ramo'});
