@@ -175,6 +175,15 @@ function finishNodes(s,f,nodes){
  if(s.mode==='dome'&&a.pumpkin){const side=({left:-1,center:0,right:1})[a.pumpkinPosition]||0;add('pumpkin','plush_pumpkin',f.center.x+side*f.radius*.64,f.center.y-f.radius*.78,f.unit*2.05*(a.pumpkinScale||1),side*.07);list[list.length-1].tucked=true;}
  if(a.crown)add('crown','extra_crown_gold',360,classic?f.rimY-118:f.center.y-f.radius*.86,classic?230:f.radius*1.05,0);
  if(g.NebulaSpooky)list.push(...NebulaSpooky.finishes(s,f));
+ const mask=s.mode==='dome'&&a.spookyMask?list.find(n=>n.url===NEBULA_META.finishes['scream-mask'].url):null;
+ const sash=list.find(n=>n.uid==='sash');
+ if(mask&&sash){
+  // Keep even diagonal bands clear of the whole face. Preserve the user's
+  // position setting; switching the mask off returns the sash to that setting.
+  const halfHeight=Math.abs(Math.sin(sash.rot))*sash.w/2+Math.abs(Math.cos(sash.rot))*sash.h/2;
+  const delta=Math.max(0,mask.y+mask.h/2+8+halfHeight-sash.y);
+  sash.y+=delta;const bow=list.find(n=>n.uid==='bow');if(bow)bow.y+=delta;
+ }
  const initial=NebulaRomance.initialNode(s,f);return list.concat(NebulaDetails.nodes(s,f),initial?[initial]:[]);
 }
 function scene(s){const sc=G.nodes(s);sc.finishes=finishNodes(s,sc.frame,sc.nodes);sc.collar=collarNode(s,sc.frame);sc.filler=g.NebulaSpooky?NebulaSpooky.filler(s,sc.frame,sc.nodes):NebulaDetails.filler(s,sc.frame,sc.nodes);sc.greenery=NebulaRomance.greenery(s,sc.frame,sc.nodes);return sc;}

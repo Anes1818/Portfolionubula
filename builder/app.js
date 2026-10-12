@@ -223,6 +223,8 @@ function render(save=true){
  $('wrapHeading').textContent=t(top?'blackCollar':'ivoryPaper');$('wrapCopy').textContent=t(top?'collarDescription':'wrapDescription');$('wrapEyebrow').textContent=t(top?'realPaper':'oneOriginal');
  $('wrapPreview').src=R.source(top?NEBULA_META.collars[st.mode].url:(NEBULA_META.wraps?.[st.finishes.paper]||NEBULA_META.wrap).back);$('wrapPreview').alt=t(top?'blackCollar':'wrapAlt');$('customTintLabel').hidden=st.finishes.paper!=='custom';$('customTint').value=st.finishes.tint;
  $('sash').value=st.finishes.sash;$('sashSettings').hidden=st.finishes.sash==='none';$('sashTextRow').hidden=!String(st.finishes.sash||'').startsWith('blank_');if(document.activeElement!==$('sashText'))$('sashText').value=st.finishes.sashText||'';$('sashPosition').value=st.finishes.sashPlacement||'auto';$('sashOffset').value=st.finishes.sashOffset||0;
+ const sashHint=$('sashSettings').querySelector('[data-i18n="sashLogic"]');sashHint.id='sashPlacementHint';sashHint.textContent=t(st.mode==='dome'&&st.finishes.spookyMask?'sashMaskLogic':'sashLogic');
+ for(const id of ['sashPosition','sashOffset'])$(id).setAttribute('aria-describedby',sashHint.id);
  $('ribbonBlock').hidden=st.mode!=='classic';
  $('autumnFinishes').hidden=st.mode!=='dome';$('pumpkin').checked=!!st.finishes.pumpkin;$('pumpkinSettings').hidden=!st.finishes.pumpkin;$('pumpkinPosition').value=st.finishes.pumpkinPosition;$('pumpkinScale').value=st.finishes.pumpkinScale;
  renderDetails();

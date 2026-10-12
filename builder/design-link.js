@@ -1,9 +1,9 @@
 /* Design links — shared by the studio (app.js) and the florist's order sheet (order.js).
 
-   A bouquet travels as a short code in the URL: no server, no database, no image
-   hosting. The recipe is encoded, not the pixel layout. Flowers are run-length coded
-   in slot order, which keeps an 84-slot dome under ~200 characters and survives being
-   pasted into WhatsApp.
+   A bouquet travels as a self-contained recipe in the URL: no server, database or
+   image hosting. Version 7 uses compact fields and optional flower dictionaries;
+   bounded LZ packing is used only when smaller. Legacy v6 links remain readable.
+   Length depends on the arrangement, finishes and optional order details.
 
    Dome and Heart keep their design in template.overrides, so the sequence has to be
    read and written per slot — an item list alone loses both the pattern and the gaps. */
@@ -13,6 +13,38 @@ const M=g.NebulaModel,{CAT}=g.NebulaConfig;
 
 function b64url(str){return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function unb64url(code){return decodeURIComponent(escape(atob(code.replace(/-/g,'+').replace(/_/g,'/'))));}
+
+/* z1: bounded, synchronous LZ packing. Links remain self-contained and work on
+   another phone without cookies, a database or a third-party shortening service.
+   Groups of eight tokens use one flag byte; matches store distance + length.
+   The version prefix leaves existing base64 JSON links fully readable. */
+function pack(text){
+ const bytes=new TextEncoder().encode(text),out=[],seen=new Map();
+ const key=i=>i+2<bytes.length?(bytes[i]<<16)|(bytes[i+1]<<8)|bytes[i+2]:-1;
+ const remember=i=>{const k=key(i);if(k<0)return;const a=seen.get(k)||[];a.push(i);if(a.length>48)a.shift();seen.set(k,a);};
+ for(let i=0;i<bytes.length;){
+  const flagsAt=out.length;out.push(0);
+  for(let bit=0;bit<8&&i<bytes.length;bit++){
+   let length=0,distance=0;const matches=seen.get(key(i))||[];
+   for(let j=matches.length-1;j>=0;j--){const start=matches[j],delta=i-start;if(delta>65535)break;let n=0;while(n<258&&i+n<bytes.length&&bytes[start+n]===bytes[i+n])n++;if(n>length){length=n;distance=delta;}if(n===258)break;}
+   if(length>=4){out[flagsAt]|=1<<bit;out.push(distance>>8,distance&255,length-3);for(let n=0;n<length;n++)remember(i+n);i+=length;}
+   else{out.push(bytes[i]);remember(i++);}
+  }
+ }
+ let binary='';for(const n of out)binary+=String.fromCharCode(n);
+ return 'z1_'+btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function unpack(code){
+ const bytes=atob(code.slice(3).replace(/-/g,'+').replace(/_/g,'/')),out=[];
+ for(let i=0;i<bytes.length;){const flags=bytes.charCodeAt(i++);if(i===bytes.length)throw Error('Truncated link');
+  for(let bit=0;bit<8&&i<bytes.length;bit++){
+   if(flags&(1<<bit)){if(i+3>bytes.length)throw Error('Truncated match');const distance=(bytes.charCodeAt(i++)<<8)|bytes.charCodeAt(i++),n=bytes.charCodeAt(i++)+3;if(!distance||distance>out.length||out.length+n>64000)throw Error('Invalid match');for(let j=0;j<n;j++)out.push(out[out.length-distance]);}
+   else out.push(bytes.charCodeAt(i++));
+   if(out.length>64000)throw Error('Link too large');
+  }
+ }
+ return new TextDecoder('utf-8',{fatal:true}).decode(new Uint8Array(out));
+}
 
 /* order: optional {ref,name,phone,date,method,pay,note} written by the studio checkout. */
 function encode(s,order){
@@ -56,14 +88,39 @@ function encode(s,order){
   for(const[k,v]of Object.entries(order))if(v)o[k]=String(v).slice(0,120);
   if(Object.keys(o).length)payload.o=o;
  }
- return b64url(JSON.stringify(payload));
+ const legacy=b64url(JSON.stringify(payload)),choices=[legacy,pack(JSON.stringify(payload))];
+ // v7 removes repeated field names; the decoder expands back to the validated
+ // v6 recipe. Per-link flower and order dictionaries remain self-describing.
+ const rest={};for(const [from,to] of [['c','c'],['fin','f'],['t','t'],['n','n'],['layout','l'],['hr','h'],['a','a'],['g','g']])if(payload[from]!==undefined)rest[to]=payload[from];
+ if(payload.o){const keys=['ref','name','phone','date','method','pay','note'];rest.o=Object.entries(payload.o).map(([k,v])=>[keys.includes(k)?keys.indexOf(k):k,v]);}
+ const compact=[7,['classic','dome','heart'].indexOf(payload.m),payload.s,payload.f,rest];
+ for(const dictionary of [false,true]){
+  if(dictionary){rest.i=[...new Set(payload.f.map(run=>run[0]))];compact[3]=payload.f.map(([id,n])=>[rest.i.indexOf(id),n]);}
+  const json=JSON.stringify(compact);choices.push(b64url(json),pack(json));
+ }
+ return choices.reduce((best,code)=>code.length<best.length?code:best);
 }
 
 function decode(code){
  try{
   if(typeof code!=='string'||code.length>24000)return null;
-  const p=JSON.parse(unb64url(code));
+  let p=JSON.parse(code.startsWith('z1_')?unpack(code):unb64url(code));
+  if(Array.isArray(p)){
+   if(p.length!==5||p[0]!==7||!Number.isInteger(p[1])||p[1]<0||p[1]>2||!p[4]||typeof p[4]!=='object'||Array.isArray(p[4]))return null;
+   const rest=p[4],expanded={v:6,m:['classic','dome','heart'][p[1]],s:p[2],f:p[3]};
+   for(const [from,to] of [['c','c'],['f','fin'],['t','t'],['n','n'],['l','layout'],['h','hr'],['a','a'],['g','g'],['i','i']])if(rest[from]!==undefined)expanded[to]=rest[from];
+   if(rest.o!==undefined){
+    if(!Array.isArray(rest.o)||rest.o.length>20)return null;
+    const keys=['ref','name','phone','date','method','pay','note'];expanded.o={};
+    for(const entry of rest.o){if(!Array.isArray(entry)||entry.length!==2||typeof entry[1]!=='string')return null;const key=typeof entry[0]==='number'?keys[entry[0]]:entry[0];if(typeof key!=='string'||['__proto__','constructor','prototype'].includes(key))return null;expanded.o[key]=entry[1];}
+   }
+   p=expanded;
+  }
   if(!p||p.v!==6||!['classic','dome','heart'].includes(p.m)||!Array.isArray(p.f)||p.f.length>100)return null;
+  if(p.i!==undefined){
+   if(!Array.isArray(p.i)||!p.i.length||p.i.length>100||p.i.some(id=>id!=='-'&&!Object.hasOwn(CAT,id)))return null;
+   p.f=p.f.map(run=>{if(!Array.isArray(run)||run.length!==2||!Number.isInteger(run[0])||run[0]<0||run[0]>=p.i.length)throw Error('Invalid flower index');return [p.i[run[0]],run[1]];});
+  }
   const seq=[];
   for(const run of p.f){
    if(!Array.isArray(run)||run.length!==2)return null;

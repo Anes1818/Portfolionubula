@@ -2,6 +2,12 @@
 
 The app itself needs no tooling. Open `index.html` or deploy the complete folder.
 
+- `check-shop.cjs`: read-only price and merchant configuration check, including
+  seasonal flowers and extras. From the repository root run
+  `node builder/tools/check-shop.cjs`; use `--live` when preparing a shop version
+  and `--json` for a structured report. Uses Node's built-in modules only. It
+  checks configuration, not physical-device operation or approval of prices.
+
 - `bundle-assets.py`: rebuild and validate the embedded RGBA WebP bundle after changing runtime assets. Run `python3 tools/bundle-assets.py` from the project folder. Without rebuilding, the offline bundle can still display old artwork.
 
   For a focused asset update, use `--update` followed by the relative asset paths.

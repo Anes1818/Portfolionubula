@@ -3,6 +3,28 @@
 Edit **shop-config.js** with a text editor. It is a public website file: never
 put passwords, API keys or other secrets in it.
 
+The file now lists all 40 flowers/materials and all 15 priced extras, including
+seasonal flowers, toys, the mask, filler and initials. Zero means included at no
+extra charge; it is still a price the shop should review. Eucalyptus is priced
+per sprig and is used for both interior greenery and the greenery collar.
+
+From the project root, check the configuration with:
+
+```sh
+node builder/tools/check-shop.cjs
+```
+
+This read-only check detects missing prices, invalid amounts, misspelled price
+keys and incomplete contact settings, then lists estimates for all ten bouquets.
+It loads the actual runtime catalogue, so new catalogue entries cannot silently
+escape the check. No packages or browser are required. It does not change any
+settings or establish that the shop has approved them.
+
+After entering the shop's approved identity and prices and setting `demo: false`,
+run `node builder/tools/check-shop.cjs --live`. That mode also reports if demo mode
+is still enabled. Add `--json` for a machine-readable report. When already inside
+the builder folder, omit `builder/` from these commands.
+
 ## Before customer use
 
 1. Set `name` to the real shop name.

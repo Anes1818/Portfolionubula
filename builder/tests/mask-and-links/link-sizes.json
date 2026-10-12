@@ -1,0 +1,62 @@
+[
+  {
+    "recipe": "pink-promise",
+    "before": 372,
+    "after": 308,
+    "reduction": "17%"
+  },
+  {
+    "recipe": "written-in-roses",
+    "before": 396,
+    "after": 332,
+    "reduction": "16%"
+  },
+  {
+    "recipe": "always-you",
+    "before": 375,
+    "after": 311,
+    "reduction": "17%"
+  },
+  {
+    "recipe": "scream-for-you",
+    "before": 451,
+    "after": 386,
+    "reduction": "14%"
+  },
+  {
+    "recipe": "forever-my-boo",
+    "before": 1048,
+    "after": 469,
+    "reduction": "55%"
+  },
+  {
+    "recipe": "midnight-blooms",
+    "before": 484,
+    "after": 419,
+    "reduction": "13%"
+  },
+  {
+    "recipe": "autumn-latte",
+    "before": 1002,
+    "after": 531,
+    "reduction": "47%"
+  },
+  {
+    "recipe": "october-cream",
+    "before": 487,
+    "after": 423,
+    "reduction": "13%"
+  },
+  {
+    "recipe": "pumpkin-patch",
+    "before": 740,
+    "after": 485,
+    "reduction": "34%"
+  },
+  {
+    "recipe": "harvest-sunshine",
+    "before": 746,
+    "after": 490,
+    "reduction": "34%"
+  }
+]

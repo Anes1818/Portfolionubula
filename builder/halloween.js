@@ -67,6 +67,35 @@ function filler(s,f,flowers){
  const frame=active(s)?f:{...f,unit:f.radius/3.35};
  return out.concat(points.slice(0,s.finishes.thistleCount).map(n=>artNode('blue-thistle',{...n,w:n.d,h:n.d},frame)));
 }
+/* Reserve real space for a mask in every Dome, without removing paid stems.
+   Work on fresh scene nodes only: removing the mask restores the original layout. */
+function reserveMask(s,scene){
+ if(s.mode!=='dome'||!s.finishes.spookyMask)return scene;
+ const mask=finishes(s,scene.frame).find(n=>n.uid==='scream-mask'||n.url===meta.finishes['scream-mask'].url);
+ if(!mask)return scene;
+ const blooms=scene.nodes.filter(n=>s.items.some(it=>it.uid===n.uid));
+ const home=blooms.map(n=>({x:n.x,y:n.y}));
+ const project=(n,i)=>{
+  // A padded ellipse protects both the mask and the centre of each flower.
+  const rx=mask.w*.5+n.w*.42+6,ry=mask.h*.5+n.h*.42+6;
+  let dx=n.x-mask.x,dy=n.y-mask.y,r=Math.hypot(dx/rx,dy/ry);
+  if(r<1){if(r<.01){const a=i*2.399963229728653;dx=Math.cos(a)*rx;dy=Math.sin(a)*ry;r=1;}n.x=mask.x+dx/r;n.y=mask.y+dy/r;}
+ };
+ for(let pass=0;pass<120;pass++){
+  for(let i=0;i<blooms.length;i++){
+   const a=blooms[i];a.x+=(home[i].x-a.x)*.025;a.y+=(home[i].y-a.y)*.025;
+   for(let j=0;j<i;j++){
+    const b=blooms[j];let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+    if(d<.001){dx=Math.cos(i*2.4);dy=Math.sin(i*2.4);d=1;}
+    const gap=(Math.min(a.w,a.h)+Math.min(b.w,b.h))*.32;
+    if(d<gap){const k=(gap-d)*.35/d;a.x+=dx*k;a.y+=dy*k;b.x-=dx*k;b.y-=dy*k;}
+   }
+  }
+  blooms.forEach(project);
+ }
+ for(const n of blooms){const slot=scene.slots?.find(p=>p.slot===n.slot);if(slot){slot.x=n.x;slot.y=n.y;}}
+ return scene;
+}
 function extras(s){if(s.mode!=='dome')return [];return Object.keys(extraKeys).filter(k=>s.finishes[k]).map(id=>({id,quantity:Number(s.finishes[id]),totalCents:Number(s.finishes[id])*CONFIG.extrasCents[id]}));}
 function validFinishes(s){const f=s.finishes;if(s.mode!=='dome')return !Object.keys(extraKeys).some(k=>f[k]);return (!active(s)||papers.includes(f.paper))&&(!f.ghostCount||f.collar);}
 function create(id){const recipe=recipes.find(r=>r.id===id);if(!recipe)throw Error('Unknown Halloween recipe');const M=g.NebulaModel,s=M.defaultMode('dome'),p=H.build(id);M.resize(s,recipe.count);Object.assign(s.template,{layout:'halloween',halloweenRecipe:id,palette:['rose_red'],overrides:Object.fromEntries(p.flowers.map((n,i)=>[i,n.id]))});s.template.accent.count=0;
@@ -74,5 +103,5 @@ function create(id){const recipe=recipes.find(r=>r.id===id);if(!recipe)throw Err
 const assets=Object.keys(artwork).map(n=>root+n+'.webp').concat(root+'ghost-decal.svg');
 function assetsFor(s){const f=s.finishes,urls=[];for(const [key,art] of [['spookyMask','scream-mask'],['spookyBow','black-bow-tails'],['ghostCount','ghost_decal'],['thistleCount','blue-thistle']])if(f[key])urls.push(meta.finishes[art].url);return urls;}
 const assetsReady=location.protocol==='file:'?new Promise((resolve,reject)=>{const el=document.createElement('script');el.src='halloween-embedded.js';el.onload=resolve;el.onerror=reject;document.head.append(el);}):Promise.resolve();
-g.NebulaSpooky={active,recipes,create,plan,layout,nodes,collar,finishes,filler,extras,allowed,catalogue,papers,recolorRoses,validTemplate,validFinishes,assets,assetsFor,assetsReady};
+g.NebulaSpooky={active,recipes,create,plan,layout,nodes,collar,finishes,filler,extras,allowed,catalogue,papers,recolorRoses,validTemplate,validFinishes,assets,assetsFor,assetsReady,reserveMask};
 })(window);
