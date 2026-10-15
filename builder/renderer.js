@@ -15,10 +15,10 @@ const source=path=>(g.NEBULA_EMBED&&g.NEBULA_EMBED[path])||path;
    Lazy artwork decoding.
    Decoding all 93 embedded images before first paint costs ~29.6 megapixels and
    ~113 MB of bitmap memory, while the opening screen needs about eight of them.
-   So: decode the small critical set up front, hand the rest to an idle queue, and
+   So: decode the selected design up front, request other artwork on demand, and
    let a frame skip anything still in flight - a repaint follows the moment it lands.
    Export is the exception: a PNG must never be missing a bloom, so blob()/
-   exportCanvas() await every asset their design uses before drawing.
+   awaitAssets() await every asset their design uses before drawing.
    --------------------------------------------------------------------------- */
 let onAssetReady=null,repaintQueued=false;
 function announce(){if(repaintQueued||!onAssetReady)return;repaintQueued=true;requestAnimationFrame(()=>{repaintQueued=false;if(onAssetReady)onAssetReady();});}
@@ -71,7 +71,6 @@ function image(path){
 const thumbnailCache=new Map();
 function thumbnail(path){const crop=NEBULA_META.crops?.[path];if(!crop)return source(path);if(thumbnailCache.has(path))return thumbnailCache.get(path);const im=decoded(path);if(!im)return source(path);const w=160,h=160*crop[3]/crop[2],cv=makeCanvas(w,h);drawAsset(cv.getContext('2d'),im,path,0,0,cv.width,cv.height);const url=cv.toDataURL('image/png');thumbnailCache.set(path,url);return url;}
 function wrapAssets(){const u=[NEBULA_META.wrap.back,NEBULA_META.wrap.front,BRAND_LOGO];for(const v of Object.values(NEBULA_META.wraps||{})){u.push(v.back,v.front);}return u;}
-function allAssets(){const urls=new Set(wrapAssets());for(const v of Object.values(NEBULA_META.flowers)){urls.add(v.head);for(const h of v.heads||[])urls.add(h);for(const h of [...(v.domeHeads||[]),...(v.domeEdgeHeads||[]),...(v.romanceHeads||[])])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);for(const b of v.classicBlooms||[])urls.add(b);if(v.classicStem)urls.add(v.classicStem);}}for(const v of Object.values(NEBULA_META.finishes))urls.add(v.url);for(const v of Object.values(NEBULA_META.collars))urls.add(v.url);return urls;}
 /* Everything a single design can draw: wrap, its collar, finishes and its own flowers. */
 function assetsFor(s){
  const urls=new Set(wrapAssets());
@@ -94,25 +93,17 @@ function assetsFor(s){
  for(const id of ids){const v=NEBULA_META.flowers[id];if(!v)continue;urls.add(v.head);for(const h of v.heads||[])urls.add(h);for(const h of [...(v.domeHeads||[]),...(v.domeEdgeHeads||[]),...(v.romanceHeads||[])])urls.add(h);if(v.classicAvailable){urls.add(v.classicBloom);for(const b of v.classicBlooms||[])urls.add(b);if(v.classicStem)urls.add(v.classicStem);}}
  return urls;
 }
-function warmRest(){
- const rest=[...allAssets()].filter(p=>!cache.has(p));let i=0;
- const idle=g.requestIdleCallback||(fn=>setTimeout(()=>fn({timeRemaining:()=>8}),80));
- (function step(deadline){
-  while(i<rest.length&&(!deadline||deadline.timeRemaining()>3))load(rest[i++]).catch(()=>{});
-  if(i<rest.length)idle(step);
- })( {timeRemaining:()=>0} );
-}
-/* Awaits only the critical set, then fills the cache in the background. */
+/* Await the selected design only; no eager background load of the whole library. */
 async function ready(designs){
- await Promise.all([g.NebulaFall?.assetsReady,g.NebulaRomance?.assetsReady,g.NebulaSpooky?.assetsReady]);
+ await Promise.all([g.NEBULA_EMBED_READY,g.NebulaFall?.assetsReady,g.NebulaRomance?.assetsReady,g.NebulaSpooky?.assetsReady]);
  const urls=new Set();
  for(const s of [].concat(designs||[]))for(const p of assetsFor(s))urls.add(p);
  if(!urls.size)for(const p of assetsFor(null))urls.add(p);
  await Promise.all([...urls].map(load));
- warmRest();
+ // Unused artwork stays unloaded. image() requests it when an edit needs it.
  return true;
 }
-async function awaitAssets(s){await Promise.all([g.NebulaFall?.assetsReady,g.NebulaRomance?.assetsReady,g.NebulaSpooky?.assetsReady]);await Promise.all([...assetsFor(s)].map(load));}
+async function awaitAssets(s){await Promise.all([g.NEBULA_EMBED_READY,g.NebulaFall?.assetsReady,g.NebulaRomance?.assetsReady,g.NebulaSpooky?.assetsReady]);await Promise.all([...assetsFor(s)].map(load));}
 function tint(path,paper,color){
  if(path===NEBULA_META.collars.domeCocoa?.url)return image(path);
  if(path===NEBULA_META.collars.domeIvory?.url&&paper==='ivory')return image(path);

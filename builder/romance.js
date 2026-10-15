@@ -65,6 +65,6 @@ function initialNode(s,f){
  const h=f.radius*1.65*a.initialScale;
  return {uid:'floral-initial',url:'initial '+a.initial,x:f.center.x,y:f.center.y+a.initialOffset*f.radius,w:h*320/360,h,d:h,rot:0,bright:1,z:600};
 }
-const assetsReady=location.protocol==='file:'?new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='romance-embedded.js';script.onload=resolve;script.onerror=()=>reject(new Error('Romantic artwork bundle unavailable'));document.head.append(script);}):Promise.resolve();
+const assetsReady=location.protocol==='file:'?Promise.resolve(g.NEBULA_EMBED_READY).then(()=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='romance-embedded.js';script.onload=resolve;script.onerror=()=>reject(new Error('Romantic artwork bundle unavailable'));document.head.append(script);})):Promise.resolve();
 g.NebulaRomance={recipes,create,greenery,initialCanvas,initialNode,assetsReady};
 })(window);

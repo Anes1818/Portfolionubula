@@ -102,6 +102,6 @@ function create(id){const recipe=recipes.find(r=>r.id===id);if(!recipe)throw Err
  Object.assign(s.finishes,{paper:'black',sash:id==='forever-my-boo'?'blank_blackband':'none',sashText:id==='forever-my-boo'?'FOREVER MY BOO':'',spookyMask:id==='scream-for-you',spookyBow:id==='scream-for-you',ghostCount:id==='forever-my-boo'?6:0,thistleCount:id==='midnight-blooms'?3:0,fillerCount:id==='scream-for-you'?6:0});s.title=recipe.en;M.syncTemplate(s);return s;}
 const assets=Object.keys(artwork).map(n=>root+n+'.webp').concat(root+'ghost-decal.svg');
 function assetsFor(s){const f=s.finishes,urls=[];for(const [key,art] of [['spookyMask','scream-mask'],['spookyBow','black-bow-tails'],['ghostCount','ghost_decal'],['thistleCount','blue-thistle']])if(f[key])urls.push(meta.finishes[art].url);return urls;}
-const assetsReady=location.protocol==='file:'?new Promise((resolve,reject)=>{const el=document.createElement('script');el.src='halloween-embedded.js';el.onload=resolve;el.onerror=reject;document.head.append(el);}):Promise.resolve();
+const assetsReady=location.protocol==='file:'?Promise.resolve(g.NEBULA_EMBED_READY).then(()=>new Promise((resolve,reject)=>{const el=document.createElement('script');el.src='halloween-embedded.js';el.onload=resolve;el.onerror=reject;document.head.append(el);})):Promise.resolve();
 g.NebulaSpooky={active,recipes,create,plan,layout,nodes,collar,finishes,filler,extras,allowed,catalogue,papers,recolorRoses,validTemplate,validFinishes,assets,assetsFor,assetsReady,reserveMask};
 })(window);

@@ -10,7 +10,7 @@ commit, and send them away with a picture that carries the shop's name.
 
 ## Open it
 
-The entry screen offers ten templates: three **For Love**, three **Spooky
+The lightweight catalog (`index.html`) offers ten templates: three **For Love**, three **Spooky
 Bouquets**, and four **Autumn** designs. Scream for You, Forever My Boo and
 Midnight Blooms use supplied photographic cutouts with fixed flower positions,
 counted extras and editable finishes. See [Halloween logic](docs/HALLOWEEN-LAYOUT.md).
@@ -26,7 +26,7 @@ Autumn Latte adds
 caramel roses, burgundy chrysanthemums, scattered baby’s breath and Snoopy.
 The Dome Finishing tab has movable Snoopy/Hello Kitty plushes and a pumpkin
 topper, with size, rotation and layering controls. All fourteen supplied autumn
-assets preserve their transparency. Template selection opens the existing builder.
+assets preserve their transparency. Template selection opens the separate `studio.html` editor.
 See [the autumn implementation notes](docs/FALL-IMPLEMENTATION-2026-10-05.md)
 for scope, asset provenance, demo prices and validation.
 
@@ -93,7 +93,10 @@ every exported picture, so a shared bouquet leads back to the shop.
 
 ## Files
 
-- `index.html`, `app.css`, `app.js` — UI and interactions
+- `index.html`, `catalog.css`, `catalog.js`, `catalog-data.js` — lightweight browsing, filters and local saved-copy links
+- `studio.html`, `app.css`, `app.js` — the separate editing studio
+- `catalog-route.js` — redirects older shared design links to the studio
+- `embedded-loader.js` — loads the embedded artwork fallback only for local-file sessions
 - `shop-config.js` — the single shop-owner settings file (prices, studio details)
 - `template-engine.js`, `dome-engine-v2.js` — fixed geometry and v2 recipe helpers
 - `model.js`, `geometry.js`, `renderer.js` — state, pricing, envelope and drawing
@@ -104,7 +107,7 @@ every exported picture, so a shared bouquet leads back to the shop.
 
 ## Honest limits
 
-The original `index.html` studio is a photographed 2D preview, not a 3D floral simulator or a certified
+The `studio.html` editor is a photographed 2D preview, not a 3D floral simulator or a certified
 assembly recipe. Natural petal overlap remains. Digital paper tints are colour
 studies of the one photographed ivory wrap, not proof of a stocked material.
 Sash lettering is baked into the supplied artwork and is English only.
@@ -127,15 +130,18 @@ rose recoloring, five paper tones, recipe extras and personal messages. See
 `docs/HALLOWEEN-LAYOUT.md` for exact fit, recoloring and paper-rendering rules.
 
 Saved bouquets: keep up to 20 named design copies in this browser. Open them from
-Templates, then edit and save a new copy. Download editable designs for backups;
-local copies do not sync between devices. The demo includes a florist walkthrough,
-and Review request prepares the existing WhatsApp handoff. Evaluation notes:
+the catalog, then edit and save a new copy. Download editable designs for backups;
+local copies do not sync between devices. Review request prepares the existing
+WhatsApp handoff. Evaluation notes:
 `docs/FLORIST-WALKTHROUGH-2026-10-08.md`.
 
-The collection screen renders all ten actual recipes at 1080 × 1240. Select View
-bouquet to inspect its ingredients and estimate, then open that exact design.
-For Love / Spooky / Autumn filters only change the displayed collection. See
-`docs/COLLECTION-PREVIEWS-2026-10-08.md` for rendering and validation details.
+The collection uses optimized WebP thumbnails without loading the rendering engines.
+Choose a bouquet to open its editable recipe and current itemized estimate in the studio.
+For Love / Spooky / Autumn filters and search stay on the catalog page. After changing
+recipe names or descriptions, run `node tools/build-catalog.cjs` to regenerate the
+metadata and static cards. See `docs/CATALOG-SPLIT-2026-10-15.md` for the route split,
+performance measurements, and current regression checks. Earlier collection-preview
+reports describe the retired combined catalog/editor screen.
 
 
 9 October update: collection photos, mask-off flower reflow and shared toy/finishing controls are documented in [Connected builder](docs/CONNECTED-BUILDER-2026-10-09.md). Local build token: 20261009a.

@@ -90,7 +90,7 @@ function paintSheet(){
   reply.hidden=false;
  }else reply.hidden=true;
 
- $('osOpenStudio').href='index.html'+location.hash;
+ $('osOpenStudio').href='studio.html'+location.hash;
  $('osFooter').textContent=(shop.studio&&shop.studio.name?shop.studio.name+' · ':'')+(shop.studio&&shop.studio.site||'');
 }
 function boot(){

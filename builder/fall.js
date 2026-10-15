@@ -89,6 +89,6 @@ function create(id){
 }
 // File URLs taint canvas image reads in some browsers. Only local-file sessions
 // load the embedded fallback; HTTP visitors download individual WebP assets.
-const assetsReady=location.protocol==='file:'?new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='fall-embedded.js';script.onload=resolve;script.onerror=()=>reject(new Error('Autumn artwork bundle unavailable'));document.head.append(script);}):Promise.resolve();
+const assetsReady=location.protocol==='file:'?Promise.resolve(g.NEBULA_EMBED_READY).then(()=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='fall-embedded.js';script.onload=resolve;script.onerror=()=>reject(new Error('Autumn artwork bundle unavailable'));document.head.append(script);})):Promise.resolve();
 g.NebulaFall={active,layout,nodes,nearest,ratio,recipes,create,assetsReady};
 })(window);
