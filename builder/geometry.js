@@ -27,15 +27,16 @@ function variation(it,seed){return .965+rng(hash(it.uid)+seed)()*.07;}
 let CLASSIC_BLOOM=0.85;
 function setClassicBloom(v){CLASSIC_BLOOM=Math.max(.3,Math.min(1.4,+v||1));}
 function diameter(it,mode,seed=11){const d=CAT[it.id][mode==='classic'?'classicDiameter':'topDiameter']*variation(it,seed);return mode==='classic'?d*CLASSIC_BLOOM:d;}
-function capacity(items,mode){
+function capacity(items,mode,engine){
  const unavailable=items.filter(it=>mode==='classic'&&!CAT[it.id].classic);
  if(unavailable.length)return {ok:false,reason:'art',ids:[...new Set(unavailable.map(x=>x.id))]};
  const main=items.filter(x=>CAT[x.id].kind==='flower'||CAT[x.id].kind==='strawberry'),texture=items.filter(x=>CAT[x.id].kind==='texture');
  const area=main.reduce((sum,it)=>sum+(CAT[it.id].classicDiameter/116)**2,0);
- if(mode==='classic'&&(main.length>CONFIG.limits.classicMain||area>CONFIG.limits.classicArea+.001))return {ok:false,reason:'classicCapacity',main:main.length,area:+area.toFixed(2),limit:20};
+ const modern=g.NebulaClassic?.engines.includes(engine),limit=modern?32:CONFIG.limits.classicMain,areaLimit=modern?48:CONFIG.limits.classicArea;
+ if(mode==='classic'&&(main.length>limit||area>areaLimit+.001))return {ok:false,reason:'classicCapacity',main:main.length,area:+area.toFixed(2),limit};
  if(mode==='classic'&&texture.length>CONFIG.limits.classicTexture)return {ok:false,reason:'textureCapacity',limit:mode==='classic'?4:8};
  if(items.length>CONFIG.limits.topItems)return {ok:false,reason:'topCapacity',limit:100};
- return {ok:true,main:main.length,texture:texture.length,area};
+ return {ok:true,main:main.length,texture:texture.length,area,limit,areaLimit};
 }
 /* Each photographed wrap carries its own mouth width, so the bloom envelope reads
    it per paper rather than using one constant. Only ivory ships now, measured at
@@ -150,7 +151,7 @@ function heart(items,seed){
 }
 const heartShapes=new Map();
 function heartShape(R){if(!heartShapes.has(R)){heartShapes.set(R,DomeEngine.buildShape('heart',R,120));if(heartShapes.size>64)heartShapes.delete(heartShapes.keys().next().value);}return heartShapes.get(R);}
-function arrange(items,mode,seed,paper){return mode==='classic'?classic(items,seed,paper):(mode==='dome'?dome:heart)(items,seed);}
+function arrange(items,mode,seed,paper,engine){return mode==='classic'?(g.NebulaClassic?.engines.includes(engine)?NebulaClassic.arrange(items,seed,paper,engine):classic(items,seed,paper)):(mode==='dome'?dome:heart)(items,seed);}
 /* Optional greenery wrap for the Dome and the Heart. Positions come straight from
    the supplied v2 greenery() recipe, whose off/swing pair is measured and coupled —
    see the engine notes, and note that the rotation there is deliberately NOT radial.
@@ -206,7 +207,9 @@ function berryWeave(s,L){
  }
  return out;
 }
+function greenRimId(){return 'eucalyptus';}
 function greenRimStems(s){
+ if(g.NebulaClassic?.active(s))return s.finishes.greenRim?7:0;
  if(!s||s.mode==='classic'||!s.finishes?.greenRim)return 0;
  const L=NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1));
  const {shape}=rimGeometry(s,L);
@@ -244,6 +247,7 @@ function stampPaper(frame,s){const p=s.finishes&&s.finishes.paper;
  return frame;}
 function nodes(s){const sc=baseNodes(s);return g.NebulaSpooky?.reserveMask(s,sc)||sc;}
 function baseNodes(s){
+ if(g.NebulaClassic?.active(s))return NebulaClassic.nodes(s);
  if(g.NebulaFall?.active(s)){const sc=g.NebulaFall.nodes(s);if(s.finishes.greenRim)sc.nodes=greenRim(s,NebulaTemplates.layout(s.mode,s.template.capacity)).concat(sc.nodes);return sc;}
  const top=s.mode!=='classic',L=top?NebulaTemplates.layout(s.mode,s.template?.capacity||Math.max(s.items.length,1)):null,frame=top?L.frame:stampPaper(s.frames.classic||classicFrame(s.items,s.finishes&&s.finishes.paper),s);
  /* A berry's size depends on what it sits beside. In an all-berry bouquet there is
@@ -362,7 +366,7 @@ function classicEnvelope(frame,id){
  return {xmin:360-half+xm,xmax:360+half-xm,ymin,
          ymax:frame.rimY-Math.max(24,halfH)-4};
 }
-function constrainClassic(p,frame,id){const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};const m=NEBULA_META.flowers[id];if(!m.classicStem&&!m.classicBlooms){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
+function constrainClassic(p,frame,id){if(g.NebulaClassic?.engines.includes(frame.engine))return NebulaClassic.constrain(p,frame,id);const e=classicEnvelope(frame,id),q={x:clamp(p.x,e.xmin,e.xmax),y:clamp(p.y,e.ymin,e.ymax),manual:!!p.manual};const m=NEBULA_META.flowers[id];if(!m.classicStem&&!m.classicBlooms){q.x=clamp(q.x,360-105*frame.scale,360+105*frame.scale);q.y=clamp(q.y,frame.rimY-65,frame.rimY-28);}return q;}
 function inside(p,frame,d,id){
  if(p.x-d/2<20||p.x+d/2>700||p.y-d/2<55||p.y+d/2>740)return false;
  if(frame.mode==='classic'){
@@ -392,6 +396,7 @@ function inside(p,frame,d,id){
    spacing with a little room to spare. */
 const CLASSIC_GAP=0.36;
 function findPlace(s,id,p,ignoreUid=null){
+ if(g.NebulaClassic?.active(s))return NebulaClassic.findPlace(s,id,p,ignoreUid);
  const {frame,nodes:ns}=nodes(s);
  const classic=s.mode==='classic';
  const d=classic?CAT[id].classicDiameter*CLASSIC_BLOOM:CAT[id].topDiameter;
@@ -411,5 +416,5 @@ function findPlace(s,id,p,ignoreUid=null){
  if(p&&score>95)return null;
  return best;
 }
-g.NebulaGeometry={classicEnvelope,mouthHalf,stampPaper,setClassicBloom,get classicBloom(){return CLASSIC_BLOOM;},constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,greenRimStems};
+g.NebulaGeometry={classicEnvelope,mouthHalf,stampPaper,setClassicBloom,get classicBloom(){return CLASSIC_BLOOM;},constrainClassic,W,H,GOLDEN,rng,hash,clamp,variation,diameter,capacity,classicFrame,arrange,nodes,inside,findPlace,heartRings,greenRimId,greenRimStems};
 })(typeof window!=='undefined'?window:globalThis);

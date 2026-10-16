@@ -7,6 +7,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Promesa rosa",
     "description": "Blush roses and a cloud of baby’s breath.",
     "descriptionEs": "Rosas rosa suave y una nube de paniculata.",
+    "preview": false,
     "image": "assets/catalog/thumbs/pink-promise.webp",
     "count": 44
   },
@@ -17,6 +18,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Escrito en rosas",
     "description": "Red roses, dark paper and their initial in flowers.",
     "descriptionEs": "Rosas rojas, papel oscuro y su inicial en flores.",
+    "preview": false,
     "image": "assets/catalog/thumbs/written-in-roses.webp",
     "count": 44
   },
@@ -27,8 +29,20 @@ window.NEBULA_COLLECTIONS = [
     "es": "Siempre tú",
     "description": "Sixteen roses, loosely gathered with eucalyptus and baby’s breath.",
     "descriptionEs": "Dieciséis rosas con eucalipto y paniculata en un ramo suelto.",
+    "preview": false,
     "image": "assets/catalog/thumbs/always-you.webp",
     "count": 16
+  },
+  {
+    "id": "midnight-blooms",
+    "collection": "classic",
+    "en": "Midnight Blooms",
+    "es": "Flores de medianoche",
+    "description": "The original lush mix: five pink lilies, black roses, dusky daisies and blue thistles in a black fan wrap.",
+    "descriptionEs": "Cinco lirios rosas, rosas negras, gerberas oscuras y cardos azules en una envoltura negra.",
+    "preview": true,
+    "image": "assets/catalog/thumbs/midnight-blooms.webp",
+    "count": 23
   },
   {
     "id": "scream-for-you",
@@ -37,6 +51,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Un grito por ti",
     "description": "Thirty red roses frame a ghostly face, with white filler and black satin.",
     "descriptionEs": "Treinta rosas rojas rodean una máscara, con paniculata y satén negro.",
+    "preview": false,
     "image": "assets/catalog/thumbs/scream-for-you.webp",
     "count": 30
   },
@@ -47,18 +62,9 @@ window.NEBULA_COLLECTIONS = [
     "es": "Mi fantasma para siempre",
     "description": "Twenty-two red roses, twenty-two black roses, and a message of your own.",
     "descriptionEs": "Veintidós rosas rojas, veintidós negras y tu propio mensaje.",
+    "preview": false,
     "image": "assets/catalog/thumbs/forever-my-boo.webp",
     "count": 44
-  },
-  {
-    "id": "midnight-blooms",
-    "collection": "halloween",
-    "en": "Midnight Blooms",
-    "es": "Flores de medianoche",
-    "description": "Pink lilies and dusky daisies among black roses, burgundy mums and blue thistles.",
-    "descriptionEs": "Lirios y gerberas rosas entre rosas negras, crisantemos burdeos y cardos azules.",
-    "image": "assets/catalog/thumbs/midnight-blooms.webp",
-    "count": 20
   },
   {
     "id": "autumn-latte",
@@ -67,6 +73,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Latte de otoño",
     "description": "Caramel roses, burgundy petals and a little Snoopy.",
     "descriptionEs": "Rosas caramelo, pétalos burdeos y un pequeño Snoopy.",
+    "preview": false,
     "image": "assets/catalog/thumbs/autumn-latte.webp",
     "count": 30
   },
@@ -77,6 +84,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Crema de octubre",
     "description": "Ivory roses, an autumn border, a little pumpkin.",
     "descriptionEs": "Rosas marfil, un borde otoñal y una calabaza.",
+    "preview": false,
     "image": "assets/catalog/thumbs/october-cream.webp",
     "count": 44
   },
@@ -87,6 +95,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Jardín de calabazas",
     "description": "Rust petals and cream roses, gathered together.",
     "descriptionEs": "Pétalos cobrizos y rosas crema, juntos.",
+    "preview": true,
     "image": "assets/catalog/thumbs/pumpkin-patch.webp",
     "count": 30
   },
@@ -97,6 +106,7 @@ window.NEBULA_COLLECTIONS = [
     "es": "Sol de otoño",
     "description": "Four generous sunflowers with warm autumn blooms.",
     "descriptionEs": "Cuatro girasoles grandes con flores de otoño.",
+    "preview": false,
     "image": "assets/catalog/thumbs/harvest-sunshine.webp",
     "count": 30
   }

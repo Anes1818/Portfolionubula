@@ -11,7 +11,8 @@ function empty(){return {version:6,mode:'classic',seed:11,nextId:1,items:[],fram
 function newItem(s,id){return {uid:'b'+s.nextId++,id,anchors:{}};}
 function arrange(s,mode=s.mode,{fresh=false,seed=s.seed}={}){
  if(mode!=='classic'){if(!s.template)migrateTemplate(s);return syncTemplate(s);}
- const geo=G.arrange(s.items,mode,seed,s.finishes&&s.finishes.paper);s.frames[mode]=geo.frame;
+ const engine=s.frames.classic?.engine||'classic-gathered';
+ const geo=G.arrange(s.items,mode,seed,s.finishes&&s.finishes.paper,engine);s.frames[mode]=geo.frame;
  for(const it of s.items){if(fresh||!it.anchors[mode])it.anchors[mode]=geo.positions[it.uid];}
  return s;
 }
@@ -45,7 +46,7 @@ function price(s){
     no longer a fixed eight - it follows the silhouette, so a bigger bouquet needs
     more greenery to look wrapped and is charged for exactly that. */
  const sprigs=G.greenRimStems(s);
- if(sprigs)extraLines.push({id:'greenRim',quantity:sprigs,totalCents:sprigs*CAT.eucalyptus.priceCents});
+ if(sprigs)extraLines.push({id:'greenRim',quantity:sprigs,totalCents:sprigs*CAT[G.greenRimId(s)].priceCents});
  /* The ribbon is Classic only - see finishNodes. A Dome or Heart design saved with
     one keeps the value so Classic can restore it, but is never charged for it. */
  for(const name of s.mode==='classic'?['ribbon','sash']:['sash'])if(s.finishes[name]!=='none')extraLines.push({id:name,quantity:1,totalCents:CONFIG.extrasCents[name]});
@@ -106,28 +107,31 @@ function add(s,id,p){
  if(!Object.hasOwn(CAT,id))return {ok:false,reason:'invalid'};
  if(s.mode==='classic'&&CAT[id].classicOffered===false)return {ok:false,reason:'art',ids:[id]};
  if(s.mode!=='classic'){const used=new Set(s.items.map(i=>i.slot)),slot=p?(g.NebulaFall?.active(s)?NebulaFall.nearest(s,p):NebulaTemplates.nearest(s.mode,s.template.capacity,p)):Array.from({length:s.template.capacity},(_,i)=>i).find(i=>!used.has(i));if(slot==null||used.has(slot))return {ok:false,reason:'templateFull'};return paintSlot(s,slot,id);}
- const it=newItem(s,id),cap=G.capacity(s.items.concat(it),s.mode);
+ const it=newItem(s,id),cap=G.capacity(s.items.concat(it),s.mode,s.frames.classic?.engine);
  if(!cap.ok){s.nextId--;return cap;}
  if(s.items.length===0){s.items.push(it);arrange(s,s.mode,{fresh:true});return {ok:true,uid:it.uid};}
  // Adding does NOT rearrange or rescale existing flowers. The wrapper only grows when space is needed.
- if(s.mode==='classic'){const fitting=G.classicFrame(s.items.concat(it),s.finishes&&s.finishes.paper);if(fitting.scale>s.frames.classic.scale)s.frames.classic=fitting;}
+ const oldFrame=clone(s.frames.classic);
+ if(s.mode==='classic'&&!g.NebulaClassic?.active(s)){const fitting=G.classicFrame(s.items.concat(it),s.finishes&&s.finishes.paper);if(fitting.scale>s.frames.classic.scale)s.frames.classic=fitting;}
  let pos=G.findPlace(s,id,p);
  if(!pos&&s.mode==='dome'){
   const oldFrame=clone(s.frames.dome);s.frames.dome.radius=Math.min(270,s.frames.dome.radius+CAT[id].topDiameter*.32);
   pos=G.findPlace(s,id,p);if(!pos)s.frames.dome=oldFrame;
  }
- if(!pos){s.nextId--;return {ok:false,reason:'placement'};}
+ if(!pos){s.frames.classic=oldFrame;s.nextId--;return {ok:false,reason:'placement'};}
  it.anchors[s.mode]={x:pos.x,y:pos.y,manual:true};s.items.push(it);return {ok:true,uid:it.uid,snapped:pos.snapped};
 }
 function replace(s,uid,id){
  const it=s.items.find(i=>i.uid===uid);if(!it||!CAT[id])return {ok:false,reason:'invalid'};
  if(s.mode==='classic'&&CAT[id].classicOffered===false&&it.id!==id)return {ok:false,reason:'art',ids:[id]};
  if(s.mode!=='classic')return paintSlot(s,it.slot,id);
- const prev=it.id;it.id=id;const cap=G.capacity(s.items,s.mode);
+ const prev=it.id;it.id=id;const cap=G.capacity(s.items,s.mode,s.frames.classic?.engine);
  if(!cap.ok){it.id=prev;return cap;}
  // Keep the item identity. A much larger bloom gets a nearby valid anchor, not a changed recipe.
+ const oldFrame=clone(s.frames.classic),fitting=G.classicFrame(s.items,s.finishes.paper);
+ if(!g.NebulaClassic?.active(s)&&fitting.scale>s.frames.classic.scale)s.frames.classic=fitting;
  const pos=G.findPlace(s,id,it.anchors[s.mode],uid);
- if(!pos){it.id=prev;return {ok:false,reason:'placement'};}
+ if(!pos){it.id=prev;s.frames.classic=oldFrame;return {ok:false,reason:'placement'};}
  it.anchors[s.mode]={x:pos.x,y:pos.y,manual:true};return {ok:true,snapped:pos.snapped};
 }
 function remove(s,uid){if(s.mode!=='classic'){const it=s.items.find(i=>i.uid===uid);return it?paintSlot(s,it.slot,null):{ok:false,reason:'invalid'};}const before=s.items.length;s.items=s.items.filter(it=>it.uid!==uid);return {ok:s.items.length!==before};}
@@ -171,7 +175,7 @@ function validateV4(raw){
  for(const it of raw.items){
   if(it&&typeof it.id==='string')it.id=live(it.id);
   if(!it||typeof it.uid!=='string'||!/^b\d{1,8}$/.test(it.uid)||used.has(it.uid)||!Object.hasOwn(CAT,it.id)||!it.anchors||typeof it.anchors!=='object')return null;
-  if(raw.mode==='classic'&&['rose_ivory','mum_rust','rose_caramel','mum_burgundy'].includes(it.id))return null;
+  if(raw.mode==='classic'&&['rose_ivory','mum_rust','rose_caramel'].includes(it.id))return null;
   if(+it.uid.slice(1)>=raw.nextId)return null;used.add(it.uid);
   const anchors={};for(const mode of ['classic','dome','heart'])if(it.anchors[mode]){
    const a=it.anchors[mode];if(!Number.isFinite(a.x)||!Number.isFinite(a.y)||a.x<0||a.x>720||a.y<0||a.y>820||typeof a.manual!=='boolean')return null;
@@ -183,6 +187,11 @@ function validateV4(raw){
   const a=raw.frames[mode];if(a.mode!==mode||!a.center||!Number.isFinite(a.center.x)||!Number.isFinite(a.center.y)||!Number.isFinite(a.radius)||a.radius<=0||a.radius>600||!Number.isFinite(a.unit)||a.unit<1||a.unit>300)return null;
   // Whitelist geometry fields; no arbitrary imported object becomes rendering instructions.
   if(mode==='classic'){
+   if(g.NebulaClassic?.engines.includes(a.engine)){
+    const expected=NebulaClassic.frame(a.engine);
+    if(['unit','radius','scale','rimY'].some(k=>a[k]!==expected[k])||['center','origin','waist'].some(k=>!a[k]||a[k].x!==expected[k].x||a[k].y!==expected[k].y))return null;
+    s.frames.classic=expected;continue;
+   }
    const ys=Number.isFinite(a.yScale)?a.yScale:a.scale,eq=(x,y)=>Number.isFinite(x)&&Math.abs(x-y)<.02;
    if(!a.origin||!a.waist||!eq(a.waist.x,360)||!eq(a.waist.y,666)||!eq(a.origin.x,360-448*a.scale)||!eq(a.origin.y,666-850*ys)||!eq(a.rimY,666-250*ys)||!eq(a.center.x,360)||!eq(a.center.y,a.rimY-108)||!eq(a.radius,230)||!eq(a.unit,116))return null;
    if(!Number.isFinite(a.scale)||a.scale<.3||a.scale>1||(a.yScale!==undefined&&(!Number.isFinite(a.yScale)||a.yScale<.3||a.yScale>1))||!a.origin||!a.waist||![a.origin.x,a.origin.y,a.waist.x,a.waist.y,a.rimY].every(Number.isFinite))return null;
@@ -195,7 +204,7 @@ function validateV4(raw){
    }
   }
  }
- if(!G.capacity(s.items,s.mode).ok)return null;
+ if(!G.capacity(s.items,s.mode,s.frames.classic?.engine).ok)return null;
  if(!s.frames[s.mode]||s.items.some(i=>!i.anchors[s.mode]))return null;
  return s;
 }

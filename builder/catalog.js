@@ -6,7 +6,7 @@
   const cards = [...document.querySelectorAll('.bouquet-card')];
   const english = Object.fromEntries([...document.querySelectorAll('[data-copy]')].map(el => [el.dataset.copy, el.textContent]));
   const spanish = {
-    skip:'Ir a los ramos',about:'Para floristerías',saved:'Ramos guardados',language:'Idioma',eyebrow:'Un poco de inspiración, solo para ti',headline:'Encuentra un ramo.',headlineEm:'Hazlo tuyo.',intro:'Empieza con algo que te encante. Después juega con las flores, los colores y cada pequeño detalle en tu propio estudio de ramos.',resume:'Continuar mi ramo →',aside:'Una primera cita. Un gran día. O un bonito detalle porque sí.',asideLabel:'Hay un ramo para eso.',all:'Todos los ramos',love:'Para el amor',halloween:'Un poco de misterio',fall:'Calidez de otoño',search:'Encuentra tu ramo',photoNote:'Imágenes de inspiración · El diseño editable se abre en el estudio',emptyTitle:'¿Otra clase de flor?',emptyCopy:'Prueba otra flor o explora toda la colección.',reset:'Ver todos los ramos',yourWay:'¿Tienes tu propia idea?',studioTitle:'Hay espacio para crear.',studioCopy:'Explora los arreglos Clásico, Domo y Corazón. Tu diseño actual te acompaña.',openStudio:'Abrir el estudio de ramos',savedEyebrow:'Pequeñas ideas que vale la pena guardar',savedHint:'Guardados en este navegador y dispositivo. Abre un diseño para seguir creando.',stepOne:'Elige un punto de partida',stepOneCopy:'Encuentra un estilo que te recuerde a esa persona.',stepTwo:'Hazlo personal',stepTwoCopy:'Personalízalo y revisa la estimación detallada.',stepThree:'Inicia la conversación',stepThreeCopy:'Prepara una solicitud por WhatsApp para tu florista.',estimateNote:'El estudio usa precios de muestra. Tu florista confirma la disponibilidad, el ramo final y el precio. Aquí no se confirma ningún pedido.',footer:'Arreglado con cuidado. Completamente tuyo.',removeTitle:'¿Eliminar este ramo guardado?',removeNote:'Tu diseño actual en el estudio no cambiará.',keep:'Conservar',remove:'Eliminar'
+    skip:'Ir a los ramos',about:'Para floristerías',saved:'Ramos guardados',language:'Idioma',eyebrow:'Un poco de inspiración, solo para ti',headline:'Encuentra un ramo.',headlineEm:'Hazlo tuyo.',intro:'Empieza con algo que te encante. Después juega con las flores, los colores y cada pequeño detalle en tu propio estudio de ramos.',resume:'Continuar mi ramo →',aside:'Una primera cita. Un gran día. O un bonito detalle porque sí.',asideLabel:'Hay un ramo para eso.',all:'Todos los ramos',love:'Para el amor',classic:'Clásicos naturales',halloween:'Un poco de misterio',fall:'Calidez de otoño',search:'Encuentra tu ramo',photoNote:'Fotos y vistas de diseño · Abre un ramo para personalizarlo',emptyTitle:'¿Otra clase de flor?',emptyCopy:'Prueba otra flor o explora toda la colección.',reset:'Ver todos los ramos',yourWay:'¿Tienes tu propia idea?',studioTitle:'Hay espacio para crear.',studioCopy:'Explora los arreglos Clásico, Domo y Corazón. Tu diseño actual te acompaña.',openStudio:'Abrir el estudio de ramos',savedEyebrow:'Pequeñas ideas que vale la pena guardar',savedHint:'Guardados en este navegador y dispositivo. Abre un diseño para seguir creando.',stepOne:'Elige un punto de partida',stepOneCopy:'Encuentra un estilo que te recuerde a esa persona.',stepTwo:'Hazlo personal',stepTwoCopy:'Personalízalo y revisa la estimación detallada.',stepThree:'Inicia la conversación',stepThreeCopy:'Prepara una solicitud por WhatsApp para tu florista.',estimateNote:'El estudio usa precios de muestra. Tu florista confirma la disponibilidad, el ramo final y el precio. Aquí no se confirma ningún pedido.',footer:'Arreglado con cuidado. Completamente tuyo.',removeTitle:'¿Eliminar este ramo guardado?',removeNote:'Tu diseño actual en el estudio no cambiará.',keep:'Conservar',remove:'Eliminar'
   };
   let lang = 'en', filter = 'all', pendingRemoval = null;
   const shelfKey = 'nebulaSavedBouquetsV1';
@@ -14,7 +14,7 @@
   const choose = (en, es) => lang === 'es' ? es : en;
   const normalized = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const params = new URLSearchParams(location.search);
-  if (['all','love','halloween','fall'].includes(params.get('collection'))) filter = params.get('collection');
+  if (['all','love','classic','halloween','fall'].includes(params.get('collection'))) filter = params.get('collection');
   $('bouquetSearch').value = (params.get('q') || '').slice(0,120);
   $('collectionTools').hidden = false;
 
@@ -99,7 +99,7 @@
       card.querySelector('.collection-tag').textContent=t(recipe.collection);
       card.querySelector('.customize-link span').textContent=choose('Make it yours','Hazlo tuyo');
       card.querySelector('.bouquet-picture').setAttribute('aria-label',choose('Customize ','Personalizar ')+title);
-      card.querySelector('img').alt=title+' — '+(recipe.id==='pumpkin-patch'?choose('editable design preview','vista del diseño editable'):choose('inspiration image','imagen de inspiración'));
+      card.querySelector('img').alt=title+' — '+(recipe.preview?choose('editable design preview','vista del diseño editable'):choose('inspiration image','imagen de inspiración'));
     });
     filterCards(false);renderSaved();
   }

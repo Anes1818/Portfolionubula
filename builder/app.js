@@ -29,7 +29,7 @@ let confirmFn=null;
 function confirm(title,body,label,fn){$('confirmTitle').textContent=title;$('confirmText').textContent=body;$('confirmYes').textContent=label;confirmFn=fn;$('confirmDialog').showModal();$('confirmCancel').focus();}
 function showFailure(result){
  if(['classicCapacity','textureCapacity','topCapacity','topFit','art'].includes(result.reason)){
-  const text=result.reason==='art'?t('art')+(result.ids||[]).map(name).join(', '):t(result.reason);
+  const text=result.reason==='art'?t('art')+(result.ids||[]).map(name).join(', '):result.reason==='classicCapacity'&&NebulaClassic.active(st)?(lang==='es'?'Este arreglo está lleno. Quita una flor o elige una más pequeña.':'This arrangement is full. Remove a flower or choose a smaller bloom.'):t(result.reason);
   openMessage(t('capacityTitle'),[paragraph(text),paragraph(t('capacityFooter'),'helper')]);
  }else toast(t(result.reason)||t('placement'));
 }
@@ -107,9 +107,11 @@ function saveToShelf(){
  catch(e){$('exportStatus').textContent=t(e.message==='full'?'shelfFull':'shelfUnavailable');}
 }
 function applyFallTemplate(id){moveMode=false;
- if(editFocus)commitTextEdit();if(st.mode!=='dome')switchBouquet('dome');
- const spooky=NebulaSpooky.recipes.some(r=>r.id===id);const romantic=NebulaRomance.recipes.some(r=>r.id===id);
- change(()=>{st=(spooky?NebulaSpooky:romantic?NebulaRomance:NebulaFall).create(id);picked=st.template.palette[0];selected=null;selectedSlot=null;brush=null;hover=null;camera={zoom:1,x:0,y:0};$('family').value=spooky?'halloween':romantic?'romance':'fall';});
+ const collection=[NebulaClassic,NebulaRomance,NebulaSpooky,NebulaFall].find(lib=>lib.recipes.some(r=>r.id===id));
+ if(!collection)return;
+ const next=collection.create(id);
+ if(editFocus)commitTextEdit();if(st.mode!==next.mode)switchBouquet(next.mode);
+ change(()=>{st=next;picked=st.items[0]?.id||'rose_red';selected=null;selectedSlot=null;brush=null;hover=null;camera={zoom:1,x:0,y:0};$('family').value='all';});
  showGallery(false);setTab('flowers');$('bouquet').focus({preventScroll:true});
 }
 function render(save=true){
@@ -119,7 +121,7 @@ function render(save=true){
  const berryFamily=$('family').querySelector('[value="strawberry"]');
  berryFamily.hidden=berryFamily.disabled=st.mode==='classic';
  if(st.mode==='classic'&&['strawberry','fall','romance','halloween'].includes($('family').value))$('family').value='rose';
- const top=st.mode!=='classic',p=M.price(st),cap=G.capacity(st.items,st.mode);
+ const top=st.mode!=='classic',p=M.price(st),cap=G.capacity(st.items,st.mode,st.frames.classic?.engine);
  document.body.dataset.organic=String(NebulaFall.active(st));
  document.body.dataset.bouquetMode=st.mode;document.body.classList.toggle('is-painting',!!brush);document.body.classList.toggle('is-panning',panMode);
  sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera,moveTargets:moveTargets()});
@@ -159,7 +161,15 @@ function render(save=true){
  if(NebulaFall.active(st)){$('countLabel').textContent=p.pieces+' '+t('pieces');$('capacityLabel').textContent=t('fallCountHint');$('compositionLabel').textContent=t('fallPreview');$('toolHint').textContent=t('fallPaintHint');$('catalogueNote').textContent=t('fallPaintHint');}
  $('greenRimLabel').hidden=st.mode==='classic';$('greenRim').checked=!!st.finishes.greenRim;
  const sprigs=G.greenRimStems({...st,finishes:{...st.finishes,greenRim:true}});
- $('greenRimPrice').textContent=M.money(sprigs*CAT.eucalyptus.priceCents,lang)+' · '+sprigs+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
+ $('greenRimPrice').textContent=M.money(sprigs*CAT[G.greenRimId(st)].priceCents,lang)+' · '+sprigs+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
+ if(NebulaClassic.active(st)){
+  $('capacityLabel').textContent=lang==='es'?`${p.flowers} / ${cap.limit} flores · composición libre`:`${p.flowers} / ${cap.limit} flowers · free arrangement`;
+  $('compositionLabel').textContent=lang==='es'?'Flores grandes, capas naturales y envoltura en abanico.':'Full blooms, natural layers and a fan-shaped wrap.';
+  $('wrapHeading').textContent=lang==='es'?'Envoltura en abanico':'Fan-shaped wrapping';
+  $('wrapCopy').textContent=lang==='es'?'Una envoltura amplia para un ramo vertical. Cambia el color o esconde el papel.':'A wide wrap around an upright bouquet. Change the tone or hide the paper.';
+  $('wrapEyebrow').textContent=lang==='es'?'ENVOLTURA FOTOGRÁFICA':'PHOTOGRAPHIC WRAPPING';
+  $('wrapPreview').src=R.paperPreview(NebulaClassic.paper(st).url,st.finishes.paper,st.finishes.tint);$('wrapPreview').alt=$('wrapHeading').textContent;
+ }
  $('crown').checked=!!st.finishes.crown;$('crownPrice').textContent=M.money(CONFIG.extrasCents.crown,lang)+(CONFIG.demo?' · '+(lang==='es'?'muestra':'sample'):'');
   /* Butterflies are a count now, so the price reads "each" and the stepper ends
      disable at the limits instead of silently refusing a press. */
@@ -234,9 +244,15 @@ function renderStarting(){
   el.append(im,label,count);el.dataset.recipe=key;el.disabled=!isReady;
   el.setAttribute('aria-label',preset[lang]+', '+count.textContent);return el;
  }));
+ for(const recipe of NebulaClassic.recipes){
+  const el=button('','recipe-card',()=>confirm(t('recipeTitle'),t('recipeText',{n:recipe.count}),t('recipeConfirm'),()=>applyFallTemplate(recipe.id))),im=document.createElement('img'),label=document.createElement('strong'),price=document.createElement('small');
+  im.src=R.source(NEBULA_META.flowers.rose_black.head);im.alt='';im.width=64;im.height=64;
+  label.textContent=recipe[lang];price.textContent=M.money(M.price(NebulaClassic.create(recipe.id)).totalCents,lang);
+  el.append(im,label,price);el.dataset.recipe=recipe.id;el.disabled=!isReady;$('startingRecipes').append(el);
+ }
 }
 function renderPaper(){
- $('paperChoices').replaceChildren(...(NebulaSpooky.active(st)?[['cocoa','#694532'],['black','#292826'],['ivory','#e6deca'],['blush','#dbb3b7'],['sage','#b1bba1'],['custom',st.finishes.tint]]:st.mode==='classic'?[['ivory','#e6deca'],['sage','#b1bba1'],['custom',st.finishes.tint]]:[...(st.mode==='dome'?[['cocoa','#694532']]:[]),['black','#292826'],['ivory','#e6deca'],['custom',st.finishes.tint]]).map(([id,col])=>{
+ $('paperChoices').replaceChildren(...(NebulaSpooky.active(st)?[['cocoa','#694532'],['black','#292826'],['ivory','#e6deca'],['blush','#dbb3b7'],['sage','#b1bba1'],['custom',st.finishes.tint]]:st.mode==='classic'?[['black','#292826'],['ivory','#e6deca'],['sage','#b1bba1'],['custom',st.finishes.tint]]:[...(st.mode==='dome'?[['cocoa','#694532']]:[]),['black','#292826'],['ivory','#e6deca'],['custom',st.finishes.tint]]).map(([id,col])=>{
   const b=button('','',()=>change(()=>{st.finishes.paper=id;M.refitPaper(st);})),dot=document.createElement('span'),label=document.createElement('span');dot.className='swatch';dot.style.setProperty('--swatch',col);label.textContent=t(id);b.append(dot,label);pressed(b,st.finishes.paper===id);b.dataset.paper=id;return b;
  }));
 }
@@ -247,7 +263,7 @@ function renderRibbons(){
  }));
 }
 function useRecipe(ids,paper){
- const trial=M.clone(st);trial.items=ids.map(id=>M.newItem(trial,id));const cap=G.capacity(trial.items,trial.mode);if(!cap.ok){showFailure(cap);return;}
+ const trial=M.clone(st);trial.items=ids.map(id=>M.newItem(trial,id));const cap=G.capacity(trial.items,trial.mode,trial.frames.classic?.engine);if(!cap.ok){showFailure(cap);return;}
  confirm(t('recipeTitle'),t('recipeText',{n:ids.length}),t('recipeConfirm'),()=>{change(()=>{st.items=ids.map(id=>M.newItem(st,id));picked=ids[0];brush=null;$('family').value=CAT[picked].family;if(paper)st.finishes.paper=paper;st.frames={};M.arrange(st,st.mode,{fresh:true});selected=null;hover=null;});$('startingPanel').open=false;toast(t('recipeApplied'));});
 }
 function setTab(key){
@@ -290,7 +306,7 @@ function orderSummary(){
  }
  if(st.mode==='dome'&&f.pumpkin)extras.push(t('pumpkin')+' · '+t('position'+f.pumpkinPosition[0].toUpperCase()+f.pumpkinPosition.slice(1)));
  if(st.mode==='dome'&&f.bow&&f.sash==='blank_cocoa')extras.push(t('bow'));
- if(st.mode!=='classic'&&f.greenRim)extras.push(t('greenRim')+': '+G.greenRimStems(st)+' × '+name('eucalyptus'));
+ if(f.greenRim&&(st.mode!=='classic'||NebulaClassic.active(st)))extras.push(t('greenRim')+': '+G.greenRimStems(st)+' × '+name(G.greenRimId(st)));
  for(const line of NebulaSpooky.extras(st))extras.push(line.quantity+' × '+t(line.id));
  return {stems,extras,total:M.money(p.totalCents,lang),pieces:st.items.length};
 }
@@ -629,7 +645,7 @@ if(!sharedOnBoot){
    if(!entry)throw new Error('missing');
    st=M.clone(entry.design);
   }else if(template){
-   const collection=[NebulaRomance,NebulaSpooky,NebulaFall].find(lib=>lib.recipes.some(recipe=>recipe.id===template));
+   const collection=[NebulaClassic,NebulaRomance,NebulaSpooky,NebulaFall].find(lib=>lib.recipes.some(recipe=>recipe.id===template));
    if(!collection)throw new Error('missing');
    st=collection.create(template);
   }

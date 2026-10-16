@@ -7,11 +7,11 @@
   <title>Nebula — The bouquet collection</title>
   <meta name="description" content="Find a bouquet you love, then make it your own. Browse romantic, autumn and spooky bouquet inspiration in the Nebula collection.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <script src="catalog-route.js?v=20261015"></script>
-  <link rel="stylesheet" href="catalog.css?v=20261015">
-  <script src="shop-config.js?v=20261015" defer></script>
-  <script src="catalog-data.js?v=20261015" defer></script>
-  <script src="catalog.js?v=20261015" defer></script>
+  <script src="catalog-route.js?v=20261016d"></script>
+  <link rel="stylesheet" href="catalog.css?v=20261016d">
+  <script src="shop-config.js?v=20261016d" defer></script>
+  <script src="catalog-data.js?v=20261016d" defer></script>
+  <script src="catalog.js?v=20261016d" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#collection" data-copy="skip">Skip to bouquets</a>
@@ -26,10 +26,10 @@
     </section>
     <section class="collection-section shell" id="collection" aria-label="Bouquet collection">
       <div class="collection-tools" id="collectionTools" hidden>
-        <div class="filters" role="group" aria-label="Filter collections"><button type="button" data-filter="all" aria-pressed="true" data-copy="all">All bouquets</button><button type="button" data-filter="love" aria-pressed="false" data-copy="love">For love</button><button type="button" data-filter="halloween" aria-pressed="false" data-copy="halloween">A little spooky</button><button type="button" data-filter="fall" aria-pressed="false" data-copy="fall">Autumn warmth</button></div>
+        <div class="filters" role="group" aria-label="Filter collections"><button type="button" data-filter="all" aria-pressed="true" data-copy="all">All bouquets</button><button type="button" data-filter="love" aria-pressed="false" data-copy="love">For love</button><button type="button" data-filter="classic" aria-pressed="false" data-copy="classic">Gathered classics</button><button type="button" data-filter="halloween" aria-pressed="false" data-copy="halloween">A little spooky</button><button type="button" data-filter="fall" aria-pressed="false" data-copy="fall">Autumn warmth</button></div>
         <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only" data-copy="search">Find your bouquet</span><input id="bouquetSearch" type="search" placeholder="Roses, sunshine, a little love…" aria-label="Search bouquets" autocomplete="off"><button type="button" id="clearSearch" aria-label="Clear search" hidden>×</button></label>
       </div>
-      <div class="collection-meta"><p id="resultCount" role="status" aria-live="polite">10 bouquets to make your own</p><p data-copy="photoNote">Inspiration images · Your editable design opens in the studio</p></div>
+      <div class="collection-meta"><p id="resultCount" role="status" aria-live="polite">11 bouquets to make your own</p><p data-copy="photoNote">Photos & design previews · Open any bouquet to customize</p></div>
       <div id="bouquetGrid" class="bouquet-grid">
         <!-- COLLECTION_CARDS_START -->
         <article class="bouquet-card" data-id="pink-promise" data-collection="love">
@@ -44,6 +44,10 @@
           <a class="bouquet-picture" href="studio.html?template=always-you" aria-label="Customize Always You"><img src="assets/catalog/thumbs/always-you.webp" alt="Always You — inspiration image" width="720" height="892" loading="eager" decoding="async"><span class="collection-tag">For love</span><span class="picture-arrow" aria-hidden="true">↗</span></a>
           <div class="card-copy"><h2><a href="studio.html?template=always-you">Always You</a></h2><p>Sixteen roses, loosely gathered with eucalyptus and baby’s breath.</p><a class="customize-link" href="studio.html?template=always-you"><span>Make it yours</span><span aria-hidden="true">↗</span></a></div>
         </article>
+        <article class="bouquet-card" data-id="midnight-blooms" data-collection="classic">
+          <a class="bouquet-picture" href="studio.html?template=midnight-blooms" aria-label="Customize Midnight Blooms"><img src="assets/catalog/thumbs/midnight-blooms.webp" alt="Midnight Blooms — editable design preview" width="720" height="892" loading="lazy" decoding="async"><span class="collection-tag">Gathered classics</span><span class="picture-arrow" aria-hidden="true">↗</span></a>
+          <div class="card-copy"><h2><a href="studio.html?template=midnight-blooms">Midnight Blooms</a></h2><p>The original lush mix: five pink lilies, black roses, dusky daisies and blue thistles in a black fan wrap.</p><a class="customize-link" href="studio.html?template=midnight-blooms"><span>Make it yours</span><span aria-hidden="true">↗</span></a></div>
+        </article>
         <article class="bouquet-card" data-id="scream-for-you" data-collection="halloween">
           <a class="bouquet-picture" href="studio.html?template=scream-for-you" aria-label="Customize Scream for You"><img src="assets/catalog/thumbs/scream-for-you.webp" alt="Scream for You — inspiration image" width="720" height="892" loading="lazy" decoding="async"><span class="collection-tag">A little spooky</span><span class="picture-arrow" aria-hidden="true">↗</span></a>
           <div class="card-copy"><h2><a href="studio.html?template=scream-for-you">Scream for You</a></h2><p>Thirty red roses frame a ghostly face, with white filler and black satin.</p><a class="customize-link" href="studio.html?template=scream-for-you"><span>Make it yours</span><span aria-hidden="true">↗</span></a></div>
@@ -51,10 +55,6 @@
         <article class="bouquet-card" data-id="forever-my-boo" data-collection="halloween">
           <a class="bouquet-picture" href="studio.html?template=forever-my-boo" aria-label="Customize Forever My Boo"><img src="assets/catalog/thumbs/forever-my-boo.webp" alt="Forever My Boo — inspiration image" width="720" height="892" loading="lazy" decoding="async"><span class="collection-tag">A little spooky</span><span class="picture-arrow" aria-hidden="true">↗</span></a>
           <div class="card-copy"><h2><a href="studio.html?template=forever-my-boo">Forever My Boo</a></h2><p>Twenty-two red roses, twenty-two black roses, and a message of your own.</p><a class="customize-link" href="studio.html?template=forever-my-boo"><span>Make it yours</span><span aria-hidden="true">↗</span></a></div>
-        </article>
-        <article class="bouquet-card" data-id="midnight-blooms" data-collection="halloween">
-          <a class="bouquet-picture" href="studio.html?template=midnight-blooms" aria-label="Customize Midnight Blooms"><img src="assets/catalog/thumbs/midnight-blooms.webp" alt="Midnight Blooms — inspiration image" width="720" height="892" loading="lazy" decoding="async"><span class="collection-tag">A little spooky</span><span class="picture-arrow" aria-hidden="true">↗</span></a>
-          <div class="card-copy"><h2><a href="studio.html?template=midnight-blooms">Midnight Blooms</a></h2><p>Pink lilies and dusky daisies among black roses, burgundy mums and blue thistles.</p><a class="customize-link" href="studio.html?template=midnight-blooms"><span>Make it yours</span><span aria-hidden="true">↗</span></a></div>
         </article>
         <article class="bouquet-card" data-id="autumn-latte" data-collection="fall">
           <a class="bouquet-picture" href="studio.html?template=autumn-latte" aria-label="Customize Autumn Latte"><img src="assets/catalog/thumbs/autumn-latte.webp" alt="Autumn Latte — inspiration image" width="720" height="892" loading="lazy" decoding="async"><span class="collection-tag">Autumn warmth</span><span class="picture-arrow" aria-hidden="true">↗</span></a>

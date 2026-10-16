@@ -74,6 +74,10 @@ function wrapAssets(){const u=[NEBULA_META.wrap.back,NEBULA_META.wrap.front,BRAN
 /* Everything a single design can draw: wrap, its collar, finishes and its own flowers. */
 function assetsFor(s){
  const urls=new Set(wrapAssets());
+ if(g.NebulaClassic?.active(s)){
+  urls.add(NebulaClassic.paper(s).url);
+  if(s.finishes.greenRim)for(const key of ['eucalyptus-sparse-a','eucalyptus-sparse-b'])urls.add(NEBULA_META.finishes[key].url);
+ }
  if(g.NebulaSpooky)for(const url of NebulaSpooky.assetsFor(s))urls.add(url);
  const f=s?.finishes;
  if(f){
@@ -114,6 +118,7 @@ function tint(path,paper,color){
 }
 function nodeDraw(ctx,n,{shadow=true,alpha=false}={}){const im=image(n.url);if(!im)return;ctx.save();ctx.translate(n.x,n.y);ctx.rotate(n.rot);if(!alpha){ctx.filter=n.bright!==1?'brightness('+n.bright+')':'none';if(shadow){ctx.shadowColor='rgba(42,36,24,.20)';ctx.shadowBlur=2.2;ctx.shadowOffsetY=1.5;}}drawAsset(ctx,im,n.url,-n.w/2,-n.h/2,n.w,n.h);ctx.restore();}
 function collarNode(s,f){
+ if(g.NebulaClassic?.active(s))return s.finishes.collar===false?null:NebulaClassic.paper(s);
  if(g.NebulaSpooky?.active(s))return NebulaSpooky.collar(s,f);
  if(s.mode==='classic'||s.finishes.collar===false)return null;
  if(s.mode==='dome'&&s.finishes.paper==='cocoa'){const m=NEBULA_META.collars.domeCocoa,w=(f.radius+f.unit*.12)/.313;return {uid:'paper',url:m.url,x:f.center.x,y:f.center.y,w,h:w,rot:0,d:w,bright:1};}
@@ -192,7 +197,7 @@ function drawArt(ctx,s,opts={}){
 
  }
  if(!opts.alphaOnly)for(const n of sc.finishes.filter(n=>n.back))nodeDraw(ctx,n,{shadow:s.finishes.paper!=='black'});
- if(s.mode==='classic'&&!opts.alphaOnly){
+ if(s.mode==='classic'&&!g.NebulaClassic?.active(s)&&!opts.alphaOnly){
   const wm=NEBULA_META.wrap,L=wrapLayers(s.finishes.paper);
   const back=tint(L.back,s.finishes.paper,s.finishes.tint),front=tint(L.front,s.finishes.paper,s.finishes.tint);
   if(back){ctx.save();ctx.shadowColor='rgba(85,70,48,.15)';ctx.shadowBlur=12;ctx.shadowOffsetY=7;ctx.drawImage(back,f.origin.x,f.origin.y,wm.width*f.scale,wm.height*(f.yScale||f.scale));ctx.restore();}
@@ -226,7 +231,7 @@ function drawArt(ctx,s,opts={}){
 }
 function view(s,camera={}){
  let v;
- if(g.NebulaFall?.active(s)){const b=artBounds(s,scene(s)),scale=Math.min(680/b.w,770/b.h);v={scale,x:360-(b.x+b.w/2)*scale,y:410-(b.y+b.h/2)*scale};}
+ if(g.NebulaFall?.active(s)||g.NebulaClassic?.active(s)){const b=artBounds(s,scene(s)),scale=Math.min(680/b.w,770/b.h);v={scale,x:360-(b.x+b.w/2)*scale,y:410-(b.y+b.h/2)*scale};}
  else if(s.mode==='classic'){
   v={scale:1.30,x:-108,y:-188};
   // Enlarge compact bouquets, but keep the original framing for tall or wide
@@ -257,7 +262,7 @@ function alphaReport(s){const sc=scene(s),cv=alphaCanvas(s),data=cv.getContext('
  for(let y=0;y<820;y++)for(let x=0;x<720;x++){let within=s.mode==='dome'?Math.hypot(x-f.center.x,y-f.center.y)<coreR:false;if(s.mode==='heart'){const b=f.unit*.32;within=G.inside({x,y},f,0)&&G.inside({x:x-b,y},f,0)&&G.inside({x:x+b,y},f,0)&&G.inside({x,y:y-b},f,0)&&G.inside({x,y:y+b},f,0);}if(!within)continue;samples++;const a=data[(y*720+x)*4+3];if(a<32)open++;if(a<225)translucent++;}
  return {applicable:true,method:s.mode==='dome'?'Actual composited head alpha in central disc R - 0.43 * RMS head diameter.':'Actual composited head alpha in permitted heart interior, eroded on four axes by 0.32 * RMS head diameter.',threshold:32,opaqueThreshold:225,pixels:samples,openPixels:open,openPercent:samples?+(100*open/samples).toFixed(4):0,belowOpaquePercent:samples?+(100*translucent/samples).toFixed(4):0,excludes:['paper','shadows','ribbons and finishing overlays','outer boundary band'],explicitItems:s.items.length};
 }
-function artBounds(s,sc){let xmin=720,ymin=820,xmax=0,ymax=0;const box=(x,y,w,h)=>{xmin=Math.min(xmin,x-w/2);xmax=Math.max(xmax,x+w/2);ymin=Math.min(ymin,y-h/2);ymax=Math.max(ymax,y+h/2);};for(const n of [...sc.nodes,...sc.finishes,...(sc.filler||[]),...(sc.greenery||[]),...(sc.collar?[sc.collar]:[])]){const c=Math.abs(Math.cos(n.rot)),sn=Math.abs(Math.sin(n.rot));box(n.x,n.y,n.w*c+n.h*sn,n.w*sn+n.h*c);}if(s.mode==='classic'){const f=sc.frame;box(f.origin.x+448*f.scale,f.origin.y+599*(f.yScale||f.scale),822*f.scale,864*(f.yScale||f.scale));}if(xmin>xmax)return {x:150,y:160,w:420,h:500};return {x:xmin-22,y:ymin-22,w:xmax-xmin+44,h:ymax-ymin+44};}
+function artBounds(s,sc){let xmin=720,ymin=820,xmax=0,ymax=0;const box=(x,y,w,h)=>{xmin=Math.min(xmin,x-w/2);xmax=Math.max(xmax,x+w/2);ymin=Math.min(ymin,y-h/2);ymax=Math.max(ymax,y+h/2);};for(const n of [...sc.nodes,...sc.finishes,...(sc.filler||[]),...(sc.greenery||[]),...(sc.collar?[sc.collar]:[])]){const c=Math.abs(Math.cos(n.rot)),sn=Math.abs(Math.sin(n.rot));box(n.x,n.y,n.w*c+n.h*sn,n.w*sn+n.h*c);}if(s.mode==='classic'&&!g.NebulaClassic?.active(s)){const f=sc.frame;box(f.origin.x+448*f.scale,f.origin.y+599*(f.yScale||f.scale),822*f.scale,864*(f.yScale||f.scale));}if(xmin>xmax)return {x:150,y:160,w:420,h:500};return {x:xmin-22,y:ymin-22,w:xmax-xmin+44,h:ymax-ymin+44};}
 function wrapText(ctx,text,max){if(!text)return [];const out=[];let line='';for(const para of text.split('\n')){for(const word of para.split(/\s+/).filter(Boolean)){if(ctx.measureText(word).width>max){if(line){out.push(line);line='';}let part='';for(const ch of [...word]){if(ctx.measureText(part+ch).width>max&&part){out.push(part);part='';}part+=ch;}line=part;}else if(line&&ctx.measureText(line+' '+word).width>max){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line){out.push(line);line='';}}return out;}
 function exportCanvas(s,w=1080,h=1080,lang='en'){
  const cv=makeCanvas(w,h),ctx=cv.getContext('2d'),sc=scene(s),b=artBounds(s,sc),base=w/1080;ctx.scale(base,base);const hh=h/base,story=hh>1200;ctx.fillStyle='#f7f3eb';ctx.fillRect(0,0,1080,hh);ctx.fillStyle='#293e36';ctx.textAlign='center';
