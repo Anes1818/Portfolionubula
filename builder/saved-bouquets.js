@@ -1,6 +1,6 @@
 /* Explicit local snapshots. No customer database, upload, or cross-device sync. */
 (function(g){'use strict';
- const key='nebulaSavedBouquetsV1',limit=20,M=g.NebulaModel;
+ const key=g.NebulaShop.key('nebulaSavedBouquetsV1'),limit=20,M=g.NebulaModel;
  function read(){
   const raw=localStorage.getItem(key);if(!raw)return [];
   if(raw.length>2000000)throw Error('invalid');

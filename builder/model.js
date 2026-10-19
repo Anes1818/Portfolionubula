@@ -30,12 +30,16 @@ function price(s){
  const lines=Object.entries(counts(s)).map(([id,quantity])=>({id,quantity,unitCents:CAT[id].priceCents,totalCents:quantity*CAT[id].priceCents}));
  const flowersCents=lines.reduce((n,line)=>n+line.totalCents,0),baseCents=s.items.length?CONFIG.baseCents:0,laborCents=s.items.length?CONFIG.laborCents[s.mode]:0;
  const extraLines=[];
+ if(s.finishes.chocolateBox)extraLines.push({id:'chocolateBox',quantity:1,totalCents:CONFIG.extrasCents.chocolateBox});
  if(s.mode==='dome'){
   const green=s.finishes.greeneryCount||0;if(green)extraLines.push({id:'interiorGreenery',quantity:green,totalCents:green*CAT.eucalyptus.priceCents});
   if(s.finishes.initial)extraLines.push({id:'floralInitial',quantity:1,totalCents:CONFIG.extrasCents.floralInitial});
-  const count=s.finishes.fillerCount||0;if(count)extraLines.push({id:'filler',quantity:count,totalCents:count*CONFIG.extrasCents.filler});
-  for(const d of s.finishes.decorations||[])extraLines.push({id:d.id,quantity:1,totalCents:CONFIG.extrasCents[d.id]});
+  const count=s.finishes.studio?.breath!==undefined?0:s.finishes.fillerCount||0;if(count)extraLines.push({id:'filler',quantity:count,totalCents:count*CONFIG.extrasCents.filler});
+
  }
+ if(s.mode==='dome'||g.NebulaCustomization)for(const d of s.finishes.decorations||[])extraLines.push({id:d.id,quantity:1,totalCents:CONFIG.extrasCents[d.id]});
+ if(s.mode==='heart'&&g.NebulaCustomization&&s.finishes.initial)extraLines.push({id:'floralInitial',quantity:1,totalCents:CONFIG.extrasCents.floralInitial});
+ if(g.NebulaCustomization)extraLines.push(...NebulaCustomization.extras(s));
  /* Butterflies are charged per butterfly; the crown is one. */
  const bf=wings(s.finishes.butterfly);
  if(bf)extraLines.push({id:'butterfly',quantity:bf,totalCents:bf*CONFIG.extrasCents.butterfly});
@@ -150,13 +154,14 @@ function validateV4(raw){
  for(const [key,max] of [['ghostCount',6],['thistleCount',3]])if(f[key]!==undefined&&(!Number.isInteger(f[key])||f[key]<0||f[key]>max))return null;
  if(f.fillerCount!==undefined&&(!Number.isInteger(f.fillerCount)||f.fillerCount<0||f.fillerCount>12))return null;
  if(f.fillerPattern!==undefined&&!['scatter','border'].includes(f.fillerPattern))return null;
+ if(f.roseArtwork!==undefined&&(!['blush-v1','reference-v1','reference-v2','reference-v3','lily-study-v1','lily-mixed-v1','sunflower-classic-v1'].includes(f.roseArtwork)||!g.NebulaRoseArt))return null;
  if(f.greeneryCount!==undefined&&(!Number.isInteger(f.greeneryCount)||f.greeneryCount<0||f.greeneryCount>12))return null;
  if(f.initial!==undefined&&(typeof f.initial!=='string'||!/^([A-Z])?$/.test(f.initial)))return null;
  if(f.initialScale!==undefined&&(!Number.isFinite(f.initialScale)||f.initialScale<.7||f.initialScale>1.3))return null;
  if(f.initialOffset!==undefined&&(!Number.isFinite(f.initialOffset)||Math.abs(f.initialOffset)>.35))return null;
- if(raw.mode!=='dome'&&((f.greeneryCount||0)>0||f.initial))return null;
+ if(raw.mode!=='dome'&&((f.greeneryCount||0)>0||(f.initial&&(!g.NebulaCustomization||raw.mode==='classic'))))return null;
  if(f.decorations!==undefined&&!NebulaDetails.valid(f.decorations))return null;
- if(raw.mode!=='dome'&&((f.fillerCount||0)>0||(f.decorations||[]).length))return null;
+ if(raw.mode!=='dome'&&((f.fillerCount||0)>0||(!g.NebulaCustomization&&(f.decorations||[]).length)))return null;
  if(f.paper==='cocoa'&&raw.mode!=='dome')return null;
  for(const key of ['bow','pumpkin'])if(f[key]!==undefined&&typeof f[key]!=='boolean')return null;
  if(f.pumpkinPosition!==undefined&&!['left','center','right'].includes(f.pumpkinPosition))return null;
@@ -168,8 +173,13 @@ function validateV4(raw){
  if(f.sashOffset!==undefined&&(!Number.isFinite(f.sashOffset)||Math.abs(f.sashOffset)>60))return null;
  if(f.sashScale!==undefined&&(!Number.isFinite(f.sashScale)||f.sashScale<.65||f.sashScale>1.25))return null;
  if(f.collar!==undefined&&typeof f.collar!=='boolean')return null;
+ if(f.chocolateBox!==undefined&&(typeof f.chocolateBox!=='boolean'||!g.NebulaGift))return null;
+ if(f.studio!==undefined&&(!g.NebulaCustomization||!NebulaCustomization.valid(f.studio,raw.mode)))return null;
  const s=empty(),finishes={...s.finishes};
+ if(f.studio!==undefined)finishes.studio=clone(f.studio);
+ if(f.chocolateBox!==undefined)finishes.chocolateBox=f.chocolateBox;
  for(const key of Object.keys(finishes))if(Object.hasOwn(f,key))finishes[key]=clone(f[key]);
+ if(f.roseArtwork!==undefined)finishes.roseArtwork=f.roseArtwork;
  Object.assign(s,{mode:raw.mode,seed:raw.seed,nextId:raw.nextId,finishes,title:raw.title,note:raw.note});
  const used=new Set();
  for(const it of raw.items){
@@ -209,10 +219,11 @@ function validateV4(raw){
  return s;
 }
 function validate(raw){
- if(!raw||![4,6].includes(raw.version))return null;const out=validateV4({...raw,version:4});if(!out)return null;
+ if(!raw||![4,6].includes(raw.version))return null;if(raw.photographic!==undefined&&(raw.version!==6||raw.mode!=='dome'))return null;const out=validateV4({...raw,version:4});if(!out)return null;
  if(out.mode==='classic'&&g.NebulaSpooky&&!g.NebulaSpooky.validFinishes(out))return null;
  if(out.mode==='classic'){out.items.forEach(it=>{it.anchors.classic=G.constrainClassic(it.anchors.classic,out.frames.classic,it.id);});return out;}
  if(raw.version===4)return migrateTemplate(out);if(!validTemplate(raw.template))return null;out.template=clone(raw.template);if(['organic','garden','halloween'].includes(out.template.layout)&&out.mode!=='dome')return null;syncTemplate(out);if(g.NebulaSpooky&&!g.NebulaSpooky.validFinishes(out))return null;
+ if(raw.photographic!==undefined){if(!g.NebulaPhoto?.valid(raw.photographic,out))return null;out.photographic=clone(raw.photographic);}
  if(out.items.length!==raw.items.length||out.items.some(it=>!raw.items.some(i=>i.uid===it.uid&&i.id===it.id&&i.slot===it.slot)))return null;return out;
 }
 function migrateV3(raw){

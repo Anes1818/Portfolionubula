@@ -1,8 +1,9 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const out=path.join(__dirname,'mask-and-links');fs.mkdirSync(out,{recursive:true});
+const out=process.env.QA_OUTPUT||fs.mkdtempSync(path.join(require('node:os').tmpdir(),'nebula-links-'));fs.mkdirSync(out,{recursive:true});
+const base=process.env.BUILDER_URL||'http://127.0.0.1:4173/builder/';
 (async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});try{
  const p=await browser.newPage({viewport:{width:390,height:844}});const errors=[];p.on('pageerror',e=>errors.push(e.message));
- await p.goto('http://127.0.0.1:8767/builder/?v=20261011a');await p.waitForFunction(()=>window.NebulaApp?.ready);
+ await p.goto(base+'studio.html');await p.waitForFunction(()=>window.NebulaApp?.ready);
  const report=await p.evaluate(()=>{
   const report=[],R=NebulaRenderer,M=NebulaModel,L=NebulaLink; const stable=v=>JSON.stringify(v,(k,x)=>x&&!Array.isArray(x)&&typeof x==="object"?Object.fromEntries(Object.entries(x).sort(([a],[b])=>a.localeCompare(b))):x);
   for(const collection of [NebulaRomance,NebulaSpooky,NebulaFall])for(const recipe of collection.recipes){
@@ -46,7 +47,7 @@ const out=path.join(__dirname,'mask-and-links');fs.mkdirSync(out,{recursive:true
  const png=await p.evaluate(async()=>Array.from(new Uint8Array(await(await NebulaApp.exportBlob(1080,1080)).arrayBuffer())));fs.writeFileSync(path.join(out,'mask-sash.png'),Buffer.from(png));
  await p.screenshot({path:path.join(out,'phone.png')});
  const code=await p.evaluate(()=>NebulaLink.encode(NebulaApp.state,{name:'Test customer',note:'Demo فقط 🌻'}));
- const fresh=await browser.newContext();const sheet=await fresh.newPage();await sheet.goto('http://127.0.0.1:8767/builder/order.html#b='+code);await sheet.waitForSelector('#orderSheet:not([hidden])');assert((await sheet.locator('#osCustomerList').innerText()).includes('Demo فقط 🌻'));
+ const fresh=await browser.newContext();const sheet=await fresh.newPage();await sheet.goto(base+'order.html#b='+code);await sheet.waitForSelector('#orderSheet:not([hidden])');assert((await sheet.locator('#osCustomerList').innerText()).includes('Demo فقط 🌻'));
  await sheet.locator('#osOpenStudio').click();await sheet.waitForFunction(()=>window.NebulaApp?.ready);assert.equal(await sheet.evaluate(()=>NebulaApp.state.finishes.spookyMask),true);await fresh.close();
  console.log('PASS compact order link opens in a fresh browser and returns to the editable design');
  await p.evaluate(()=>{while(NebulaApp.history.undo)NebulaApp.undo();});

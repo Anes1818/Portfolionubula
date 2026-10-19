@@ -1,0 +1,467 @@
+{
+  "family": "lfe-pink-gingham",
+  "version": 1,
+  "status": "editable-local-study-awaiting-final-art",
+  "reference": "C:/Users/laptops zone/Downloads/Telegram Desktop/photo_3_2026-10-16_23-33-51.jpg",
+  "generationProvider": "Gemini, operated by the user",
+  "assets": [
+    {
+      "id": "rose-blush-open-a",
+      "status": "accepted-for-proof",
+      "filename": "rose-blush-open-a.png",
+      "master": "masters/rose-blush-open-a.png",
+      "source": "C:/Users/laptops zone/Downloads/Telegram Desktop/IMG_20261017_064646_304.png",
+      "sha256": "70b0b73cf114cb0464d3496f2f0d1f21b52e0ba131cbb2e60cd9bc59d100433b",
+      "width": 647,
+      "height": 635,
+      "alphaBounds": [
+        0,
+        0,
+        646,
+        634
+      ],
+      "crop": [
+        0,
+        0,
+        647,
+        635
+      ],
+      "pivot": [
+        323,
+        270
+      ],
+      "attachmentAnchor": [
+        333,
+        533
+      ],
+      "flowerCenter": [
+        323,
+        201
+      ],
+      "anchorMethod": "Authored coordinates from inspection of the full-resolution source; no crop or resize applied.",
+      "view": "central-three-quarter-front",
+      "cameraFamily": "lfe-pink-gingham-v1",
+      "lighting": "soft upper-left",
+      "brief": "marketing/LA-FLOR-ETERNA-ASSET-PROMPTS.md: common brief + P01",
+      "inspection": {
+        "hasAlpha": true,
+        "transparentPixels": 165459,
+        "partialPixels": 35138,
+        "backgrounds": [
+          "ivory",
+          "white",
+          "plum"
+        ],
+        "mobileWidth": 110,
+        "edgeNote": "Tightly trimmed: only low-alpha edge samples touch top/left (max alpha 82/255); no fully opaque boundary pixels. Reserve drawing margin. No checkerboard, black background or obvious halo after compositing.",
+        "visualNote": "Accepted as central rose for the first composition proof. Warm salmon blush, readable spiral, fine petal texture, short neck. Full-bouquet visual acceptance still pending."
+      }
+    },
+    {
+      "id": "rose-blush-open-b",
+      "status": "accepted-for-proof",
+      "filename": "rose-blush-open-b.png",
+      "master": "masters/rose-blush-open-b.png",
+      "source": "C:/Users/laptops zone/Downloads/IMG_20261017_070722_439.png",
+      "sha256": "16ecd5b74f7e3d4c4b51253b45e5ecb47bbfb5950f3e6ba08addc43dbf008cd3",
+      "width": 668,
+      "height": 646,
+      "alphaBounds": [
+        0,
+        0,
+        667,
+        645
+      ],
+      "crop": [
+        0,
+        0,
+        668,
+        646
+      ],
+      "pivot": [
+        334,
+        265
+      ],
+      "attachmentAnchor": [
+        334,
+        511
+      ],
+      "flowerCenter": [
+        342,
+        190
+      ],
+      "anchorMethod": "Visually authored coordinates on the full-resolution source; no crop or resizing applied.",
+      "view": "central-front-slight-turn",
+      "cameraFamily": "lfe-pink-gingham-v1",
+      "lighting": "soft upper-left",
+      "brief": "marketing/LA-FLOR-ETERNA-ASSET-PROMPTS.md: common brief + P02",
+      "inspection": {
+        "hasAlpha": true,
+        "transparentPixels": 172723,
+        "partialPixels": 9911,
+        "backgrounds": [
+          "ivory",
+          "white",
+          "plum"
+        ],
+        "mobileWidth": 100,
+        "edgeNote": "Tight crop with low-alpha top/left boundary samples only (max 80/255); reserve scene drawing margin. Slight pale outline on parts of lower sepals is minor at composition scale; tuck the neck and sepals behind neighboring blooms. No opaque background or checkerboard.",
+        "visualNote": "Distinct petal arrangement and cup from A, consistent salmon blush and light. Accepted as a second central bloom, not as a substitute for an oblique edge view. Full arrangement approval pending."
+      }
+    },
+    {
+      "id": "rose-blush-edge-left",
+      "status": "accepted-for-proof",
+      "filename": "rose-blush-edge-left.png",
+      "master": "masters/rose-blush-edge-left.png",
+      "source": "C:/Users/laptops zone/Downloads/IMG_20261017_071502_895.png",
+      "sha256": "cba3de6ae5283ec35cf00db7ebc29dd9a4931839167551388c5f83a60b6da223",
+      "width": 570,
+      "height": 647,
+      "alphaBounds": [
+        0,
+        0,
+        569,
+        646
+      ],
+      "crop": [
+        0,
+        0,
+        570,
+        647
+      ],
+      "pivot": [
+        285,
+        250
+      ],
+      "attachmentAnchor": [
+        302,
+        496
+      ],
+      "flowerCenter": [
+        273,
+        163
+      ],
+      "anchorMethod": "Visually authored coordinates on the full-resolution source; original PNG is neither cropped nor resized.",
+      "view": "left-oblique-three-quarter",
+      "cameraFamily": "lfe-pink-gingham-v1",
+      "lighting": "soft upper-left",
+      "brief": "marketing/LA-FLOR-ETERNA-ASSET-PROMPTS.md: common brief + P03",
+      "inspection": {
+        "hasAlpha": true,
+        "transparentPixels": 154297,
+        "partialPixels": 18208,
+        "backgrounds": [
+          "ivory",
+          "white",
+          "plum"
+        ],
+        "mobileWidth": 100,
+        "edgeNote": "Tight crop: only low-alpha samples touch top/left (maximum 101/255); retain drawing margin. Faint pale sepal edge is minor at bouquet scale; tuck the lower green attachment behind neighboring blooms.",
+        "visualNote": "Narrower oblique cup with visible side wall and center displaced left of the base. Consistent salmon blush, fine petal texture and light; useful left-edge perspective compared with frontal A/B. Accepted for assembly proof, not final arrangement approval.",
+        "supersedes": "JPG attachment photo_2026-10-17_07-15-37.jpg; use this PNG instead."
+      }
+    },
+    {
+      "id": "rose-blush-edge-right",
+      "status": "accepted-for-proof",
+      "filename": "rose-blush-edge-right.png",
+      "master": "masters/rose-blush-edge-right.png",
+      "source": "C:/Users/laptops zone/Downloads/IMG_20261017_072059_752.png",
+      "sha256": "49e1c78cef5b33c76bafd69e18891b6d8c88922463f830d55f1fb5a7fe0bfc94",
+      "width": 464,
+      "height": 564,
+      "alphaBounds": [
+        0,
+        0,
+        463,
+        563
+      ],
+      "crop": [
+        0,
+        0,
+        464,
+        564
+      ],
+      "pivot": [
+        238,
+        224
+      ],
+      "attachmentAnchor": [
+        185,
+        437
+      ],
+      "flowerCenter": [
+        271,
+        136
+      ],
+      "anchorMethod": "Visually authored coordinates on the full-resolution source; no crop, resizing or sharpening applied.",
+      "view": "right-oblique-three-quarter",
+      "cameraFamily": "lfe-pink-gingham-v1",
+      "lighting": "soft upper-left",
+      "brief": "marketing/LA-FLOR-ETERNA-ASSET-PROMPTS.md: common brief + P04",
+      "inspection": {
+        "hasAlpha": true,
+        "transparentPixels": 102483,
+        "partialPixels": 63625,
+        "backgrounds": [
+          "ivory",
+          "white",
+          "plum"
+        ],
+        "mobileWidth": 90,
+        "edgeNote": "Tight crop with low-alpha top/left boundary samples (max 80/255); reserve drawing margin. Minor pale lower-sepal edges should be occluded by neighboring flowers.",
+        "visualNote": "Distinct right-facing perspective; flower center sits right of neck, petal pattern is not a mirrored copy of left view, upper-left illumination remains compatible. Softer and smaller than A/B/left (464x564); use for modest-sized edge flowers, without upscaling. Final export-scale sharpness remains an assembled-scene gate."
+      }
+    },
+    {
+      "id": "rose-salmon-reference-center-v1",
+      "status": "accepted-for-proof",
+      "filename": "rose-salmon-reference-center-v1.png",
+      "master": "masters/rose-salmon-reference-center-v1.png",
+      "source": "C:\\Users\\laptops zone\\Downloads\\IMG_20261018_071531_520 (2).png",
+      "sha256": "d8ef9138cc4ff5d90a44599d40c8625b5ba3362ef7ae78f7409b59e361ba7729",
+      "width": 782,
+      "height": 790,
+      "alphaBounds": [
+        0,
+        0,
+        781,
+        789
+      ],
+      "crop": [
+        0,
+        0,
+        782,
+        790
+      ],
+      "pivot": [
+        391,
+        395
+      ],
+      "attachmentAnchor": [
+        391,
+        640
+      ],
+      "flowerCenter": [
+        391,
+        382
+      ],
+      "anchorMethod": "Visual flower center and concealed attachment estimate; full uncropped source preserved. Attachment is not visible in this face view.",
+      "view": "central-flower-face",
+      "cameraFamily": "lfe-reference-face-v1",
+      "brief": "marketing/LA-FLOR-ETERNA-REALISM-FIRST-ASSET.md",
+      "inspection": {
+        "hasAlpha": true,
+        "transparentPixels": 181733,
+        "partialPixels": 36441,
+        "backgrounds": [
+          "ivory",
+          "white",
+          "plum"
+        ],
+        "mobileWidth": 80,
+        "edgeNote": "Tightly trimmed alpha antialiasing at top/left (max 65/83); no opaque edge pixels. Reserve layout margin. No obvious halo on inspected backgrounds.",
+        "visualNote": "Accepted for proof as a central bloom. Closer compact spiral and hidden calyx than earlier assets. Full bouquet trial reveals repeated prominent centers; requires a distinct second bloom before final visual acceptance. Not activated in default recipe."
+      }
+    },
+    {
+      "id": "rose-salmon-reference-center-b-v1",
+      "status": "accepted-for-proof",
+      "filename": "rose-salmon-reference-center-b-v1.png",
+      "master": "masters/rose-salmon-reference-center-b-v1.png",
+      "source": "C:\\Users\\laptops zone\\Downloads\\IMG_20261018_072010_608.png",
+      "sha256": "cc5ad1497a2300933f7544ec7a8cf78db98931d2a6a24aecfc00da35433770e4",
+      "width": 774,
+      "height": 753,
+      "alphaBounds": [
+        0,
+        0,
+        773,
+        752
+      ],
+      "crop": [
+        0,
+        0,
+        774,
+        753
+      ],
+      "pivot": [
+        387.0,
+        376.5
+      ],
+      "attachmentAnchor": [
+        387.0,
+        564.75
+      ],
+      "flowerCenter": [
+        387.0,
+        376.5
+      ],
+      "view": "central-flower-face",
+      "inspection": {
+        "hasAlpha": true,
+        "edgeNote": "Tight low-alpha source boundary; scene reserves exterior margin.",
+        "visualNote": "User supplied; accepted for assembled local proof, not final owner approval."
+      }
+    },
+    {
+      "id": "wrap-gingham-ivory-reference-v1",
+      "status": "accepted-for-proof",
+      "filename": "wrap-gingham-ivory-reference-v1.png",
+      "master": "masters/wrap-gingham-ivory-reference-v1.png",
+      "source": "C:\\Users\\laptops zone\\Downloads\\IMG_20261018_074000_255.png",
+      "sha256": "d2f0dab9ed96abf6552e2173e21e44b90b4aef4b4652cc77920378b5df74be63",
+      "width": 899,
+      "height": 899,
+      "alphaBounds": [
+        0,
+        0,
+        898,
+        898
+      ],
+      "crop": [
+        0,
+        0,
+        899,
+        899
+      ],
+      "pivot": [
+        449.5,
+        449.5
+      ],
+      "attachmentAnchor": [
+        449.5,
+        674.25
+      ],
+      "flowerCenter": [
+        449.5,
+        449.5
+      ],
+      "view": "reference-paper-backing",
+      "inspection": {
+        "hasAlpha": true,
+        "edgeNote": "Tight low-alpha source boundary; scene reserves exterior margin.",
+        "visualNote": "User supplied; accepted for assembled local proof, not final owner approval."
+      }
+    },
+    {
+      "id": "breath-compact-reference-v1",
+      "status": "accepted-for-proof",
+      "filename": "breath-compact-reference-v1.png",
+      "master": "masters/breath-compact-reference-v1.png",
+      "source": "C:\\Users\\laptops zone\\Downloads\\IMG_20261018_075829_729.png",
+      "sha256": "15eaf4d9e7d57837aae7bebc90caee492c283a96402e7b786dd76834e7d838f1",
+      "width": 618,
+      "height": 588,
+      "alphaBounds": [
+        0,
+        0,
+        617,
+        587
+      ],
+      "crop": [
+        0,
+        0,
+        618,
+        588
+      ],
+      "pivot": [
+        309.0,
+        294.0
+      ],
+      "attachmentAnchor": [
+        309.0,
+        441.0
+      ],
+      "flowerCenter": [
+        309.0,
+        294.0
+      ],
+      "view": "compact-flower-tuft",
+      "inspection": {
+        "hasAlpha": true,
+        "edgeNote": "Tight low-alpha source boundary; scene reserves exterior margin.",
+        "visualNote": "User supplied; accepted for assembled local proof, not final owner approval."
+      }
+    }
+  ],
+  "pending": {
+    "status": "compact-filler-local-composition-review",
+    "nextAction": "Review reference-v2 in existing studio. Large satin bow still pending."
+  },
+  "existingCandidates": [
+    {
+      "path": "builder/assets/classic/rose_pink-bloom.webp",
+      "decision": "replace-for-this-family",
+      "reason": "Cool saturated pink, low resolution and petal-edge fringing; reference is warmer salmon blush. Preserve legacy original."
+    },
+    {
+      "path": "builder/assets/fall/breath-airy.webp",
+      "decision": "reuse-candidate",
+      "reason": "Real alpha and connected airy branching. Judge scale, florets and overlap in the new assembled scene before requesting replacement."
+    },
+    {
+      "path": "builder/assets/fall/breath-wide.webp",
+      "decision": "reuse-candidate",
+      "reason": "Real alpha and a distinct wider branch. Judge at mobile size with accepted roses."
+    },
+    {
+      "path": "builder/assets/finishes/ribbon_blush.webp",
+      "decision": "not-accepted-for-reference-proof",
+      "reason": "Small symmetric bow, shorter tails and pale edge fringe differ from the loose long-tailed bow over the flower face. No additional prompt requested yet."
+    },
+    {
+      "path": "builder/assets/classic/wrap-ivory-back.webp",
+      "decision": "not-suitable-for-reference-proof",
+      "reason": "Visually inspected: plain ivory cone / overhead ruffled collar does not match broad peach gingham and ivory folded sheets."
+    },
+    {
+      "path": "builder/assets/wrapping/dome-ivory-ruffle.webp",
+      "decision": "not-suitable-for-reference-proof",
+      "reason": "Visually inspected: plain ivory cone / overhead ruffled collar does not match broad peach gingham and ivory folded sheets."
+    }
+  ],
+  "measurements": "../../qa/next-phase/existing-asset-measurements.json",
+  "notes": "Four inspected rose views are used in the lfe-pink-gingham v2 unwrapped dome study. Masters unchanged. Lower-petal rendering masks hide attachment necks. Existing filler reused. Synthetic paper was rejected and is absent from v2; v1 remains recoverable with original geometry. Final photographic paper and bow generation are deferred by the user. Owner quantities/prices and complete visual acceptance remain pending.",
+  "rejectedAttempts": [
+    {
+      "asset": "wrap-gingham-ivory-master",
+      "source": "C:/Users/laptops zone/Downloads/IMG_20261017_153920_675.png",
+      "sha256": "dcdca59084d4a86b73c40e08872bc8f12a7cc0f7e19acf052d146cd2434d1f27",
+      "width": 1186,
+      "height": 620,
+      "hasAlpha": true,
+      "status": "rejected-not-integrated",
+      "reason": "Sideways deep tubular sleeve with projecting tied neck, thick inner wall and small tunnel-like opening. Reference is an upright broad, shallow spread of angular gingham/ivory sheets around the flower face. Rotation cannot correct the geometry.",
+      "qaSource": "../../qa/next-phase/wrap-attempt-1-source.png"
+    },
+    {
+      "asset": "wrap-gingham-ivory-master",
+      "source": "C:/Users/laptops zone/Downloads/Generated Image October 17, 2026 - 3_43PM.jpg",
+      "sha256": "0b67214557a167503eaaf34aba722937ed2dd262f08fbf81e54c10ecebe1810f",
+      "width": 1408,
+      "height": 768,
+      "hasAlpha": false,
+      "status": "rejected-not-integrated",
+      "reason": "Artificial symmetric crown/frame with disconnected-looking upright flaps and a huge aperture. JPG has baked-in checkerboard, no alpha. Prompt overconstrained the empty opening."
+    },
+    {
+      "asset": "wrap-gingham-ivory-master",
+      "source": "C:/Users/laptops zone/Downloads/Generated Image October 17, 2026 - 3_49PM.jpg",
+      "sha256": "a94f37e861c88dba65d8c93743164858e10e3a3458b4f0051319edf765917d30",
+      "status": "rejected-not-integrated",
+      "reason": "Still a wide symmetric crown/tray, with two mirrored rear spikes, outward wings and thin horizontal bottom rim. Continuous backing and blue background did not fix silhouette, sheet arrangement or camera. Target has taller oval flower face, irregular broad perimeter sheets and substantial diagonal lower apron."
+    }
+  ],
+  "candidateSources": [
+    {
+      "source": "C:/Users/laptops zone/Downloads/Generated Image October 17, 2026 - 4_02PM.jpg",
+      "status": "inspected-deferred-not-integrated",
+      "width": 1408,
+      "height": 768,
+      "hasAlpha": false,
+      "assessment": "More coherent visible gingham/ivory sheets than previous attempts, but rounder and more regular than the real reference. Full bouquet conceals inner paper boundaries; extraction is unproven. User deferred generation. No pixels from this source are used in the editable study."
+    }
+  ]
+}

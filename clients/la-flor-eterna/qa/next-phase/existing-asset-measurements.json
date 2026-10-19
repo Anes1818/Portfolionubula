@@ -1,0 +1,58 @@
+[
+  {
+    "path": "builder/assets/classic/rose_pink-bloom.webp",
+    "width": 338,
+    "height": 281,
+    "hasAlpha": true,
+    "alphaBounds": [
+      5,
+      5,
+      328,
+      271
+    ],
+    "transparent": 31553,
+    "partial": 1393
+  },
+  {
+    "path": "builder/assets/fall/breath-airy.webp",
+    "width": 1408,
+    "height": 768,
+    "hasAlpha": true,
+    "alphaBounds": [
+      376,
+      64,
+      656,
+      639
+    ],
+    "transparent": 998746,
+    "partial": 29485
+  },
+  {
+    "path": "builder/assets/fall/breath-wide.webp",
+    "width": 1408,
+    "height": 768,
+    "hasAlpha": true,
+    "alphaBounds": [
+      232,
+      63,
+      935,
+      642
+    ],
+    "transparent": 939007,
+    "partial": 53180
+  },
+  {
+    "path": "builder/assets/finishes/ribbon_blush.webp",
+    "width": 382,
+    "height": 421,
+    "hasAlpha": true,
+    "alphaBounds": [
+      5,
+      5,
+      372,
+      411
+    ],
+    "transparent": 80328,
+    "partial": 8103
+  }
+]

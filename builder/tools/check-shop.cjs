@@ -31,7 +31,12 @@ function audit(context,{live=false}={}){
  }
  if(!text(shop.name))errors.push('name: enter the shop name.');
  for(const key of ['name','site','phone'])if(!text(shop.studio?.[key]))errors.push(`studio.${key}: enter the identity shown on shared pictures.`);
- if(typeof shop.whatsapp!=='string'||!/^[1-9]\d{7,14}$/.test(shop.whatsapp))errors.push('whatsapp: use 8–15 international digits, without +, spaces or punctuation.');
+ if(shop.requestChannel==='sms'){
+  if(typeof shop.recipient!=='string'||!/^\+[1-9]\d{7,14}$/.test(shop.recipient))errors.push('recipient: use + followed by 8–15 international digits.');
+  if(live&&shop.pricesApproved!==true)errors.push('pricesApproved: owner approval is pending.');
+  if(live&&shop.selectionComplete!==true)errors.push('selectionComplete: final catalog approval is pending.');
+  if(live&&shop.fulfillmentApproved!==true)errors.push('fulfillmentApproved: fulfillment rules are pending.');
+ }else if(typeof shop.whatsapp!=='string'||!/^[1-9]\d{7,14}$/.test(shop.whatsapp))errors.push('whatsapp: use 8–15 international digits, without +, spaces or punctuation.');
  try{
   if(typeof shop.currency!=='string'||!/^[A-Z]{3}$/.test(shop.currency))throw Error();
   const format=new Intl.NumberFormat('en',{style:'currency',currency:shop.currency}).resolvedOptions();

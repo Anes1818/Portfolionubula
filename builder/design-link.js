@@ -54,6 +54,7 @@ function encode(s,order){
       for(const it of s.items)if(Number.isInteger(it.slot)&&it.slot<cap)seq[it.slot]=it.id;}
  const runs=[];for(const id of seq){const last=runs[runs.length-1];if(last&&last[0]===id)last[1]++;else runs.push([id,1]);}
  const f=s.finishes,payload={v:6,m:s.mode,s:s.seed,f:runs};
+ if(s.photographic)payload.photo=s.photographic;
  if(s.mode!=='classic'&&s.template&&s.template.capacity)payload.c=s.template.capacity;
  // Optional extension: keep a hand-arranged Classic picture and its variation IDs.
  // Older recipe-only v6 links still use the original arrange path below.
@@ -69,8 +70,11 @@ function encode(s,order){
     one. The crown was never written at all and vanished from every shared link. */
  if(f.butterfly)fin.b=Math.max(0,Math.min(9,f.butterfly|0))||1;
  if(f.crown)fin.k=1;
+ if(f.chocolateBox)fin.cb=1;
+ if(f.studio)fin.cx=f.studio;
  if(f.fillerCount)fin.fc=f.fillerCount;
  if(f.fillerPattern==='border')fin.fp='border';
+ if(f.roseArtwork)fin.ra=f.roseArtwork;
  if(f.greeneryCount)fin.gc=f.greeneryCount;
  if(f.initial){fin.il=f.initial;fin.is=f.initialScale;fin.io=f.initialOffset;}
  if(f.decorations?.length)fin.dc=f.decorations.map(d=>[d.id,d.x,d.y,d.scale,d.rotation,d.layer]);
@@ -91,7 +95,7 @@ function encode(s,order){
  const legacy=b64url(JSON.stringify(payload)),choices=[legacy,pack(JSON.stringify(payload))];
  // v7 removes repeated field names; the decoder expands back to the validated
  // v6 recipe. Per-link flower and order dictionaries remain self-describing.
- const rest={};for(const [from,to] of [['c','c'],['fin','f'],['t','t'],['n','n'],['layout','l'],['hr','h'],['a','a'],['g','g']])if(payload[from]!==undefined)rest[to]=payload[from];
+ const rest={};for(const [from,to] of [['photo','p'],['c','c'],['fin','f'],['t','t'],['n','n'],['layout','l'],['hr','h'],['a','a'],['g','g']])if(payload[from]!==undefined)rest[to]=payload[from];
  if(payload.o){const keys=['ref','name','phone','date','method','pay','note'];rest.o=Object.entries(payload.o).map(([k,v])=>[keys.includes(k)?keys.indexOf(k):k,v]);}
  const compact=[7,['classic','dome','heart'].indexOf(payload.m),payload.s,payload.f,rest];
  for(const dictionary of [false,true]){
@@ -108,7 +112,7 @@ function decode(code){
   if(Array.isArray(p)){
    if(p.length!==5||p[0]!==7||!Number.isInteger(p[1])||p[1]<0||p[1]>2||!p[4]||typeof p[4]!=='object'||Array.isArray(p[4]))return null;
    const rest=p[4],expanded={v:6,m:['classic','dome','heart'][p[1]],s:p[2],f:p[3]};
-   for(const [from,to] of [['c','c'],['f','fin'],['t','t'],['n','n'],['l','layout'],['h','hr'],['a','a'],['g','g'],['i','i']])if(rest[from]!==undefined)expanded[to]=rest[from];
+   for(const [from,to] of [['p','photo'],['c','c'],['f','fin'],['t','t'],['n','n'],['l','layout'],['h','hr'],['a','a'],['g','g'],['i','i']])if(rest[from]!==undefined)expanded[to]=rest[from];
    if(rest.o!==undefined){
     if(!Array.isArray(rest.o)||rest.o.length>20)return null;
     const keys=['ref','name','phone','date','method','pay','note'];expanded.o={};
@@ -148,6 +152,8 @@ function decode(code){
      butterfly it drew - the same thing it means now, so old links still open right. */
   s.finishes.butterfly=Number.isInteger(fin.b)?Math.max(0,Math.min(9,fin.b)):0;
   s.finishes.crown=fin.k===1;
+  if(fin.cx!==undefined)s.finishes.studio=fin.cx;
+  if(fin.cb!==undefined){if(fin.cb!==1)return null;s.finishes.chocolateBox=true;}
   if(fin.fc!==undefined)s.finishes.fillerCount=fin.fc;
   for(const [short,key] of [['fp','fillerPattern'],['gc','greeneryCount'],['il','initial'],['is','initialScale'],['io','initialOffset']])if(fin[short]!==undefined)s.finishes[key]=fin[short];
   if(fin.dc!==undefined){if(!Array.isArray(fin.dc)||fin.dc.some(a=>!Array.isArray(a)||a.length!==6))return null;
@@ -160,6 +166,7 @@ function decode(code){
   if(fin.w===0)s.finishes.collar=false;
   if(fin.t)s.finishes.sashText=String(fin.t).slice(0,28);
   if(fin.l)s.finishes.sashPlacement=String(fin.l);
+  if(fin.ra!==undefined)s.finishes.roseArtwork=fin.ra;
   if(fin.y!==undefined)s.finishes.sashOffset=fin.y;
   if(p.t)s.title=String(p.t).slice(0,70);
   if(p.n)s.note=String(p.n).slice(0,180);
@@ -173,6 +180,7 @@ function decode(code){
    }
    s.nextId=Math.max(...p.a.map(a=>a[0]))+1;s.frames.classic=p.g;
   }
+  if(p.photo!==undefined)s.photographic=p.photo;
   const design=M.validate(s);
   return design?{design,order:p.o||null}:null;
  }catch(e){return null;}

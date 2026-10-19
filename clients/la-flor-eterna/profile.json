@@ -1,0 +1,21 @@
+{
+  "id": "la-flor-eterna",
+  "name": "La Flor Eterna",
+  "byline": "By Maritza Gomez",
+  "website": "https://lafloreterna.com/",
+  "instagram": "laflor_eterna",
+  "logo": "assets/client/logo.png",
+  "requestChannel": "sms",
+  "recipient": "+13108729856",
+  "currency": "USD",
+  "demo": true,
+  "features": {"pinkStudy": false},
+  "pricesApproved": false,
+  "selectedRecipeIds": ["pink-promise"],
+  "recipeOptions": {},
+  "selectionComplete": false,
+  "fulfillmentApproved": false,
+  "publicBaseUrl": "",
+  "theme": {"background":"#FFF9F6","surface":"#FFFFFF","soft":"#F8E8ED","ink":"#292336","primary":"#76394E","border":"#E8D7D9"},
+  "studio": {"name":"La Flor Eterna","site":"lafloreterna.com","phone":"+1 310 872 9856","instagram":"@laflor_eterna","place":"","year":"2026"}
+}

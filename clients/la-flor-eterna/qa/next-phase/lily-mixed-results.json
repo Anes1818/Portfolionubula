@@ -1,0 +1,79 @@
+{
+  "code": "z1_AFs3LDEsMTEsAFtbInJvc2VfAHBpbmsiLDFdAiwAEARjcmVhbSIcLDIAEQYAIRQAEQJ3aGkAdGVfZmxvd2WAcl9zcHJheQAqCeMAWzUAIQJsaWwATQoAdx0ANQg_AGESAFAtACoTAEYNAR0ZACwVXSwAeyJjIjoyOCwAImYiOnsicCIAOiJpdm9yeSJALCJyYSI6ADkCLQBtaXhlZC12MQAiLCJnYyI6OAAsImRjIjpbWwAic2F0aW5fYgBvdyIsLTAuMgAyLDAuMDIsMQQsLQBQAXJvbnQiAF1dLCJsIjoiAGF1dG8ifSwiAHQiOiJCbHVzAGggbGlsaWVzACDigJQgTGEgAEZsb3IgRXRlEHJuYSIAMgNvcmcAYW5pYyJ9XQ",
+  "counts": {
+    "rose_pink": 7,
+    "rose_cream": 11,
+    "white_flower_spray": 4,
+    "lily": 6
+  },
+  "same": true,
+  "missing": [],
+  "price": {
+    "currency": "USD",
+    "demo": true,
+    "estimateOnly": true,
+    "lines": [
+      {
+        "id": "rose_pink",
+        "quantity": 7,
+        "unitCents": 400,
+        "totalCents": 2800
+      },
+      {
+        "id": "rose_cream",
+        "quantity": 11,
+        "unitCents": 400,
+        "totalCents": 4400
+      },
+      {
+        "id": "white_flower_spray",
+        "quantity": 4,
+        "unitCents": 350,
+        "totalCents": 1400
+      },
+      {
+        "id": "lily",
+        "quantity": 6,
+        "unitCents": 500,
+        "totalCents": 3000
+      }
+    ],
+    "extraLines": [
+      {
+        "id": "interiorGreenery",
+        "quantity": 8,
+        "totalCents": 1600
+      },
+      {
+        "id": "satin_bow",
+        "quantity": 1,
+        "totalCents": 400
+      }
+    ],
+    "flowersCents": 11600,
+    "baseCents": 2500,
+    "laborCents": 1000,
+    "extrasCents": 2000,
+    "totalCents": 17100,
+    "flowers": 28,
+    "texture": 0,
+    "chocolates": 0,
+    "pieces": 28
+  },
+  "bow": {
+    "uid": "detail-satin_bow",
+    "detailId": "satin_bow",
+    "url": "assets/client/lily-family/bow-blush-long-tails.webp",
+    "x": 324.76877385046043,
+    "y": 393.2028387408672,
+    "w": 85.85642525701111,
+    "h": 155.94622817967962,
+    "d": 155.94622817967962,
+    "rot": -0.13962634015954636,
+    "bright": 1,
+    "tucked": false,
+    "grounded": false,
+    "z": 500
+  },
+  "greens": 8
+}

@@ -1,0 +1,33 @@
+{
+  "source": "C:/Users/laptops zone/Downloads/IMG_20261017_072059_752.png",
+  "format": "png",
+  "width": 464,
+  "height": 564,
+  "hasAlpha": true,
+  "alphaBounds": [
+    0,
+    0,
+    463,
+    563
+  ],
+  "transparentPixels": 102483,
+  "partialPixels": 63625,
+  "border": {
+    "top": {
+      "count": 6,
+      "maxAlpha": 80
+    },
+    "left": {
+      "count": 2,
+      "maxAlpha": 45
+    },
+    "bottom": {
+      "count": 0,
+      "maxAlpha": 0
+    },
+    "right": {
+      "count": 0,
+      "maxAlpha": 0
+    }
+  }
+}

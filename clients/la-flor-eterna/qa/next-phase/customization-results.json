@@ -1,0 +1,214 @@
+[
+  {
+    "mode": "flowers",
+    "count": 44,
+    "focal": 3,
+    "onTop": true,
+    "thistles": 2,
+    "same": true,
+    "priced": {
+      "currency": "USD",
+      "demo": true,
+      "estimateOnly": true,
+      "lines": [
+        {
+          "id": "lily",
+          "quantity": 2,
+          "unitCents": 500,
+          "totalCents": 1000
+        },
+        {
+          "id": "rose_pink",
+          "quantity": 41,
+          "unitCents": 400,
+          "totalCents": 16400
+        },
+        {
+          "id": "sunflower",
+          "quantity": 1,
+          "unitCents": 400,
+          "totalCents": 400
+        }
+      ],
+      "extraLines": [
+        {
+          "id": "filler",
+          "quantity": 12,
+          "totalCents": 2400
+        },
+        {
+          "id": "thistleCount",
+          "quantity": 2,
+          "totalCents": 500
+        }
+      ],
+      "flowersCents": 17800,
+      "baseCents": 2500,
+      "laborCents": 1000,
+      "extrasCents": 2900,
+      "totalCents": 24200,
+      "flowers": 44,
+      "texture": 0,
+      "chocolates": 0,
+      "pieces": 44
+    },
+    "maskClear": true,
+    "sashLast": true,
+    "fits": true,
+    "missing": [],
+    "code": "z1_AFs3LDEsMTEsAFtbImxpbHkiACwxXSxbInJvAHNlX3BpbmsiBCw0ABABc3VuZmzQb3dlcgAgDzYAEAEAOxMAMzFdXSx7ImMAIjo0NCwiZiIAOnsidGhpc3QAbGVDb3VudCIAOjIsInAiOiIAaXZvcnkiLCIAZmMiOjEyLCIAcmEiOiJyZWYAZXJlbmNlLXYAMyIsInQiOiIASGFwcHkgQmkgcnRoZGEAMQFsIgA6ImRpYWdvbhBhbCJ9ACUDUGluAGsgUHJvbWlzAmUAIwRvcmdhbmkAYyJ9XQ"
+  },
+  {
+    "mode": "toys-sash",
+    "count": 44,
+    "focal": 3,
+    "onTop": true,
+    "thistles": 2,
+    "same": true,
+    "priced": {
+      "currency": "USD",
+      "demo": true,
+      "estimateOnly": true,
+      "lines": [
+        {
+          "id": "lily",
+          "quantity": 2,
+          "unitCents": 500,
+          "totalCents": 1000
+        },
+        {
+          "id": "rose_pink",
+          "quantity": 41,
+          "unitCents": 400,
+          "totalCents": 16400
+        },
+        {
+          "id": "sunflower",
+          "quantity": 1,
+          "unitCents": 400,
+          "totalCents": 400
+        }
+      ],
+      "extraLines": [
+        {
+          "id": "filler",
+          "quantity": 12,
+          "totalCents": 2400
+        },
+        {
+          "id": "snoopy",
+          "quantity": 1,
+          "totalCents": 2200
+        },
+        {
+          "id": "kitty",
+          "quantity": 1,
+          "totalCents": 2200
+        },
+        {
+          "id": "sash",
+          "quantity": 1,
+          "totalCents": 0
+        },
+        {
+          "id": "thistleCount",
+          "quantity": 2,
+          "totalCents": 500
+        }
+      ],
+      "flowersCents": 17800,
+      "baseCents": 2500,
+      "laborCents": 1000,
+      "extrasCents": 7300,
+      "totalCents": 28600,
+      "flowers": 44,
+      "texture": 0,
+      "chocolates": 0,
+      "pieces": 44
+    },
+    "maskClear": true,
+    "sashLast": true,
+    "fits": true,
+    "missing": [],
+    "code": "z1_AFs3LDEsMTEsAFtbImxpbHkiACwxXSxbInJvAHNlX3BpbmsiBCw0ABABc3VuZmzQb3dlcgAgDzYAEAEAOxMAMzFdXSx7ImMAIjo0NCwiZiIAOnsidGhpc3QAbGVDb3VudCIAOjIsInAiOiIAaXZvcnkiLCIAaCI6ImJsYW4Aa19jaGFtcGEAZ25lIiwiZmMAIjoxMiwicmEAIjoicmVmZXIAZW5jZS12MyIALCJkYyI6W1sAInNub29weSIgLC0wLjYABQE4MgAsMSwtOCwidEB1Y2tlZCIAmAFrwGl0dHkiLAAiCQAhCABdLCJ0IjoiSABhcHB5IEJpchB0aGRhAJMBbCI6ACJkaWFnb25hCGwifQAlA1BpbmuAIFByb21pcwCgAQEAIwFvcmdhbmljACJ9XQ"
+  },
+  {
+    "mode": "mask-toys-sash",
+    "count": 44,
+    "focal": 3,
+    "onTop": true,
+    "thistles": 2,
+    "same": true,
+    "priced": {
+      "currency": "USD",
+      "demo": true,
+      "estimateOnly": true,
+      "lines": [
+        {
+          "id": "lily",
+          "quantity": 2,
+          "unitCents": 500,
+          "totalCents": 1000
+        },
+        {
+          "id": "rose_pink",
+          "quantity": 41,
+          "unitCents": 400,
+          "totalCents": 16400
+        },
+        {
+          "id": "sunflower",
+          "quantity": 1,
+          "unitCents": 400,
+          "totalCents": 400
+        }
+      ],
+      "extraLines": [
+        {
+          "id": "filler",
+          "quantity": 12,
+          "totalCents": 2400
+        },
+        {
+          "id": "snoopy",
+          "quantity": 1,
+          "totalCents": 2200
+        },
+        {
+          "id": "kitty",
+          "quantity": 1,
+          "totalCents": 2200
+        },
+        {
+          "id": "sash",
+          "quantity": 1,
+          "totalCents": 0
+        },
+        {
+          "id": "spookyMask",
+          "quantity": 1,
+          "totalCents": 2000
+        },
+        {
+          "id": "thistleCount",
+          "quantity": 2,
+          "totalCents": 500
+        }
+      ],
+      "flowersCents": 17800,
+      "baseCents": 2500,
+      "laborCents": 1000,
+      "extrasCents": 9300,
+      "totalCents": 30600,
+      "flowers": 44,
+      "texture": 0,
+      "chocolates": 0,
+      "pieces": 44
+    },
+    "maskClear": true,
+    "sashLast": true,
+    "fits": true,
+    "missing": [],
+    "code": "z1_AFs3LDEsMTEsAFtbImxpbHkiACwxXSxbInJvAHNlX3BpbmsiBCw0ABABc3VuZmzQb3dlcgAgDzYAEAEAOxMAMzFdXSx7ImMAIjo0NCwiZiIAOnsic3Bvb2sAeU1hc2siOnQAcnVlLCJ0aGkAc3RsZUNvdW4AdCI6MiwicCIAOiJpdm9yeSIALCJoIjoiYmwAYW5rX2NoYW0AcGFnbmUiLCIAZmMiOjEyLCIAcmEiOiJyZWYAZXJlbmNlLXYAMyIsImRjIjoAW1sic25vb3CAeSIsLTAuNgAFAQA4MiwxLC04LAAidHVja2VkIgEAqgFraXR0eSIsAwAiCQAhCF0sInQiOgAiSGFwcHkgQkBpcnRoZGEAkwFsACI6ImRpYWdvIG5hbCJ9ACUDUGkAbmsgUHJvbWkGcwCgAQAjAW9yZ2FuAGljIn1d"
+  }
+]

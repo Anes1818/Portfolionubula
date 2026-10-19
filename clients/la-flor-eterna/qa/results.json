@@ -1,0 +1,143 @@
+{
+  "checks": [
+    "Strict international recipient validation",
+    "Both channel URLs preserve accents, newlines and punctuation",
+    "Apple best-effort syntax remains explicit",
+    "Impossible dates, past dates, empty names and overlong notes rejected",
+    "SMS profile passes price coverage/configuration audit in sample mode",
+    "Live validation blocks unapproved sample prices",
+    "Catalog stays light and does not import Nebula language/draft/shelf",
+    "Confirmed design is first; complete retained library available",
+    "Withdrawn design absent",
+    "Catalog fits 320",
+    "Catalog fits 390",
+    "Catalog fits 768",
+    "Catalog fits 1440",
+    "Shop identity, exact SMS recipient and scoped keys",
+    "Undo retains exact design",
+    "Reload retains edits and isolates original Nebula draft",
+    "Saved shelf is shop-scoped",
+    "Empty form has recovery error",
+    "Past date rejected",
+    "Request uses exact recipient, sample label and complete florist-sheet link",
+    "Diagnostics removed and fallbacks initially collapsed",
+    "Design link omits all customer and private title/note fields",
+    "Repeated prepare preserves reference",
+    "Clipboard failure selects complete text and keeps manual fallback",
+    "Clipboard success confirms copy only",
+    "Complete text alternative omits link and retains name/notes/options",
+    "Simulated unavailable/cancelled handler retains message and form",
+    "Branded PNG exports successfully",
+    "Editor fits 320",
+    "Editor fits 390",
+    "Editor fits 768",
+    "Editor fits 1440",
+    "Customer review has no WhatsApp or payment chooser",
+    "Spanish handoff uses translated request, sample estimate and exact recipient",
+    "Florist sheet has working supplied logo, client title and sample estimate",
+    "Florist-sheet edit link preserves shop context and recipe",
+    "Fresh browser reconstructs same bouquet from sheet without saved state",
+    "Untrusted URL fields cannot override shop identity or recipient",
+    "Recipe loads, links and exports complete artwork: pink-promise",
+    "Recipe loads, links and exports complete artwork: written-in-roses",
+    "Recipe loads, links and exports complete artwork: always-you",
+    "Recipe loads, links and exports complete artwork: midnight-blooms",
+    "Recipe loads, links and exports complete artwork: scream-for-you",
+    "Recipe loads, links and exports complete artwork: forever-my-boo",
+    "Recipe loads, links and exports complete artwork: autumn-latte",
+    "Recipe loads, links and exports complete artwork: october-cream",
+    "Recipe loads, links and exports complete artwork: pumpkin-patch",
+    "Recipe loads, links and exports complete artwork: harvest-sunshine",
+    "Scream preserves restrictions and hides unsupported lily controls",
+    "Midnight retains restored Classic composition with real lilies",
+    "Transient lily request failure retries automatically without losing design",
+    "Lily failure is visible and retryable",
+    "Lily retry restores export readiness",
+    "Lily renders and exports in supported classic",
+    "Lily renders and exports in supported dome",
+    "Lily renders and exports in supported heart",
+    "Custom Classic preserves all manual anchors in design links",
+    "Empty bouquet cannot enter request flow",
+    "Invalid backup is namespaced; Nebula original untouched",
+    "Catalog Spanish supports SMS wording with no WhatsApp",
+    "No missing HTTP resources across retained library",
+    "No unexpected runtime errors (one intentional lily failure recorded)",
+    "Invalid sheet links have localized recovery text"
+  ],
+  "lengths": [
+    {
+      "id": "pink-promise",
+      "characters": 472,
+      "encodedBody": 642,
+      "uri": 664
+    },
+    {
+      "id": "written-in-roses",
+      "characters": 467,
+      "encodedBody": 611,
+      "uri": 633
+    },
+    {
+      "id": "always-you",
+      "characters": 507,
+      "encodedBody": 699,
+      "uri": 721
+    },
+    {
+      "id": "midnight-blooms",
+      "characters": 1843,
+      "encodedBody": 2034,
+      "uri": 2056
+    },
+    {
+      "id": "scream-for-you",
+      "characters": 590,
+      "encodedBody": 804,
+      "uri": 826
+    },
+    {
+      "id": "forever-my-boo",
+      "characters": 685,
+      "encodedBody": 894,
+      "uri": 916
+    },
+    {
+      "id": "autumn-latte",
+      "characters": 850,
+      "encodedBody": 1134,
+      "uri": 1156
+    },
+    {
+      "id": "october-cream",
+      "characters": 680,
+      "encodedBody": 908,
+      "uri": 930
+    },
+    {
+      "id": "pumpkin-patch",
+      "characters": 743,
+      "encodedBody": 971,
+      "uri": 993
+    },
+    {
+      "id": "harvest-sunshine",
+      "characters": 730,
+      "encodedBody": 949,
+      "uri": 971
+    },
+    {
+      "id": "custom-classic-20-varieties-manual-max-unicode-form",
+      "characters": 3067,
+      "encodedBody": 6963,
+      "uri": 6985
+    }
+  ],
+  "missing": [],
+  "errors": [],
+  "physicalSMSDeliveryTested": false,
+  "notes": [
+    "One lily asset request intentionally aborted to test retry.",
+    "No SMS handler launched. Cancellation/unavailable handler simulated by preventing navigation.",
+    "Lengths use local preview URL; rerun with final publicBaseUrl before handset checks."
+  ]
+}

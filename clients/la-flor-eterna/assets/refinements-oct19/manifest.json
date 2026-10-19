@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-19",
+  "notes": "One full wrapper supplies both rendered layers, preserving registration. Alternate paper archived. User accepted the supplied chocolate image as-is on 19 October; it is included without retouching.",
+  "assets": [
+    {
+      "source": "IMG_20261019_103714_379.png",
+      "file": "white-stock-tip.webp",
+      "width": 535,
+      "height": 541,
+      "runtime": true,
+      "sha256": "d84082e7a769f242770d25bcec2fc04d5252c90eb4563852a28f208f0d903f86",
+      "alphaPreserved": true
+    },
+    {
+      "source": "IMG_20261019_103719_319.png",
+      "file": "wrap-butter-yellow.webp",
+      "width": 700,
+      "height": 893,
+      "runtime": true,
+      "sha256": "69095d4f6d6c7fec13b94c39b487b02eea77042bac79a851a9e1565b4243aacb",
+      "alphaPreserved": true
+    },
+    {
+      "source": "IMG_20261019_103719_674.png",
+      "file": "rose-salmon-oblique.webp",
+      "width": 631,
+      "height": 510,
+      "runtime": true,
+      "sha256": "69671004cf563dc8264888ec40f0550e9440b4db2770951c15b52413ae49449c",
+      "alphaPreserved": true
+    },
+    {
+      "source": "IMG_20261019_103714_632.png",
+      "file": "wrap-butter-yellow-alternate.webp",
+      "width": 698,
+      "height": 889,
+      "runtime": false,
+      "sha256": "20f9e590596745605eb9cf1b91025b0439fe83795bc4ad173222f36bc7af41ee",
+      "alphaPreserved": true
+    },
+    {
+      "source": "IMG_20261019_103714_047.png",
+      "file": "chocolate-box-gold.webp",
+      "width": 948,
+      "height": 494,
+      "runtime": true,
+      "sha256": "8d85a8632299d1a9f37aa940af0bf79273ac6ce40ae6f2c2acea38cbbc22eda3",
+      "alphaPreserved": true,
+      "acceptedByUser": true
+    }
+  ]
+}

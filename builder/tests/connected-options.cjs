@@ -1,15 +1,15 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('fs');
-const out=__dirname+'/connected-options';fs.mkdirSync(out,{recursive:true});
+const out=process.env.QA_OUTPUT||fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(),'nebula-connected-'));fs.mkdirSync(out,{recursive:true});
+const base=process.env.BUILDER_URL||'http://127.0.0.1:4173/builder/';
 (async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});try{
  const p=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
- await p.goto('http://127.0.0.1:8767/builder/?v=20261009a');await p.waitForFunction(()=>window.NebulaApp?.ready);await p.waitForFunction(()=>document.querySelectorAll('[data-preview]:not(:disabled)').length===10);
- assert.equal(await p.locator('.catalog-photo').count(),9);
- for(const id of ['pink-promise','written-in-roses','always-you','scream-for-you','forever-my-boo','midnight-blooms','autumn-latte','october-cream','harvest-sunshine']){
-  const img=p.locator('[data-preview='+id+'] img');await img.scrollIntoViewIfNeeded();await img.evaluate(el=>el.decode());
-  await p.locator('[data-preview='+id+']').click();assert((await p.locator('#collectionPreviewImage').getAttribute('src')).endsWith(id+'.jpg'));
-  await p.locator('#collectionPreviewDesign').click();assert(await p.evaluate(id=>document.querySelector('[data-preview="'+id+'"] canvas').toDataURL()===document.querySelector('#collectionPreviewImage').src,id));await p.keyboard.press('Escape');
+ await p.goto(base);assert.equal(await p.locator('.bouquet-card').count(),10);
+ for(const id of await p.evaluate(()=>NEBULA_COLLECTIONS.map(r=>r.id))){
+  const img=p.locator('[data-id='+id+'] img');await img.scrollIntoViewIfNeeded();await img.evaluate(el=>el.decode());assert((await img.getAttribute('src')).endsWith(id+'.webp'));
+  assert.equal(await p.locator('[data-id='+id+'] .customize-link').getAttribute('href'),'studio.html?template='+id);
  }
- console.log('PASS Nine supplied style images map to the correct recipes and switch to exact editable previews');
+ await p.goto(base+'studio.html');await p.waitForFunction(()=>window.NebulaApp?.ready);
+ console.log('PASS Ten catalog thumbnails load and link to their matching standalone editable recipes');
  await p.evaluate(()=>NebulaApp.applyFallTemplate('scream-for-you'));await p.locator('#tab-finishing').click();
  const before=await p.evaluate(()=>JSON.stringify(NebulaApp.state)),price=await p.evaluate(()=>NebulaModel.price(NebulaApp.state).totalCents);
  await p.locator('#spookyMask').uncheck();

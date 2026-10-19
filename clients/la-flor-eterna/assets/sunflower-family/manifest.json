@@ -1,0 +1,54 @@
+{
+  "conversion": "lossless RGBA verified; no retouching",
+  "assets": [
+    {
+      "file": "wrap-yellow-back.webp",
+      "width": 763,
+      "height": 951,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185246_575.png",
+      "sha256": "819e6983d40a5c19e48995e8b1184a6349c91ee2d1e212642818bf74c07b042b"
+    },
+    {
+      "file": "wrap-yellow-front.webp",
+      "width": 1058,
+      "height": 779,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185254_522.png",
+      "sha256": "aa0238feecdddd9f61126c2fb635c3cbb79391b1016c9b2e54c42edfa8580a4f"
+    },
+    {
+      "file": "sunflower-oblique-a.webp",
+      "width": 629,
+      "height": 741,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185301_011.png",
+      "sha256": "bdd27c686e2579667baa23580858d5a62419e31def852e11d3189106fc729f70"
+    },
+    {
+      "file": "sunflower-front-a.webp",
+      "width": 688,
+      "height": 753,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185306_650.png",
+      "sha256": "c98bf1856500cc959316deddb15e4c79cbf56e9eced57072f8b961b739ffc739"
+    },
+    {
+      "file": "sunflower-front-b.webp",
+      "width": 772,
+      "height": 763,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185306_455.png",
+      "sha256": "ee9aed791c0a903ed5fe7aa849816cf8f73723dc61383952fe65ae9493bcb4fc"
+    },
+    {
+      "file": "sunflower-oblique-b.webp",
+      "width": 611,
+      "height": 691,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185258_931.png",
+      "sha256": "fe59a48c0a6e9c800da9c67351bf5d0b421afa79e5e2fad27a07f5b198de7810"
+    },
+    {
+      "file": "sunflower-leaf-stem.webp",
+      "width": 714,
+      "height": 1001,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_185247_005.png",
+      "sha256": "937c46ea9e8aa7b55cefc8ce93242be79a846475597657084f375d63f356856d"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "lily-pink-open-a",
+  "status": "accepted-for-composition-trial",
+  "source": "C:\\Users\\laptops zone\\Downloads\\IMG_20261018_130715_676.png",
+  "master": "masters/lily-pink-open-a.png",
+  "file": "lily-pink-open-a.webp",
+  "width": 831,
+  "height": 833,
+  "alphaBounds": [
+    0,
+    0,
+    830,
+    832
+  ],
+  "conversion": "Lossless WebP; decoded RGBA matches PNG exactly; no resizing or retouching.",
+  "sha256": "0eaacf4080d1caf9702fb8fbc26244b6515c51ceb3bd1ee0455966992dc39959",
+  "sourceBytes": 612435,
+  "runtimeBytes": 319722
+}

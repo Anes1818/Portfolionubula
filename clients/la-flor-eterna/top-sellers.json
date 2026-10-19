@@ -1,0 +1,50 @@
+[
+  {
+    "id": "pink-promise",
+    "en": "Pink Promise",
+    "es": "Promesa rosa",
+    "description": "Salmon roses, delicate baby’s breath and peach gingham.",
+    "descriptionEs": "Rosas salmón, paniculata y papel a cuadros durazno.",
+    "image": "assets/client/featured/pink-promise.jpg",
+    "href": "studio.html#b=WzcsMSwxMSxbWyJyb3NlX3BpbmsiLDMyXV0seyJjIjozMiwiZiI6eyJwIjoiaXZvcnkiLCJjeCI6eyJ2IjoxLCJicmVhdGgiOjMsIndyYXAiOiJnaW5naGFtIn0sInJhIjoicmVmZXJlbmNlLXYzIiwiZGMiOltbInNhdGluX2JvdyIsLTAuMzgsMCwxLjE1LC02LCJmcm9udCJdXSwibCI6ImF1dG8ifSwidCI6IlBpbmsgUHJvbWlzZSIsImwiOiJvcmdhbmljIn1d",
+    "expected": {
+      "code": "WzcsMSwxMSxbWyJyb3NlX3BpbmsiLDMyXV0seyJjIjozMiwiZiI6eyJwIjoiaXZvcnkiLCJjeCI6eyJ2IjoxLCJicmVhdGgiOjMsIndyYXAiOiJnaW5naGFtIn0sInJhIjoicmVmZXJlbmNlLXYzIiwiZGMiOltbInNhdGluX2JvdyIsLTAuMzgsMCwxLjE1LC02LCJmcm9udCJdXSwibCI6ImF1dG8ifSwidCI6IlBpbmsgUHJvbWlzZSIsImwiOiJvcmdhbmljIn1d",
+      "count": 32,
+      "mode": "dome",
+      "art": "reference-v3"
+    },
+    "source": "C:/Users/laptops zone/Downloads/Telegram Desktop/photo_3_2026-10-16_23-33-51.jpg"
+  },
+  {
+    "id": "blush-lilies",
+    "en": "Blush Lilies",
+    "es": "Lirios rosados",
+    "description": "Pink lilies, ivory roses and soft eucalyptus.",
+    "descriptionEs": "Lirios rosados, rosas marfil y eucalipto.",
+    "image": "assets/client/featured/blush-lilies.jpg",
+    "href": "studio.html#b=z1_AFs3LDEsMTEsAFtbInJvc2VfAHBpbmsiLDFdAiwAEARjcmVhbSIMLDIAEQYAIVtsaWx5_QAcEDMAHAcASBIANx8AHAcAfxQASBIBACwFXSx7ImMiOgAyOCwiZiI6ewAicCI6Iml2b4ByeSIsImN4ABIBAHYiOjEsImJyAGVhdGgiOjAsACJzcHJheXMigDo0LCJ3cmEAMQEAcGVhY2gifSwgInJhIjoAawItbQBpeGVkLXYxIgAsImdjIjo4LAAiZGMiOltbIgBzYXRpbl9ibwB3IiwtMC41MgAsMC42OCwxLAAtMTAsImZybwBudCJdXSwibIAiOiJhdXRvAFYBAHQiOiJCbHVzAGggTGlsaWVzAiIAHwNvcmdhbmkAYyJ9XQ",
+    "expected": {
+      "code": "z1_AFs3LDEsMTEsAFtbInJvc2VfAHBpbmsiLDFdAiwAEARjcmVhbSIMLDIAEQYAIVtsaWx5_QAcEDMAHAcASBIANx8AHAcAfxQASBIBACwFXSx7ImMiOgAyOCwiZiI6ewAicCI6Iml2b4ByeSIsImN4ABIBAHYiOjEsImJyAGVhdGgiOjAsACJzcHJheXMigDo0LCJ3cmEAMQEAcGVhY2gifSwgInJhIjoAawItbQBpeGVkLXYxIgAsImdjIjo4LAAiZGMiOltbIgBzYXRpbl9ibwB3IiwtMC41MgAsMC42OCwxLAAtMTAsImZybwBudCJdXSwibIAiOiJhdXRvAFYBAHQiOiJCbHVzAGggTGlsaWVzAiIAHwNvcmdhbmkAYyJ9XQ",
+      "count": 28,
+      "mode": "dome",
+      "art": "lily-mixed-v1"
+    },
+    "source": "C:/Users/laptops zone/Downloads/Telegram Desktop/photo_5_2026-10-16_23-33-51.jpg"
+  },
+  {
+    "id": "golden-sunshine",
+    "en": "Golden Sunshine",
+    "es": "Sol dorado",
+    "description": "Seven sunflowers in yellow paper, with an optional chocolate gift.",
+    "descriptionEs": "Siete girasoles en papel amarillo, con chocolates opcionales.",
+    "image": "assets/client/featured/golden-sunshine.jpg",
+    "href": "studio.html#b=z1_AFs3LDAsMTEsAFtbInN1bmZsAG93ZXIiLDddAF0seyJmIjp7ACJwIjoiaXZvAHJ5IiwiciI6ACJidXJndW5kAQAPAWNiIjoxLCIUY3gAKAF2AAwCYnJlAGF0aCI6MCwiCHdyYQA8AXllbGwAb3ctdXByaWcAaHQifSwicmEEIjoAbQctY2xhcwBzaWMtdjEiLAAibCI6ImF1dAJvACgBdCI6IkdvAGxkZW4gU3VuAHNoaW5lIiwiAGEiOltbMSwzADIyLDIzNSwxAF0sWzIsNDMwECwyOTAADgIzLDIgMzcsMzMADgM0LEAzNTIsMzYAKgM1gCw0NzAsNDEAHAMANiwyNzUsNDUBABwDNywzOTIsNCEARgJdLCJnANUBbW8gZGUiOiIAowQiLDAiZW5nAIcBABMGLWeAYXRoZXJlZAEPASBlbnRlcgA3AXgiADozNjAsInkiEDozOTAA8wJkaXUAcyI6MjMwLCIAdW5pdCI6NjiALCJzY2FsZQE4AkBvcmlnaW4APAQ1BjQAOwIAOQF3YWlzdAkAUww3MwBTAmltWSIAOjU2MH19XQ",
+    "expected": {
+      "code": "z1_AFs3LDAsMTEsAFtbInN1bmZsAG93ZXIiLDddAF0seyJmIjp7ACJwIjoiaXZvAHJ5IiwiciI6ACJidXJndW5kAQAPAWNiIjoxLCIUY3gAKAF2AAwCYnJlAGF0aCI6MCwiCHdyYQA8AXllbGwAb3ctdXByaWcAaHQifSwicmEEIjoAbQctY2xhcwBzaWMtdjEiLAAibCI6ImF1dAJvACgBdCI6IkdvAGxkZW4gU3VuAHNoaW5lIiwiAGEiOltbMSwzADIyLDIzNSwxAF0sWzIsNDMwECwyOTAADgIzLDIgMzcsMzMADgM0LEAzNTIsMzYAKgM1gCw0NzAsNDEAHAMANiwyNzUsNDUBABwDNywzOTIsNCEARgJdLCJnANUBbW8gZGUiOiIAowQiLDAiZW5nAIcBABMGLWeAYXRoZXJlZAEPASBlbnRlcgA3AXgiADozNjAsInkiEDozOTAA8wJkaXUAcyI6MjMwLCIAdW5pdCI6NjiALCJzY2FsZQE4AkBvcmlnaW4APAQ1BjQAOwIAOQF3YWlzdAkAUww3MwBTAmltWSIAOjU2MH19XQ",
+      "count": 7,
+      "mode": "classic",
+      "art": "sunflower-classic-v1"
+    },
+    "source": "C:/Users/laptops zone/Downloads/Telegram Desktop/photo_1_2026-10-16_23-33-51.jpg"
+  }
+]

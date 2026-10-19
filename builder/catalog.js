@@ -9,8 +9,8 @@
     skip:'Ir a los ramos',about:'Para floristerías',saved:'Ramos guardados',language:'Idioma',eyebrow:'Un poco de inspiración, solo para ti',headline:'Encuentra un ramo.',headlineEm:'Hazlo tuyo.',intro:'Empieza con algo que te encante. Después juega con las flores, los colores y cada pequeño detalle en tu propio estudio de ramos.',resume:'Continuar mi ramo →',aside:'Una primera cita. Un gran día. O un bonito detalle porque sí.',asideLabel:'Hay un ramo para eso.',all:'Todos los ramos',love:'Para el amor',classic:'Clásicos naturales',halloween:'Un poco de misterio',fall:'Calidez de otoño',search:'Encuentra tu ramo',photoNote:'Fotos y vistas de diseño · Abre un ramo para personalizarlo',emptyTitle:'¿Otra clase de flor?',emptyCopy:'Prueba otra flor o explora toda la colección.',reset:'Ver todos los ramos',yourWay:'¿Tienes tu propia idea?',studioTitle:'Hay espacio para crear.',studioCopy:'Explora los arreglos Clásico, Domo y Corazón. Tu diseño actual te acompaña.',openStudio:'Abrir el estudio de ramos',savedEyebrow:'Pequeñas ideas que vale la pena guardar',savedHint:'Guardados en este navegador y dispositivo. Abre un diseño para seguir creando.',stepOne:'Elige un punto de partida',stepOneCopy:'Encuentra un estilo que te recuerde a esa persona.',stepTwo:'Hazlo personal',stepTwoCopy:'Personalízalo y revisa la estimación detallada.',stepThree:'Inicia la conversación',stepThreeCopy:'Prepara una solicitud por WhatsApp para tu florista.',estimateNote:'El estudio usa precios de muestra. Tu florista confirma la disponibilidad, el ramo final y el precio. Aquí no se confirma ningún pedido.',footer:'Arreglado con cuidado. Completamente tuyo.',removeTitle:'¿Eliminar este ramo guardado?',removeNote:'Tu diseño actual en el estudio no cambiará.',keep:'Conservar',remove:'Eliminar'
   };
   let lang = 'en', filter = 'all', pendingRemoval = null;
-  const shelfKey = 'nebulaSavedBouquetsV1';
-  const t = key => lang === 'es' ? spanish[key] || english[key] || key : english[key] || key;
+  const shelfKey = NebulaShop.key('nebulaSavedBouquetsV1');
+  const t = key => window.NEBULA_SHOP?.catalogCopy?.[lang]?.[key] || (lang === 'es' ? spanish[key] || english[key] || key : english[key] || key);
   const choose = (en, es) => lang === 'es' ? es : en;
   const normalized = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const params = new URLSearchParams(location.search);
@@ -25,7 +25,7 @@
       const recipe = recipes.find(item => item.id === card.dataset.id);
       if (!recipe) return;
       const haystack = normalized([recipe.en,recipe.es,recipe.description,recipe.descriptionEs,t(recipe.collection)].join(' '));
-      card.hidden = (filter !== 'all' && recipe.collection !== filter) || !query.split(/\s+/).every(word => haystack.includes(word));
+      card.hidden = !NebulaShop.recipeAllowed(recipe.id) || (filter !== 'all' && recipe.collection !== filter) || !query.split(/\s+/).every(word => haystack.includes(word));
       if (!card.hidden) count++;
     });
     document.querySelectorAll('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === filter)));
@@ -57,7 +57,7 @@
   function renderSaved() {
     $('savedGrid').replaceChildren();
     try {
-      $('resumeDesign').hidden = !['nebulaBouquetV6','nebulaBouquetV5','nebulaBouquetV4'].some(key => localStorage.getItem(key));
+      $('resumeDesign').hidden = !['nebulaBouquetV6','nebulaBouquetV5','nebulaBouquetV4'].some(key => localStorage.getItem(NebulaShop.key(key)));
       const entries = readShelf();
       $('savedStatus').textContent = entries.length
         ? choose(`${entries.length} of 20 saved spaces used.`,`${entries.length} de 20 espacios guardados.`)
@@ -107,7 +107,7 @@
   $('bouquetSearch').addEventListener('input',()=>filterCards());
   $('clearSearch').addEventListener('click',()=>{$('bouquetSearch').value='';filterCards();$('bouquetSearch').focus();});
   $('resetFilters').addEventListener('click',()=>{filter='all';$('bouquetSearch').value='';filterCards();document.querySelector('[data-filter="all"]').focus();});
-  $('language').addEventListener('change',()=>{lang=$('language').value==='es'?'es':'en';try{localStorage.setItem('nebulaLanguageV4',lang);}catch{}localize();});
+  $('language').addEventListener('change',()=>{lang=$('language').value==='es'?'es':'en';try{localStorage.setItem(NebulaShop.key('nebulaLanguageV4'),lang);}catch{}localize();});
   $('removeDialog').addEventListener('close',()=>{
     if($('removeDialog').returnValue==='remove'&&pendingRemoval){
       try{localStorage.setItem(shelfKey,JSON.stringify(readShelf().filter(entry=>entry.id!==pendingRemoval)));renderSaved();$('savedTitle').tabIndex=-1;$('savedTitle').focus();}
@@ -116,6 +116,6 @@
     pendingRemoval=null;
   });
   document.querySelectorAll('.bouquet-picture img').forEach(image=>image.addEventListener('error',()=>{image.hidden=true;image.closest('a').classList.add('image-unavailable');}));
-  function refresh(){try{lang=localStorage.getItem('nebulaLanguageV4')==='es'?'es':'en';}catch{}localize();}
+  function refresh(){try{lang=localStorage.getItem(NebulaShop.key('nebulaLanguageV4'))==='es'?'es':'en';}catch{}localize();}
   addEventListener('pageshow',refresh);addEventListener('storage',refresh);refresh();
 })();

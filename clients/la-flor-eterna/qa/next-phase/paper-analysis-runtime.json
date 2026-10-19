@@ -1,0 +1,19 @@
+{
+  "recipe": "pink-promise",
+  "mode": "dome",
+  "layout": "organic",
+  "paper": "ivory",
+  "paperNode": {
+    "uid": "paper",
+    "url": "assets/wrapping/dome-ivory-ruffle.webp",
+    "x": 360,
+    "y": 390,
+    "w": 558.1435965950592,
+    "h": 558.1435965950592,
+    "rot": 0,
+    "d": 558.1435965950592,
+    "bright": 1
+  },
+  "renderedFlowers": 44,
+  "photoAssetIntegrated": false
+}

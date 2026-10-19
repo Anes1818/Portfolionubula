@@ -8,7 +8,7 @@ const makeCanvas=(w=720,h=820)=>{const c=document.createElement('canvas');c.widt
    are resampled onto the ivory's paper box at build time, which is why adding one
    back here needs no change to classicFrame's measured constants. */
 const PHOTO_PAPERS=['ivory'];
-const BRAND_LOGO='assets/brand/logo-full.webp';
+const BRAND_LOGO=NebulaConfig.CONFIG.logo||'assets/brand/logo-full.webp';
 function wrapLayers(paper){const W=NEBULA_META.wraps;return (W&&W[paper])||{back:NEBULA_META.wrap.back,front:NEBULA_META.wrap.front};}
 const source=path=>(g.NEBULA_EMBED&&g.NEBULA_EMBED[path])||path;
 /* ---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ function announce(){if(repaintQueued||!onAssetReady)return;repaintQueued=true;re
    Guarding here rather than at each call site keeps hit-testing and the idle
    preloader from trying to treat one as a file path. */
 function load(path){if(typeof path==='string'&&(path.startsWith('sashtext ')||path.startsWith('initial ')))return Promise.resolve(null);
- if(!cache.has(path)){const im=new Image(),promise=new Promise((resolve,reject)=>{im.onload=()=>{resolve(im);announce();};im.onerror=()=>{if(cache.get(path)?.im===im)cache.delete(path);reject(new Error('Artwork failed to load: '+path));};});cache.set(path,{im,promise});im.src=source(path);}return cache.get(path).promise;}
+ if(!cache.has(path)){const im=new Image();let retried=false;const promise=new Promise((resolve,reject)=>{im.onload=()=>{resolve(im);announce();};im.onerror=()=>{if(!retried){retried=true;setTimeout(()=>{im.src=source(path);},180);return;}if(cache.get(path)?.im===im)cache.delete(path);reject(new Error('Artwork failed to load: '+path));};});cache.set(path,{im,promise});im.src=source(path);}return cache.get(path).promise;}
 function decoded(path){const it=cache.get(path);return it&&it.im.complete&&it.im.naturalWidth?it.im:null;}
 /* Returns null instead of throwing when the artwork has not decoded yet; every
    drawing call site treats null as "skip this element and repaint shortly". */
@@ -73,7 +73,12 @@ function thumbnail(path){const crop=NEBULA_META.crops?.[path];if(!crop)return so
 function wrapAssets(){const u=[NEBULA_META.wrap.back,NEBULA_META.wrap.front,BRAND_LOGO];for(const v of Object.values(NEBULA_META.wraps||{})){u.push(v.back,v.front);}return u;}
 /* Everything a single design can draw: wrap, its collar, finishes and its own flowers. */
 function assetsFor(s){
+ if(g.NebulaPhoto?.active(s))return new Set([...NebulaPhoto.assets(s),BRAND_LOGO]);
  const urls=new Set(wrapAssets());
+ if(g.NebulaCustomization)for(const url of NebulaCustomization.assets(s))urls.add(url);
+ if(g.NebulaGift)for(const url of NebulaGift.assets(s))urls.add(url);
+ if(g.NebulaSunflower)for(const url of NebulaSunflower.assets(s))urls.add(url);
+ if(g.NebulaRoseArt)for(const url of NebulaRoseArt.assets(s))urls.add(url);
  if(g.NebulaClassic?.active(s)){
   urls.add(NebulaClassic.paper(s).url);
   if(s.finishes.greenRim)for(const key of ['eucalyptus-sparse-a','eucalyptus-sparse-b'])urls.add(NEBULA_META.finishes[key].url);
@@ -109,15 +114,16 @@ async function ready(designs){
 }
 async function awaitAssets(s){await Promise.all([g.NEBULA_EMBED_READY,g.NebulaFall?.assetsReady,g.NebulaRomance?.assetsReady,g.NebulaSpooky?.assetsReady]);await Promise.all([...assetsFor(s)].map(load));}
 function tint(path,paper,color){
- if(path===NEBULA_META.collars.domeCocoa?.url)return image(path);
+ if(path===NEBULA_META.collars.domeCocoa?.url&&(!g.NebulaCustomization||['ivory','cocoa'].includes(paper)))return image(path);
  if(path===NEBULA_META.collars.domeIvory?.url&&paper==='ivory')return image(path);
- const blackSource=path.includes('wrapping/')||path==='assets/halloween/black-fan-wrap.webp';if((PHOTO_PAPERS.includes(paper)&&!blackSource)||(paper==='black'&&blackSource))return image(path);color=paper==='ivory'?'#e6deca':paper==='black'?'#292826':paper==='blush'?'#dbb3b7':paper==='sage'?'#b1bba1':color;const key=path+color;if(tintCache.has(key))return tintCache.get(key);
+ const blackSource=path.includes('wrapping/')||path==='assets/halloween/black-fan-wrap.webp';if((PHOTO_PAPERS.includes(paper)&&!blackSource)||(paper==='black'&&blackSource))return image(path);color=paper==='ivory'?'#e6deca':paper==='black'?'#292826':paper==='cocoa'?'#755247':paper==='blush'?'#dbb3b7':paper==='sage'?'#b1bba1':paper==='kraft'?'#c29a6c':paper==='linen'?'#d8c6a3':color;const key=path+color;if(tintCache.has(key))return tintCache.get(key);
  const im=image(path);if(!im)return null;const cv=makeCanvas(im.width,im.height),ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0);const d=ctx.getImageData(0,0,cv.width,cv.height),rgb=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16));
  // Lift black-paper shadows into the chosen pigment without clipping its folds to white.
  for(let i=0;i<d.data.length;i+=4){if(!d.data[i+3])continue;const light=d.data[i]*.2126+d.data[i+1]*.7152+d.data[i+2]*.0722,lum=blackSource?.42+.58*Math.sqrt(light/255):light/224;for(let j=0;j<3;j++)d.data[i+j]=Math.min(255,rgb[j]*lum);}ctx.putImageData(d,0,0);tintCache.set(key,cv);return cv;
 }
-function nodeDraw(ctx,n,{shadow=true,alpha=false}={}){const im=image(n.url);if(!im)return;ctx.save();ctx.translate(n.x,n.y);ctx.rotate(n.rot);if(!alpha){ctx.filter=n.bright!==1?'brightness('+n.bright+')':'none';if(shadow){ctx.shadowColor='rgba(42,36,24,.20)';ctx.shadowBlur=2.2;ctx.shadowOffsetY=1.5;}}drawAsset(ctx,im,n.url,-n.w/2,-n.h/2,n.w,n.h);ctx.restore();}
+function nodeDraw(ctx,n,{shadow=true,alpha=false}={}){const im=n.paperTone?tint(n.url,n.paperTone,n.paperTint):image(n.url);if(!im)return;ctx.save();if(Number.isFinite(n.clipBottom)){ctx.beginPath();ctx.rect(-2000,-2000,4000,n.clipBottom+2000);ctx.clip();}ctx.translate(n.x,n.y);if(n.grounded&&!alpha){ctx.save();ctx.translate(0,n.h*.49);ctx.scale(1,.10);const gr=ctx.createRadialGradient(0,0,0,0,0,n.w*.5);gr.addColorStop(0,'rgba(50,35,22,.16)');gr.addColorStop(1,'rgba(50,35,22,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(0,0,n.w*.5,0,Math.PI*2);ctx.fill();ctx.restore();}ctx.rotate(n.rot);if(n.flipX)ctx.scale(-1,1);if(n.petalMask){const matrix=ctx.getTransform();ctx.scale(n.w/n.maskWidth,n.h/n.maskHeight);ctx.translate(-n.maskWidth/2,-n.maskHeight/2);ctx.clip(new Path2D(n.petalMask));ctx.setTransform(matrix);}if(!alpha){ctx.filter=n.bright!==1?'brightness('+n.bright+')':'none';if(shadow){ctx.shadowColor='rgba(42,36,24,.20)';ctx.shadowBlur=2.2;ctx.shadowOffsetY=1.5;}}drawAsset(ctx,im,n.url,-n.w/2,-n.h/2,n.w,n.h);ctx.restore();}
 function collarNode(s,f){
+ const referencePaper=g.NebulaRoseArt?.paper(s,f);if(referencePaper)return referencePaper;
  if(g.NebulaClassic?.active(s))return s.finishes.collar===false?null:NebulaClassic.paper(s);
  if(g.NebulaSpooky?.active(s))return NebulaSpooky.collar(s,f);
  if(s.mode==='classic'||s.finishes.collar===false)return null;
@@ -182,16 +188,43 @@ function finishNodes(s,f,nodes){
  }
  const initial=NebulaRomance.initialNode(s,f);return list.concat(NebulaDetails.nodes(s,f),initial?[initial]:[]);
 }
-function scene(s){const sc=G.nodes(s);sc.finishes=finishNodes(s,sc.frame,sc.nodes);sc.collar=collarNode(s,sc.frame);sc.filler=g.NebulaSpooky?NebulaSpooky.filler(s,sc.frame,sc.nodes):NebulaDetails.filler(s,sc.frame,sc.nodes);sc.greenery=NebulaRomance.greenery(s,sc.frame,sc.nodes);return sc;}
+function scene(s){if(g.NebulaPhoto?.active(s))return NebulaPhoto.scene(s);const sc=G.nodes(s);if(g.NebulaRoseArt)NebulaRoseArt.apply(s,sc);sc.finishes=finishNodes(s,sc.frame,sc.nodes);sc.collar=collarNode(s,sc.frame);sc.filler=g.NebulaSpooky?NebulaSpooky.filler(s,sc.frame,sc.nodes):NebulaDetails.filler(s,sc.frame,sc.nodes);sc.greenery=NebulaRomance.greenery(s,sc.frame,sc.nodes);g.NebulaRoseArt?.complete(s,sc);g.NebulaSunflower?.complete(s,sc);g.NebulaCustomization?.complete(s,sc);g.NebulaGift?.complete(s,sc);return sc;}
 const stemCanvas=makeCanvas();
+const sprigCanvas=makeCanvas();
+const footprintCache=new Map();
+function footprint(n){
+ const im=decoded(n.url);if(!im)return null;
+ const key=n.url+'|'+(n.petalMask||'');if(footprintCache.has(key))return footprintCache.get(key);
+ const cv=makeCanvas(80,80),c=cv.getContext('2d',{willReadFrequently:true});
+ nodeDraw(c,{...n,x:40,y:40,w:80,h:80,rot:0,flipX:false},{shadow:false,alpha:true});
+ const data=c.getImageData(0,0,80,80).data,result={data,w:80,h:80};footprintCache.set(key,result);return result;
+}
+function tuckedSprig(ctx,n,flowers){
+ // Infill is a complete botanical cutout above the petal canopy. A geometric
+ // half-plane cannot distinguish a stem from a leaf: masking it sliced leaves
+ // and blossoms in half. Placement, size and source art provide the clearance.
+ if(n.infill){nodeDraw(ctx,n,{shadow:false});return;}
+ const c=sprigCanvas.getContext('2d');c.clearRect(0,0,720,820);
+ nodeDraw(c,n,{shadow:false});
+ // A soft occlusion under the rose cups avoids both white florets across
+ // the spiral centres and the hard circular cut-outs of the old overlay.
+ c.save();c.globalCompositeOperation='destination-out';
+ for(const flower of flowers){
+  const r=flower.w*.31,gradient=c.createRadialGradient(flower.x,flower.y,r*.50,flower.x,flower.y,r);
+  gradient.addColorStop(0,'rgba(0,0,0,1)');gradient.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle=gradient;c.fillRect(flower.x-r,flower.y-r,2*r,2*r);
+ }
+ c.restore();ctx.drawImage(sprigCanvas,0,0);
+}
 function classicStemMask(f,backPath){
  const cv=makeCanvas(),c=cv.getContext('2d'),wm=NEBULA_META.wrap,back=image(backPath||NEBULA_META.wrap.back);
  if(back)c.drawImage(back,f.origin.x,f.origin.y,wm.width*f.scale,wm.height*(f.yScale||f.scale));
  const half=wm.width*f.scale*.445;c.fillStyle='#000';c.fillRect(360-half,55,2*half,Math.max(0,f.rimY-55));c.clearRect(0,f.waist.y+8,720,820);return cv;
 }
 function drawArt(ctx,s,opts={}){
+ if(g.NebulaPhoto?.active(s))return NebulaPhoto.draw(ctx,s,opts.scene||scene(s),nodeDraw,opts);
  const sc=opts.scene||scene(s),f=sc.frame;ctx.save();
- if(sc.collar&&!opts.alphaOnly){const n=sc.collar,art=tint(n.url,s.finishes.paper,s.finishes.tint);if(art){ctx.save();ctx.shadowColor='rgba(27,26,22,.16)';ctx.shadowBlur=8;ctx.shadowOffsetY=3;ctx.drawImage(art,n.x-n.w/2,n.y-n.h/2,n.w,n.h);ctx.restore();}}
+ if(sc.collar&&!opts.alphaOnly){const n=sc.collar,art=n.untinted?image(n.url):tint(n.url,s.finishes.paper,s.finishes.tint);if(art){ctx.save();ctx.shadowColor='rgba(27,26,22,.16)';ctx.shadowBlur=8;ctx.shadowOffsetY=3;ctx.drawImage(art,n.x-n.w/2,n.y-n.h/2,n.w,n.h);ctx.restore();}}
  if(g.NebulaSpooky?.active(s)&&!opts.alphaOnly){
   if(s.template.halloweenRecipe!=='midnight-blooms'&&s.finishes.collar){ctx.save();ctx.fillStyle=s.finishes.paper==='black'?'#151515':s.finishes.paper==='custom'?s.finishes.tint:({ivory:'#b6ad9a',blush:'#ac888b',sage:'#87917a'}[s.finishes.paper]||'#151515');ctx.beginPath();ctx.ellipse(360,390,f.unit*2.55,f.unit*(s.template.halloweenRecipe==='scream-for-you'?3.2:2.55),0,0,Math.PI*2);ctx.fill();ctx.restore();}
 
@@ -210,13 +243,13 @@ function drawArt(ctx,s,opts={}){
  }
  if(opts.guides&&sc.slots?.length){for(const p of sc.slots)if(!p.uid){ctx.save();ctx.strokeStyle='#557363';ctx.lineWidth=1.5;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(p.x,p.y,p.near*.32,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(p.x-5,p.y);ctx.lineTo(p.x+5,p.y);ctx.moveTo(p.x,p.y-5);ctx.lineTo(p.x,p.y+5);ctx.stroke();ctx.restore();}}
  const garden=s.template?.layout==='garden';
- const stems=garden&&!opts.alphaOnly?[...sc.nodes,...(sc.greenery||[]),...(sc.filler||[]).map(n=>({...n,z:n.y+f.unit*.20}))].sort((a,b)=>a.z-b.z):sc.nodes;
- for(const n of stems)nodeDraw(ctx,n,{shadow:!opts.alphaOnly,alpha:opts.alphaOnly});
+ const stems=sc.layeredFlowers&&!opts.alphaOnly?sc.layeredFlowers:garden&&!opts.alphaOnly?[...sc.nodes,...(sc.greenery||[]),...(sc.filler||[]).map(n=>({...n,z:n.y+f.unit*.20}))].sort((a,b)=>a.z-b.z):sc.nodes;
+ for(const n of stems){if((n.infill||n.protectCenters)&&!opts.alphaOnly)tuckedSprig(ctx,n,sc.nodes);else nodeDraw(ctx,n,{shadow:!opts.alphaOnly&&!n.softDetail,alpha:opts.alphaOnly});}
  if(!opts.alphaOnly){
   // Sprigs emerge through petal gaps. Keep flower centres clear, using the
   // same deterministic geometry in preview, gallery and exported artwork.
-  if(g.NebulaSpooky?.active(s)){for(const n of [...sc.greenery||[],...sc.filler||[]])nodeDraw(ctx,n,{shadow:false});}
-  else if(!garden){ctx.save();ctx.beginPath();ctx.rect(-2000,-2000,4000,4000);
+  if(g.NebulaSpooky?.active(s)&&!sc.layeredFlowers){for(const n of [...sc.greenery||[],...sc.filler||[]])nodeDraw(ctx,n,{shadow:false});}
+  else if(!garden&&!sc.layeredFlowers){ctx.save();ctx.beginPath();ctx.rect(-2000,-2000,4000,4000);
   for(const n of sc.nodes){ctx.moveTo(n.x+n.d*.21,n.y);ctx.arc(n.x,n.y,n.d*.21,0,Math.PI*2);}
   ctx.clip('evenodd');for(const n of sc.greenery||[])nodeDraw(ctx,n,{shadow:false});for(const n of sc.filler||[])nodeDraw(ctx,n,{shadow:false});ctx.restore();}
   for(const n of sc.finishes.filter(n=>n.tucked)){nodeDraw(ctx,n);
@@ -230,8 +263,12 @@ function drawArt(ctx,s,opts={}){
  ctx.restore();return sc;
 }
 function view(s,camera={}){
+ if(camera.lockedView)return {...camera.lockedView};
+ if(g.NebulaPhoto?.active(s)){const z=camera.zoom||1,base=s.photographic.version===2?1.38:1;return {scale:base*z,x:360*(1-base*z)+(camera.x||0),y:410*(1-base*z)+(camera.y||0)};}
  let v;
- if(g.NebulaFall?.active(s)||g.NebulaClassic?.active(s)){const b=artBounds(s,scene(s)),scale=Math.min(680/b.w,770/b.h);v={scale,x:360-(b.x+b.w/2)*scale,y:410-(b.y+b.h/2)*scale};}
+ if(g.NebulaCustomization&&s.mode==='classic'&&(s.finishes.chocolateBox||s.finishes.decorations.length)){const places=Object.values(g.NebulaCustomization.giftLayout(s,s.frames.classic)),secondRow=places.some(p=>p.floor>950),scale=secondRow?.72:.84;v={scale,x:360*(1-scale),y:5};}
+ else if(g.NebulaSunflower?.active(s))v={scale:.78,x:79.2,y:-60};
+ else if(s.finishes?.chocolateBox||g.NebulaRoseArt?.reference(s)||g.NebulaFall?.active(s)||g.NebulaClassic?.active(s)){const b=artBounds(s,scene(s)),scale=Math.min(680/b.w,770/b.h);v={scale,x:360-(b.x+b.w/2)*scale,y:410-(b.y+b.h/2)*scale};}
  else if(s.mode==='classic'){
   v={scale:1.30,x:-108,y:-188};
   // Enlarge compact bouquets, but keep the original framing for tall or wide
@@ -247,12 +284,12 @@ function view(s,camera={}){
 function worldPoint(s,p,camera){const v=view(s,camera);return {x:(p.x-v.x)/v.scale,y:(p.y-v.y)/v.scale};}
 function paint(cv,s,opts={}){const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);ctx.save();ctx.scale(cv.width/720,cv.height/820);const v=view(s,opts.camera);ctx.translate(v.x,v.y);ctx.scale(v.scale,v.scale);const sc=drawArt(ctx,s,opts);ctx.restore();return sc;}
 function alphaFor(path){if(!alphaCache.has(path)){const im=image(path),crop=NEBULA_META.crops?.[path],w=crop?.[2]||im.width,h=crop?.[3]||im.height,cv=makeCanvas(w,h),ctx=cv.getContext('2d',{willReadFrequently:true});drawAsset(ctx,im,path,0,0,w,h);alphaCache.set(path,{w,h,data:ctx.getImageData(0,0,w,h).data});}return alphaCache.get(path);}
-function hit(sc,p){if(sc.frame.mode!=='classic'&&!['fall-mixed-size-v1','garden-v1','halloween-v1'].includes(sc.frame.engine)){let best=null,dist=Infinity;for(const n of sc.nodes){if(n.decorative)continue;const d=Math.hypot(p.x-n.x,p.y-n.y),slot=sc.slots?.find(a=>a.slot===n.slot);if(d<dist&&d<(slot?.near||n.d)*.70){dist=d;best=n;}}return best;}for(const n of sc.nodes.slice().reverse()){if(n.decorative)continue;const dx=p.x-n.x,dy=p.y-n.y,x=dx*Math.cos(n.rot)+dy*Math.sin(n.rot),y=-dx*Math.sin(n.rot)+dy*Math.cos(n.rot);if(Math.abs(x)>n.w/2||Math.abs(y)>n.h/2)continue;const a=alphaFor(n.url),ix=Math.floor((x/n.w+.5)*a.w),iy=Math.floor((y/n.h+.5)*a.h);if(ix>=0&&ix<a.w&&iy>=0&&iy<a.h&&a.data[(iy*a.w+ix)*4+3]>60)return n;}return null;}
+function hit(sc,p){if(sc.frame.mode!=='classic'&&!['fall-mixed-size-v1','garden-v1','halloween-v1'].includes(sc.frame.engine)){let best=null,dist=Infinity;for(const n of sc.nodes){if(n.decorative)continue;const d=Math.hypot(p.x-n.x,p.y-n.y),slot=sc.slots?.find(a=>a.slot===n.slot);if(d<dist&&d<(slot?.near||n.d)*.70){dist=d;best=n;}}return best;}for(const n of sc.nodes.slice().reverse()){if(n.decorative)continue;const dx=p.x-n.x,dy=p.y-n.y,x=dx*Math.cos(n.rot)+dy*Math.sin(n.rot),y=-dx*Math.sin(n.rot)+dy*Math.cos(n.rot);if(Math.abs(x)>n.w/2||Math.abs(y)>n.h/2)continue;const a=alphaFor(n.url),ix=Math.floor(((n.flipX?-x:x)/n.w+.5)*a.w),iy=Math.floor((y/n.h+.5)*a.h);if(ix>=0&&ix<a.w&&iy>=0&&iy<a.h&&a.data[(iy*a.w+ix)*4+3]>60)return n;}return null;}
 function detailHit(sc,p){
  for(const n of sc.finishes.filter(n=>n.detailId).reverse()){
   const dx=p.x-n.x,dy=p.y-n.y,x=dx*Math.cos(n.rot)+dy*Math.sin(n.rot),y=-dx*Math.sin(n.rot)+dy*Math.cos(n.rot);
   if(Math.abs(x)>=n.w/2||Math.abs(y)>=n.h/2||!decoded(n.url))continue;
-  const a=alphaFor(n.url),ix=Math.floor((x/n.w+.5)*a.w),iy=Math.floor((y/n.h+.5)*a.h);
+  const a=alphaFor(n.url),ix=Math.floor(((n.flipX?-x:x)/n.w+.5)*a.w),iy=Math.floor((y/n.h+.5)*a.h);
   if(a.data[(iy*a.w+ix)*4+3]>60)return n;
  }return null;
 }
@@ -262,31 +299,31 @@ function alphaReport(s){const sc=scene(s),cv=alphaCanvas(s),data=cv.getContext('
  for(let y=0;y<820;y++)for(let x=0;x<720;x++){let within=s.mode==='dome'?Math.hypot(x-f.center.x,y-f.center.y)<coreR:false;if(s.mode==='heart'){const b=f.unit*.32;within=G.inside({x,y},f,0)&&G.inside({x:x-b,y},f,0)&&G.inside({x:x+b,y},f,0)&&G.inside({x,y:y-b},f,0)&&G.inside({x,y:y+b},f,0);}if(!within)continue;samples++;const a=data[(y*720+x)*4+3];if(a<32)open++;if(a<225)translucent++;}
  return {applicable:true,method:s.mode==='dome'?'Actual composited head alpha in central disc R - 0.43 * RMS head diameter.':'Actual composited head alpha in permitted heart interior, eroded on four axes by 0.32 * RMS head diameter.',threshold:32,opaqueThreshold:225,pixels:samples,openPixels:open,openPercent:samples?+(100*open/samples).toFixed(4):0,belowOpaquePercent:samples?+(100*translucent/samples).toFixed(4):0,excludes:['paper','shadows','ribbons and finishing overlays','outer boundary band'],explicitItems:s.items.length};
 }
-function artBounds(s,sc){let xmin=720,ymin=820,xmax=0,ymax=0;const box=(x,y,w,h)=>{xmin=Math.min(xmin,x-w/2);xmax=Math.max(xmax,x+w/2);ymin=Math.min(ymin,y-h/2);ymax=Math.max(ymax,y+h/2);};for(const n of [...sc.nodes,...sc.finishes,...(sc.filler||[]),...(sc.greenery||[]),...(sc.collar?[sc.collar]:[])]){const c=Math.abs(Math.cos(n.rot)),sn=Math.abs(Math.sin(n.rot));box(n.x,n.y,n.w*c+n.h*sn,n.w*sn+n.h*c);}if(s.mode==='classic'&&!g.NebulaClassic?.active(s)){const f=sc.frame;box(f.origin.x+448*f.scale,f.origin.y+599*(f.yScale||f.scale),822*f.scale,864*(f.yScale||f.scale));}if(xmin>xmax)return {x:150,y:160,w:420,h:500};return {x:xmin-22,y:ymin-22,w:xmax-xmin+44,h:ymax-ymin+44};}
+function artBounds(s,sc){if(g.NebulaPhoto?.active(s))return {...NebulaPhoto.boundsFor(s)};let xmin=720,ymin=820,xmax=0,ymax=0;const box=(x,y,w,h)=>{xmin=Math.min(xmin,x-w/2);xmax=Math.max(xmax,x+w/2);ymin=Math.min(ymin,y-h/2);ymax=Math.max(ymax,y+h/2);};for(const n of [...sc.nodes,...sc.finishes,...(sc.filler||[]),...(sc.greenery||[]),...(sc.collar?[sc.collar]:[])]){const c=Math.abs(Math.cos(n.rot)),sn=Math.abs(Math.sin(n.rot));box(n.x,n.y,n.w*c+n.h*sn,n.w*sn+n.h*c);}if(s.mode==='classic'&&!g.NebulaClassic?.active(s)){const f=sc.frame;box(f.origin.x+448*f.scale,f.origin.y+599*(f.yScale||f.scale),822*f.scale,864*(f.yScale||f.scale));}if(xmin>xmax)return {x:150,y:160,w:420,h:500};return {x:xmin-22,y:ymin-22,w:xmax-xmin+44,h:ymax-ymin+44};}
 function wrapText(ctx,text,max){if(!text)return [];const out=[];let line='';for(const para of text.split('\n')){for(const word of para.split(/\s+/).filter(Boolean)){if(ctx.measureText(word).width>max){if(line){out.push(line);line='';}let part='';for(const ch of [...word]){if(ctx.measureText(part+ch).width>max&&part){out.push(part);part='';}part+=ch;}line=part;}else if(line&&ctx.measureText(line+' '+word).width>max){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line){out.push(line);line='';}}return out;}
 function exportCanvas(s,w=1080,h=1080,lang='en'){
- const cv=makeCanvas(w,h),ctx=cv.getContext('2d'),sc=scene(s),b=artBounds(s,sc),base=w/1080;ctx.scale(base,base);const hh=h/base,story=hh>1200;ctx.fillStyle='#f7f3eb';ctx.fillRect(0,0,1080,hh);ctx.fillStyle='#293e36';ctx.textAlign='center';
+ const cv=makeCanvas(w,h),ctx=cv.getContext('2d'),sc=scene(s),b=artBounds(s,sc),base=w/1080,theme=g.NEBULA_SHOP?.theme||{};ctx.scale(base,base);const hh=h/base,story=hh>1200;ctx.fillStyle=theme.background||'#f7f3eb';ctx.fillRect(0,0,1080,hh);ctx.fillStyle=theme.ink||'#293e36';ctx.textAlign='center';
  /* The studio logo, on the light export ground it was drawn for. Falls back to
     the typed brand name whenever the artwork has not decoded yet. */
  const badge=decoded(BRAND_LOGO);
- if(badge){const bw=248,bh=bw*badge.naturalHeight/badge.naturalWidth;ctx.drawImage(badge,540-bw/2,20,bw,bh);}
+ if(badge){const bw=NebulaConfig.CONFIG.logo?180*badge.naturalWidth/badge.naturalHeight:248,bh=bw*badge.naturalHeight/badge.naturalWidth;ctx.drawImage(badge,540-bw/2,NebulaConfig.CONFIG.logo?12:20,bw,bh);}
  else{ctx.font='22px Arial';ctx.fillText(NebulaConfig.CONFIG.brand.toUpperCase(),540,66);ctx.font='14px Arial';ctx.fillStyle='#676c60';ctx.fillText(lang==='es'?'ESTUDIO DE RAMOS':'BOUQUET STUDIO',540,92);}
  ctx.font='italic 44px Georgia';const title=s.title.trim()||(lang==='es'?'Un ramo, muy tuyo':'A bouquet, all yours'),titles=wrapText(ctx,title,936);ctx.font='26px Arial';const notes=wrapText(ctx,s.note.trim(),900),noteH=notes.length?notes.length*35+24:0,p=M.price(s),titleH=titles.length*51;
- const label=g.NebulaSpooky?.active(s)?'Halloween':(lang==='es'?{classic:'Clásico',dome:'Cúpula',heart:'Corazón plano'}:{classic:'Classic',dome:'Dome',heart:'Flat heart'})[s.mode],bottom=titleH+42+noteH+94+(s.mode==='classic'?0:24),artTop=story?180:126,artH=hh-artTop-bottom-26,scale=Math.min(920/b.w,artH/b.h);
+ const label=g.NebulaSpooky?.active(s)?'Halloween':(lang==='es'?{classic:'Clásico',dome:'Cúpula',heart:'Corazón plano'}:{classic:'Classic',dome:'Dome',heart:'Flat heart'})[s.mode],bottom=titleH+42+noteH+94+(s.mode==='classic'?0:24),artTop=NebulaConfig.CONFIG.logo?205:story?180:126,artH=hh-artTop-bottom-26,scale=Math.min(920/b.w,artH/b.h);
  ctx.save();ctx.translate((1080-b.w*scale)/2-b.x*scale,artTop+(artH-b.h*scale)/2-b.y*scale);ctx.scale(scale,scale);drawArt(ctx,s,{scene:sc});ctx.restore();
- let y=artTop+artH+48;ctx.fillStyle='#293e36';ctx.font='italic 44px Georgia';for(const line of titles){ctx.fillText(line,540,y);y+=51;}ctx.font='24px Arial';ctx.fillStyle='#596253';ctx.fillText(label+'  ·  '+p.pieces+(lang==='es'?' piezas':' pieces')+'  ·  '+M.money(p.totalCents,lang)+(NebulaConfig.CONFIG.demo?(lang==='es'?' estimado de muestra':' sample estimate'):(lang==='es'?' estimado':' estimate')),540,y+2);y+=46;
+ let y=artTop+artH+48;ctx.fillStyle=theme.ink||'#293e36';ctx.font='italic 44px Georgia';for(const line of titles){ctx.fillText(line,540,y);y+=51;}ctx.font='24px Arial';ctx.fillStyle=theme.primary||'#596253';ctx.fillText((g.NebulaPhoto?.active(s)?(s.photographic.version===2?(lang==='es'?'Estudio floral · envoltorio y precio pendientes':'Flower study · wrapping and pricing pending'):(lang==='es'?'Estudio visual · papel provisional · cantidades y precio pendientes':'Visual study · temporary paper · quantities and pricing pending')):label+'  ·  '+p.pieces+(lang==='es'?' piezas':' pieces')+'  ·  '+M.money(p.totalCents,lang)+(NebulaConfig.CONFIG.demo?(lang==='es'?' estimado de muestra':' sample estimate'):(lang==='es'?' estimado':' estimate'))),540,y+2);y+=46;
  if(notes.length){ctx.font='26px Arial';ctx.fillStyle='#3c483f';for(const line of notes){ctx.fillText(line,540,y+8);y+=35;}}
  /* Studio line. Every picture a customer shares carries it home. */
  const S=NebulaConfig.CONFIG.studio||{};
  const credit=[S.name,S.site,S.phone].filter(Boolean).join('   ·   ');
- if(credit){ctx.font='600 19px Arial';ctx.fillStyle='#3f5a4c';ctx.fillText(credit,540,hh-62);}
- ctx.font='16px Arial';ctx.fillStyle='#65695f';ctx.fillText(lang==='es'?'Solo estimación. Requiere confirmación; no es un pedido.':'Estimate only. Florist confirmation required; no order placed.',540,hh-33);return cv;
+ if(credit){ctx.font='600 19px Arial';ctx.fillStyle=theme.primary||'#3f5a4c';ctx.fillText(credit,540,hh-62);}
+ ctx.font='16px Arial';ctx.fillStyle='#65695f';ctx.fillText(g.NebulaPhoto?.active(s)?(lang==='es'?'Estudio visual local. Materiales y cantidades pendientes de confirmar.':'Local visual study. Materials and quantities await confirmation.'):(lang==='es'?'Solo estimación. Requiere confirmación; no es un pedido.':'Estimate only. Florist confirmation required; no order placed.'),540,hh-33);return cv;
 }
 /* An exported picture must be complete, so wait for this design's artwork first.
    A preview frame may skip a bloom and repaint; a saved PNG may not. */
 async function blob(s,w,h,lang){await awaitAssets(s);const cv=exportCanvas(s,w,h,lang);return new Promise((resolve,reject)=>cv.toBlob(b=>b?resolve(b):reject(new Error('PNG export failed.')),'image/png'));}
 const paperPreviews=new WeakMap();
 function paperPreview(path,paper,color){const im=tint(path,paper,color);if(!im?.toDataURL)return source(path);if(!paperPreviews.has(im))paperPreviews.set(im,im.toDataURL());return paperPreviews.get(im);}
-g.NebulaRenderer={paperPreview,thumbnail,classicStemMask,source,load,ready,image,decoded,scene,drawArt,paint,view,worldPoint,hit,detailHit,ghost,alphaCanvas,alphaReport,artBounds,exportCanvas,blob,wrapText,makeCanvas,collarNode,awaitAssets,assetsFor,
+g.NebulaRenderer={footprint,paperPreview,thumbnail,classicStemMask,source,load,ready,image,decoded,scene,drawArt,paint,view,worldPoint,hit,detailHit,ghost,alphaCanvas,alphaReport,artBounds,exportCanvas,blob,wrapText,makeCanvas,collarNode,awaitAssets,assetsFor,
  set onAssetReady(fn){onAssetReady=fn;},get onAssetReady(){return onAssetReady;}};
 })(window);

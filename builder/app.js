@@ -7,19 +7,20 @@ let lang='en',st=M.create(),undoStack=[],redoStack=[],selected=null,picked='rose
 window.__errors=[];addEventListener('error',e=>window.__errors.push(String(e.message)));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason)));
 const t=(key,vars)=>NebulaI18n.text(lang,key,vars),name=id=>CAT[id][lang],snap=()=>JSON.stringify(st);
 try{
- lang=localStorage.getItem('nebulaLanguageV4')==='es'?'es':'en';
+ lang=localStorage.getItem(NebulaShop.key('nebulaLanguageV4'))==='es'?'es':'en';
  const raw=localStorage.getItem(CONFIG.storageKey);
- if(raw){const parsed=M.validatePortfolio(JSON.parse(raw));if(parsed){banks=parsed.bouquets;st=M.clone(banks[parsed.activeMode]);}else{localStorage.setItem(CONFIG.storageKey+'.invalid-backup',raw);setTimeout(()=>toast(t('recovered')),1100);}}
+ if(raw){let parsed=null;try{parsed=M.validatePortfolio(JSON.parse(raw));}catch{}if(parsed){banks=parsed.bouquets;st=M.clone(banks[parsed.activeMode]);}else{localStorage.setItem(CONFIG.storageKey+'.invalid-backup',raw);setTimeout(()=>toast(t('recovered')),1100);}}
  else{const old=localStorage.getItem(CONFIG.previousKey)||localStorage.getItem(CONFIG.olderKey);if(old){const parsed=JSON.parse(old),studio=M.validatePortfolio(parsed),copied=studio?null:M.validate(parsed);if(studio){banks=studio.bouquets;st=M.clone(banks[studio.activeMode]);}else if(copied){st=copied;banks[st.mode]=M.clone(st);}}}
 }catch(e){storageOK=false;}
 for(const mode of ['classic','dome','heart'])if(!banks[mode])banks[mode]=mode===st.mode?M.clone(st):M.defaultMode(mode);
 function toast(str){$('toast').textContent=str;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),4200);}
-function persist(){try{localStorage.setItem(CONFIG.storageKey,JSON.stringify(M.portfolio(st,banks)));storageOK=true;
+function backupUnsupported(){if(!NebulaShop.assess(st).ok){try{localStorage.setItem(CONFIG.storageKey+'.unsupported-backup',JSON.stringify(M.portfolio(st,banks)));}catch{}}}
+function persist(){if(!NebulaShop.assess(st).ok)return;try{localStorage.setItem(CONFIG.storageKey,JSON.stringify(M.portfolio(st,banks)));storageOK=true;
  // Once a shared design is edited and saved locally, reload must resume the edit.
  if(NebulaLink.readHash(location.hash)){try{window.history.replaceState(null,'',location.pathname+location.search);$('sharedBanner').hidden=true;}catch{}}
  }catch(e){if(storageOK)toast(t('storageWarning'));storageOK=false;}}
 function storeHistory(before){if(before===snap())return false;undoStack.push(before);if(undoStack.length>100)undoStack.shift();redoStack=[];return true;}
-function change(fn){const before=snap();const result=fn()||{ok:true};if(result.ok===false){st=JSON.parse(before);render(false);showFailure(result);return result;}storeHistory(before);render();return result;}
+function change(fn){const before=snap();let result=fn()||{ok:true};if(result.ok!==false&&!NebulaShop.assess(st).ok)result={ok:false,reason:'unsupported'};if(result.ok===false){st=JSON.parse(before);render(false);showFailure(result);return result;}storeHistory(before);render();return result;}
 function history(kind){if(editFocus)commitTextEdit();const from=kind==='undo'?undoStack:redoStack,to=kind==='undo'?redoStack:undoStack;if(!from.length)return;to.push(snap());st=JSON.parse(from.pop());selected=null;hover=null;render();toast(t(kind==='undo'?'undoDone':'redoDone'));}
 function button(text,cls,fn){const el=document.createElement('button');el.type='button';el.className=cls||'';el.textContent=text;if(fn)el.addEventListener('click',fn);return el;}
 function pressed(el,on){el.setAttribute('aria-pressed',String(on));}
@@ -28,12 +29,14 @@ function openMessage(title,children){$('messageTitle').textContent=title;$('mess
 let confirmFn=null;
 function confirm(title,body,label,fn){$('confirmTitle').textContent=title;$('confirmText').textContent=body;$('confirmYes').textContent=label;confirmFn=fn;$('confirmDialog').showModal();$('confirmCancel').focus();}
 function showFailure(result){
+ if(result.reason==='unsupported'){toast(NebulaShop.message(lang));return;}
  if(['classicCapacity','textureCapacity','topCapacity','topFit','art'].includes(result.reason)){
   const text=result.reason==='art'?t('art')+(result.ids||[]).map(name).join(', '):result.reason==='classicCapacity'&&NebulaClassic.active(st)?(lang==='es'?'Este arreglo está lleno. Quita una flor o elige una más pequeña.':'This arrangement is full. Remove a flower or choose a smaller bloom.'):t(result.reason);
   openMessage(t('capacityTitle'),[paragraph(text),paragraph(t('capacityFooter'),'helper')]);
  }else toast(t(result.reason)||t('placement'));
 }
 function switchBouquet(mode){moveMode=false;
+ if(!NebulaShop.modeAllowed(mode)){showFailure({reason:'unsupported'});return {ok:false,reason:'unsupported'};}
  if(editFocus)commitTextEdit();if(gesture)endPointer({pointerId:gesture.pointerId},true);
  if(mode===st.mode)return {ok:true};
  histories[st.mode]={undo:undoStack,redo:redoStack};picks[st.mode]=picked;
@@ -61,7 +64,7 @@ function positionDelete(){
 }
 function setZoom(z){camera.zoom=G.clamp(z,1,3);const lim=(camera.zoom-1)*300;camera.x=G.clamp(camera.x,-lim,lim);camera.y=G.clamp(camera.y,-lim,lim);if(camera.zoom===1){camera.x=camera.y=0;panMode=false;}render(false);}
 function setFocusPreview(on){focusPreview=!!on;document.body.classList.toggle('preview-focus',focusPreview);$('focusPreview').setAttribute('aria-pressed',String(focusPreview));$('focusPreview').setAttribute('aria-label',t(focusPreview?'closeFocus':'expandPreview'));$('focusLabel').textContent=t(focusPreview?'closeShort':'expandShort');fitPhoneCanvas();scheduleCanvas();}
-function setLanguage(value){if(editFocus)commitTextEdit();lang=value==='es'?'es':'en';try{localStorage.setItem('nebulaLanguageV4',lang);}catch(e){}render(false);}
+function setLanguage(value){if(editFocus)commitTextEdit();lang=value==='es'?'es':'en';try{localStorage.setItem(NebulaShop.key('nebulaLanguageV4'),lang);}catch(e){}render(false);}
 function localize(){
  document.documentElement.lang=lang;document.title=CONFIG.brand+' — '+t('pageTitle');$('brandName').textContent=CONFIG.brand;document.querySelector('.brand').setAttribute('aria-label',CONFIG.brand+' '+t('studioFooter'));document.querySelector('.site-footer>span').firstChild.textContent=CONFIG.brand+' ';$('language').value=lang;
  for(const el of document.querySelectorAll('[data-i18n]'))el.textContent=t(el.dataset.i18n);
@@ -76,7 +79,7 @@ function localize(){
 function renderStudio(){
  /* Point the header mark at the embedded copy, so it also shows from file://
     where a relative path would resolve but a tainted canvas would not. */
- const mark=NEBULA_META.brand?.mark;if(mark&&$('brandLogo'))$('brandLogo').src=R.source(mark);
+ const mark=CONFIG.logo||NEBULA_META.brand?.mark;if(mark&&$('brandLogo'))$('brandLogo').src=R.source(mark);
  const S=CONFIG.studio||{},on=!!(S.name||S.site||S.phone);
  $('studioCredit').hidden=!on;if(!on)return;
  $('studioName').textContent=S.name;$('studioPlace').textContent=S.place;
@@ -89,7 +92,7 @@ function renderStudio(){
 }
 function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera,moveTargets:moveTargets()});positionDelete();}});}
 /* Some catalogue entries only read correctly from one camera angle. */
-function offered(id){if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
+function offered(id){if(window.NebulaCustomization&&['white_flower_spray','babys_breath'].includes(id))return false;if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
 function fillChoices(el,current,{empty=false,classic=false}={}){
  const ids=Object.keys(CAT).filter(id=>offered(id)&&(!classic||CAT[id].classic)),sig=lang+':'+classic+':'+empty+':'+st.mode;
  if(el.dataset.choiceSignature!==sig){el.replaceChildren();if(empty){const o=document.createElement('option');o.value='';o.textContent=t('emptySlot');el.append(o);}for(const id of ids){const o=document.createElement('option');o.value=id;o.textContent=name(id)+' · '+M.money(CAT[id].priceCents,lang);el.append(o);}el.dataset.choiceSignature=sig;}
@@ -107,16 +110,20 @@ function saveToShelf(){
  catch(e){$('exportStatus').textContent=t(e.message==='full'?'shelfFull':'shelfUnavailable');}
 }
 function applyFallTemplate(id){moveMode=false;
+ if(!NebulaShop.recipeAllowed(id)){showFailure({reason:'unsupported'});return;}
  const collection=[NebulaClassic,NebulaRomance,NebulaSpooky,NebulaFall].find(lib=>lib.recipes.some(r=>r.id===id));
  if(!collection)return;
  const next=collection.create(id);
+ backupUnsupported();
  if(editFocus)commitTextEdit();if(st.mode!==next.mode)switchBouquet(next.mode);
  change(()=>{st=next;picked=st.items[0]?.id||'rose_red';selected=null;selectedSlot=null;brush=null;hover=null;camera={zoom:1,x:0,y:0};$('family').value='all';});
  showGallery(false);setTab('flowers');$('bouquet').focus({preventScroll:true});
 }
 function render(save=true){
+ if(st.photographic&&window.NebulaPhoto?.active(st)){location.replace('pink-proof.html#b='+NebulaLink.encode(st));return;}
+
  localize();if(!isReady)return;
- if(st.mode!=='dome'||!st.finishes.decorations.some(d=>d.id===selectedDetail))selectedDetail=null;
+ if((st.mode!=='dome'&&!window.NebulaCustomization)||!st.finishes.decorations.some(d=>d.id===selectedDetail))selectedDetail=null;
  if(!offered(picked)){picked='rose_pink';brush=null;}
  const berryFamily=$('family').querySelector('[value="strawberry"]');
  berryFamily.hidden=berryFamily.disabled=st.mode==='classic';
@@ -155,6 +162,9 @@ function render(save=true){
  $('ribbonBlock').hidden=st.mode!=='classic';
  $('autumnFinishes').hidden=st.mode!=='dome';$('pumpkin').checked=!!st.finishes.pumpkin;$('pumpkinSettings').hidden=!st.finishes.pumpkin;$('pumpkinPosition').value=st.finishes.pumpkinPosition;$('pumpkinScale').value=st.finishes.pumpkinScale;
  renderDetails();
+ if(!window.NebulaCustomization)window.NebulaRoseArt?.renderControls(st,lang,isReady);
+ if(!window.NebulaCustomization)window.NebulaSunflower?.renderControls(st,lang,isReady);
+ window.NebulaGift?.renderControls(st,lang,isReady);
  $('cocoaBowLabel').hidden=st.finishes.sash!=='blank_cocoa';$('cocoaBow').checked=!!st.finishes.bow;
  for(const key of ['pumpkin','bow'])$(key+'Price').textContent=M.money(CONFIG.extrasCents[key],lang)+(CONFIG.demo?' · '+t('sampleShort'):'');
  if(st.finishes.paper==='cocoa'){$('wrapPreview').src=R.source(NEBULA_META.collars.domeCocoa.url);$('wrapHeading').textContent=t('cocoa');$('wrapPreview').alt=t('cocoa');}
@@ -183,7 +193,26 @@ function render(save=true){
  if(NebulaFall.active(st))$('sizePanel').querySelector('.size-label').textContent=t('bouquetSize');
  $('zoomOut').disabled=camera.zoom<=1;$('zoomIn').disabled=camera.zoom>=3;$('panView').disabled=camera.zoom<=1;pressed($('panView'),panMode);$('artSurface').classList.toggle('zoomed',camera.zoom>1);
  renderCatalog();renderStarting();renderPaper();renderRibbons();renderSpooky();positionDelete();
- if(save)persist();
+ window.NebulaCustomizationUI?.render(st,lang,isReady);
+ renderCapabilities();
+ if(save&&NebulaShop.assess(st).ok)persist();
+}
+function renderCapabilities(){
+ const policy=NebulaShop.assess(st);let notice=$('shopCapabilityNotice');
+ if(!notice){notice=document.createElement('div');notice.id='shopCapabilityNotice';notice.className='shared-banner';notice.setAttribute('role','status');$('sharedBanner').after(notice);}
+ notice.hidden=policy.ok;
+ if(!policy.ok){const link=document.createElement('a');link.href='index.html#collection';link.textContent=lang==='es'?'Elegir un ramo disponible':'Choose an available bouquet';notice.replaceChildren(paragraph(NebulaShop.message(lang)),link);}
+ document.querySelectorAll('[data-mode]').forEach(el=>{el.disabled=!NebulaShop.modeAllowed(el.dataset.mode);});
+ $('orderButton').disabled=!st.items.length||!policy.ok;
+ if(NebulaShop.restricted){
+  // Custom options are a separate owner decision. Keep recovery/save/export available.
+  const options=window.NEBULA_SHOP.recipeOptions?.[policy.recipeId]||{};
+  for(const id of ['sizePanel','templateTools','arrangeRow','flowerGrid','catalogueFilters','catalogueNote','pickedFlower','moveFlowers','inlineDelete'])$(id).hidden=true;
+  $('panel-wrapping').querySelectorAll('input,select,button').forEach(el=>{el.disabled=true;});
+  $('panel-finishing').querySelectorAll('input,select,button').forEach(el=>{el.disabled=!['designName','giftNote'].includes(el.id);});
+  for(const key of ['paper','ribbon'])document.querySelectorAll('[data-'+key+']').forEach(el=>{el.disabled=!options[key]?.includes(el.dataset[key]);});
+  $('capacityLabel').textContent=lang==='es'?'Diseño seleccionado por la tienda':'Shop-selected design';
+ }
 }
 function renderSpooky(){
  const on=NebulaSpooky.active(st),id=st.template?.halloweenRecipe;
@@ -200,6 +229,7 @@ function renderSpooky(){
   $('wrapHeading').textContent=t(st.finishes.paper);$('wrapCopy').textContent=t(st.finishes.ghostCount?'spookyGhostWrap':'spookyWrapHint');
   const count=brush?Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,brush)).filter(Boolean).length:0;
   $('spookyFitCount').textContent=brush?t('spookyFits',{name:name(brush),n:count,cap:st.template.capacity}):t('chooseBrush');
+  if(id==='scream-for-you')$('catalogueNote').textContent=lang==='es'?'Este diseño conserva posiciones pequeñas alrededor de la máscara. Los lirios no caben aquí; solo se muestran flores compatibles.':'This design keeps small flower positions around the mask. Lilies do not fit here; only compatible flowers are shown.';
   const roses=st.items.filter(it=>CAT[it.id].family==='rose'),canRecolor=brush&&CAT[brush].family==='rose';
   $('recolorRoses').disabled=!isReady||!canRecolor||!roses.some(it=>it.id!==brush);
   $('recolorRoses').textContent=canRecolor?t('spookyRecolor',{n:roses.length,name:name(brush)}):t('spookyChooseRose');
@@ -237,7 +267,7 @@ function selectItem(uid){brush=null;selected=uid;selectedSlot=st.items.find(i=>i
 /* Three Classic starting points, shown as pictures instead of a buried list. */
 function renderStarting(){
  const panel=$('startingPanel');panel.hidden=st.mode!=='classic';if(panel.hidden)return;
- $('startingRecipes').replaceChildren(...Object.entries(PRESETS).filter(([,preset])=>preset.featured!==false).map(([key,preset])=>{
+ $('startingRecipes').replaceChildren(...Object.entries(PRESETS).filter(([key,preset])=>!NebulaShop.restricted&&preset.featured!==false).map(([key,preset])=>{
   const el=button('','recipe-card',()=>useRecipe(preset.items,preset.paper)),im=document.createElement('img'),label=document.createElement('strong'),count=document.createElement('small');
   im.src=R.source(catalogImage(preset.cover));im.alt='';im.width=64;im.height=64;im.draggable=false;
   label.textContent=preset[lang];count.textContent=M.money(M.price(M.create(key)).totalCents,lang);
@@ -245,6 +275,7 @@ function renderStarting(){
   el.setAttribute('aria-label',preset[lang]+', '+count.textContent);return el;
  }));
  for(const recipe of NebulaClassic.recipes){
+  if(!NebulaShop.recipeAllowed(recipe.id))continue;
   const el=button('','recipe-card',()=>confirm(t('recipeTitle'),t('recipeText',{n:recipe.count}),t('recipeConfirm'),()=>applyFallTemplate(recipe.id))),im=document.createElement('img'),label=document.createElement('strong'),price=document.createElement('small');
   im.src=R.source(NEBULA_META.flowers.rose_black.head);im.alt='';im.width=64;im.height=64;
   label.textContent=recipe[lang];price.textContent=M.money(M.price(NebulaClassic.create(recipe.id)).totalCents,lang);
@@ -263,6 +294,7 @@ function renderRibbons(){
  }));
 }
 function useRecipe(ids,paper){
+ if(NebulaShop.restricted){showFailure({reason:'unsupported'});return;}
  const trial=M.clone(st);trial.items=ids.map(id=>M.newItem(trial,id));const cap=G.capacity(trial.items,trial.mode,trial.frames.classic?.engine);if(!cap.ok){showFailure(cap);return;}
  confirm(t('recipeTitle'),t('recipeText',{n:ids.length}),t('recipeConfirm'),()=>{change(()=>{st.items=ids.map(id=>M.newItem(st,id));picked=ids[0];brush=null;$('family').value=CAT[picked].family;if(paper)st.finishes.paper=paper;st.frames={};M.arrange(st,st.mode,{fresh:true});selected=null;hover=null;});$('startingPanel').open=false;toast(t('recipeApplied'));});
 }
@@ -284,8 +316,11 @@ function showSave(){if(editFocus)commitTextEdit();R.paint($('savePreview'),st);$
    wa.me carries text only, so the bouquet travels as words, not an attachment. */
 /* Links are built by design-link.js so the studio and the florist's order sheet
    always read and write the same format. */
-function siteBase(){return location.origin+location.pathname.replace(/[^/]*$/,'');}
-function designLink(order,design=st){return siteBase()+(order?'order.html':'studio.html')+'#b='+NebulaLink.encode(design,order);}
+function siteBase(){const configured=window.NEBULA_SHOP?.publicBaseUrl;return configured||location.origin+location.pathname.replace(/[^/]*$/,'');}
+function designLink(order,design=st){
+ const clean=M.clone(design);if(CONFIG.requestChannel==='sms'){clean.title='';clean.note='';order=null;}
+ return siteBase()+(order||CONFIG.requestChannel==='sms'?'order.html':'studio.html')+'#b='+NebulaLink.encode(clean,order);
+}
 function shopDigits(){const s=window.NEBULA_SHOP||{};return String(s.whatsapp||(s.studio&&s.studio.phone)||'').replace(/\D/g,'');}
 function orderRef(){return 'NB-'+Date.now().toString(36).slice(-5).toUpperCase();}
 function orderSummary(){
@@ -298,10 +333,12 @@ function orderSummary(){
  if(f.sash&&f.sash!=='none')extras.push(t('sash')+': '+$('sash').selectedOptions[0].textContent+(f.sashText?' — '+f.sashText:''));
  if(f.butterfly)extras.push(t('butterfly')+(f.butterfly>1?' ×'+f.butterfly:''));
  if(f.crown)extras.push(t('crown'));
+ if(f.chocolateBox)extras.push('1 × '+t('chocolateBox'));
+ if(window.NebulaCustomization){for(const e of NebulaCustomization.extras(st))extras.push(e.quantity+' × '+t(e.id));if(st.mode!=='dome'){for(const d of f.decorations||[])extras.push('1 × '+t(d.id));if(f.initial)extras.push(t('floralInitial')+': '+f.initial);}}
  if(st.mode==='dome'){
   if(f.greeneryCount)extras.push(f.greeneryCount+' × '+t('interiorGreenery'));
   if(f.initial)extras.push(t('floralInitial')+': '+f.initial);
-  if(f.fillerCount)extras.push(f.fillerCount+' × '+t('filler')+' · '+t(f.fillerPattern));
+  if(f.fillerCount&&f.studio?.breath===undefined)extras.push(f.fillerCount+' × '+t('filler')+' · '+t(f.fillerPattern));
   for(const d of f.decorations)extras.push('1 × '+t(d.id));
  }
  if(st.mode==='dome'&&f.pumpkin)extras.push(t('pumpkin')+' · '+t('position'+f.pumpkinPosition[0].toUpperCase()+f.pumpkinPosition.slice(1)));
@@ -310,9 +347,10 @@ function orderSummary(){
  for(const line of NebulaSpooky.extras(st))extras.push(line.quantity+' × '+t(line.id));
  return {stems,extras,total:M.money(p.totalCents,lang),pieces:st.items.length};
 }
-function showOrder(){
+async function showOrder(){
  if(editFocus)commitTextEdit();
  if(!st.items.length)return;
+ try{await R.awaitAssets(st);}catch{toast(t('exportError'));return;}
  const s=orderSummary();
  R.paint($('orderPreview'),st);
  $('orderRecapTitle').textContent=(st.title||'').trim()||t(st.mode);
@@ -323,6 +361,7 @@ function showOrder(){
  const d=new Date();$('ordDate').min=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
  $('orderError').hidden=true;
  for(const id of ['ordName','ordPhone','ordDate'])$(id).removeAttribute('aria-invalid');
+ if(CONFIG.requestChannel==='sms'){const phone=$('ordPhone');phone.required=false;$('ordPay').closest('label').hidden=true;$('smsPrepared').hidden=true;}
  $('orderDialog').showModal();
  setTimeout(()=>$('ordName').focus(),40);
 }
@@ -355,6 +394,8 @@ function orderText(ref){
 }
 function sendOrder(e){
  e.preventDefault();
+ if(!NebulaShop.assess(st).ok){$('orderError').textContent=NebulaShop.message(lang);$('orderError').hidden=false;return;}
+ if(CONFIG.requestChannel==='sms')return prepareSMS();
  const missing=['ordName','ordPhone','ordDate'].filter(id=>!$(id).value.trim()||!$(id).checkValidity());
  for(const id of ['ordName','ordPhone','ordDate']){if(missing.includes(id))$(id).setAttribute('aria-invalid','true');else $(id).removeAttribute('aria-invalid');}
  if(missing.length){$('orderError').textContent=t('orderMissing');$('orderError').hidden=false;$(missing[0]).focus();return;}
@@ -368,6 +409,34 @@ function sendOrder(e){
  $('orderDialog').close();
  toast(t('orderOpened'));
 }
+let smsFingerprint='',smsRef='',smsDraft=null;
+function prepareSMS(){
+ if(!NebulaShop.assess(st).ok){smsDraft=null;$('smsPrepared').hidden=true;$('orderError').textContent=NebulaShop.message(lang);$('orderError').hidden=false;return;}
+ const data={name:$('ordName').value.trim(),phone:$('ordPhone').value.trim(),date:$('ordDate').value,method:$('ordMethod').value,note:$('ordNote').value.trim(),cardNote:st.note};
+ const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ const invalid=NebulaRequest.validate(data,today);
+ if(!st.items.length||invalid||!NebulaRequest.recipient(CONFIG.recipient)){$('orderError').textContent=t(invalid==='date'?'smsDateError':'orderMissing');$('orderError').hidden=false;if(invalid==='name')$('ordName').focus();else if(invalid==='date')$('ordDate').focus();return;}
+ $('orderError').hidden=true;
+ const fingerprint=JSON.stringify({data,design:st,lang});
+ if(fingerprint!==smsFingerprint){smsRef='LFE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();smsFingerprint=fingerprint;}
+ const summary={...orderSummary(),style:t(st.mode)+' · '+st.items.length+' '+t('pieces')},link=designLink(null),args={ref:smsRef,shop:CONFIG.brand,data,summary,link,lang,sample:CONFIG.demo};
+ smsDraft={full:NebulaRequest.compose(args),plain:NebulaRequest.compose({...args,link:''})};
+ $('smsPlain').checked=false;$('smsPrepared').querySelector('.sms-trouble').open=false;refreshSMS();$('smsPrepared').hidden=false;$('smsMessage').focus({preventScroll:true});$('smsMessage').setSelectionRange(0,0);$('smsMessage').scrollTop=0;$('smsPrepared').scrollIntoView({block:'start'});
+}
+function refreshSMS(){
+ if(!smsDraft)return;const message=$('smsPlain').checked?smsDraft.plain:smsDraft.full;
+ $('smsMessage').value=message;$('smsRecipient').textContent=CONFIG.recipient;
+ const apple=/iPhone|iPad|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
+ $('smsOpen').href=NebulaRequest.url('sms',CONFIG.recipient,message,apple);
+ const clean=M.clone(st);clean.title='';clean.note='';$('smsSheet').href=siteBase()+'order.html#b='+NebulaLink.encode(clean);
+ $('smsStatus').textContent='';
+}
+if(CONFIG.requestChannel==='sms'){
+ $('smsCopy').onclick=async()=>{$('smsStatus').textContent=t(await NebulaRequest.copy($('smsMessage').value,$('smsMessage'))?'smsCopyOK':'smsCopyFail');};
+ $('smsPlain').onchange=refreshSMS;
+ $('smsImage').onclick=()=>exportPNG(false);
+ for(const id of ['ordName','ordPhone','ordDate','ordMethod','ordNote'])$(id).addEventListener('input',()=>{if(!$('smsPrepared').hidden){$('smsPrepared').hidden=true;$('smsStatus').textContent=t('smsChanged');}});
+}
 function download(blob,filename){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
 for(const id of ['ordName','ordPhone','ordDate'])$(id).addEventListener('input',()=>{
  if($(id).value.trim()&&$(id).checkValidity())$(id).removeAttribute('aria-invalid');
@@ -376,7 +445,7 @@ for(const id of ['ordName','ordPhone','ordDate'])$(id).addEventListener('input',
 async function exportPNG(story){
  if(exporting)return;exporting=true;const saved=M.clone(st),savedLang=lang;
  $('saveSquare').disabled=true;$('saveStory').disabled=true;$('saveJSON').disabled=true;$('exportStatus').textContent=t('exporting');
- try{const b=await R.blob(saved,1080,story?1920:1080,savedLang);download(b,'nebula-'+saved.mode+'-'+(story?'story':'square')+'.png');$('exportStatus').textContent=t('savedPNG');}
+ try{const b=await R.blob(saved,1080,story?1920:1080,savedLang);download(b,(CONFIG.shopId||'nebula')+'-'+saved.mode+'-'+(story?'story':'square')+'.png');$('exportStatus').textContent=t('savedPNG');}
  catch(e){window.__errors.push(String(e));$('exportStatus').textContent=t('exportError');}
  finally{exporting=false;for(const id of ['saveSquare','saveStory','saveJSON'])$(id).disabled=false;}
 }
@@ -387,7 +456,7 @@ async function shareBouquet(){
  btn.disabled=true;$('shareStatus').textContent=t('sharePreparing');
  try{
   const blob=await R.blob(saved,1080,1080,savedLang);
-  const file=new File([blob],'nebula-'+saved.mode+'.png',{type:'image/png'});
+  const file=new File([blob],(CONFIG.shopId||'nebula')+'-'+saved.mode+'.png',{type:'image/png'});
   /* The link rides along with the picture: whoever receives it can open the exact
      bouquet and change it, instead of only looking at a flat image. */
   const payload={files:[file],title:saved.title||NebulaI18n.text(savedLang,'shareTitle'),text:savedLink};
@@ -406,6 +475,7 @@ function importDesign(raw){
  if(!studio&&!validated){toast(t('invalid'));return false;}
  confirm(t('importTitle'),t(studio?'importStudioText':'importText'),t('importConfirm'),()=>{
   if(studio){const backup=M.portfolio(st,banks);try{localStorage.setItem(CONFIG.storageKey+'.before-import',JSON.stringify(backup));}catch(e){}banks=M.clone(studio.bouquets);st=M.clone(banks[studio.activeMode]);histories={};undoStack=[];redoStack=[];}
+  else if(!NebulaShop.assess(validated).ok){const before=snap();banks[st.mode]=M.clone(st);st=validated;storeHistory(before);}
   else{if(st.mode!==validated.mode)switchBouquet(validated.mode);change(()=>{st=validated;});}
   selected=null;hover=null;render();toast(t('imported'));
  });return true;
@@ -442,7 +512,7 @@ function renderDetails(){
   $('detailChoices').replaceChildren(...Object.keys(NebulaDetails.types).map(id=>{
    const present=st.finishes.decorations.some(d=>d.id===id),b=button('','',()=>{
     selectedDetail=id;selected=null;brush=null;hover=null;
-    if(!st.finishes.decorations.some(d=>d.id===id))change(()=>{st.finishes.decorations.push(NebulaDetails.create(id));});else render(false);
+    if(!st.finishes.decorations.some(d=>d.id===id))change(()=>{window.NebulaCustomization?.beforeDetail(st,id);st.finishes.decorations.push(window.NebulaCustomization?NebulaCustomization.placeDetail(st,NebulaDetails.create(id)):NebulaDetails.create(id));});else render(false);
    }),im=document.createElement('img'),label=document.createElement('strong'),cost=document.createElement('small'),status=document.createElement('small');
    im.src=R.thumbnail(NEBULA_META.finishes[id].url);im.alt='';im.draggable=false;
    label.textContent=t(id);cost.textContent=M.money(CONFIG.extrasCents[id],lang);status.textContent=t(present?'editDetail':'addDetail');
@@ -479,7 +549,7 @@ function tapMove(p){
  if(result.ok){selected=null;selectedSlot=null;render(false);toast(t('moveDone'));}
 }
 function beginPointer(e){
- if(!isReady||e.button!==0||gesture)return;const p=point(e),detail=!panMode&&!brush&&tab==='finishing'?R.detailHit(sc,p):null,node=detail?null:R.hit(sc,p);hover=null;
+ if(!isReady||e.button!==0||gesture)return;const p=point(e),detail=!panMode&&!brush?R.detailHit(sc,p):null,node=detail?null:R.hit(sc,p);hover=null;
  if(detail){selectedDetail=detail.detailId;selected=null;renderDetails();}else selectedDetail=null;
  /* A finger is coarser than a mouse: give touch more slack before a tap counts as a drag.
     Measured in real CSS pixels, not canvas units, so it does not change with preview size. */
@@ -488,6 +558,7 @@ function beginPointer(e){
     whether this gesture is a tap or a drag. Dome/Heart keep instant brush strokes. */
  const holdPaint=!!brush&&st.mode==='classic'&&!!node;
  gesture={detailId:detail?.detailId,pointerId:e.pointerId,start:p,screenStart:canvasPoint(e),cameraBefore:{...camera},before:snap(),uid:node?.uid||null,moved:false,changed:false,touched:new Set(),pan:panMode,offset:detail?{x:p.x-detail.x,y:p.y-detail.y}:node?{x:p.x-node.x,y:p.y-node.y}:{x:0,y:0},painting:!!brush&&!holdPaint,pendingPaint:holdPaint,slop,rawStart:{x:e.clientX,y:e.clientY}};
+ if(window.NebulaCustomization&&!panMode)camera.lockedView=R.view(st,camera);
  gesture.moveSelection=moveMode?selected:null;
  if(!panMode){if(gesture.painting)paintAt(p);else if(!brush&&!(moveMode&&selected)){selected=node?.uid||null;selectedSlot=node?.slot??null;}}
  $('bouquet').setPointerCapture(e.pointerId);$('bouquet').focus({preventScroll:true});e.preventDefault();scheduleCanvas();
@@ -497,7 +568,7 @@ function movePointer(e){
  if(Math.hypot(e.clientX-gesture.rawStart.x,e.clientY-gesture.rawStart.y)>gesture.slop)gesture.moved=true;
  if(gesture.pan){const q=canvasPoint(e),lim=(camera.zoom-1)*300;camera.x=G.clamp(gesture.cameraBefore.x+q.x-gesture.screenStart.x,-lim,lim);camera.y=G.clamp(gesture.cameraBefore.y+q.y-gesture.screenStart.y,-lim,lim);scheduleCanvas();return;}
  if(gesture.detailId){
-  if(gesture.moved){const d=currentDetail(),f=sc.frame;
+  if(gesture.moved){const d=currentDetail(),f=window.NebulaCustomization?NebulaCustomization.detailFrame(st,sc.frame,d):sc.frame;
    d.x=G.clamp(+((p.x-gesture.offset.x-f.center.x)/f.radius).toFixed(4),-1,1);
    d.y=G.clamp(+((p.y-gesture.offset.y-f.center.y)/f.radius).toFixed(4),-1.15,1);
    gesture.changed=true;scheduleCanvas();}return;
@@ -511,7 +582,7 @@ function movePointer(e){
  }
 }
 function endPointer(e,canceled=false){
- if(!gesture||e.pointerId!==gesture.pointerId)return;const g=gesture;gesture=null;hover=null;try{$('bouquet').releasePointerCapture(e.pointerId);}catch(err){}
+ if(!gesture||e.pointerId!==gesture.pointerId)return;const g=gesture;gesture=null;delete camera.lockedView;hover=null;try{$('bouquet').releasePointerCapture(e.pointerId);}catch(err){}
  if(canceled){st=JSON.parse(g.before);camera=g.cameraBefore;selected=null;render(false);return;}
  if(g.pan){render(false);return;}
  if(g.detailId){storeHistory(g.before);render();return;}
@@ -534,7 +605,7 @@ for(const [id,key] of [['detailScale','scale'],['detailRotation','rotation']]){
  input.onchange=()=>{commitTextEdit();render();};input.onblur=commitTextEdit;
 }
 $('detailLayer').onchange=()=>change(()=>{if(currentDetail())currentDetail().layer=$('detailLayer').value;});
-$('detailReset').onclick=()=>change(()=>{if(currentDetail())Object.assign(currentDetail(),NebulaDetails.create(selectedDetail));});
+$('detailReset').onclick=()=>change(()=>{if(currentDetail())Object.assign(currentDetail(),window.NebulaCustomization?NebulaCustomization.placeDetail(st,NebulaDetails.create(selectedDetail)):NebulaDetails.create(selectedDetail));});
 $('detailRemove').onclick=deleteDetail;
 for(const key of ['spookyMask','spookyBow'])$(key).onchange=()=>change(()=>{st.finishes[key]=$(key).checked;M.syncTemplate(st);});
  for(const [key,field,max] of [['ghostCount','ghostCount',6],['thistleCount','thistleCount',3],['spookyFiller','fillerCount',12]])$(key).onchange=()=>{const n=Number($(key).value);if(!Number.isInteger(n)||n<0||n>max){toast(t('invalidCount'));render(false);return;}change(()=>{st.finishes[field]=n;if(field==='ghostCount'&&n)st.finishes.collar=true;});};
@@ -592,7 +663,7 @@ for(const [id,step] of [['butterflyLess',-1],['butterflyMore',1]])$(id).onclick=
 syncText($('designName'),'title');syncText($('giftNote'),'note');
 for(const id of ['missingInline','missingWrapButton'])$(id).onclick=showMissing;$('helpButton').onclick=showHelp;$('gapCheck').onclick=showGap;
 $('saveShelf').onclick=saveToShelf;
-$('saveTop').onclick=showSave;$('shareButton').onclick=shareBouquet;$('orderButton').onclick=showOrder;$('orderForm').onsubmit=sendOrder;$('saveSquare').onclick=()=>exportPNG(false);$('saveStory').onclick=()=>exportPNG(true);$('saveJSON').onclick=()=>{download(new Blob([JSON.stringify({...M.portfolio(st,banks),activeEstimate:M.order(st,lang)},null,2)],{type:'application/json'}),'nebula-three-bouquets.json');$('exportStatus').textContent=t('savedJSON');};
+$('saveTop').onclick=showSave;$('shareButton').onclick=shareBouquet;$('orderButton').onclick=showOrder;$('orderForm').onsubmit=sendOrder;$('saveSquare').onclick=()=>exportPNG(false);$('saveStory').onclick=()=>exportPNG(true);$('saveJSON').onclick=()=>{download(new Blob([JSON.stringify({...M.portfolio(st,banks),activeEstimate:M.order(st,lang)},null,2)],{type:'application/json'}),(CONFIG.shopId||'nebula')+'-bouquets.json');$('exportStatus').textContent=t('savedJSON');};
 $('importFile').onchange=async()=>{const file=$('importFile').files[0];if(!file)return;try{if(file.size>1_000_000)throw new Error('oversize');importDesign(JSON.parse(await file.text()));}catch(e){toast(t('invalid'));}finally{$('importFile').value='';}};
 for(const el of document.querySelectorAll('[data-close]'))el.onclick=()=>$(el.dataset.close).close();
 $('confirmCancel').onclick=()=>{$('confirmDialog').close();confirmFn=null;};$('confirmYes').onclick=()=>{const fn=confirmFn;confirmFn=null;$('confirmDialog').close();if(fn)fn();};
@@ -635,6 +706,7 @@ function openSharedDesign(){
  return true;
 }
 const sharedOnBoot=openSharedDesign();
+if(st.photographic&&window.NebulaPhoto?.active(st)){location.replace('pink-proof.html#b='+NebulaLink.encode(st));return;}
 const launchParams=new URLSearchParams(location.search);
 let launchError='';
 if(!sharedOnBoot){
@@ -645,8 +717,10 @@ if(!sharedOnBoot){
    if(!entry)throw new Error('missing');
    st=M.clone(entry.design);
   }else if(template){
+   if(!NebulaShop.recipeAllowed(template))throw new Error('unreviewed');
    const collection=[NebulaClassic,NebulaRomance,NebulaSpooky,NebulaFall].find(lib=>lib.recipes.some(recipe=>recipe.id===template));
    if(!collection)throw new Error('missing');
+   backupUnsupported();
    st=collection.create(template);
   }
  }catch{

@@ -1,0 +1,16 @@
+{
+  "issues": [],
+  "checks": [
+    "classic 3 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "classic 7 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "classic 20 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "dome 12 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "dome 28 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "dome 60 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "heart 12 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "heart 28 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "heart 60 flowers: progressive petal spacing, unchanged anchors/quantities, deterministic link",
+    "All 5 satin sources decoded; Classic gifts grouped at paper base; separate chocolate",
+    "390px touch drag, exact undo/redo, persisted reload"
+  ]
+}

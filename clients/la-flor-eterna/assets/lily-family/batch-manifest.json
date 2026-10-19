@@ -1,0 +1,141 @@
+{
+  "conversion": "lossless; decoded RGBA exactly equal; no resizing or retouching",
+  "assets": [
+    {
+      "id": "white-flower-spray",
+      "file": "white-flower-spray.webp",
+      "width": 485,
+      "height": 950,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154233_794.png",
+      "master": "masters/white-flower-spray.png",
+      "alphaBounds": [
+        0,
+        0,
+        484,
+        949
+      ],
+      "sha256": "557ab3579c5e554ef777610ad53e0021f0b313c95f1818646a023ccdce03464c",
+      "sourceBytes": 272806,
+      "runtimeBytes": 154068
+    },
+    {
+      "id": "lily-pink-oblique-left",
+      "file": "lily-pink-oblique-left.webp",
+      "width": 801,
+      "height": 729,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154225_785.png",
+      "master": "masters/lily-pink-oblique-left.png",
+      "alphaBounds": [
+        0,
+        0,
+        800,
+        728
+      ],
+      "sha256": "25782cd4c41fd07cdc8c8f924c3b2a0b678e08dc1d9e44267e7afd5dbaa02d63",
+      "sourceBytes": 491542,
+      "runtimeBytes": 262056
+    },
+    {
+      "id": "bow-blush-long-tails",
+      "file": "bow-blush-long-tails.webp",
+      "width": 599,
+      "height": 1088,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154240_200.png",
+      "master": "masters/bow-blush-long-tails.png",
+      "alphaBounds": [
+        0,
+        0,
+        598,
+        1087
+      ],
+      "sha256": "111a1239ba4b94d8b20e9e15064ba99b8a4ddc7e1cce774afe387450c6cd5480",
+      "sourceBytes": 278410,
+      "runtimeBytes": 158240
+    },
+    {
+      "id": "rose-ivory-open-a",
+      "file": "rose-ivory-open-a.webp",
+      "width": 898,
+      "height": 846,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154233_102.png",
+      "master": "masters/rose-ivory-open-a.png",
+      "alphaBounds": [
+        0,
+        0,
+        897,
+        845
+      ],
+      "sha256": "d276c26c201d1ce00ef6746dfc29bd6615669136cebaee2ccf92a76745a3373a",
+      "sourceBytes": 556983,
+      "runtimeBytes": 304398
+    },
+    {
+      "id": "eucalyptus-edge",
+      "file": "eucalyptus-edge.webp",
+      "width": 666,
+      "height": 826,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154233_612.png",
+      "master": "masters/eucalyptus-edge.png",
+      "alphaBounds": [
+        0,
+        0,
+        665,
+        825
+      ],
+      "sha256": "1f25c39f415254b3e9131699582937d44a92d9e65c5aa43b4d7ce7be4b94d1b6",
+      "sourceBytes": 216088,
+      "runtimeBytes": 120706
+    },
+    {
+      "id": "wrap-peach-blush",
+      "file": "wrap-peach-blush.webp",
+      "width": 855,
+      "height": 786,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154233_895.png",
+      "master": "masters/wrap-peach-blush.png",
+      "alphaBounds": [
+        0,
+        0,
+        854,
+        785
+      ],
+      "sha256": "3dbd8bba6f0cf9eb7c0b0c02b6cf9a6d79d5d1c91c022561285ce7fbd7caa545",
+      "sourceBytes": 337811,
+      "runtimeBytes": 187346
+    },
+    {
+      "id": "rose-ivory-open-b",
+      "file": "rose-ivory-open-b.webp",
+      "width": 880,
+      "height": 823,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_154234_001.png",
+      "master": "masters/rose-ivory-open-b.png",
+      "alphaBounds": [
+        0,
+        0,
+        879,
+        822
+      ],
+      "sha256": "32eca020574d1fc5c712a90f1467c0d9a3945da3408642bf1b902d1901e9f5df",
+      "sourceBytes": 505996,
+      "runtimeBytes": 276538
+    },
+    {
+      "id": "lily-pink-open-a",
+      "file": "lily-pink-open-a.webp",
+      "width": 831,
+      "height": 833,
+      "source": "C:\\Users\\laptops zone\\Downloads\\Telegram Desktop\\IMG_20261018_130715_676.png",
+      "master": "masters/lily-pink-open-a.png",
+      "alphaBounds": [
+        0,
+        0,
+        830,
+        832
+      ],
+      "sha256": "0eaacf4080d1caf9702fb8fbc26244b6515c51ceb3bd1ee0455966992dc39959",
+      "sourceBytes": 612435,
+      "runtimeBytes": 319722
+    }
+  ]
+}
