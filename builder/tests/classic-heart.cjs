@@ -19,7 +19,7 @@ const base=process.env.BUILDER_URL||'http://127.0.0.1:4173/builder/';
     const cv=await NebulaApp.exportCanvas(720,820),decoded=NebulaLink.decode(NebulaLink.encode(s))?.design;
     return {title:s.title,mode:s.mode,n:s.items.length,valid:!!copy,roundtrip:!!decoded&&JSON.stringify(copy.items.map(i=>[i.id,i.anchors[copy.mode].x,i.anchors[copy.mode].y]))===JSON.stringify(decoded.items.map(i=>[i.id,i.anchors[decoded.mode].x,i.anchors[decoded.mode].y]))&&M.price(copy).totalCents===M.price(decoded).totalCents ,nodes:sc.nodes.map(n=>({id:n.id,x:n.x,y:n.y,w:n.w,h:n.h})),green:M.price(s).extraLines.find(l=>l.id==='greenRim'),png:cv.toDataURL('image/png')};
    });
-   assert.equal(data.mode,'classic');assert.ok(data.valid);assert.ok(data.roundtrip);assert.equal(data.n,23);
+   assert.equal(data.mode,'classic');assert.ok(data.valid);assert.ok(data.roundtrip);assert.equal(data.n,20);
    assert.ok(data.nodes.every(n=>[n.x,n.y,n.w,n.h].every(Number.isFinite)));
    fs.writeFileSync(path.join(out,id+'.png'),Buffer.from(data.png.split(',')[1],'base64'));
    await page.screenshot({path:path.join(out,id+'-desktop.png')});

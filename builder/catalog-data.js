@@ -38,11 +38,11 @@ window.NEBULA_COLLECTIONS = [
     "collection": "classic",
     "en": "Midnight Blooms",
     "es": "Flores de medianoche",
-    "description": "The original lush mix: five pink lilies, black roses, dusky daisies and blue thistles in a black fan wrap.",
-    "descriptionEs": "Cinco lirios rosas, rosas negras, gerberas oscuras y cardos azules en una envoltura negra.",
+    "description": "Five pink lilies, black roses and dusky daisies in black wrapping. Blue thistles are optional.",
+    "descriptionEs": "Cinco lirios rosas, rosas negras y gerberas oscuras en papel negro. Cardos azules opcionales.",
     "preview": true,
     "image": "assets/catalog/thumbs/midnight-blooms.webp",
-    "count": 23
+    "count": 20
   },
   {
     "id": "scream-for-you",

@@ -13,6 +13,12 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
  const row=el('div',null,'toggle-row'),label=el('span','whiteSprayHeading'),step=el('span',null,'stepper');row.append(label,step);
  for(const [id,delta] of [['whiteSprayLess',-1],['whiteSprayMore',1]]){const b=el('button',id);b.type='button';b.textContent=delta<0?'−':'+';b.setAttribute('aria-label',delta<0?'Fewer white flowering accents':'More white flowering accents');b.onclick=()=>edit(s=>{const o=studio(s);o.sprays=Math.max(0,Math.min(8,(o.sprays||0)+delta));});step.append(b);if(delta<0)step.append(el('output','whiteSprayCount'));}
  fillers.append(row,el('small','fillerCost','helper'));
+ fillers.append(el('strong','thistleHeading'),el('div','thistleLevels','custom-segments'),el('small','thistleCost','helper'));
+ for(let i=0;i<=3;i++){const b=el('button');b.type='button';b.dataset.thistles=i;b.onclick=()=>edit(s=>{
+  // Explicitly choosing a level also converts old full-slot thistles.
+  for(const n of s.items.filter(n=>n.id==='blue_thistle'))NebulaModel.remove(s,n.uid);
+  s.finishes.thistleCount=i;
+ });$('thistleLevels').append(b);}
  const migrate=el('button','convertLegacySprays','text-button');migrate.type='button';migrate.onclick=()=>edit(s=>{
   const o=studio(s),ids=s.items.filter(n=>n.id==='white_flower_spray').slice(0,8-(o.sprays||0)).map(n=>n.uid);o.sprays=(o.sprays||0)+ids.length;for(const id of ids)NebulaModel.remove(s,id);
  });fillers.append(migrate);
@@ -39,6 +45,11 @@ function render(s,lang,ready){build();if(!built)return;const o=s.finishes.studio
  for(const b of $('breathLevels').children){const i=+b.dataset.breath;b.textContent=(es?['Ninguna','Ligera','Media','Abundante']:['None','Light','Medium','Full'])[i];b.setAttribute('aria-pressed',String(i===level));b.disabled=!ready;}
  $('whiteSprayHeading').textContent=text('White flowering accents','Ramas de flores blancas',lang);$('whiteSprayCount').textContent=o.sprays||0;$('whiteSprayLess').disabled=!ready||!o.sprays;$('whiteSprayMore').disabled=!ready||(o.sprays||0)>=8;
  $('whiteSprayLess').setAttribute('aria-label',text('Fewer white flowering accents','Menos ramas blancas',lang));$('whiteSprayMore').setAttribute('aria-label',text('More white flowering accents','Más ramas blancas',lang));
+ const thistles=(s.finishes.thistleCount||0)+s.items.filter(n=>n.id==='blue_thistle').length;
+ $('thistleHeading').textContent=text('Blue thistle · optional','Cardo azul · opcional',lang);
+ for(const b of $('thistleLevels').children){const i=+b.dataset.thistles;b.textContent=i?String(i):text('None','Ninguno',lang);b.setAttribute('aria-pressed',String(i===thistles));b.disabled=!ready;}
+ $('thistleCost').textContent=text('Small blue accents between the flowers. ','Pequeños acentos azules entre las flores. ',lang)+NebulaModel.money(thistles*NebulaConfig.CONFIG.extrasCents.thistleCount,lang)+text(' sample total',' total de muestra',lang);
+ $('thistleCountRow').hidden=true;
  const legacy=s.items.filter(n=>n.id==='white_flower_spray').length,convertible=Math.min(legacy,8-(o.sprays||0));$('convertLegacySprays').hidden=!legacy;$('convertLegacySprays').textContent=text('Move '+convertible+' existing white sprays out of flower slots','Convertir '+convertible+' ramas existentes en relleno',lang);
  $('convertLegacySprays').disabled=(o.sprays||0)>=8;
  const cost=U.extras(s).filter(n=>n.id!=='breathBorder').reduce((t,n)=>t+n.totalCents,0);
@@ -51,7 +62,7 @@ function render(s,lang,ready){build();if(!built)return;const o=s.finishes.studio
  for(const [id,color] of [['blush','#dbb3b7'],['sage','#b1bba1'],['kraft','#c29a6c'],['linen','#d8c6a3']])if(!$('paperChoices').querySelector('[data-paper="'+id+'"]')){const b=el('button');b.type='button';b.dataset.paper=id;b.textContent=NebulaI18n[lang][id]||id;const dot=el('span',null,'swatch');dot.style.setProperty('--swatch',color);b.prepend(dot);b.setAttribute('aria-pressed',String(s.finishes.paper===id));b.onclick=()=>edit(n=>{studio(n).wrap=U.style(n);n.finishes.paper=id;});$('paperChoices').append(b);}
  const original=$('paperChoices').querySelector('[data-paper="ivory"]');if(original?.lastChild?.nodeType===3)original.lastChild.textContent=['fan','round','heart'].includes(chosen)?text('Ivory','Marfil',lang):'Original';
  for(const b of $('detailChoices').querySelectorAll('[data-detail]'))b.hidden=U.bowIds.includes(b.dataset.detail);
- $('simpleToys').querySelector('h3').textContent=text(s.mode==='classic'?'Accompanying toys & bouquet tie':'Toys & satin bows',s.mode==='classic'?'Peluches aparte y lazo del ramo':'Peluches y lazos',lang);$('simpleDragHint').textContent=s.mode==='classic'?text('Toys accompany the bouquet separately. Drag gifts in the area below; the satin bow ties the stems.','Los peluches acompañan el ramo por separado. Arrástralos en la zona inferior; el lazo ata los tallos.',lang):text('Add a detail, then drag it directly on the bouquet. Select it to change size or placement.','Añade un detalle y arrástralo sobre el ramo. Selecciónalo para ajustar tamaño o posición.',lang);
+ $('simpleToys').querySelector('h3').textContent=text(s.mode==='classic'?'Accompanying toys & bouquet tie':'Toys & satin bows',s.mode==='classic'?'Peluches aparte y lazo del ramo':'Peluches y lazos',lang);$('simpleDragHint').textContent=s.mode==='classic'?text('Toys accompany the bouquet separately. Drag gifts in the area below; the satin bow ties the stems. Tap a toy or bow, then × to remove it.','Los peluches acompañan el ramo por separado. Arrástralos en la zona inferior; el lazo ata los tallos. Toca un peluche o lazo y después × para quitarlo.',lang):text('Add a detail, then drag it directly on the bouquet. Tap it, then × to remove it.','Añade un detalle y arrástralo sobre el ramo. Tócalo y después × para quitarlo.',lang);
  $('detailLayer').closest('label').hidden=s.mode==='classic';
  $('greeneryCount').closest('.toggle-row').hidden=s.mode!=='dome';
  $('convertLegacyPumpkin').hidden=!s.finishes.pumpkin;$('convertLegacyPumpkin').textContent=text('Make the existing pumpkin draggable','Activar arrastre de la calabaza existente',lang);

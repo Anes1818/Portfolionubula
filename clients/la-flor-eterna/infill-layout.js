@@ -15,7 +15,7 @@ function clearance(p,n){
 }
 function pockets(sc){
  const flowers=sc.nodes.filter(n=>!n.decorative&&n.id!=='eucalyptus'&&n.id!=='white_flower_spray').map(shape).sort((a,b)=>a.uid.localeCompare(b.uid));
- const unit=sc.frame.unit,key=JSON.stringify([unit,flowers.map(n=>[n.uid,n.id,n.x,n.y,n.w,n.h,n.rot,n.z,n.flowerCup])]);
+ const unit=sc.frame.unit,key=JSON.stringify([unit,flowers.map(n=>[n.uid,n.id,n.url,n.x,n.y,n.w,n.h,n.rot,n.flipX,n.z,n.flowerCup])]);
  if(cache.has(key))return cache.get(key);
  if(!flowers.length)return {flowers,points:[]};
  const candidates=[],seen=new Set();
@@ -82,7 +82,7 @@ function samples(m){
  if(mask)sampleCache.set(m.url,out);return out;
 }
 function fit(p,kind,index,flowers,art){
- const m=kind==='sprays'?art.spray:kind==='greenery'?art.greens[index%art.greens.length]:index%2?art.wide:art.airy;
+ const m=kind==='thistles'?art.thistle:kind==='sprays'?art.spray:kind==='greenery'?art.greens[index%art.greens.length]:index%2?art.wide:art.airy;
  const crown=m.crown||(kind==='greenery'?[.64,.36]:kind==='sprays'?[.48,.40]:[.51,.38]),base=m.base||(kind==='greenery'?[.03,.96]:[.48,.98]);
  const pixels=samples(m);let best=null;
  for(const turn of [0,-.55,.55,-1.1,1.1]){
@@ -102,11 +102,11 @@ function fit(p,kind,index,flowers,art){
  return best;
 }
 function plan(sc,counts,art){
- const source=pockets(sc),flowers=source.flowers.map(n=>({...n,mask:g.NebulaRenderer?.footprint(n)})),points=source.points,unit=sc.frame.unit,used=[],out={sprays:[],greenery:[],breath:[]};
+ const source=pockets(sc),flowers=source.flowers.map(n=>({...n,mask:g.NebulaRenderer?.footprint(n)})),points=source.points,unit=sc.frame.unit,used=[],out={sprays:[],greenery:[],thistles:[],breath:[]};
  // A selected stem has multiple branching tips. Find separate nearby seams
  // for those tips instead of stacking a compact white stamp on its crown.
  const tips=(counts.breath||0)*(counts.level>=2?2:1)+(counts.level===3?Math.ceil((counts.breath||0)/2):0);
- for(const kind of ['sprays','greenery','breath'])for(let i=0;i<(kind==='breath'?tips:counts[kind]||0);i++){
+ for(const kind of ['sprays','greenery','thistles','breath'])for(let i=0;i<(kind==='breath'?tips:counts[kind]||0);i++){
   let chosen=null,best=-Infinity;const ranked=[];
   for(const p of points){
    if(used.some(q=>q.p===p))continue;
@@ -122,7 +122,7 @@ function plan(sc,counts,art){
   for(const {p,spacing,score} of ranked.slice(0,art?14:1)){
    const local=clamp(p.local,unit*.90,unit*1.3),fitSize=clamp((p.clear/unit+.28)*1.25,.90,1.10);
    const density=kind==='breath'?[1,.90,1.05,1.22][counts.level||1]*(i>=counts.breath?.78:1):1;
-   const w=Math.min(local*(kind==='sprays'?.94:kind==='greenery'?1.02:1.24)*fitSize,unit*(kind==='greenery'?1.15:kind==='sprays'?1.05:1.44))*density;
+   const w=Math.min(local*(kind==='thistles'?.62:kind==='sprays'?.94:kind==='greenery'?1.02:1.24)*fitSize,unit*(kind==='thistles'?.72:kind==='greenery'?1.15:kind==='sprays'?1.05:1.44))*density;
    const fitted=art?fit({...p,w},kind,i,flowers,art):null,total=score+(fitted?.quality||0);
    if(total>best){chosen={...p,spacing,w,fitted,source:p};best=total;}
   }
@@ -139,11 +139,12 @@ function anchored(p,m,w,crown,base,extra=0){
  return {x,y,w,h,d:w,rot,crown:{x:p.x,y:p.y},base:{x:x+bx*Math.cos(rot)-by*Math.sin(rot),y:y+bx*Math.sin(rot)+by*Math.cos(rot)}};
 }
 function nodes(sc,counts,art){
- const key=JSON.stringify([sc.frame.unit,counts,sc.nodes.map(n=>[n.uid,n.url,n.x,n.y,n.w,n.h,n.rot,n.z,n.flowerCup,!!g.NebulaRenderer?.decoded(n.url)]),Object.values(art).flat().map(m=>[m.url,m.width,m.height,m.crown,m.base,!!g.NebulaRenderer?.decoded(m.url)])]);
+ const key=JSON.stringify([sc.frame.unit,counts,sc.nodes.map(n=>[n.uid,n.url,n.x,n.y,n.w,n.h,n.rot,n.flipX,n.z,n.flowerCup,!!g.NebulaRenderer?.decoded(n.url)]),Object.values(art).flat().map(m=>[m.url,m.width,m.height,m.crown,m.base,!!g.NebulaRenderer?.decoded(m.url)])]);
  if(layoutCache.has(key))return layoutCache.get(key);
  const layout=plan(sc,counts,art),all=[],greenery=[],canopy=Math.max(0,...sc.nodes.map(n=>n.z??n.y))+20;
  const common=(p,kind)=>({z:canopy+(kind==='greenery'?0:kind==='spray'?1:2),bright:1,softDetail:true,infill:true,infillKind:kind,pocket:{x:p.x,y:p.y,clear:p.clear},occlude:p.neighbours,front:p.front,visibleRatio:p.fitted?.visible,coreOverlap:p.fitted?.core});
  layout.sprays.forEach((p,i)=>{const a=p.fitted.pose;all.push({...common(p,'spray'),...a,uid:'spray-accent-'+i,url:art.spray.url});});
+ layout.thistles.forEach((p,i)=>all.push({...common(p,'thistle'),...p.fitted.pose,uid:'thistle-accent-'+i,url:art.thistle.url}));
  layout.greenery.forEach((p,i)=>{
   const m=art.greens[i%art.greens.length],a=p.fitted.pose;
   const n={...common(p,'greenery'),...a,uid:'greenery-'+i,url:m.url};all.push(n);greenery.push(n);

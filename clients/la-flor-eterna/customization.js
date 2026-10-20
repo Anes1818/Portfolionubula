@@ -70,7 +70,7 @@ function paper(s,f){
  if(front&&s.finishes.paper!=='ivory'){front.paperTone=s.finishes.paper;front.paperTint=s.finishes.tint;}
  return {back:{uid:'paper',url:m.url,x,y,w,h,d:w,rot:0,bright:1,untinted:['gingham','peach','yellow-upright','kraft-upright'].includes(k)&&s.finishes.paper==='ivory'},front};
 }
-function assets(s){const o=s.finishes.studio,urls=[];if(s.mode==='dome'&&s.finishes.greeneryCount)urls.push(silverTip.url);if(o?.breath||o?.edge||s.finishes.fillerCount)urls.push(airy.url,wide.url,tuft.url);if(o?.sprays)urls.push(spray.url);if(s.mode==='classic'&&s.items.some(i=>i.id==='rose_pink'))urls.push(salmon.url);if(s.finishes.initial)urls.push(tuft.url);for(const d of s.finishes.decorations||[])urls.push(detailArt(s,d.id).url);if(o?.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,s.frames[s.mode]);if(p){urls.push(p.back.url);if(p.front)urls.push(p.front.url);}}return urls;}
+function assets(s){const o=s.finishes.studio,urls=[];if(NebulaMidnightArt.active(s)&&s.items.some(n=>n.id==='lily'))urls.push(NebulaMidnightArt.lily.url);if(s.finishes.thistleCount)urls.push(NebulaMidnightArt.thistle.url);if(s.mode==='dome'&&s.finishes.greeneryCount)urls.push(silverTip.url);if(o?.breath||o?.edge||s.finishes.fillerCount)urls.push(airy.url,wide.url,tuft.url);if(o?.sprays)urls.push(spray.url);if(s.mode==='classic'&&s.items.some(i=>i.id==='rose_pink'))urls.push(salmon.url);if(s.finishes.initial)urls.push('assets/client/lettering-oct20/white-florets.png');for(const d of s.finishes.decorations||[])urls.push(detailArt(s,d.id).url);if(o?.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,s.frames[s.mode]);if(p){urls.push(p.back.url);if(p.front)urls.push(p.front.url);}}return urls;}
 function borderScatter(s,sc,count){
  const f=sc.frame,flowers=sc.nodes.filter(n=>!n.decorative),out=[];
  if(!flowers.length)return out;
@@ -85,7 +85,7 @@ function complete(s,sc){
  const f=sc.frame,o=s.finishes.studio||{};
  if(s.mode==='classic'){
   // Use actual photographed oblique blooms, not a rotated overhead disk.
-  sc.nodes=sc.nodes.map(n=>{const m=meta.flowers[n.id];if(n.id==='sunflower')return NebulaSunflower.flower(n,f.center.x);if(n.decorative||n.id==='lily'||!m?.classicAvailable)return n;const w=n.d;return {...n,url:n.id==='rose_pink'?salmon.url:m.classicBloom,w,h:w*(n.id==='rose_pink'?salmon.height/salmon.width:m.bloomHeight/m.bloomWidth),rot:(n.x-f.center.x)/1600,z:n.y};});
+  sc.nodes=sc.nodes.map(n=>{const m=meta.flowers[n.id];if(n.id==='sunflower')return NebulaSunflower.flower(n,f.center.x);if(n.id==='lily')return NebulaMidnightArt.flower(s,n);if(n.decorative||!m?.classicAvailable)return n;if(m.heads?.length>1&&NebulaClassic.active(s))return n;const w=n.d;return {...n,url:n.id==='rose_pink'?salmon.url:m.classicBloom,w,h:w*(n.id==='rose_pink'?salmon.height/salmon.width:m.bloomHeight/m.bloomWidth),rot:(n.x-f.center.x)/1600,z:n.y};});
  }
  // More filler needs real room. Keep every authored center/anchor and quantity,
  // but gently open the rendered petal canopy as density rises (max 8.5%).
@@ -95,13 +95,13 @@ function complete(s,sc){
  if(o.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,f);sc.collar=p?.back||null;sc.finishes=sc.finishes.filter(n=>!['sunflower-front-paper','paper-front'].includes(n.uid));if(p?.front)paperFront={...p.front,z:-500};}
  if(s.mode==='classic'){const ribbon=sc.finishes.find(n=>n.uid==='ribbon');if(ribbon)ribbon.y=neckY(s)+ribbon.h*(s.finishes.ribbon==='blush'?.3:.08);}
  const fillerCount=o.breath!==undefined?breathCount(s):(s.finishes.fillerCount||0),greenCount=s.mode==='dome'?(s.finishes.greeneryCount||0):0;
- const packed=NebulaInfill.nodes(sc,{breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount},{airy,wide,tuft,spray,greens:[silverTip]});
+ const packed=NebulaInfill.nodes(sc,{breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:s.finishes.thistleCount||0},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});
  const added=[...packed.all];
- sc.filler=(sc.filler||[]).filter(n=>!n.uid.startsWith('filler-'));
+ sc.filler=(sc.filler||[]).filter(n=>!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url);
  if(s.mode==='dome')sc.greenery=packed.greenery;
  if(o.edge)borderScatter(s,sc,16).forEach((p,i)=>{const m=i%2?airy:wide,w=f.unit*.62;added.push({...p,uid:'breath-edge-'+i,url:m.url,w,h:w*m.height/m.width,d:w,bright:1,softDetail:true,infill:true,infillKind:'breath-border'});});
- if(o.breath!==undefined||fillerCount||greenCount||o.sprays||o.edge||s.mode==='classic'){
-  const old=(sc.layeredFlowers||[]).filter(n=>!sc.nodes.some(f=>f.uid===n.uid)&&!n.parentFiller&&!n.uid.startsWith('filler-')&&!(s.mode==='dome'&&n.uid.startsWith('greenery-'))).map(n=>paperFront&&n.parentFlower?{...n,z:-1000,clipBottom:Math.max(...sc.nodes.map(f=>f.y+f.h*.38))}:n);
+ if(o.breath!==undefined||fillerCount||greenCount||o.sprays||o.edge||s.finishes.thistleCount||s.mode==='classic'){
+  const old=(sc.layeredFlowers||[]).filter(n=>!sc.nodes.some(f=>f.uid===n.uid)&&!n.parentFiller&&!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url&&!(s.mode==='dome'&&n.uid.startsWith('greenery-'))).map(n=>paperFront&&n.parentFlower?{...n,z:-1000,clipBottom:Math.max(...sc.nodes.map(f=>f.y+f.h*.38))}:n);
   sc.layeredFlowers=[...sc.nodes,...old,...(!sc.layeredFlowers?[...(s.mode==='dome'?[]:sc.greenery||[]),...(sc.filler||[])]:[]),...(paperFront?[paperFront]:[]),...added].sort((a,b)=>(a.z??a.y)-(b.z??b.y));
  }
  // Reconstruct from stored drag coordinates after legacy automatic face-clearance rules.
@@ -109,12 +109,5 @@ function complete(s,sc){
 }
 function beforeDetail(s,id){if(id==='pumpkin_plush')s.finishes.pumpkin=false;if(bowIds.includes(id)){s.finishes.bow=false;s.finishes.spookyBow=false;s.finishes.ribbon='none';s.finishes.decorations=s.finishes.decorations.filter(d=>!bowIds.includes(d.id));}}
 function placeDetail(s,d){if(s.mode!=='classic'&&bowIds.includes(d.id)){d.x=pinkReference(s)?-.38:-.52;d.y=pinkReference(s)?0:.68;d.scale=pinkReference(s)?1.15:1;d.rotation=-10;}else if(s.mode!=='classic'){const others=s.finishes.decorations.filter(n=>n.id!==d.id&&!bowIds.includes(n.id));if(others.some(n=>Math.hypot(n.x-d.x,n.y-d.y)<.75)){const p=[[-.65,-.65],[.65,-.65],[0,-1],[0,.15]].find(([x,y])=>others.every(n=>Math.hypot(n.x-x,n.y-y)>=.75));if(p)[d.x,d.y]=p;}}return d;}
-const initialCache=new Map();
-NebulaRomance.initialCanvas=(letter,R)=>{
- if(initialCache.has(letter))return initialCache.get(letter);const im=R.image(tuft.url);if(!im)return null;
- const cv=document.createElement('canvas');cv.width=320;cv.height=360;const c=cv.getContext('2d'),mask=document.createElement('canvas');mask.width=320;mask.height=360;const m=mask.getContext('2d');m.font='bold 270px Georgia';m.textBaseline='alphabetic';const mt=m.measureText(letter),scale=Math.min(260/(mt.actualBoundingBoxLeft+mt.actualBoundingBoxRight),285/(mt.actualBoundingBoxAscent+mt.actualBoundingBoxDescent));m.save();m.translate(160+(mt.actualBoundingBoxLeft-mt.actualBoundingBoxRight)*scale/2,180+(mt.actualBoundingBoxAscent-mt.actualBoundingBoxDescent)*scale/2);m.scale(scale,scale);m.fillText(letter,0,0);m.restore();const pixels=m.getImageData(0,0,320,360).data;
- for(let y=12;y<348;y+=7)for(let x=12;x<308;x+=7)if(pixels[(y*320+x)*4+3]>180){c.save();c.translate(x,y);c.rotate(Math.sin(x*3+y)*2);c.drawImage(im,-7,-7,14,14);c.restore();}initialCache.set(letter,cv);return cv;
-};
-NebulaRomance.initialNode=(s,f)=>{const a=s.finishes;if(s.mode==='classic'||!a.initial)return null;const h=f.radius*1.15*a.initialScale;return {uid:'floral-initial',url:'initial '+a.initial,x:f.center.x,y:f.center.y+(s.mode==='heart'?-.06:0)*f.radius+a.initialOffset*f.radius,w:h*320/360,h,d:h,rot:0,bright:1,z:600};};
 g.NebulaCustomization={valid,extras,assets,complete,beforeDetail,placeDetail,detailFrame,giftLayout,neckY,wraps,wrapNames,style,paper,level,breathCount,bowIds};
 })(window);

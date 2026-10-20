@@ -30,7 +30,7 @@ for(const file of files.sort()){
    html=html.replace('<div class="collection-tools"','<h2 class="all-bouquets-title" data-copy="all">All bouquets</h2><div class="collection-tools"');
   }
   if(file==='index.html'&&profile.demo===false)html=html.replace(/<article class="bouquet-card" data-id="([a-z-]+)"[\s\S]*?<\/article>/g,(card,id)=>policy.recipeAllowed(id)?card:'');
-  if(['studio.html','order.html'].includes(file))html=html.replace('<script src="model.js','<script src="pink-recipe.js" defer></script><script src="rose-artwork.js" defer></script><script src="lily-arrangement.js" defer></script><script src="sunflower-arrangement.js" defer></script><script src="gift-options.js" defer></script><script src="infill-layout.js" defer></script><script src="customization.js" defer></script><script src="customization-ui.js" defer></script><script src="model.js');
+  if(['studio.html','order.html'].includes(file))html=html.replace('<script src="model.js','<script src="pink-recipe.js" defer></script><script src="rose-artwork.js" defer></script><script src="lily-arrangement.js" defer></script><script src="sunflower-arrangement.js" defer></script><script src="gift-options.js" defer></script><script src="infill-layout.js" defer></script><script src="midnight-artwork.js" defer></script><script src="customization.js" defer></script><script src="customization-ui.js" defer></script><script src="floral-lettering.js" defer></script><script src="model.js');
   if(file==='index.html'&&profile.demo&&profile.features?.pinkStudy)html=html.replace('<main', '<aside style="padding:16px;text-align:center;background:#f8e8ed"><a href="pink-proof.html" style="color:#76394e">Explore the new pink bouquet study →</a></aside><main');
   if(file==='order.html')html=html.replace('<div class="os-top">','<img class="sheet-logo" src="assets/client/logo.png" alt="La Flor Eterna — By Maritza Gomez" width="170" height="170"><div class="os-top">');
   if(file==='studio.html')html=html.replace(/(<p class="helper order-fine" data-i18n="orderFine">[\s\S]*?<\/p>)/,`$1
@@ -56,7 +56,7 @@ for(const file of files.sort()){
 const thumbs=path.join(client,'assets/thumbs');
 if(fs.existsSync(thumbs))for(const name of fs.readdirSync(thumbs).sort())if(/^[a-z-]+\.webp$/.test(name))write('assets/catalog/thumbs/'+name,fs.readFileSync(path.join(thumbs,name)));
 write('shop-config.js','/* Generated profile; sample price inputs inherited from builder/shop-config.js. */\nwindow.NEBULA_SHOP='+JSON.stringify(shop,null,2)+';\n');
-for(const name of ['client-ui.js','theme.css','rose-artwork.js','lily-arrangement.js','sunflower-arrangement.js','gift-options.js','infill-layout.js','customization.js','customization-ui.js','pink-recipe.js','pink-proof.html','pink-proof.css','pink-proof.js'])write(name,fs.readFileSync(path.join(client,name)));
+for(const name of ['client-ui.js','theme.css','rose-artwork.js','lily-arrangement.js','sunflower-arrangement.js','gift-options.js','infill-layout.js','midnight-artwork.js','customization.js','customization-ui.js','floral-lettering.js','pink-recipe.js','pink-proof.html','pink-proof.css','pink-proof.js'])write(name,fs.readFileSync(path.join(client,name)));
 write(profile.logo,fs.readFileSync(path.join(client,'assets/logo.png')));
 for(const item of JSON.parse(fs.readFileSync(path.join(client,'top-sellers.json'),'utf8'))){
  if(!/^assets\/client\/featured\/[a-z-]+\.jpg$/.test(item.image))throw Error('Invalid featured photo path');
@@ -86,7 +86,9 @@ const giftRoot=path.join(client,'assets/gifts'),gift=JSON.parse(fs.readFileSync(
 const giftBytes=fs.readFileSync(path.join(giftRoot,'chocolate-box-yellow.webp'));
 if(crypto.createHash('sha256').update(giftBytes).digest('hex')!==gift.sha256)throw Error('Gift asset changed');
 write('assets/client/gifts/chocolate-box-yellow.webp',giftBytes);
-const refinementRoot=path.join(client,'assets/refinements-oct19');
+for(const name of ['lily-magenta.png','thistle-blue.png'])write('assets/client/midnight-oct20/'+name,fs.readFileSync(path.join(client,'assets/midnight-oct20',name)));
+ write('assets/client/lettering-oct20/white-florets.png',fs.readFileSync(path.join(client,'assets/lettering-oct20/white-florets.png')));
+ const refinementRoot=path.join(client,'assets/refinements-oct19');
  write('assets/client/refinements-oct19/eucalyptus-silver-tip-v2.png',fs.readFileSync(path.join(refinementRoot,'eucalyptus-silver-tip-v2.png')));
  for(const name of ['breath-branch-v2.png','bow-pink-reference-v2.png'])write('assets/client/refinements-oct19/'+name,fs.readFileSync(path.join(refinementRoot,name)));
 for(const a of JSON.parse(fs.readFileSync(path.join(refinementRoot,'manifest.json'),'utf8')).assets.filter(a=>a.runtime)){

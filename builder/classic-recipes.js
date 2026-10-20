@@ -11,7 +11,7 @@ for(const id of ['rose_black','pink_daisy','mum_burgundy','blue_thistle']){
  Object.assign(m,{classicAvailable:true,classicBloom:m.head,classicBlooms:m.heads||[m.head],classicStem:null,bloomWidth:m.headWidth,bloomHeight:m.headHeight,bloomCenter:[m.headWidth/2,m.headHeight/2],stemBase:[m.headWidth/2,m.headHeight]});
 }
 const recipes=[
- {id:'midnight-blooms',en:'Midnight Blooms',es:'Flores de medianoche',description:'The original lush mix: five pink lilies, black roses, dusky daisies and blue thistles in a black fan wrap.',descriptionEs:'Cinco lirios rosas, rosas negras, gerberas oscuras y cardos azules en una envoltura negra.',count:23,preview:true}
+ {id:'midnight-blooms',en:'Midnight Blooms',es:'Flores de medianoche',description:'Five pink lilies, black roses and dusky daisies in black wrapping. Blue thistles are optional.',descriptionEs:'Cinco lirios rosas, rosas negras y gerberas oscuras en papel negro. Cardos azules opcionales.',count:20,preview:true}
 ];
 const engines=['classic-gathered'];
 const shapes=new Map();
@@ -78,7 +78,7 @@ function create(id){
  const M=g.NebulaModel,s=M.empty();s.title=r.en;
  s.finishes.paper='black';s.frames.classic=frame();
  const plan=g.NebulaHalloween.build('midnight-blooms');
- s.items=[...plan.flowers,...plan.filler].map(n=>{const it=M.newItem(s,n.id);it.anchors.classic={x:360+n.x*68,y:390+n.y*68,manual:false};return it;});return s;
+ s.items=plan.flowers.map(n=>{const it=M.newItem(s,n.id);it.anchors.classic={x:360+n.x*68,y:390+n.y*68,manual:false};return it;});return s;
 }
 g.NebulaClassic={recipes,create,active,engines,frame,arrange,nodes,constrain,findPlace,paper,rim};
 })(window);
