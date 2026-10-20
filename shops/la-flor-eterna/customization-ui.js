@@ -24,12 +24,6 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
  select.onchange=()=>edit(s=>{const previous=s.finishes.decorations.find(d=>U.bowIds.includes(d.id));s.finishes.decorations=s.finishes.decorations.filter(d=>!U.bowIds.includes(d.id));s.finishes.bow=false;s.finishes.spookyBow=false;s.finishes.ribbon='none';if(select.value){U.beforeDetail(s,select.value);s.finishes.decorations.push(previous?{...previous,id:select.value}:U.placeDetail(s,NebulaDetails.create(select.value)));}});
  const lettering=section('simpleLettering','Floral lettering',finish);lettering.append($('initialEnabled').closest('label'),$('initialSettings'));
  const small=section('smallAccents','Small details',finish);small.append(document.querySelector('.finish-toggles'));
- const thistleRow=el('label',null,'autumn-toggle'),thistleToggle=el('input','thistleEnabled');thistleToggle.type='checkbox';thistleToggle.setAttribute('aria-describedby','thistleCost');
- thistleRow.append(el('span','thistleHeading'),thistleToggle);small.append(thistleRow,el('small','thistleCost','helper'));
- thistleToggle.onchange=()=>edit(s=>{
-  for(const n of s.items.filter(n=>n.id==='blue_thistle'))NebulaModel.remove(s,n.uid);
-  s.finishes.thistleCount=0;studio(s).thistles=thistleToggle.checked;
- });
  const edge=section('edgeFinishing','Around the bouquet',finish);edge.append($('greenRimLabel'));
  fillers.append($('greeneryCount').closest('.toggle-row'));
  const edgeLabel=el('label',null,'autumn-toggle'),check=el('input','breathWrap');check.type='checkbox';const words=el('span','breathWrapLabel');edgeLabel.append(words,check);edge.append(edgeLabel);check.onchange=()=>edit(s=>{studio(s).edge=check.checked;});
@@ -45,10 +39,6 @@ function render(s,lang,ready){build();if(!built)return;const o=s.finishes.studio
  for(const b of $('breathLevels').children){const i=+b.dataset.breath;b.textContent=(es?['Ninguna','Ligera','Media','Abundante']:['None','Light','Medium','Full'])[i];b.setAttribute('aria-pressed',String(i===level));b.disabled=!ready;}
  $('whiteSprayHeading').textContent=text('White flowering accents','Ramas de flores blancas',lang);$('whiteSprayCount').textContent=o.sprays||0;$('whiteSprayLess').disabled=!ready||!o.sprays;$('whiteSprayMore').disabled=!ready||(o.sprays||0)>=8;
  $('whiteSprayLess').setAttribute('aria-label',text('Fewer white flowering accents','Menos ramas blancas',lang));$('whiteSprayMore').setAttribute('aria-label',text('More white flowering accents','Más ramas blancas',lang));
- const thistles=NebulaMidnightArt.thistleCount(s);
- $('thistleHeading').textContent=text('Blue thistle accents','Acentos de cardo azul',lang);
- $('thistleEnabled').checked=o.thistles??!!(thistles||s.items.some(n=>n.id==='blue_thistle'));$('thistleEnabled').disabled=!ready;
- $('thistleCost').textContent=text('Spread naturally between the flowers, adjusted to your bouquet’s size.','Distribuidos entre las flores según el tamaño del ramo.',lang)+(thistles?' '+thistles+text(' accents · ',' acentos · ',lang)+NebulaModel.money(thistles*NebulaConfig.CONFIG.extrasCents.thistleCount,lang)+text(' sample total',' total de muestra',lang):'');
  $('thistleCountRow').hidden=true;
  const legacy=s.items.filter(n=>n.id==='white_flower_spray').length,convertible=Math.min(legacy,8-(o.sprays||0));$('convertLegacySprays').hidden=!legacy;$('convertLegacySprays').textContent=text('Move '+convertible+' existing white sprays out of flower slots','Convertir '+convertible+' ramas existentes en relleno',lang);
  $('convertLegacySprays').disabled=(o.sprays||0)>=8;

@@ -1,6 +1,13 @@
 /* La Flor Eterna copy and presentation. Shared engine remains in builder/. */
 (() => {
  'use strict';
+ if(window.NebulaModel&&window.NebulaMidnightArt){
+  const M=NebulaModel,retire=NebulaMidnightArt.retire,validate=M.validate,portfolio=M.validatePortfolio,create=NebulaSpooky.create;
+  M.validate=raw=>retire(validate(raw));
+  M.validatePortfolio=raw=>{const p=portfolio(raw);if(p)Object.values(p.bouquets).forEach(retire);return p;};
+  NebulaSpooky.create=(...args)=>retire(create(...args));
+ }
+
  const shop=window.NEBULA_SHOP;
  shop.catalogCopy={
   en:{eyebrow:'LA FLOR ETERNA · BY MARITZA GOMEZ',headline:'A bouquet,',headlineEm:'made personal.',intro:'Choose a starting design, make it yours, and text your request to La Flor Eterna.',photoNote:'Editable design previews · Sample prices for owner review',stepThree:'Text your request',stepThreeCopy:'Open a text message or copy your request. Maritza confirms the details.',estimateNote:'Owner preview · Sample USD estimates, pending approval. Maritza confirms availability, the finished design and final price.',studioCopy:'Explore supported flowers and finishes. Each starting design has its own options.',footer:'Flowers with a personal touch.'},
