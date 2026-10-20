@@ -52,7 +52,7 @@ NebulaDetails.nodes=(s,f)=>(s.finishes.decorations||[]).map(d=>{
  const m=detailArt(s,d.id),h=detailHeight(s,f,d),a=detailFrame(s,f,d);
  return {uid:'detail-'+d.id,detailId:d.id,url:m.url,x:a.center.x+d.x*a.radius,y:a.center.y+d.y*a.radius,w:h*m.width/m.height,h,d:h,rot:d.rotation*Math.PI/180,bright:1,tucked:s.mode!=='classic'&&d.layer==='tucked',grounded:s.mode==='classic'&&!bowIds.includes(d.id),z:500};
 });
-function valid(o,mode){return o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).every(k=>['v','breath','sprays','edge','wrap'].includes(k))&&o.v===1&&(o.breath===undefined||Number.isInteger(o.breath)&&o.breath>=0&&o.breath<=3)&&(o.sprays===undefined||Number.isInteger(o.sprays)&&o.sprays>=0&&o.sprays<=8)&&(o.edge===undefined||typeof o.edge==='boolean')&&(o.wrap===undefined||wraps[mode].includes(o.wrap));}
+function valid(o,mode){return o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).every(k=>['v','breath','sprays','edge','wrap','thistles'].includes(k))&&o.v===1&&(o.thistles===undefined||typeof o.thistles==='boolean')&&(o.breath===undefined||Number.isInteger(o.breath)&&o.breath>=0&&o.breath<=3)&&(o.sprays===undefined||Number.isInteger(o.sprays)&&o.sprays>=0&&o.sprays<=8)&&(o.edge===undefined||typeof o.edge==='boolean')&&(o.wrap===undefined||wraps[mode].includes(o.wrap));}
 function level(s){const o=s.finishes.studio;if(o?.breath!==undefined)return o.breath;return s.finishes.fillerCount?Math.min(3,Math.ceil(s.finishes.fillerCount/4)):0;}
 function breathCount(s){const n=s.items.filter(i=>cat[i.id]?.kind!=='greenery').length;return Math.min(8,Math.ceil(Math.sqrt(n)*.75))*(s.finishes.studio?.breath||0);}
 function extras(s){const o=s.finishes.studio||{},out=[],count=breathCount(s);if(count)out.push({id:'filler',quantity:count,totalCents:count*C.extrasCents.filler});if(o.sprays)out.push({id:'whiteSprays',quantity:o.sprays,totalCents:o.sprays*cat.white_flower_spray.priceCents});if(o.edge)out.push({id:'breathBorder',quantity:8,totalCents:8*C.extrasCents.filler});return out;}
@@ -70,7 +70,7 @@ function paper(s,f){
  if(front&&s.finishes.paper!=='ivory'){front.paperTone=s.finishes.paper;front.paperTint=s.finishes.tint;}
  return {back:{uid:'paper',url:m.url,x,y,w,h,d:w,rot:0,bright:1,untinted:['gingham','peach','yellow-upright','kraft-upright'].includes(k)&&s.finishes.paper==='ivory'},front};
 }
-function assets(s){const o=s.finishes.studio,urls=[];if(NebulaMidnightArt.active(s)&&s.items.some(n=>n.id==='lily'))urls.push(NebulaMidnightArt.lily.url);if(s.finishes.thistleCount)urls.push(NebulaMidnightArt.thistle.url);if(s.mode==='dome'&&s.finishes.greeneryCount)urls.push(silverTip.url);if(o?.breath||o?.edge||s.finishes.fillerCount)urls.push(airy.url,wide.url,tuft.url);if(o?.sprays)urls.push(spray.url);if(s.mode==='classic'&&s.items.some(i=>i.id==='rose_pink'))urls.push(salmon.url);if(s.finishes.initial)urls.push('assets/client/lettering-oct20/white-florets.png');for(const d of s.finishes.decorations||[])urls.push(detailArt(s,d.id).url);if(o?.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,s.frames[s.mode]);if(p){urls.push(p.back.url);if(p.front)urls.push(p.front.url);}}return urls;}
+function assets(s){const o=s.finishes.studio,urls=[];if(NebulaMidnightArt.active(s)&&s.items.some(n=>n.id==='lily'))urls.push(NebulaMidnightArt.lily.url);if(NebulaMidnightArt.thistleCount(s))urls.push(NebulaMidnightArt.thistle.url);if(s.mode==='dome'&&s.finishes.greeneryCount)urls.push(silverTip.url);if(o?.breath||o?.edge||s.finishes.fillerCount)urls.push(airy.url,wide.url,tuft.url);if(o?.sprays)urls.push(spray.url);if(s.mode==='classic'&&s.items.some(i=>i.id==='rose_pink'))urls.push(salmon.url);if(s.finishes.initial)urls.push('assets/client/lettering-oct20/white-florets.png');for(const d of s.finishes.decorations||[])urls.push(detailArt(s,d.id).url);if(o?.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,s.frames[s.mode]);if(p){urls.push(p.back.url);if(p.front)urls.push(p.front.url);}}return urls;}
 function borderScatter(s,sc,count){
  const f=sc.frame,flowers=sc.nodes.filter(n=>!n.decorative),out=[];
  if(!flowers.length)return out;
@@ -95,12 +95,12 @@ function complete(s,sc){
  if(o.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,f);sc.collar=p?.back||null;sc.finishes=sc.finishes.filter(n=>!['sunflower-front-paper','paper-front'].includes(n.uid));if(p?.front)paperFront={...p.front,z:-500};}
  if(s.mode==='classic'){const ribbon=sc.finishes.find(n=>n.uid==='ribbon');if(ribbon)ribbon.y=neckY(s)+ribbon.h*(s.finishes.ribbon==='blush'?.3:.08);}
  const fillerCount=o.breath!==undefined?breathCount(s):(s.finishes.fillerCount||0),greenCount=s.mode==='dome'?(s.finishes.greeneryCount||0):0;
- const packed=NebulaInfill.nodes(sc,{breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:s.finishes.thistleCount||0},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});
+ const packed=NebulaInfill.nodes(sc,{breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:NebulaMidnightArt.thistleCount(s)},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});
  const added=[...packed.all];
  sc.filler=(sc.filler||[]).filter(n=>!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url);
  if(s.mode==='dome')sc.greenery=packed.greenery;
  if(o.edge)borderScatter(s,sc,16).forEach((p,i)=>{const m=i%2?airy:wide,w=f.unit*.62;added.push({...p,uid:'breath-edge-'+i,url:m.url,w,h:w*m.height/m.width,d:w,bright:1,softDetail:true,infill:true,infillKind:'breath-border'});});
- if(o.breath!==undefined||fillerCount||greenCount||o.sprays||o.edge||s.finishes.thistleCount||s.mode==='classic'){
+ if(o.breath!==undefined||fillerCount||greenCount||o.sprays||o.edge||NebulaMidnightArt.thistleCount(s)||s.mode==='classic'){
   const old=(sc.layeredFlowers||[]).filter(n=>!sc.nodes.some(f=>f.uid===n.uid)&&!n.parentFiller&&!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url&&!(s.mode==='dome'&&n.uid.startsWith('greenery-'))).map(n=>paperFront&&n.parentFlower?{...n,z:-1000,clipBottom:Math.max(...sc.nodes.map(f=>f.y+f.h*.38))}:n);
   sc.layeredFlowers=[...sc.nodes,...old,...(!sc.layeredFlowers?[...(s.mode==='dome'?[]:sc.greenery||[]),...(sc.filler||[])]:[]),...(paperFront?[paperFront]:[]),...added].sort((a,b)=>(a.z??a.y)-(b.z??b.y));
  }

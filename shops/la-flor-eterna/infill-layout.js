@@ -115,7 +115,8 @@ function plan(sc,counts,art){
    if(core<.42)continue;
    const parent=kind==='breath'&&i>=counts.breath?out.breath[i%counts.breath]:null;
    const reach=parent?distance(p,parent)/unit:0;
-   const score=p.quality+Math.min(spacing,2)*.7-(spacing<.80?(1-spacing)*4:0)+(kind==='greenery'&&p.edge?.12:0)-(parent?Math.abs(reach-.85)*1.1:0);
+   const spread=kind==='thistles'&&out.thistles.length?Math.min(3,Math.min(...out.thistles.map(q=>distance(p,q)/unit)))*.9:0;
+   const score=p.quality+Math.min(spacing,2)*.7-(spacing<.80?(1-spacing)*4:0)+(kind==='greenery'&&p.edge?.12:0)-(parent?Math.abs(reach-.85)*1.1:0)+spread;
    ranked.push({p,spacing,score});
   }
   ranked.sort((a,b)=>b.score-a.score);

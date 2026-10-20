@@ -10,18 +10,19 @@ try{
  assert.equal(await p.evaluate(()=>NebulaApp.state.items.filter(n=>n.id==='blue_thistle').length),0);
  await capture('midnight-after-oct20');
  for(const mode of ['classic','dome','heart']){
-  await p.evaluate(mode=>NebulaApp.setState(mode==='classic'?NebulaClassic.create('midnight-blooms'):NebulaModel.defaultMode(mode)),mode);await ready();await p.evaluate(()=>NebulaApp.setTab('flowers'));
+  await p.evaluate(mode=>NebulaApp.setState(mode==='classic'?NebulaClassic.create('midnight-blooms'):NebulaModel.defaultMode(mode)),mode);await ready();await p.evaluate(()=>NebulaApp.setTab('finishing'));
   const before=await p.evaluate(()=>({items:JSON.stringify(NebulaApp.state.items),price:NebulaModel.price(NebulaApp.state).totalCents}));
-  for(const level of [1,3,0]){
-   await p.locator('[data-thistles="'+level+'"]').click();await ready();
-   const a=await p.evaluate(()=>{const s=NebulaApp.state,sc=NebulaApp.scene(),copy=NebulaLink.decode(NebulaLink.encode(s))?.design;return {items:JSON.stringify(s.items),price:NebulaModel.price(s).totalCents,each:NebulaConfig.CONFIG.extrasCents.thistleCount,level:s.finishes.thistleCount,roundtrip:copy?.finishes.thistleCount,nodes:(sc.layeredFlowers||[]).filter(n=>n.infillKind==='thistle').map(n=>({w:n.w,unit:sc.frame.unit,core:n.coreOverlap,url:n.url})),other:(sc.filler||[]).filter(n=>n.url.includes('thistle')).length};});
-   assert.equal(a.items,before.items);assert.equal(a.level,level);assert.equal(a.roundtrip,level);assert.equal(a.price,before.price+a.each*level);assert.equal(a.nodes.length,level);assert.equal(a.other,0);assert.ok(a.nodes.every(n=>n.w<=n.unit*.72&&n.url.includes('midnight-oct20')&&n.core<.2));
-   if(mode==='classic'&&level===3)await capture('midnight-optional-thistles-oct20');
+  for(const enabled of [true,false]){
+   await p.locator('#thistleEnabled').setChecked(enabled);await p.evaluate(()=>NebulaRenderer.awaitAssets(NebulaApp.state));
+   const a=await p.evaluate(()=>{const s=NebulaApp.state,sc=NebulaRenderer.scene(s),copy=NebulaLink.decode(NebulaLink.encode(s))?.design;return {items:JSON.stringify(s.items),price:NebulaModel.price(s).totalCents,each:NebulaConfig.CONFIG.extrasCents.thistleCount,count:NebulaMidnightArt.thistleCount(s),enabled:s.finishes.studio.thistles,roundtrip:copy?.finishes.studio.thistles,nodes:(sc.layeredFlowers||[]).filter(n=>n.infillKind==='thistle').map(n=>({x:n.x,y:n.y,w:n.w,unit:sc.frame.unit,core:n.coreOverlap,url:n.url})),other:(sc.filler||[]).filter(n=>n.url.includes('thistle')).length};});
+   assert.equal(a.items,before.items);assert.equal(a.enabled,enabled);assert.equal(a.roundtrip,enabled);assert.equal(a.price,before.price+a.each*a.count);assert.equal(a.nodes.length,a.count);assert.equal(a.other,0);assert.ok(a.nodes.every(n=>n.w<=n.unit*.72&&n.url.includes('midnight-oct20')&&n.core<.2));
+   if(enabled){assert.ok(a.count>3);assert.ok(Math.max(...a.nodes.map(n=>n.x))-Math.min(...a.nodes.map(n=>n.x))>a.nodes[0].unit*2);assert.ok(Math.max(...a.nodes.map(n=>n.y))-Math.min(...a.nodes.map(n=>n.y))>a.nodes[0].unit*2);}
+   if(mode==='classic'&&enabled)await capture('midnight-optional-thistles-oct20');
   }
  }
  // Choosing None removes legacy thistles only, retaining authored flower anchors.
  await p.evaluate(()=>{const s=NebulaClassic.create('midnight-blooms');for(let i=0;i<3;i++){const n=NebulaModel.newItem(s,'blue_thistle');n.anchors.classic={x:300+i*50,y:350,manual:false};s.items.push(n);}NebulaApp.setState(s);});await ready();
- await p.locator('[data-thistles="0"]').click();await ready();assert.equal(await p.evaluate(()=>NebulaApp.state.items.length),20);
+ await p.locator('#thistleEnabled').uncheck();await ready();assert.equal(await p.evaluate(()=>NebulaApp.state.items.length),20);
  await p.evaluate(()=>NebulaApp.undo());await ready();assert.equal(await p.evaluate(()=>NebulaApp.state.items.length),23);
  // Real hit testing: find an opaque, topmost pixel of each accessory.
  async function accessoryPoint(id){
