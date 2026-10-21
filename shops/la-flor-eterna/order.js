@@ -102,9 +102,13 @@ function paintSheet(){
  }
  $('osFooter').textContent=(shop.studio&&shop.studio.name?shop.studio.name+' · ':'')+(shop.studio&&shop.studio.site||'');
 }
-function boot(){
+async function boot(){
  localizePage();
- const code=NebulaLink.readHash(location.hash);
+ let code=NebulaLink.readHash(location.hash);
+ if(!code&&new URLSearchParams(location.search).has('d')){
+  try{code=await NebulaShortLinks.resolve(new URLSearchParams(location.search).get('d'));}
+  catch{$('orderLoading').hidden=true;$('orderBroken').hidden=false;return;}
+ }
  if(!code){$('orderLoading').hidden=true;$('orderBroken').hidden=false;return;}
  const parsed=NebulaLink.decode(code);
  if(!parsed){$('orderLoading').hidden=true;$('orderBroken').hidden=false;return;}

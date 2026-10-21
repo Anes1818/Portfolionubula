@@ -1,0 +1,78 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "nebula": {
+      "la-flor-eterna": {
+        "designs": {
+          "$id": {
+            ".read": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && data.exists() && data.child('expiresAt').val() > now",
+            ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('code').val() === data.child('code').val() && newData.child('purpose').val() === data.child('purpose').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
+            ".validate": "newData.hasChildren([\"shopId\", \"code\", \"purpose\", \"createdAt\", \"expiresAt\"]) && true",
+            "shopId": {
+              ".validate": "newData.val() === 'la-flor-eterna'"
+            },
+            "code": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24000 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+            },
+            "purpose": {
+              ".validate": "newData.val() === 'share' || newData.val() === 'request'"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber() && (data.exists() || (newData.val() >= now - 300000 && newData.val() <= now + 300000))"
+            },
+            "expiresAt": {
+              ".validate": "newData.isNumber() && newData.val() === newData.parent().child('createdAt').val() + 7776000000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "requests": {
+          "$id": {
+            ".read": false,
+            ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('designId').val() === data.child('designId').val() && newData.child('customerName').val() === data.child('customerName').val() && newData.child('requestedDate').val() === data.child('requestedDate').val() && newData.child('method').val() === data.child('method').val() && newData.child('reference').val() === data.child('reference').val() && newData.child('code').val() === data.child('code').val() && newData.child('shortUrl').val() === data.child('shortUrl').val() && newData.child('status').val() === data.child('status').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
+            ".validate": "newData.hasChildren([\"shopId\", \"designId\", \"customerName\", \"requestedDate\", \"method\", \"reference\", \"code\", \"shortUrl\", \"status\", \"createdAt\", \"expiresAt\"]) && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).exists() && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val() > now && newData.child('code').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('code').val() && newData.child('expiresAt').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val()",
+            "shopId": {
+              ".validate": "newData.val() === 'la-flor-eterna'"
+            },
+            "designId": {
+              ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{22}$/)"
+            },
+            "customerName": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120"
+            },
+            "requestedDate": {
+              ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)"
+            },
+            "method": {
+              ".validate": "newData.val() === 'Pickup' || newData.val() === 'Delivery'"
+            },
+            "reference": {
+              ".validate": "newData.isString() && newData.val().matches(/^[-A-Z0-9]{1,50}$/)"
+            },
+            "code": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24000 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+            },
+            "shortUrl": {
+              ".validate": "newData.val() === 'https://nebulastudio.site/b/#' + newData.parent().child('designId').val()"
+            },
+            "status": {
+              ".validate": "newData.val() === 'prepared'"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber() && (data.exists() || (newData.val() >= now - 300000 && newData.val() <= now + 300000))"
+            },
+            "expiresAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ const shop={...context.window.NEBULA_SHOP,...profile,whatsapp:'',email:''};
 context.window.NEBULA_SHOP=shop;
 vm.runInNewContext(fs.readFileSync(path.join(source,'shop-context.js'),'utf8'),context);
 const policy=context.window.NebulaShop;
-const files=['index.html','studio.html','order.html','app.css','catalog.css','app.js','asset-meta.js','catalog-data.js','catalog-route.js','catalog.js','classic-recipes.js','config.js','design-link.js','dome-engine-v2.js','embedded-loader.js','fall-details.js','fall.js','geometry.js','halloween-layout.js','halloween.js','i18n-v6.js','i18n.js','model.js','order.js','renderer.js','saved-bouquets.js','shop-context.js','request.js','template-engine.js'];
+const files=['index.html','studio.html','order.html','app.css','catalog.css','app.js','asset-meta.js','catalog-data.js','catalog-route.js','catalog.js','classic-recipes.js','config.js','design-link.js','dome-engine-v2.js','embedded-loader.js','fall-details.js','fall.js','geometry.js','halloween-layout.js','halloween.js','i18n-v6.js','i18n.js','model.js','order.js','renderer.js','saved-bouquets.js','short-links.js','shop-context.js','request.js','template-engine.js'];
 const assetDirs=['brand','classic','fall','finishes','halloween','heads','heart','romance','wrapping','catalog/thumbs'];
 files.push('romance.js');
 for(const dir of assetDirs){const scan=rel=>{for(const ent of fs.readdirSync(path.join(source,rel),{withFileTypes:true})){const file=rel+'/'+ent.name;if(ent.isDirectory())scan(file);else if(/\.(webp|svg)$/.test(file))files.push(file);}};scan('assets/'+dir);}
@@ -30,6 +30,7 @@ for(const file of files.sort()){
    html=html.replace('<div class="collection-tools"','<h2 class="all-bouquets-title" data-copy="all">All bouquets</h2><div class="collection-tools"');
   }
   if(file==='index.html'&&profile.demo===false)html=html.replace(/<article class="bouquet-card" data-id="([a-z-]+)"[\s\S]*?<\/article>/g,(card,id)=>policy.recipeAllowed(id)?card:'');
+  if(['studio.html','order.html'].includes(file))html=html.replace(/(<script src="(?:app|order)\.js)/,'<script src="../../b/config.js" defer></script><script src="../../b/database.js" defer></script><script src="short-links.js" defer></script>$1');
   if(['studio.html','order.html'].includes(file))html=html.replace('<script src="model.js','<script src="pink-recipe.js" defer></script><script src="rose-artwork.js" defer></script><script src="lily-arrangement.js" defer></script><script src="sunflower-arrangement.js" defer></script><script src="gift-options.js" defer></script><script src="infill-layout.js" defer></script><script src="midnight-artwork.js" defer></script><script src="customization.js" defer></script><script src="customization-ui.js" defer></script><script src="floral-lettering.js" defer></script><script src="model.js');
   if(file==='index.html'&&profile.demo&&profile.features?.pinkStudy)html=html.replace('<main', '<aside style="padding:16px;text-align:center;background:#f8e8ed"><a href="pink-proof.html" style="color:#76394e">Explore the new pink bouquet study →</a></aside><main');
   if(file==='order.html')html=html.replace('<div class="os-top">','<img class="sheet-logo" src="assets/client/logo.png" alt="La Flor Eterna — By Maritza Gomez" width="170" height="170"><div class="os-top">');

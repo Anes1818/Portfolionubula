@@ -1,4 +1,4 @@
-/* Direct manipulation, complete history, safe local persistence. No network services or checkout. */
+/* Direct manipulation, complete history, safe local persistence. Optional snapshot sharing; no checkout. */
 (function(){'use strict';
 const $=id=>document.getElementById(id),M=NebulaModel,G=NebulaGeometry,R=NebulaRenderer,{CAT,CONFIG,PRESETS,MISSING,SIZES}=NebulaConfig;
 let selectedDetail=null,moveMode=false,moveOpenedFocus=false;
@@ -313,7 +313,7 @@ function priceRows(target='priceBreakdown'){const p=M.price(st),nodes=[];functio
 function showSave(){if(editFocus)commitTextEdit();R.paint($('savePreview'),st);$('savedBouquetName').value=st.title;$('exportStatus').textContent='';priceRows();$('saveDialog').showModal();}
 /* ── Order flow ───────────────────────────────────────────────
    Opens WhatsApp with the design written out. Nothing is charged here and no
-   order record is created - the florist confirms availability and final price.
+   confirmed order is created - the florist confirms availability and final price.
    wa.me carries text only, so the bouquet travels as words, not an attachment. */
 /* Links are built by design-link.js so the studio and the florist's order sheet
    always read and write the same format. */
@@ -411,7 +411,7 @@ function sendOrder(e){
  toast(t('orderOpened'));
 }
 let smsFingerprint='',smsRef='',smsDraft=null;
-function prepareSMS(){
+async function prepareSMS(){
  if(!NebulaShop.assess(st).ok){smsDraft=null;$('smsPrepared').hidden=true;$('orderError').textContent=NebulaShop.message(lang);$('orderError').hidden=false;return;}
  const data={name:$('ordName').value.trim(),phone:$('ordPhone').value.trim(),date:$('ordDate').value,method:$('ordMethod').value,note:$('ordNote').value.trim(),cardNote:st.note};
  const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -420,8 +420,23 @@ function prepareSMS(){
  $('orderError').hidden=true;
  const fingerprint=JSON.stringify({data,design:st,lang});
  if(fingerprint!==smsFingerprint){smsRef='LFE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();smsFingerprint=fingerprint;}
- const summary={...orderSummary(),style:t(st.mode)+' · '+st.items.length+' '+t('pieces')},link=designLink(null),args={ref:smsRef,shop:CONFIG.brand,data,summary,link,lang,sample:CONFIG.demo};
- smsDraft={full:NebulaRequest.compose(args),plain:NebulaRequest.compose({...args,link:''})};
+ const summary={...orderSummary(),style:t(st.mode)+' · '+st.items.length+' '+t('pieces')};
+ const saved=M.clone(st),fallback=designLink(null,saved);
+ let shared={url:fallback},requestRecord=null;
+ if(window.NebulaShortLinks?.enabled()){
+  $('smsPrepared').hidden=true;
+  $('orderSend').disabled=true;
+  const currentFingerprint=()=>JSON.stringify({data:{name:$('ordName').value.trim(),phone:$('ordPhone').value.trim(),date:$('ordDate').value,method:$('ordMethod').value,note:$('ordNote').value.trim(),cardNote:st.note},design:st,lang});
+  try{
+   shared=await NebulaShortLinks.create(saved,'request',fallback);
+   if(currentFingerprint()!==fingerprint)return;
+   if(shared.saved)requestRecord=await NebulaShortLinks.saveRequest(shared.id,data,smsRef);
+   if(currentFingerprint()!==fingerprint)return;
+  }finally{$('orderSend').disabled=false;}
+ }
+ const link=shared.url,args={ref:smsRef,shop:CONFIG.brand,data,summary,link,lang,sample:CONFIG.demo};
+ const notice=window.NebulaShortLinks?.enabled()?(requestRecord?.saved?(lang==='es'?'Datos guardados para la tienda. Envía el mensaje para completar tu solicitud.':'Details saved for the shop. Send the message to complete your request.'):(lang==='es'?'No se pudieron guardar los datos para la tienda. Puedes enviar el mensaje completo de abajo.':'Shop details could not be saved. You can still send the complete message below.')):'';
+ smsDraft={full:NebulaRequest.compose(args),plain:NebulaRequest.compose({...args,link:''}),link,notice};
  $('smsPlain').checked=false;$('smsPrepared').querySelector('.sms-trouble').open=false;refreshSMS();$('smsPrepared').hidden=false;$('smsMessage').focus({preventScroll:true});$('smsMessage').setSelectionRange(0,0);$('smsMessage').scrollTop=0;$('smsPrepared').scrollIntoView({block:'start'});
 }
 function refreshSMS(){
@@ -429,8 +444,8 @@ function refreshSMS(){
  $('smsMessage').value=message;$('smsRecipient').textContent=CONFIG.recipient;
  const apple=/iPhone|iPad|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
  $('smsOpen').href=NebulaRequest.url('sms',CONFIG.recipient,message,apple);
- const clean=M.clone(st);clean.title='';clean.note='';$('smsSheet').href=siteBase()+'order.html#b='+NebulaLink.encode(clean);
- $('smsStatus').textContent='';
+ const clean=M.clone(st);clean.title='';clean.note='';$('smsSheet').href=smsDraft.link||siteBase()+'order.html#b='+NebulaLink.encode(clean);
+ $('smsStatus').textContent=smsDraft.notice||'';
 }
 if(CONFIG.requestChannel==='sms'){
  $('smsCopy').onclick=async()=>{$('smsStatus').textContent=t(await NebulaRequest.copy($('smsMessage').value,$('smsMessage'))?'smsCopyOK':'smsCopyFail');};
@@ -457,10 +472,11 @@ async function shareBouquet(){
  btn.disabled=true;$('shareStatus').textContent=t('sharePreparing');
  try{
   const blob=await R.blob(saved,1080,1080,savedLang);
+  const shared=window.NebulaShortLinks?await NebulaShortLinks.create(saved,'share',savedLink):{url:savedLink};
   const file=new File([blob],(CONFIG.shopId||'nebula')+'-'+saved.mode+'.png',{type:'image/png'});
   /* The link rides along with the picture: whoever receives it can open the exact
      bouquet and change it, instead of only looking at a flat image. */
-  const payload={files:[file],title:saved.title||NebulaI18n.text(savedLang,'shareTitle'),text:savedLink};
+  const payload={files:[file],title:saved.title||NebulaI18n.text(savedLang,'shareTitle'),text:shared.url};
   if(navigator.canShare?.(payload)&&typeof navigator.share==='function'){
    $('shareStatus').textContent=t('shareOpened');
    try{await navigator.share(payload);$('shareStatus').textContent=t('shareDone');}

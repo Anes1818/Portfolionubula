@@ -1,4 +1,13 @@
 ﻿*.zip
 node_modules/
+firebase/.firebase/
+firebase/*debug.log
+firebase/functions/.env*
+firebase/functions/.secret.local
 /shops/la-flor-eterna/
 
+
+cloudflare/**/.dev.vars*
+cloudflare/**/.env*
+cloudflare/**/.wrangler/
+cloudflare/**/dist/

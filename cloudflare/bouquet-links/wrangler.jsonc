@@ -1,0 +1,7 @@
+{
+  "name": "nebula-bouquet-links",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {"FIREBASE_PROJECT_ID": "la-flora-6ed47"}
+}
