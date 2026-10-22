@@ -2,7 +2,7 @@
 window.NEBULA_LINK_SERVICE={
  enabled:true,
  provider:'realtime',
- endpoint:'', // Set the deployed Worker URL before enabling.
+ endpoint:'', // Only needed if switching to the Cloudflare provider later.
  firebase:{
   apiKey:'AIzaSyDIwvYLyHE6sVy1XMmNU_GVnlWxQpLa4wI',
   authDomain:'la-flora-6ed47.firebaseapp.com',
