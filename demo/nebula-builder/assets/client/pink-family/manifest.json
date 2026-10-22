@@ -1,0 +1,263 @@
+{
+  "family": "lfe-pink-gingham",
+  "version": 1,
+  "recipeReady": false,
+  "assets": [
+    {
+      "id": "rose-blush-open-a",
+      "url": "assets/client/pink-family/rose-blush-open-a.png",
+      "sha256": "70b0b73cf114cb0464d3496f2f0d1f21b52e0ba131cbb2e60cd9bc59d100433b",
+      "width": 647,
+      "height": 635,
+      "crop": [
+        0,
+        0,
+        647,
+        635
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        646,
+        634
+      ],
+      "pivot": [
+        323,
+        270
+      ],
+      "attachmentAnchor": [
+        333,
+        533
+      ],
+      "flowerCenter": [
+        323,
+        201
+      ],
+      "view": "central-three-quarter-front"
+    },
+    {
+      "id": "rose-blush-open-b",
+      "url": "assets/client/pink-family/rose-blush-open-b.png",
+      "sha256": "16ecd5b74f7e3d4c4b51253b45e5ecb47bbfb5950f3e6ba08addc43dbf008cd3",
+      "width": 668,
+      "height": 646,
+      "crop": [
+        0,
+        0,
+        668,
+        646
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        667,
+        645
+      ],
+      "pivot": [
+        334,
+        265
+      ],
+      "attachmentAnchor": [
+        334,
+        511
+      ],
+      "flowerCenter": [
+        342,
+        190
+      ],
+      "view": "central-front-slight-turn"
+    },
+    {
+      "id": "rose-blush-edge-left",
+      "url": "assets/client/pink-family/rose-blush-edge-left.png",
+      "sha256": "cba3de6ae5283ec35cf00db7ebc29dd9a4931839167551388c5f83a60b6da223",
+      "width": 570,
+      "height": 647,
+      "crop": [
+        0,
+        0,
+        570,
+        647
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        569,
+        646
+      ],
+      "pivot": [
+        285,
+        250
+      ],
+      "attachmentAnchor": [
+        302,
+        496
+      ],
+      "flowerCenter": [
+        273,
+        163
+      ],
+      "view": "left-oblique-three-quarter"
+    },
+    {
+      "id": "rose-blush-edge-right",
+      "url": "assets/client/pink-family/rose-blush-edge-right.png",
+      "sha256": "49e1c78cef5b33c76bafd69e18891b6d8c88922463f830d55f1fb5a7fe0bfc94",
+      "width": 464,
+      "height": 564,
+      "crop": [
+        0,
+        0,
+        464,
+        564
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        463,
+        563
+      ],
+      "pivot": [
+        238,
+        224
+      ],
+      "attachmentAnchor": [
+        185,
+        437
+      ],
+      "flowerCenter": [
+        271,
+        136
+      ],
+      "view": "right-oblique-three-quarter"
+    },
+    {
+      "id": "rose-salmon-reference-center-v1",
+      "url": "assets/client/pink-family/rose-salmon-reference-center-v1.png",
+      "sha256": "d8ef9138cc4ff5d90a44599d40c8625b5ba3362ef7ae78f7409b59e361ba7729",
+      "width": 782,
+      "height": 790,
+      "crop": [
+        0,
+        0,
+        782,
+        790
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        781,
+        789
+      ],
+      "pivot": [
+        391,
+        395
+      ],
+      "attachmentAnchor": [
+        391,
+        640
+      ],
+      "flowerCenter": [
+        391,
+        382
+      ],
+      "view": "central-flower-face"
+    },
+    {
+      "id": "rose-salmon-reference-center-b-v1",
+      "url": "assets/client/pink-family/rose-salmon-reference-center-b-v1.png",
+      "sha256": "cc5ad1497a2300933f7544ec7a8cf78db98931d2a6a24aecfc00da35433770e4",
+      "width": 774,
+      "height": 753,
+      "crop": [
+        0,
+        0,
+        774,
+        753
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        773,
+        752
+      ],
+      "pivot": [
+        387,
+        376.5
+      ],
+      "attachmentAnchor": [
+        387,
+        564.75
+      ],
+      "flowerCenter": [
+        387,
+        376.5
+      ],
+      "view": "central-flower-face"
+    },
+    {
+      "id": "wrap-gingham-ivory-reference-v1",
+      "url": "assets/client/pink-family/wrap-gingham-ivory-reference-v1.png",
+      "sha256": "d2f0dab9ed96abf6552e2173e21e44b90b4aef4b4652cc77920378b5df74be63",
+      "width": 899,
+      "height": 899,
+      "crop": [
+        0,
+        0,
+        899,
+        899
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        898,
+        898
+      ],
+      "pivot": [
+        449.5,
+        449.5
+      ],
+      "attachmentAnchor": [
+        449.5,
+        674.25
+      ],
+      "flowerCenter": [
+        449.5,
+        449.5
+      ],
+      "view": "reference-paper-backing"
+    },
+    {
+      "id": "breath-compact-reference-v1",
+      "url": "assets/client/pink-family/breath-compact-reference-v1.png",
+      "sha256": "15eaf4d9e7d57837aae7bebc90caee492c283a96402e7b786dd76834e7d838f1",
+      "width": 618,
+      "height": 588,
+      "crop": [
+        0,
+        0,
+        618,
+        588
+      ],
+      "alphaBounds": [
+        0,
+        0,
+        617,
+        587
+      ],
+      "pivot": [
+        309,
+        294
+      ],
+      "attachmentAnchor": [
+        309,
+        441
+      ],
+      "flowerCenter": [
+        309,
+        294
+      ],
+      "view": "compact-flower-tuft"
+    }
+  ]
+}

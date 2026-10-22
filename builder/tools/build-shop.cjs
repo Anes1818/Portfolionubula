@@ -19,7 +19,7 @@ function write(rel,bytes){const target=path.join(dest,rel);if(!target.startsWith
 for(const file of files.sort()){
  let bytes=fs.readFileSync(path.join(source,file));
  if(file.endsWith('.html')){
-  let html=bytes.toString().replaceAll('Nebula',profile.name).replaceAll('nebula bouquet',profile.name+' bouquet').replaceAll('https://nebulastudio.site','index.html').replaceAll('type="image/svg+xml"','type="image/png"').replaceAll('href="favicon.svg"','href="assets/client/logo.png"').replaceAll('assets/brand/logo-mark.webp',profile.logo);
+  let html=bytes.toString().replace('<script src="demo-route.js"></script>','').replaceAll('Nebula',profile.name).replaceAll('nebula bouquet',profile.name+' bouquet').replaceAll('https://nebulastudio.site','index.html').replaceAll('type="image/svg+xml"','type="image/png"').replaceAll('href="favicon.svg"','href="assets/client/logo.png"').replaceAll('assets/brand/logo-mark.webp',profile.logo);
   html=html.replace('name="theme-color" content="#f7f5ef"','name="theme-color" content="#FFF9F6"');
   html=html.replace('</head>','<meta name="robots" content="noindex,nofollow"><meta property="og:title" content="La Flor Eterna — A bouquet, made personal."><meta property="og:description" content="Customize a bouquet and prepare a text request. Owner preview with sample prices."><meta property="og:image" content="assets/client/logo.png"><link rel="stylesheet" href="theme.css"></head>');
   if(profile.demo===false)html=html.replace('Owner preview with sample prices.','Final availability and price require confirmation.');
