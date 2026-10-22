@@ -80,7 +80,7 @@ window.NEBULA_SHOP={
   "id": "nebula-demo",
   "byline": "BOUQUET BUILDER DEMO",
   "website": "https://nebulastudio.site/flowers/",
-  "logo": "assets/brand/logo-mark.webp",
+  "logo": "assets/brand/nebula-logo.jpg",
   "requestChannel": "sms",
   "recipient": "+15713367129",
   "features": {

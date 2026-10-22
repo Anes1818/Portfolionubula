@@ -24,7 +24,7 @@
    (sample?(es?'Estimación de muestra':'Sample estimate'):(es?'Estimación actual':'Current estimate'))+': '+summary.total,
    data.note?.trim()?(es?'Nota: ':'Note: ')+data.note.trim():'',
    data.cardNote?.trim()?(es?'Tarjeta: ':'Card: ')+data.cardNote.trim():'',
-   es?'El equipo de Nebula confirma disponibilidad, diseño y precio final. Pago directamente con la tienda.':'Demo request for Nebula. No flower order or payment is placed.',
+   es?'Solicitud de prueba para Nebula. No se realiza ningún pedido ni pago.':'Demo request for Nebula. No flower order or payment is placed.',
    link?(es?'Diseño: ':'Design: ')+link:''].filter(Boolean).join('\n');
  }
  async function copy(text,textarea){
