@@ -10,10 +10,10 @@ const pinkBow={url:'assets/client/refinements-oct19/bow-pink-reference-v2.png',w
 const pinkReference=s=>s.mode==='dome'&&s.finishes.roseArtwork==='reference-v3';
 const detailArt=(s,id)=>id==='satin_bow'&&pinkReference(s)?pinkBow:meta.finishes[id];
 const wraps={
- classic:['fan','ivory-upright','kraft-upright','yellow-upright'],
+ classic:['fan','ivory-upright','kraft-upright','yellow-upright','smoke-upright'],
  dome:['round','ruffle','cocoa','gingham','peach'],heart:['heart']
 };
-const wrapNames={'fan':['Fan folds','Pliegues en abanico'],'ivory-upright':['Ivory folded paper','Papel marfil'],'kraft-upright':['Kraft folded paper','Papel kraft'],'yellow-upright':['Yellow gathered paper','Papel amarillo'],round:['Round folds','Pliegues redondos'],ruffle:['Ivory ruffles','Volantes marfil'],cocoa:['Cocoa folds','Pliegues cacao'],gingham:['Peach gingham','Cuadros durazno'],peach:['Peach & blush folds','Durazno y rosa'],heart:['Heart-shaped wrap','Envoltura de corazón']};
+const wrapNames={'smoke-upright':['Smoke-black cellophane','Celofán negro humo'],'fan':['Fan folds','Pliegues en abanico'],'ivory-upright':['Ivory folded paper','Papel marfil'],'kraft-upright':['Kraft folded paper','Papel kraft'],'yellow-upright':['Yellow gathered paper','Papel amarillo'],round:['Round folds','Pliegues redondos'],ruffle:['Ivory ruffles','Volantes marfil'],cocoa:['Cocoa folds','Pliegues cacao'],gingham:['Peach gingham','Cuadros durazno'],peach:['Peach & blush folds','Durazno y rosa'],heart:['Heart-shaped wrap','Envoltura de corazón']};
 const bowIds=['satin_bow','satin_black','satin_cocoa','satin_burgundy','satin_sage'];
 for(const [id,art,label,es] of [['pumpkin_plush','plush_pumpkin','Pumpkin plush','Peluche de calabaza'],['satin_black','black-bow-tails','Black satin bow','Lazo negro'],['satin_cocoa','bow_cocoa','Cocoa satin bow','Lazo cacao'],['satin_burgundy','ribbon_burgundy','Burgundy satin bow','Lazo burdeos'],['satin_sage','ribbon_sage','Sage satin bow','Lazo verde salvia']]){
  meta.finishes[id]={...meta.finishes[art]};
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded',()=>{for(const [id,v] of Object.ent
 const detailValid=NebulaDetails.valid;
 NebulaDetails.valid=list=>Array.isArray(list)&&list.length<=10&&new Set(list.map(d=>d?.id)).size===list.length&&list.every(d=>detailValid([d]));
 function detailHeight(s,f,d){return (s.mode==='classic'?(bowIds.includes(d.id)?185:145):f.unit*(bowIds.includes(d.id)?(pinkReference(s)&&d.id==='satin_bow'?3.3:1.9):d.id==='pumpkin_plush'?1.45:1.75))*d.scale;}
-function neckY(s){return style(s)==='fan'?638:['ivory-upright','kraft-upright'].includes(style(s))?662:618;}
+function neckY(s){if(style(s)==='smoke-upright')return 612;return style(s)==='fan'?638:['ivory-upright','kraft-upright'].includes(style(s))?662:618;}
 function giftLayout(s,f){
  const gifts=['snoopy','kitty','pumpkin_plush','snoopy_topper'].filter(id=>s.finishes.decorations.some(d=>d.id===id)).map(id=>{const m=meta.finishes[id];return {id,w:145*m.width/m.height,h:145};});
  if(s.finishes.chocolateBox)gifts.push({id:'chocolate-box',w:220,h:220*NebulaGift.art.height/NebulaGift.art.width});
@@ -58,7 +58,7 @@ function breathCount(s){const n=s.items.filter(i=>cat[i.id]?.kind!=='greenery').
 function extras(s){const o=s.finishes.studio||{},out=[],count=breathCount(s);if(count)out.push({id:'filler',quantity:count,totalCents:count*C.extrasCents.filler});if(o.sprays)out.push({id:'whiteSprays',quantity:o.sprays,totalCents:o.sprays*cat.white_flower_spray.priceCents});if(o.edge)out.push({id:'breathBorder',quantity:8,totalCents:8*C.extrasCents.filler});return out;}
 function style(s){return s.finishes.studio?.wrap||(s.mode==='classic'?(g.NebulaSunflower?.active(s)?'yellow-upright':'fan'):s.mode==='heart'?'heart':s.finishes.roseArtwork==='lily-mixed-v1'?'peach':g.NebulaRoseArt?.reference(s)?'gingham':s.finishes.paper==='cocoa'?'cocoa':s.finishes.paper==='ivory'?'ruffle':'round');}
 function paper(s,f){
- if(!s.finishes.collar)return null;const k=style(s),classic=s.mode==='classic';let m,w,h,x=f.center.x,y=f.center.y,front=null;
+ if(!s.finishes.collar)return null;if(style(s)==='smoke-upright')return g.NebulaCrimson.paper(s,f);const k=style(s),classic=s.mode==='classic';let m,w,h,x=f.center.x,y=f.center.y,front=null;
  if(classic){
   if(k==='fan'){m=meta.finishes['black-fan-wrap'];w=520;h=w*m.height/m.width;y=810-h/2;front={uid:'paper-front',url:m.url,x,y,w,h,d:w,rot:0,bright:1,paperTone:s.finishes.paper,paperTint:s.finishes.tint,petalMask:'M 0 440 Q 360 610 754 430 L 754 1042 L 0 1042 Z',maskWidth:754,maskHeight:1042};}
   else if(k==='yellow-upright'){m={url:'assets/client/refinements-oct19/wrap-butter-yellow.webp',width:700,height:893};w=560;h=w*893/700;y=840-h/2;front={uid:'paper-front',url:m.url,x,y,w,h,d:w,rot:0,bright:1,petalMask:'M 78 292 Q 350 375 620 291 L 700 893 L 0 893 Z',maskWidth:700,maskHeight:893};}
@@ -89,10 +89,11 @@ function complete(s,sc){
  }
  // More filler needs real room. Keep every authored center/anchor and quantity,
  // but gently open the rendered petal canopy as density rises (max 8.5%).
+ g.NebulaCrimson?.flowers(s,sc);
  const bloomScale=[1,.99,.955,.915][level(s)];
  sc.nodes=sc.nodes.map(n=>n.decorative?n:{...n,w:n.w*bloomScale,h:n.h*bloomScale,d:n.d*bloomScale});
  let paperFront=null;
- if(o.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,f);sc.collar=p?.back||null;sc.finishes=sc.finishes.filter(n=>!['sunflower-front-paper','paper-front'].includes(n.uid));if(p?.front)paperFront={...p.front,z:-500};}
+ if(o.wrap||s.mode==='classic'&&style(s)==='yellow-upright'){const p=paper(s,f);sc.collar=p?.back||null;sc.finishes=sc.finishes.filter(n=>!['sunflower-front-paper','paper-front'].includes(n.uid));if(p?.front)paperFront={...p.front,z:style(s)==='smoke-upright'?650:-500};}
  if(s.mode==='classic'){const ribbon=sc.finishes.find(n=>n.uid==='ribbon');if(ribbon)ribbon.y=neckY(s)+ribbon.h*(s.finishes.ribbon==='blush'?.3:.08);}
  const fillerCount=o.breath!==undefined?breathCount(s):(s.finishes.fillerCount||0),greenCount=s.mode==='dome'?(s.finishes.greeneryCount||0):0;
  const packed=NebulaInfill.nodes(sc,{breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:NebulaMidnightArt.thistleCount(s)},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});

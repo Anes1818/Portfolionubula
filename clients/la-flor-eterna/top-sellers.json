@@ -46,5 +46,21 @@
       "art": "sunflower-classic-v1"
     },
     "source": "C:/Users/laptops zone/Downloads/Telegram Desktop/photo_1_2026-10-16_23-33-51.jpg"
+  },
+  {
+    "id": "crimson-velvet",
+    "en": "Crimson Velvet",
+    "es": "Terciopelo carmesí",
+    "description": "Red roses, white accents and smoke-black wrapping.",
+    "descriptionEs": "Rosas rojas, detalles blancos y celofán negro humo.",
+    "image": "assets/client/featured/crimson-velvet.jpg",
+    "href": "studio.html#b=z1_AFs3LDAsMTEsAFtbInJvc2VfAHJlZCIsMjBdAF0seyJmIjp7ACJwIjoiYmxhgGNrIiwiY3gAEgEAdiI6MSwid3ICYQAbAXNtb2tlLQB1cHJpZ2h0IgAsImJyZWF0aAAiOjJ9LCJyYQAiOiJjcmltcwBvbi1jbGFzcwBpYy12MSIsIgBkYyI6W1sicyBhdGluXwBeBC0wAC4zLDAuMTUsADAuOTQsLTQsACJmcm9udCJdAF0sImwiOiJhAHV0byJ9LCJ0ECI6IkMAVgMgVmUobHZlAHgBYQBRATEsADI0OSwyMTUsADFdLFsyLDMzEDMsMTkADgMzLDRAMDcsMjIzAA4CNAAsNDc0LDI0MZEADgI1LDIAHAE5NgAOAgA2LDI4OSwyNwI3AA4CNywzNzAsCDMwMAAOAjgsNDQgOCwzMDgADgI5LIA1MDcsMzM0AA4CADEwLDIxOCwzAjcAHQMxMSwzMDUQLDM1OQAPAzIsMwQ4NgAeBzMsNDY3BCwzAHQEMTQsNTEQMCw0MQAPBDUsMiA1NSw0NQCgAzE2gCwzMzgsNDMAPAQSNwApAjQ2ANoDMTgsQDQ3Niw0NwAPBDmALDMxOCw1MQCWAwAyMCwzOTgsNUIyAA8BXSwiZwHDAW0Yb2RlAZwBAZQDIiwiIGVuZ2luABMILWcQYXRoZQINAiJjZRBudGVyADcBeCI6ADM2MCwieSI6CDM5MAHiAmRpdXMAIjoyMzAsInUAbml0Ijo2OCxAInNjYWxlAiYCbyByaWdpbgA8BDU0gwA7AgA5AXdhaXN0AFMMBDczAFMCaW1ZIjoANTYwfX1d",
+    "expected": {
+      "code": "z1_AFs3LDAsMTEsAFtbInJvc2VfAHJlZCIsMjBdAF0seyJmIjp7ACJwIjoiYmxhgGNrIiwiY3gAEgEAdiI6MSwid3ICYQAbAXNtb2tlLQB1cHJpZ2h0IgAsImJyZWF0aAAiOjJ9LCJyYQAiOiJjcmltcwBvbi1jbGFzcwBpYy12MSIsIgBkYyI6W1sicyBhdGluXwBeBC0wAC4zLDAuMTUsADAuOTQsLTQsACJmcm9udCJdAF0sImwiOiJhAHV0byJ9LCJ0ECI6IkMAVgMgVmUobHZlAHgBYQBRATEsADI0OSwyMTUsADFdLFsyLDMzEDMsMTkADgMzLDRAMDcsMjIzAA4CNAAsNDc0LDI0MZEADgI1LDIAHAE5NgAOAgA2LDI4OSwyNwI3AA4CNywzNzAsCDMwMAAOAjgsNDQgOCwzMDgADgI5LIA1MDcsMzM0AA4CADEwLDIxOCwzAjcAHQMxMSwzMDUQLDM1OQAPAzIsMwQ4NgAeBzMsNDY3BCwzAHQEMTQsNTEQMCw0MQAPBDUsMiA1NSw0NQCgAzE2gCwzMzgsNDMAPAQSNwApAjQ2ANoDMTgsQDQ3Niw0NwAPBDmALDMxOCw1MQCWAwAyMCwzOTgsNUIyAA8BXSwiZwHDAW0Yb2RlAZwBAZQDIiwiIGVuZ2luABMILWcQYXRoZQINAiJjZRBudGVyADcBeCI6ADM2MCwieSI6CDM5MAHiAmRpdXMAIjoyMzAsInUAbml0Ijo2OCxAInNjYWxlAiYCbyByaWdpbgA8BDU0gwA7AgA5AXdhaXN0AFMMBDczAFMCaW1ZIjoANTYwfX1d",
+      "count": 20,
+      "mode": "classic",
+      "art": "crimson-classic-v1"
+    },
+    "source": "C:/Users/laptops zone/Downloads/photo_2026-10-22_23-10-57.jpg"
   }
 ]

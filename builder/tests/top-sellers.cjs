@@ -1,11 +1,11 @@
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const base='http://127.0.0.1:4174/shops/la-flor-eterna/',qa='clients/la-flor-eterna/qa/next-phase/';
+const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/',qa='clients/la-flor-eterna/qa/next-phase/';
 const entries=JSON.parse(fs.readFileSync('clients/la-flor-eterna/top-sellers.json','utf8'));
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
  await page.goto(base+'index.html');await page.locator('#collectionTools').waitFor();
- assert.equal(await page.locator('.featured-card').count(),3);
+ assert.equal(await page.locator('.featured-card').count(),entries.length);
  await page.locator('#top-sellers').scrollIntoViewIfNeeded();await page.evaluate(()=>Promise.all([...document.querySelectorAll('.featured-photo img')].map(i=>i.decode())));
  assert.ok(await page.evaluate(()=>!window.NebulaRenderer&&!window.NebulaModel),'Catalog stays lightweight');
  await page.locator('#top-sellers').screenshot({path:qa+'top-sellers-desktop.png'});
@@ -21,5 +21,5 @@ const entries=JSON.parse(fs.readFileSync('clients/la-flor-eterna/top-sellers.jso
  await page.locator('#language').selectOption('en');
  for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal overflow at '+width);if(width===390){await page.locator('#top-sellers').screenshot({path:qa+'top-sellers-mobile.png'});}}
  await page.screenshot({path:qa+'full-site-preview.png',fullPage:true});
- assert.deepEqual(errors,[]);console.log('PASS: three original photos; exact editable design links; flower replacement; asset loading; English/Spanish; 320/390/768/1440px; no browser errors.');
+ assert.deepEqual(errors,[]);console.log('PASS: original photo covers; exact editable design links; flower replacement; asset loading; English/Spanish; 320/390/768/1440px; no browser errors.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

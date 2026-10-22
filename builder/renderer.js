@@ -77,6 +77,7 @@ function assetsFor(s){
  const urls=new Set(wrapAssets());
  if(g.NebulaCustomization)for(const url of NebulaCustomization.assets(s))urls.add(url);
  if(g.NebulaGift)for(const url of NebulaGift.assets(s))urls.add(url);
+ if(g.NebulaCrimson)for(const url of NebulaCrimson.assets(s))urls.add(url);
  if(g.NebulaSunflower)for(const url of NebulaSunflower.assets(s))urls.add(url);
  if(g.NebulaRoseArt)for(const url of NebulaRoseArt.assets(s))urls.add(url);
  if(g.NebulaClassic?.active(s)){
