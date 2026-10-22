@@ -12,6 +12,9 @@ for(const file of Object.keys(manifest.files).sort()){
  let bytes=fs.readFileSync(path.join(source,file));
  if(file.endsWith('.html')||file.endsWith('.js')){
   let s=brand(bytes.toString()).replaceAll("smsRef='LFE-'","smsRef='DEMO-'");
+  // The featured card is the current Pink Promise; retire its older catalog duplicate.
+  if(file==='index.html')s=s.replace(/<article class="bouquet-card" data-id="pink-promise"[\s\S]*?<\/article>/,'');
+  if(file==='catalog-data.js'){const data={window:{}};vm.runInNewContext(s,data);s='window.NEBULA_COLLECTIONS='+JSON.stringify(data.window.NEBULA_COLLECTIONS.filter(r=>r.id!=='pink-promise'))+';\n';}
   if(file==='request.js')s=s.replaceAll('the Nebula team confirms availability, design and final price. Payment directly with the shop.','Demo request for Nebula. No flower order or payment is placed.').replaceAll('the Nebula team confirma disponibilidad, diseño y precio final. Pago directamente con la tienda.','Solicitud de prueba para Nebula. No se realiza ningún pedido ni pago.');
   if(file.endsWith('.html'))s=s.replace('</head>','<link rel="stylesheet" href="demo-brand.css"></head>').replace('<script src="client-ui.js" defer></script>','<script src="client-ui.js" defer></script><script src="demo-brand.js" defer></script>');
   s=s.replaceAll('assets/client/logo.png',profile.logo).replaceAll('type="image/png"','type="image/jpeg"');
