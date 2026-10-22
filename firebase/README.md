@@ -1,3 +1,30 @@
+# Active: direct Realtime Database pilot
+
+The site currently uses `b/database.js` with provider `realtime` in `b/config.js`.
+The owner published `realtime.rules.json` in Realtime Database. No Worker,
+Cloud Functions, secret, billing upgrade or anonymous-auth setup is required.
+
+Data lives under `nebula/la-flor-eterna/designs/<id>` and
+`nebula/la-flor-eterna/requests/<id>`. Each private request contains customerName,
+code (full bouquet recipe), shortUrl, requestedDate, method, reference and
+status=prepared. Names are fields, not IDs, to avoid same-name collisions.
+The console owner can inspect requests; public clients cannot read them.
+Public links allow only individual unexpired design reads, not collection listing.
+Writes are validated and immutable; identical retries are allowed. No deletion
+or arbitrary-field writes are allowed through this client route.
+
+This is an unauthenticated create-only pilot, not the rate-limited Worker path.
+It has no application rate limit; do not assume CORS or the public API key
+prevents spam. Monitor Spark quotas. The later Cloudflare implementation can
+replace creation, but retain the existing Realtime link resolver for old links.
+Records are not automatically deleted; public links expire after 90 days.
+
+The opt-in `builder/tests/realtime-live.cjs` creates one clearly labeled sample
+request in the real database and checks public access isolation and reconstruction.
+It never sends a message to the florist. Use `NEBULA_LIVE_TEST=1` to run it.
+
+The Cloudflare instructions below are for an optional later migration only.
+
 # Superseded deployment: use Cloudflare
 
 The active deployment instructions are in `../cloudflare/bouquet-links/README.md`.
