@@ -44,14 +44,18 @@
 
     <!-- ======================= OWNER INSPECTOR BANNER ======================= -->
     <aside id="inspectBanner" class="inspect-banner" hidden>
-      <div>
-        <strong id="inspectTitle">Studio Owner Inspector — Loaded Client Submission</strong>
-        <div id="inspectMeta" style="font-size:12.5px;opacity:0.9;margin-top:2px"></div>
+      <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
+        <div>
+          <strong id="inspectTitle">Studio Owner Inspector — Loaded Client Submission</strong>
+          <div id="inspectMeta" style="font-size:12.5px;opacity:0.9;margin-top:2px"></div>
+        </div>
+        <div class="inspect-actions">
+          <button type="button" id="inspectDownloadAllPhotos" class="action-btn secondary">🖼 Download All Uploaded Photos</button>
+          <button type="button" id="inspectDownloadConfig" class="action-btn secondary">⬇ Download shop-config.js</button>
+          <button type="button" id="inspectDownloadJson" class="action-btn secondary">⬇ Download Full JSON</button>
+        </div>
       </div>
-      <div class="inspect-actions">
-        <button type="button" id="inspectDownloadConfig" class="action-btn secondary">⬇ Download shop-config.js</button>
-        <button type="button" id="inspectDownloadJson" class="action-btn secondary">⬇ Download Full JSON + Assets</button>
-      </div>
+      <div id="inspectPhotosGallery" style="width:100%;display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.2)"></div>
     </aside>
 
     <!-- ======================= HERO ======================= -->

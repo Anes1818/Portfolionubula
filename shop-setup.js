@@ -1016,7 +1016,7 @@
         var f = e.target.files && e.target.files[0];
         if (!f) return;
         row.fileName = f.name.slice(0, 14);
-        row.photoDataUrl = await compressImageFile(f, 240, 0.7);
+        row.photoDataUrl = await compressImageFile(f, 600, 0.8);
         renderCustomAssetRows();
       });
       div.querySelector(".remove-row-btn").addEventListener("click", function () {
@@ -1098,7 +1098,7 @@
       slotEl.querySelector(".slot-file-input").addEventListener("change", async function (e) {
         var f = e.target.files && e.target.files[0];
         if (!f) return;
-        b.customPhotoDataUrl = await compressImageFile(f, 280, 0.72);
+        b.customPhotoDataUrl = await compressImageFile(f, 600, 0.8);
         renderBouquetSlots();
       });
 
@@ -1334,32 +1334,50 @@
     return new TextDecoder().decode(bytes);
   }
 
-  function encodePayloadWithinLimit(payload, maxChars) {
-    maxChars = maxChars || 23800;
-    var clone = JSON.parse(JSON.stringify(payload));
-    delete clone.shopConfigJsText; // Can be regenerated deterministically from nebulaShopConfig
-    var encoded = toBase64Url(JSON.stringify(clone));
-    if (encoded.length <= maxChars) return encoded;
-
-    // If uploaded photos push it over 24,000 chars, trim bouquet/custom photos first while keeping logo
-    if (clone.signatureBouquets) {
-      clone.signatureBouquets.forEach(function (b) {
-        b.photoDataUrl = "";
-      });
+  async function uploadDataUrlInChunks(dataUrl, now, expiresAt) {
+    if (!dataUrl || typeof dataUrl !== "string") return [];
+    var b64u = toBase64Url(dataUrl);
+    var chunkSize = 20000;
+    var chunkIds = [];
+    for (var offset = 0; offset < b64u.length; offset += chunkSize) {
+      var slice = b64u.slice(offset, offset + chunkSize);
+      var cid = randomId22();
+      var res = await fetch(
+        FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + cid + ".json?print=silent",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            shopId: "la-flor-eterna",
+            code: slice,
+            purpose: "share",
+            createdAt: now,
+            expiresAt: expiresAt
+          }),
+          credentials: "omit",
+          referrerPolicy: "no-referrer"
+        }
+      );
+      if (res.ok) chunkIds.push(cid);
     }
-    encoded = toBase64Url(JSON.stringify(clone));
-    if (encoded.length <= maxChars) return encoded;
+    return chunkIds;
+  }
 
-    if (clone.customAssetRequests && clone.customAssetRequests.items) {
-      clone.customAssetRequests.items.forEach(function (it) {
-        it.photoDataUrl = "";
-      });
-    }
-    encoded = toBase64Url(JSON.stringify(clone));
-    if (encoded.length <= maxChars) return encoded;
-
-    clone.logoDataUrl = "";
-    return toBase64Url(JSON.stringify(clone)).slice(0, maxChars);
+  async function downloadDataUrlFromChunks(chunkIds) {
+    if (!Array.isArray(chunkIds) || !chunkIds.length) return "";
+    var parts = await Promise.all(
+      chunkIds.map(async function (cid) {
+        var r = await fetch(
+          FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + cid + ".json",
+          { credentials: "omit" }
+        );
+        if (!r.ok) return "";
+        var j = await r.json();
+        return (j && j.code) || "";
+      })
+    );
+    var joined = parts.join("");
+    return joined ? fromBase64Url(joined) : "";
   }
 
   async function saveToFirebaseRealtime(payload) {
@@ -1367,7 +1385,38 @@
     var requestId = randomId22();
     var now = Date.now();
     var expiresAt = now + 7776000000; // 90 days (matches realtime.rules.json)
-    var codeB64 = encodePayloadWithinLimit(payload, 23800);
+
+    // Clone payload and store every uploaded photo in dedicated 20KB Firebase chunks so ZERO photos are ever lost!
+    var clone = JSON.parse(JSON.stringify(payload));
+    delete clone.shopConfigJsText;
+    clone.photoChunks = { logo: [], bouquets: {}, customItems: {} };
+
+    try {
+      if (clone.logoDataUrl) {
+        clone.photoChunks.logo = await uploadDataUrlInChunks(clone.logoDataUrl, now, expiresAt);
+        clone.logoDataUrl = "";
+      }
+      if (Array.isArray(clone.signatureBouquets)) {
+        for (var bi = 0; bi < clone.signatureBouquets.length; bi++) {
+          var bPhoto = clone.signatureBouquets[bi].photoDataUrl;
+          if (bPhoto) {
+            clone.photoChunks.bouquets[bi] = await uploadDataUrlInChunks(bPhoto, now, expiresAt);
+            clone.signatureBouquets[bi].photoDataUrl = "";
+          }
+        }
+      }
+      if (clone.customAssetRequests && Array.isArray(clone.customAssetRequests.items)) {
+        for (var ci = 0; ci < clone.customAssetRequests.items.length; ci++) {
+          var cPhoto = clone.customAssetRequests.items[ci].photoDataUrl;
+          if (cPhoto) {
+            clone.photoChunks.customItems[ci] = await uploadDataUrlInChunks(cPhoto, now, expiresAt);
+            clone.customAssetRequests.items[ci].photoDataUrl = "";
+          }
+        }
+      }
+    } catch (_) {}
+
+    var codeB64 = toBase64Url(JSON.stringify(clone)).slice(0, 23800);
 
     // 1. Try dedicated nebula/onboarding/<designId> path (if updated rules are deployed)
     var dedicatedOk = false;
@@ -1556,7 +1605,7 @@
     var banner = document.getElementById("inspectBanner");
     var meta = document.getElementById("inspectMeta");
     banner.hidden = false;
-    meta.textContent = "Loading submission " + inspectId + " from Firebase Realtime Database…";
+    meta.textContent = "Loading submission & uploaded photos " + inspectId + " from Firebase Realtime Database…";
 
     try {
       var res = await fetch(
@@ -1567,10 +1616,49 @@
       var record = await res.json();
       if (!record || !record.code) throw new Error("Empty record");
       var decoded = JSON.parse(fromBase64Url(record.code));
+
+      // Reconstruct all chunked photos from Firebase!
+      if (decoded.photoChunks) {
+        if (decoded.photoChunks.logo && decoded.photoChunks.logo.length) {
+          decoded.logoDataUrl = await downloadDataUrlFromChunks(decoded.photoChunks.logo);
+        }
+        if (decoded.photoChunks.bouquets && Array.isArray(decoded.signatureBouquets)) {
+          for (var bi = 0; bi < decoded.signatureBouquets.length; bi++) {
+            var bChunks = decoded.photoChunks.bouquets[bi];
+            if (bChunks && bChunks.length) {
+              decoded.signatureBouquets[bi].photoDataUrl = await downloadDataUrlFromChunks(bChunks);
+            }
+          }
+        }
+        if (
+          decoded.photoChunks.customItems &&
+          decoded.customAssetRequests &&
+          Array.isArray(decoded.customAssetRequests.items)
+        ) {
+          for (var ci = 0; ci < decoded.customAssetRequests.items.length; ci++) {
+            var cChunks = decoded.photoChunks.customItems[ci];
+            if (cChunks && cChunks.length) {
+              decoded.customAssetRequests.items[ci].photoDataUrl = await downloadDataUrlFromChunks(cChunks);
+            }
+          }
+        }
+      }
+
       restorePayloadIntoForm(decoded, inspectId);
     } catch (err) {
       meta.textContent = "Could not load record " + inspectId + " (" + err.message + ").";
     }
+  }
+
+  function downloadDataUrlFile(filename, dataUrl) {
+    var a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      a.remove();
+    }, 300);
   }
 
   function restorePayloadIntoForm(data, inspectId) {
@@ -1649,6 +1737,62 @@
     updateSlugPreview();
     updateLiveSampleCalculator();
 
+    // Collect all uploaded photos for the Owner Inspector Gallery
+    var uploadedPhotos = [];
+    var slug = data.slug || "shop";
+    if (data.logoDataUrl) {
+      uploadedPhotos.push({
+        label: "Shop Logo",
+        filename: slug + "-logo.webp",
+        dataUrl: data.logoDataUrl
+      });
+    }
+    if (Array.isArray(data.signatureBouquets)) {
+      data.signatureBouquets.forEach(function (sb, i) {
+        if (sb.photoDataUrl) {
+          uploadedPhotos.push({
+            label: "Bouquet #" + (i + 1) + ": " + (sb.name || ""),
+            filename: slug + "-bouquet-" + (i + 1) + ".webp",
+            dataUrl: sb.photoDataUrl
+          });
+        }
+      });
+    }
+    if (data.customAssetRequests && Array.isArray(data.customAssetRequests.items)) {
+      data.customAssetRequests.items.forEach(function (it, i) {
+        if (it.photoDataUrl) {
+          uploadedPhotos.push({
+            label: "Custom Asset: " + (it.name || it.category || "#" + (i + 1)),
+            filename: slug + "-custom-asset-" + (i + 1) + ".webp",
+            dataUrl: it.photoDataUrl
+          });
+        }
+      });
+    }
+
+    var galleryEl = document.getElementById("inspectPhotosGallery");
+    if (galleryEl && uploadedPhotos.length > 0) {
+      galleryEl.style.display = "grid";
+      galleryEl.innerHTML = "";
+      uploadedPhotos.forEach(function (ph) {
+        var card = document.createElement("div");
+        card.style.cssText =
+          "background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center";
+        card.innerHTML =
+          '<img src="' +
+          ph.dataUrl +
+          '" alt="" style="width:100%;height:110px;object-fit:contain;background:#fff;border-radius:6px;padding:4px">' +
+          '<div style="font-size:11.5px;font-weight:700;line-height:1.25">' +
+          ph.label +
+          "</div>" +
+          '<button type="button" style="background:#fff;color:#432d3f;border-radius:99px;padding:5px 12px;font-size:11px;font-weight:800;width:100%">⬇ Save Image</button>';
+        card.querySelector("button").onclick = function () {
+          downloadDataUrlFile(ph.filename, ph.dataUrl);
+        };
+        galleryEl.appendChild(card);
+      });
+    }
+
     var meta = document.getElementById("inspectMeta");
     meta.textContent =
       "Loaded: " +
@@ -1657,8 +1801,22 @@
       (data.plan && data.plan.monthlyUsd) +
       "/mo · Phone: " +
       data.phone +
+      " · Uploaded Photos: " +
+      uploadedPhotos.length +
       " · ID: " +
       inspectId;
+
+    var dlAllBtn = document.getElementById("inspectDownloadAllPhotos");
+    if (dlAllBtn) {
+      dlAllBtn.textContent = "🖼 Download All Photos (" + uploadedPhotos.length + ")";
+      dlAllBtn.onclick = function () {
+        uploadedPhotos.forEach(function (ph, idx) {
+          setTimeout(function () {
+            downloadDataUrlFile(ph.filename, ph.dataUrl);
+          }, idx * 250);
+        });
+      };
+    }
 
     document.getElementById("inspectDownloadConfig").onclick = function () {
       var latest = buildOnboardingPayload();
@@ -1668,6 +1826,7 @@
       var latest = buildOnboardingPayload();
       downloadFile(latest.slug + "-onboarding-full.json", JSON.stringify(latest, null, 2), "application/json");
     };
+    document.getElementById("generatedConfigPreview").textContent = buildOnboardingPayload().shopConfigJsText;
   }
 
   function downloadFile(filename, text, mime) {
@@ -1740,7 +1899,7 @@
       var file = e.target.files && e.target.files[0];
       if (!file) return;
       document.getElementById("logoFileName").textContent = file.name;
-      logoDataUrl = await compressImageFile(file, 260, 0.8);
+      logoDataUrl = await compressImageFile(file, 520, 0.85);
       if (logoDataUrl) {
         document.getElementById("logoPreviewBox").innerHTML = '<img src="' + logoDataUrl + '" alt="Shop Logo">';
       }

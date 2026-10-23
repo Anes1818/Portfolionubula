@@ -18,11 +18,20 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
 
     let firebaseSaved = false;
     let formspreePosted = false;
+    const mockDb = new Map();
 
-    // Intercept external network in automated test so we don't spam live inbox during CI
+    // Intercept external network in automated test and store Firebase PUTs in mockDb to test ?inspect=<id> round-trip!
     await context.route('**/*firebaseio.com/**', async route => {
-      firebaseSaved = true;
-      await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+      const req = route.request();
+      const u = new URL(req.url());
+      if (req.method() === 'PUT') {
+        firebaseSaved = true;
+        mockDb.set(u.pathname, req.postDataJSON());
+        await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+      } else {
+        const stored = mockDb.get(u.pathname) || null;
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(stored) });
+      }
     });
     await context.route('**/*formspree.io/**', async route => {
       formspreePosted = true;
@@ -75,6 +84,11 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     await page.locator('.custom-item-row .ca-name').fill('Giant Graduation Teddy Bear');
     await page.locator('.custom-item-row .ca-price').fill('28.00');
 
+    // Upload a real logo image, a custom toy photo, and a signature bouquet photo
+    await page.setInputFiles('#logoInput', 'assets/logo.png');
+    await page.setInputFiles('.custom-item-row .ca-file', 'builder/assets/fall/plush-snoopy.png');
+    await page.setInputFiles('.slot-file-input[data-idx="0"]', 'builder/assets/catalog/pink-promise.jpg');
+
     // Select $35/mo Custom Domain plan
     await page.locator('.plan-choice-card[data-plan-choice="custom_domain"]').click();
     assert.equal(await page.locator('#samplePlanPrice').innerText(), '$35/mo');
@@ -85,6 +99,14 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
 
     assert.ok(firebaseSaved, 'Should save onboarding payload to Firebase Realtime Database');
     assert.ok(formspreePosted, 'Should post onboarding summary to Formspree email endpoint');
+
+    // Extract saved Firebase ID and test ?inspect=<id> round-trip reconstruction of all 3 uploaded photos!
+    const badgeText = await page.locator('#deliveryBadges').innerText();
+    const idMatch = badgeText.match(/ID:\s*([A-Za-z0-9_-]{22})/);
+    assert.ok(idMatch, 'Should display 22-char Firebase record ID');
+    await page.goto(url + '?inspect=' + idMatch[1], { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.querySelectorAll('#inspectPhotosGallery img').length === 3);
+    assert.equal(await page.locator('#inspectPhotosGallery img').count(), 3, 'Inspector mode reconstructs all 3 uploaded photos (logo, bouquet, toy)');
 
     // Validate generated window.NEBULA_SHOP config against check-shop.cjs!
     const generatedJs = await page.locator('#generatedConfigPreview').textContent();
