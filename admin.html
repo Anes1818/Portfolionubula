@@ -180,6 +180,72 @@
       .top-panel, .rec-card { grid-template-columns: 1fr; }
       .rec-actions { flex-direction: row; flex-wrap: wrap; }
     }
+
+    /* Setup card logo thumbnail */
+    .rec-main { display: flex; gap: 16px; align-items: flex-start; }
+    .logo-thumb {
+      flex: 0 0 68px; width: 68px; height: 68px; border-radius: 12px;
+      background: var(--warm); border: 1px solid var(--line);
+      display: grid; place-items: center; overflow: hidden; font-size: 26px;
+    }
+    .logo-thumb img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+
+    /* Client dossier (full setup viewer) */
+    .dossier {
+      position: fixed; inset: 0; z-index: 100; background: rgba(44, 32, 41, 0.62);
+      display: flex; justify-content: center; align-items: flex-start;
+      overflow-y: auto; padding: 28px 14px;
+    }
+    .dossier[hidden] { display: none; }
+    .dossier-panel {
+      background: var(--paper); border-radius: 18px; width: min(1000px, 100%);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35); overflow: hidden;
+    }
+    .dossier-head {
+      background: var(--plum); color: #fff; padding: 20px 26px;
+      display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .dossier-head h2 { font-family: var(--serif); font-size: 32px; line-height: 1.1; }
+    .dossier-head .sub { font-size: 12.5px; opacity: 0.85; margin-top: 2px; }
+    .dossier-body { padding: 24px 26px 30px; display: grid; gap: 24px; }
+    .dossier-sec h3 {
+      font-family: var(--serif); font-size: 24px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .dossier-sec h3 .tools { margin-left: auto; display: flex; gap: 8px; }
+    .kv-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px;
+    }
+    .kv { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; }
+    .kv .k { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    .kv .v { font-size: 14.5px; font-weight: 600; word-break: break-word; }
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .photo-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px; display: flex; flex-direction: column; gap: 8px; text-align: center;
+    }
+    .photo-card img {
+      width: 100%; height: 170px; object-fit: contain; background: #fff;
+      border-radius: 8px; border: 1px solid var(--line); cursor: zoom-in;
+    }
+    .photo-card .cap { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
+    .photo-card.missing { border-style: dashed; color: var(--muted); }
+    .photo-card.missing .ph { height: 170px; display: grid; place-items: center; font-size: 12.5px; }
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); }
+    .chip b { font-weight: 800; }
+    .chip.off { text-decoration: line-through; opacity: 0.5; }
+    .warn-box { background: #fff4e0; color: #8a5a00; border-radius: 10px; padding: 12px 15px; font-weight: 600; font-size: 13.5px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--surface); border-radius: 10px; overflow: hidden; }
+    .tbl th, .tbl td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+    .tbl th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); background: var(--warm); }
+    .cfg-pre {
+      background: #241a22; color: #f1e7ee; border-radius: 10px; padding: 14px;
+      font-size: 12px; max-height: 280px; overflow: auto; white-space: pre;
+    }
+    .lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.85); display: grid; place-items: center; padding: 20px; cursor: zoom-out; }
+    .lightbox[hidden] { display: none; }
+    .lightbox img { max-width: 100%; max-height: 100%; background: #fff; border-radius: 10px; }
   </style>
 </head>
 <body>
@@ -258,6 +324,25 @@
     <section id="panel-leads" class="records-list" hidden></section>
     <section id="panel-setups" class="records-list" hidden></section>
   </main>
+
+  <div id="dossier" class="dossier" hidden role="dialog" aria-modal="true" aria-label="Client shop setup">
+    <div class="dossier-panel">
+      <div class="dossier-head">
+        <div>
+          <h2 id="dsTitle">Loading…</h2>
+          <div class="sub" id="dsSub"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn sec" id="dsDownloadAll">⬇ All photos</button>
+          <button type="button" class="btn sec" id="dsDownloadConfig">⬇ shop-config.js</button>
+          <button type="button" class="btn sec" id="dsDownloadJson">⬇ Full JSON</button>
+          <button type="button" class="btn pink" id="dsClose">✕ Close</button>
+        </div>
+      </div>
+      <div class="dossier-body" id="dsBody"></div>
+    </div>
+  </div>
+  <div id="lightbox" class="lightbox" hidden><img alt=""></div>
 
   <script>
   (function () {
@@ -545,13 +630,17 @@
       el.innerHTML = setupsData
         .map(function (s) {
           var planPrice = s.plan && s.plan.monthlyUsd ? "$" + s.plan.monthlyUsd + "/mo" : "$29/mo";
-          var inspectLink = "shop-setup.html?inspect=" + encodeURIComponent(s.designId || "");
           var ca = s.customAssetRequests || {};
+          var photoCount = Number(s.photosAttempted || 0) - ((s.photoUploadFailures || []).length);
           return (
             '<article class="rec-card">' +
+            '<div class="rec-main">' +
+            '<div class="logo-thumb" data-logo-design="' + esc(s.designId || "") + '">🏪</div>' +
             "<div>" +
             '<div class="rec-badges">' +
             '<span class="pill green">🏪 Shop Setup Submitted</span>' +
+            (photoCount > 0 ? '<span class="pill pink">📷 ' + photoCount + " photo" + (photoCount === 1 ? "" : "s") + "</span>" : "") +
+            ((s.photoUploadFailures || []).length ? '<span class="pill" style="background:#fff4e0;color:#8a5a00">⚠ ' + s.photoUploadFailures.length + " photo(s) failed</span>" : "") +
             '<span class="pill plum">' + esc(planPrice) + " · " + esc((s.plan && s.plan.siteUrl) || "") + "</span>" +
             '<span class="pill">' + esc(s.currency || "USD") + "</span>" +
             "</div>" +
@@ -568,9 +657,9 @@
                 (ca.notes ? "\nNotes: " + esc(ca.notes) : "") +
                 "</div>"
               : "") +
-            "</div>" +
+            "</div></div>" +
             '<div class="rec-actions">' +
-            '<a class="btn" href="' + inspectLink + '" target="_blank" rel="noopener">🔍 Inspect &amp; Download Photos ↗</a>' +
+            '<button type="button" class="btn" data-dossier="' + esc(s.designId || "") + '">🔍 Open full setup &amp; photos</button>' +
             "</div>" +
             "</article>"
           );
@@ -721,15 +810,348 @@
         alert("Could not read ID: " + id + ". Make sure you published the updated Firebase Rules (or entered your Database Secret) if this is a /requests ID.");
         return;
       }
-      var decoded = fromBase64Url(rec.code);
-      if (decoded.indexOf('"nebulaShopConfig"') !== -1) {
-        window.open("shop-setup.html?inspect=" + (rec.designId || id), "_blank");
+      var looksLikeSetup = false;
+      try {
+        var probe = JSON.parse(fromBase64Url(rec.code));
+        looksLikeSetup = !!(probe && (probe.shopName || probe.nebulaShopConfig) && !Array.isArray(probe));
+      } catch (_) {}
+      if (looksLikeSetup) {
+        openDossier(rec.designId || id);
       } else {
         window.open("shops/la-flor-eterna/order.html?d=" + (rec.designId || id), "_blank");
       }
     });
 
-    loadAllAdminData();
+    /* ===================== CLIENT DOSSIER (full setup viewer) ===================== */
+    var currentDossier = null;
+
+    function toDataUrlChunks(ids) {
+      if (!Array.isArray(ids) || !ids.length) return Promise.resolve("");
+      return Promise.all(ids.map(function (cid) {
+        return fetch(DB_BASE + "/designs/" + cid + ".json", { credentials: "omit" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (j) { return (j && j.code) || ""; })
+          .catch(function () { return ""; });
+      })).then(function (parts) {
+        if (parts.some(function (p) { return !p; })) return "";
+        return fromBase64Url(parts.join(""));
+      });
+    }
+
+    async function loadSetupRecord(designId) {
+      var secret = localStorage.getItem("nebula_fb_secret") || "";
+      var q = secret ? "?auth=" + encodeURIComponent(secret) : "";
+      var r = await fetch(DB_BASE + "/designs/" + encodeURIComponent(designId) + ".json" + q, { credentials: "omit" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      var rec = await r.json();
+      if (!rec || !rec.code) throw new Error("Record not found or expired (records expire after 90 days)");
+      var data = JSON.parse(fromBase64Url(rec.code));
+      data._designId = designId;
+      data._createdAt = rec.createdAt;
+
+      var pc = data.photoChunks || {};
+      var photos = []; // { label, filename, dataUrl, missing }
+      var slug = data.slug || "shop";
+      var jobs = [];
+
+      if (pc.logo && pc.logo.length) {
+        jobs.push(toDataUrlChunks(pc.logo).then(function (u) { data.logoDataUrl = u; }));
+      }
+      (data.signatureBouquets || []).forEach(function (sb, i) {
+        var ids = pc.bouquets && pc.bouquets[i];
+        if (ids && ids.length) {
+          jobs.push(toDataUrlChunks(ids).then(function (u) { sb.photoDataUrl = u; }));
+        }
+      });
+      var items = (data.customAssetRequests && data.customAssetRequests.items) || [];
+      items.forEach(function (it, i) {
+        var ids = pc.customItems && pc.customItems[i];
+        if (ids && ids.length) {
+          jobs.push(toDataUrlChunks(ids).then(function (u) { it.photoDataUrl = u; }));
+        }
+      });
+      await Promise.all(jobs);
+
+      if (data.logoDataUrl) {
+        photos.push({ label: "Shop logo", filename: slug + "-logo.webp", dataUrl: data.logoDataUrl });
+      }
+      (data.signatureBouquets || []).forEach(function (sb, i) {
+        if (sb.photoDataUrl) {
+          photos.push({
+            label: "Bouquet #" + (i + 1) + ": " + (sb.name || "") + (sb.targetPrice ? " ($" + sb.targetPrice + ")" : ""),
+            filename: slug + "-bouquet-" + (i + 1) + ".webp",
+            dataUrl: sb.photoDataUrl
+          });
+        }
+      });
+      items.forEach(function (it, i) {
+        if (it.photoDataUrl) {
+          photos.push({
+            label: "Custom: " + (it.name || it.category || "#" + (i + 1)) + (it.priceDollars ? " ($" + it.priceDollars + ")" : ""),
+            filename: slug + "-custom-" + (i + 1) + ".webp",
+            dataUrl: it.photoDataUrl
+          });
+        }
+      });
+      return { data: data, photos: photos };
+    }
+
+    function prettyKey(k) {
+      return String(k).replace(/_/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+    function money(cents) { return "$" + (Number(cents || 0) / 100).toFixed(2); }
+
+    function kv(k, v, html) {
+      return '<div class="kv"><div class="k">' + esc(k) + '</div><div class="v">' + (html ? v : esc(v || "—")) + "</div></div>";
+    }
+
+    function shopConfigText(data) {
+      if (!data.nebulaShopConfig) return "";
+      return "/* Auto-generated by Nebula Florist Studio Setup for " + String(data.shopName || "").replace(/\*\//g, "") +
+        " */\nwindow.NEBULA_SHOP = " + JSON.stringify(data.nebulaShopConfig, null, 2) + ";\n";
+    }
+
+    function downloadText(name, text, mime) {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([text], { type: mime || "text/plain;charset=utf-8" }));
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+    }
+    function downloadUrl(name, url) {
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { a.remove(); }, 300);
+    }
+
+    function renderDossier(rec) {
+      var d = rec.data;
+      var photos = rec.photos;
+      var plan = d.plan || {};
+      var ca = d.customAssetRequests || {};
+      var cfg = d.nebulaShopConfig || {};
+      var digits = String(d.phone || "").replace(/\D+/g, "");
+      if (digits.length === 10) digits = "1" + digits;
+      var failed = d.photoUploadFailures || [];
+
+      document.getElementById("dsTitle").textContent = d.shopName || "Flower shop";
+      document.getElementById("dsSub").textContent =
+        (d.ownerName || "") + " · " + (plan.type === "custom_domain" ? "Custom domain" : "Subdomain") +
+        " $" + (plan.monthlyUsd || 29) + "/mo · submitted " + formatDate(d.submittedAt || d._createdAt) + " · ref " + d._designId;
+
+      var html = "";
+
+      if (failed.length) {
+        html += '<div class="warn-box">⚠ These photos failed to upload from the client and are NOT saved: ' + esc(failed.join(", ")) +
+          ". Ask the client to send them directly.</div>";
+      }
+
+      // Contact
+      html += '<section class="dossier-sec"><h3>👤 Contact &amp; shop</h3><div class="kv-grid">' +
+        kv("Owner", d.ownerName) +
+        kv("Order channel", (d.channel || "").toUpperCase() + " · " + (d.phone || "")) +
+        kv("Email", d.email ? '<a href="mailto:' + esc(d.email) + '" style="text-decoration:underline">' + esc(d.email) + "</a>" : "—", true) +
+        kv("Instagram", d.instagram) +
+        kv("City", d.city) +
+        kv("Currency", d.currency) +
+        "</div>" +
+        '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">' +
+        (digits.length >= 8 ? '<a class="btn green" target="_blank" rel="noopener" href="https://wa.me/' + digits + '">💬 WhatsApp client ↗</a>' : "") +
+        (d.email ? '<a class="btn sec" href="mailto:' + esc(d.email) + '?subject=' + encodeURIComponent("Your Nebula Bouquet Studio — " + (d.shopName || "")) + '">✉ Email client</a>' : "") +
+        "</div></section>";
+
+      // Plan
+      var extraN = plan.extraCustomBouquets || 0;
+      html += '<section class="dossier-sec"><h3>💳 Plan &amp; billing</h3><div class="kv-grid">' +
+        kv("Plan", "$" + (plan.monthlyUsd || 29) + "/month — " + (plan.type === "custom_domain" ? "Custom domain" : "Subdomain")) +
+        kv("Site URL", plan.siteUrl) +
+        (plan.desiredDomain ? kv("Desired domain", plan.desiredDomain) : "") +
+        kv("Included bouquets", (plan.includedFreeBouquets || 4) + " free") +
+        kv("Extra bouquets", extraN + (plan.oneTimeExtraBouquetsUsd ? " → one-time $" + plan.oneTimeExtraBouquetsUsd : "")) +
+        "</div></section>";
+
+      // Photos
+      html += '<section class="dossier-sec"><h3>📷 Uploaded photos (' + photos.length + ")</h3>";
+      if (photos.length) {
+        html += '<div class="photo-grid">' + photos.map(function (p, i) {
+          return '<div class="photo-card"><img src="' + p.dataUrl + '" alt="" data-zoom="' + i + '">' +
+            '<div class="cap">' + esc(p.label) + "</div>" +
+            '<button type="button" class="btn sec" data-dl="' + i + '">⬇ Save image</button></div>';
+        }).join("") + "</div>";
+      } else {
+        html += '<div class="empty-state" style="padding:24px">The client did not upload any photos (or this record was submitted before photo storage was added).</div>';
+      }
+      html += "</section>";
+
+      // Signature bouquets
+      html += '<section class="dossier-sec"><h3>💐 Signature bouquets (4 included)</h3><table class="tbl"><tr><th>#</th><th>Name</th><th>Target price</th><th>Photo</th></tr>' +
+        (d.signatureBouquets || []).map(function (b) {
+          return "<tr><td>" + esc(b.slot) + "</td><td>" + esc(b.name) + "</td><td>$" + esc(b.targetPrice) + "</td><td>" +
+            (b.photoDataUrl ? "✓ custom photo" : "standard template") + "</td></tr>";
+        }).join("") + "</table></section>";
+
+      // Custom assets
+      var items = ca.items || [];
+      html += '<section class="dossier-sec"><h3>✨ Custom asset requests</h3>';
+      if (!ca.wantsNewAssets && !items.length && !ca.notes) {
+        html += '<div class="kv"><div class="v">None — using the standard library.</div></div>';
+      } else {
+        if ((ca.categories || []).length) {
+          html += '<div class="chip-wrap" style="margin-bottom:10px">' + ca.categories.map(function (c) { return '<span class="chip">' + esc(c) + "</span>"; }).join("") + "</div>";
+        }
+        if (items.length) {
+          html += '<table class="tbl"><tr><th>Category</th><th>Item</th><th>Price</th><th>Photo</th></tr>' + items.map(function (it) {
+            return "<tr><td>" + esc(it.category) + "</td><td>" + esc(it.name || "Unnamed") + "</td><td>$" + esc(it.priceDollars) + "</td><td>" + (it.photoDataUrl ? "✓" : "—") + "</td></tr>";
+          }).join("") + "</table>";
+        }
+        if (ca.notes) html += '<div class="rec-box">' + esc(ca.notes) + "</div>";
+      }
+      html += "</section>";
+
+      // Prices
+      if (d.nebulaShopConfig) {
+        var disF = new Set(cfg.disabledFlowers || []);
+        var disE = new Set(cfg.disabledExtras || []);
+        html += '<section class="dossier-sec"><h3>🏷 Prices</h3><div class="kv-grid">' +
+          kv("Base (wrap/ribbon)", money(cfg.baseCents)) +
+          kv("Labor — classic / dome / heart", money((cfg.laborCents || {}).classic) + " / " + money((cfg.laborCents || {}).dome) + " / " + money((cfg.laborCents || {}).heart)) +
+          kv("Enabled modes", (cfg.enabledModes || []).join(", ")) +
+          "</div>" +
+          '<div style="margin:12px 0 6px;font-weight:700">Flowers (per stem)</div><div class="chip-wrap">' +
+          Object.keys(cfg.flowerPrices || {}).map(function (k) {
+            return '<span class="chip' + (disF.has(k) ? " off" : "") + '">' + esc(prettyKey(k)) + " <b>" + money(cfg.flowerPrices[k]) + "</b></span>";
+          }).join("") + "</div>" +
+          '<div style="margin:12px 0 6px;font-weight:700">Extras</div><div class="chip-wrap">' +
+          Object.keys(cfg.extrasCents || {}).map(function (k) {
+            return '<span class="chip' + (disE.has(k) ? " off" : "") + '">' + esc(prettyKey(k)) + " <b>" + money(cfg.extrasCents[k]) + "</b></span>";
+          }).join("") + "</div></section>";
+
+        html += '<section class="dossier-sec"><h3>⚙ shop-config.js<span class="tools"><button type="button" class="btn sec" id="dsCopyConfig">📋 Copy</button></span></h3>' +
+          '<pre class="cfg-pre" id="dsConfigPre">' + esc(shopConfigText(d)) + "</pre></section>";
+      } else {
+        html += '<section class="dossier-sec"><div class="warn-box">The price configuration was too large to store in the cloud record. Use the full copy in the Formspree email sent for this submission.</div></section>';
+      }
+
+      document.getElementById("dsBody").innerHTML = html;
+
+      // Wire interactions
+      document.querySelectorAll("#dsBody [data-dl]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var p = photos[Number(b.dataset.dl)];
+          downloadUrl(p.filename, p.dataUrl);
+        });
+      });
+      document.querySelectorAll("#dsBody [data-zoom]").forEach(function (img) {
+        img.addEventListener("click", function () {
+          var lb = document.getElementById("lightbox");
+          lb.querySelector("img").src = photos[Number(img.dataset.zoom)].dataUrl;
+          lb.hidden = false;
+        });
+      });
+      var copyBtn = document.getElementById("dsCopyConfig");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", function () {
+          if (navigator.clipboard) navigator.clipboard.writeText(shopConfigText(d));
+          copyBtn.textContent = "✓ Copied";
+        });
+      }
+      document.getElementById("dsDownloadAll").textContent = "⬇ All photos (" + photos.length + ")";
+    }
+
+    async function openDossier(designId) {
+      var box = document.getElementById("dossier");
+      box.hidden = false;
+      document.body.style.overflow = "hidden";
+      document.getElementById("dsTitle").textContent = "Loading setup…";
+      document.getElementById("dsSub").textContent = "Fetching prices and rebuilding photos from Firebase";
+      document.getElementById("dsBody").innerHTML = '<div class="empty-state">Loading…</div>';
+      currentDossier = null;
+      try {
+        var rec = await loadSetupRecord(designId);
+        currentDossier = rec;
+        renderDossier(rec);
+      } catch (err) {
+        document.getElementById("dsTitle").textContent = "Could not open this setup";
+        document.getElementById("dsSub").textContent = String(err && err.message || err);
+        document.getElementById("dsBody").innerHTML =
+          '<div class="empty-state">This record could not be read. If you just changed the Firebase Rules, click Refresh; otherwise it may have expired (90 days).</div>';
+      }
+    }
+
+    function closeDossier() {
+      document.getElementById("dossier").hidden = true;
+      document.body.style.overflow = "";
+      if (/[?&]setup=/.test(location.search) && history.replaceState) {
+        history.replaceState(null, "", location.pathname);
+      }
+    }
+
+    document.getElementById("dsClose").addEventListener("click", closeDossier);
+    document.getElementById("dossier").addEventListener("click", function (e) {
+      if (e.target === this) closeDossier();
+    });
+    document.getElementById("lightbox").addEventListener("click", function () { this.hidden = true; });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      var lb = document.getElementById("lightbox");
+      if (!lb.hidden) lb.hidden = true;
+      else if (!document.getElementById("dossier").hidden) closeDossier();
+    });
+    document.getElementById("dsDownloadAll").addEventListener("click", function () {
+      if (!currentDossier) return;
+      currentDossier.photos.forEach(function (p, i) {
+        setTimeout(function () { downloadUrl(p.filename, p.dataUrl); }, i * 300);
+      });
+    });
+    document.getElementById("dsDownloadConfig").addEventListener("click", function () {
+      if (!currentDossier) return;
+      var txt = shopConfigText(currentDossier.data);
+      if (!txt) { alert("No config stored for this record (too large). Use the email copy."); return; }
+      downloadText((currentDossier.data.slug || "shop") + "-shop-config.js", txt, "application/javascript");
+    });
+    document.getElementById("dsDownloadJson").addEventListener("click", function () {
+      if (!currentDossier) return;
+      downloadText((currentDossier.data.slug || "shop") + "-onboarding-full.json", JSON.stringify(currentDossier.data, null, 2), "application/json");
+    });
+
+    // "Open full setup" buttons on the setup cards
+    document.getElementById("panel-setups").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-dossier]");
+      if (b && b.dataset.dossier) openDossier(b.dataset.dossier);
+    });
+
+    // Lazy-load each setup card's logo thumbnail
+    function loadLogoThumbs() {
+      document.querySelectorAll("#panel-setups [data-logo-design]").forEach(function (el) {
+        var id = el.dataset.logoDesign;
+        if (!id || el.dataset.loaded) return;
+        el.dataset.loaded = "1";
+        fetch(DB_BASE + "/designs/" + encodeURIComponent(id) + ".json", { credentials: "omit" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (rec) {
+            if (!rec || !rec.code) return null;
+            var data = JSON.parse(fromBase64Url(rec.code));
+            if (data.logoDataUrl) return data.logoDataUrl;
+            var ids = data.photoChunks && data.photoChunks.logo;
+            return toDataUrlChunks(ids);
+          })
+          .then(function (u) {
+            if (u) el.innerHTML = '<img alt="" src="' + u + '">';
+          })
+          .catch(function () {});
+      });
+    }
+    var _renderSetups = renderSetups;
+    renderSetups = function () { _renderSetups(); loadLogoThumbs(); };
+
+    loadAllAdminData().then(function () {
+      var m = location.search.match(/[?&]setup=([A-Za-z0-9_-]{22})/);
+      if (m) openDossier(m[1]);
+    });
   })();
   </script>
 </body>

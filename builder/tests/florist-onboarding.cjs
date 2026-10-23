@@ -109,19 +109,26 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     assert.ok(firebaseSaved, 'Should save onboarding payload to Firebase Realtime Database');
     assert.ok(formspreePosted, 'Should post onboarding summary to Formspree email endpoint');
 
-    // Extract saved Firebase ID and test ?inspect=<id> round-trip reconstruction of all 3 uploaded photos!
+    // Client-facing confirmation: clear next steps, reference code, NO developer config exposed to the client
     const badgeText = await page.locator('#deliveryBadges').innerText();
-    const idMatch = badgeText.match(/ID:\s*([A-Za-z0-9_-]{22})/);
-    assert.ok(idMatch, 'Should display 22-char Firebase record ID');
+    const idMatch = badgeText.match(/reference:\s*([A-Za-z0-9_-]{22})/i);
+    assert.ok(idMatch, 'Should display 22-char reference code');
+    assert.equal(await page.locator('#nextSteps li').count(), 4, 'Confirmation shows 4 clear next steps');
+    assert.equal(await page.locator('#generatedConfigPreview, #btnDownloadShopConfig, #inspectBanner').count(), 0, 'Client page must not expose developer config/inspector');
+
+    // Legacy ?inspect= owner link redirects to the private admin dashboard
     await page.goto(url + '?inspect=' + idMatch[1], { waitUntil: 'networkidle' });
-    await page.waitForFunction(() => document.querySelectorAll('#inspectPhotosGallery img').length === 3);
-    assert.equal(await page.locator('#inspectPhotosGallery img').count(), 3, 'Inspector mode reconstructs all 3 uploaded photos (logo, bouquet, toy)');
+    assert.match(page.url(), /admin\.html\?setup=/, 'Legacy inspect link redirects to admin');
+
+    // Admin dossier reconstructs all 3 uploaded photos + config from chunked Firebase records
+    await page.waitForFunction(() => document.querySelectorAll('#dsBody .photo-card img').length === 3);
+    assert.equal(await page.locator('#dsBody .photo-card img').count(), 3, 'Admin dossier shows all 3 uploaded photos (logo, bouquet, toy)');
+    assert.equal(await page.locator('#dsBody .photo-card [data-dl]').count(), 3, 'Each photo has a download button');
 
     // Validate generated window.NEBULA_SHOP config against check-shop.cjs!
-    const generatedJs = await page.locator('#generatedConfigPreview').textContent();
+    const generatedJs = await page.locator('#dsConfigPre').textContent();
     const report = audit(loadShop(generatedJs), { live: true });
     assert.equal(report.ok, true, 'Generated window.NEBULA_SHOP config must pass check-shop.cjs --live: ' + report.errors.join('; '));
-
     // 4. Test flowers/index.html Consultation Form -> Firebase -> Admin Dashboard
     const baseOrigin = new URL(url).origin;
     await page.goto(baseOrigin + '/flowers/index.html', { waitUntil: 'networkidle' });

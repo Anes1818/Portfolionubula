@@ -317,31 +317,6 @@ h1, h2, h3, h4, p, figure {
   flex-shrink: 0;
 }
 
-/* ---------- Inspector Banner (For Studio Owner Reviewing a Submitted Shop) ---------- */
-.inspect-banner {
-  background: var(--plum);
-  color: #fff;
-  padding: 16px 22px;
-  border-radius: var(--radius-md);
-  margin: 24px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  box-shadow: var(--shadow-md);
-}
-
-.inspect-banner strong {
-  font-size: 15px;
-}
-
-.inspect-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 /* ---------- Step Sections ---------- */
 .setup-step {
   padding: clamp(36px, 5vw, 56px) 0;
@@ -1465,6 +1440,37 @@ h1, h2, h3, h4, p, figure {
   font-size: 24px;
   font-weight: 800;
   flex-shrink: 0;
+}
+
+.next-steps {
+  list-style: none;
+  counter-reset: ns;
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.next-steps li {
+  counter-increment: ns;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.next-steps li::before {
+  content: counter(ns);
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--plum);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .success-actions-row {

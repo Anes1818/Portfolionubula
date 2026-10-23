@@ -1334,6 +1334,9 @@
     return new TextDecoder().decode(bytes);
   }
 
+  /* Uploads one image as 20KB chunks. Each chunk is retried up to 3 times.
+     Returns the ordered chunk IDs, or null if ANY chunk could not be saved
+     (a half-saved photo would be corrupt, so we never keep partial photos). */
   async function uploadDataUrlInChunks(dataUrl, now, expiresAt) {
     if (!dataUrl || typeof dataUrl !== "string") return [];
     var b64u = toBase64Url(dataUrl);
@@ -1341,24 +1344,31 @@
     var chunkIds = [];
     for (var offset = 0; offset < b64u.length; offset += chunkSize) {
       var slice = b64u.slice(offset, offset + chunkSize);
-      var cid = randomId22();
-      var res = await fetch(
-        FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + cid + ".json?print=silent",
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            shopId: "la-flor-eterna",
-            code: slice,
-            purpose: "share",
-            createdAt: now,
-            expiresAt: expiresAt
-          }),
-          credentials: "omit",
-          referrerPolicy: "no-referrer"
-        }
-      );
-      if (res.ok) chunkIds.push(cid);
+      var saved = "";
+      for (var attempt = 0; attempt < 3 && !saved; attempt++) {
+        var cid = randomId22();
+        try {
+          var res = await fetch(
+            FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + cid + ".json?print=silent",
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                shopId: "la-flor-eterna",
+                code: slice,
+                purpose: "share",
+                createdAt: now,
+                expiresAt: expiresAt
+              }),
+              credentials: "omit",
+              referrerPolicy: "no-referrer"
+            }
+          );
+          if (res.ok) saved = cid;
+        } catch (_) {}
+      }
+      if (!saved) return null;
+      chunkIds.push(saved);
     }
     return chunkIds;
   }
@@ -1390,17 +1400,25 @@
     var clone = JSON.parse(JSON.stringify(payload));
     delete clone.shopConfigJsText;
     clone.photoChunks = { logo: [], bouquets: {}, customItems: {} };
+    clone.photoUploadFailures = [];
+    var photosAttempted = 0;
 
     try {
       if (clone.logoDataUrl) {
-        clone.photoChunks.logo = await uploadDataUrlInChunks(clone.logoDataUrl, now, expiresAt);
+        photosAttempted++;
+        var logoIds = await uploadDataUrlInChunks(clone.logoDataUrl, now, expiresAt);
+        if (logoIds) clone.photoChunks.logo = logoIds;
+        else clone.photoUploadFailures.push("Shop logo");
         clone.logoDataUrl = "";
       }
       if (Array.isArray(clone.signatureBouquets)) {
         for (var bi = 0; bi < clone.signatureBouquets.length; bi++) {
           var bPhoto = clone.signatureBouquets[bi].photoDataUrl;
           if (bPhoto) {
-            clone.photoChunks.bouquets[bi] = await uploadDataUrlInChunks(bPhoto, now, expiresAt);
+            photosAttempted++;
+            var bIds = await uploadDataUrlInChunks(bPhoto, now, expiresAt);
+            if (bIds) clone.photoChunks.bouquets[bi] = bIds;
+            else clone.photoUploadFailures.push("Bouquet #" + (bi + 1));
             clone.signatureBouquets[bi].photoDataUrl = "";
           }
         }
@@ -1409,14 +1427,25 @@
         for (var ci = 0; ci < clone.customAssetRequests.items.length; ci++) {
           var cPhoto = clone.customAssetRequests.items[ci].photoDataUrl;
           if (cPhoto) {
-            clone.photoChunks.customItems[ci] = await uploadDataUrlInChunks(cPhoto, now, expiresAt);
+            photosAttempted++;
+            var cIds = await uploadDataUrlInChunks(cPhoto, now, expiresAt);
+            if (cIds) clone.photoChunks.customItems[ci] = cIds;
+            else clone.photoUploadFailures.push("Custom item #" + (ci + 1));
             clone.customAssetRequests.items[ci].photoDataUrl = "";
           }
         }
       }
     } catch (_) {}
 
-    var codeB64 = toBase64Url(JSON.stringify(clone)).slice(0, 23800);
+    var codeB64 = toBase64Url(JSON.stringify(clone));
+    if (codeB64.length > 23800) {
+      // Never truncate JSON (it would be unreadable). Drop the bulky config copy instead;
+      // the admin dossier can rebuild shop-config.js from the prices + the emailed copy.
+      delete clone.nebulaShopConfig;
+      clone.nebulaShopConfigOmitted = true;
+      codeB64 = toBase64Url(JSON.stringify(clone));
+    }
+    codeB64 = codeB64.slice(0, 23800);
 
     // 1. Try dedicated nebula/onboarding/<designId> path (if updated rules are deployed)
     var dedicatedOk = false;
@@ -1519,7 +1548,9 @@
                       notes: payload.customAssetRequests.notes
                     },
                     submittedAt: payload.submittedAt,
-                    inspectUrl: "shop-setup.html?inspect=" + designId
+                    inspectUrl: "admin.html?setup=" + designId,
+                    photosAttempted: photosAttempted,
+                    photoUploadFailures: clone.photoUploadFailures
                   })
                 ).slice(0, 23800),
                 purpose: "request",
@@ -1539,7 +1570,9 @@
       ok: dedicatedOk || liveValidatedOk,
       designId: designId,
       requestId: requestId,
-      inspectUrl: "https://nebulastudio.site/shop-setup.html?inspect=" + designId
+      inspectUrl: "https://nebulastudio.site/admin.html?setup=" + designId,
+      photosAttempted: photosAttempted,
+      photoFailures: clone.photoUploadFailures
     };
   }
 
@@ -1638,240 +1671,17 @@
   }
 
   /* -----------------------------------------------------------------------
-     10. OWNER INSPECTOR MODE (?inspect=<designId>)
+     10. LEGACY OWNER LINKS (?inspect=<designId>)
+     Old owner links used to open the client form. Submissions are now reviewed
+     in the private Admin dashboard (photos, prices, downloads), so redirect there.
      ----------------------------------------------------------------------- */
-  async function checkOwnerInspectMode() {
+  function checkOwnerInspectMode() {
     var params = new URLSearchParams(window.location.search);
     var inspectId = params.get("inspect");
-    if (!inspectId || !/^[A-Za-z0-9_-]{22}$/.test(inspectId)) return;
-
-    var banner = document.getElementById("inspectBanner");
-    var meta = document.getElementById("inspectMeta");
-    banner.hidden = false;
-    meta.textContent = "Loading submission & uploaded photos " + inspectId + " from Firebase Realtime Database…";
-
-    try {
-      var res = await fetch(
-        FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + inspectId + ".json",
-        { credentials: "omit" }
-      );
-      if (!res.ok) throw new Error("Not found");
-      var record = await res.json();
-      if (!record || !record.code) throw new Error("Empty record");
-      var decoded = JSON.parse(fromBase64Url(record.code));
-
-      // Reconstruct all chunked photos from Firebase!
-      if (decoded.photoChunks) {
-        if (decoded.photoChunks.logo && decoded.photoChunks.logo.length) {
-          decoded.logoDataUrl = await downloadDataUrlFromChunks(decoded.photoChunks.logo);
-        }
-        if (decoded.photoChunks.bouquets && Array.isArray(decoded.signatureBouquets)) {
-          for (var bi = 0; bi < decoded.signatureBouquets.length; bi++) {
-            var bChunks = decoded.photoChunks.bouquets[bi];
-            if (bChunks && bChunks.length) {
-              decoded.signatureBouquets[bi].photoDataUrl = await downloadDataUrlFromChunks(bChunks);
-            }
-          }
-        }
-        if (
-          decoded.photoChunks.customItems &&
-          decoded.customAssetRequests &&
-          Array.isArray(decoded.customAssetRequests.items)
-        ) {
-          for (var ci = 0; ci < decoded.customAssetRequests.items.length; ci++) {
-            var cChunks = decoded.photoChunks.customItems[ci];
-            if (cChunks && cChunks.length) {
-              decoded.customAssetRequests.items[ci].photoDataUrl = await downloadDataUrlFromChunks(cChunks);
-            }
-          }
-        }
-      }
-
-      restorePayloadIntoForm(decoded, inspectId);
-    } catch (err) {
-      meta.textContent = "Could not load record " + inspectId + " (" + err.message + ").";
+    if (inspectId && /^[A-Za-z0-9_-]{22}$/.test(inspectId)) {
+      window.location.replace("admin.html?setup=" + encodeURIComponent(inspectId));
     }
   }
-
-  function downloadDataUrlFile(filename, dataUrl) {
-    var a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () {
-      a.remove();
-    }, 300);
-  }
-
-  function restorePayloadIntoForm(data, inspectId) {
-    if (!data) return;
-    document.getElementById("shopName").value = data.shopName || "";
-    document.getElementById("ownerName").value = data.ownerName || "";
-    document.getElementById("orderChannel").value = data.channel || "whatsapp";
-    document.getElementById("shopPhone").value = data.phone || "";
-    document.getElementById("shopEmail").value = data.email || "";
-    document.getElementById("shopInstagram").value = data.instagram || "";
-    document.getElementById("shopCity").value = data.city || "";
-    document.getElementById("shopCurrency").value = data.currency || "USD";
-
-    if (data.logoDataUrl) {
-      logoDataUrl = data.logoDataUrl;
-      document.getElementById("logoPreviewBox").innerHTML = '<img src="' + logoDataUrl + '" alt="Shop Logo">';
-    }
-
-    var cfg = data.nebulaShopConfig || {};
-    if (Number.isFinite(cfg.baseCents)) {
-      document.getElementById("basePrice").value = centsToDollarsStr(cfg.baseCents);
-    }
-    if (cfg.laborCents) {
-      if (Number.isFinite(cfg.laborCents.classic))
-        document.getElementById("laborClassic").value = centsToDollarsStr(cfg.laborCents.classic);
-      if (Number.isFinite(cfg.laborCents.dome))
-        document.getElementById("laborDome").value = centsToDollarsStr(cfg.laborCents.dome);
-      if (Number.isFinite(cfg.laborCents.heart))
-        document.getElementById("laborHeart").value = centsToDollarsStr(cfg.laborCents.heart);
-    }
-
-    if (cfg.flowerPrices) {
-      var disSet = new Set(cfg.disabledFlowers || []);
-      Object.keys(cfg.flowerPrices).forEach(function (k) {
-        if (flowerState[k]) {
-          flowerState[k].cents = cfg.flowerPrices[k];
-          flowerState[k].enabled = !disSet.has(k);
-        }
-      });
-    }
-    if (cfg.extrasCents) {
-      var disEx = new Set(cfg.disabledExtras || []);
-      Object.keys(cfg.extrasCents).forEach(function (k) {
-        if (extrasState[k]) {
-          extrasState[k].cents = cfg.extrasCents[k];
-          extrasState[k].enabled = !disEx.has(k);
-        }
-      });
-    }
-
-    if (data.customAssetRequests) {
-      document.getElementById("customAssetsNotes").value = data.customAssetRequests.notes || "";
-      customAssetsRows = data.customAssetRequests.items || [];
-    }
-
-    if (Array.isArray(data.signatureBouquets)) {
-      data.signatureBouquets.forEach(function (sb, i) {
-        if (DEFAULT_SIGNATURE_BOUQUETS[i]) {
-          DEFAULT_SIGNATURE_BOUQUETS[i].defaultName = sb.name || DEFAULT_SIGNATURE_BOUQUETS[i].defaultName;
-          DEFAULT_SIGNATURE_BOUQUETS[i].defaultPrice = sb.targetPrice || DEFAULT_SIGNATURE_BOUQUETS[i].defaultPrice;
-          DEFAULT_SIGNATURE_BOUQUETS[i].customPhotoDataUrl = sb.photoDataUrl || "";
-        }
-      });
-    }
-
-    if (data.plan) {
-      selectPlanCard(data.plan.type || "subdomain");
-      document.getElementById("desiredDomain").value = data.plan.desiredDomain || "";
-      document.getElementById("extraBouquetsSelect").value = String(data.plan.extraCustomBouquets || 0);
-    }
-
-    renderFlowerFamilies();
-    renderExtrasGrid();
-    renderCustomAssetRows();
-    renderBouquetSlots();
-    updateSlugPreview();
-    updateLiveSampleCalculator();
-
-    // Collect all uploaded photos for the Owner Inspector Gallery
-    var uploadedPhotos = [];
-    var slug = data.slug || "shop";
-    if (data.logoDataUrl) {
-      uploadedPhotos.push({
-        label: "Shop Logo",
-        filename: slug + "-logo.webp",
-        dataUrl: data.logoDataUrl
-      });
-    }
-    if (Array.isArray(data.signatureBouquets)) {
-      data.signatureBouquets.forEach(function (sb, i) {
-        if (sb.photoDataUrl) {
-          uploadedPhotos.push({
-            label: "Bouquet #" + (i + 1) + ": " + (sb.name || ""),
-            filename: slug + "-bouquet-" + (i + 1) + ".webp",
-            dataUrl: sb.photoDataUrl
-          });
-        }
-      });
-    }
-    if (data.customAssetRequests && Array.isArray(data.customAssetRequests.items)) {
-      data.customAssetRequests.items.forEach(function (it, i) {
-        if (it.photoDataUrl) {
-          uploadedPhotos.push({
-            label: "Custom Asset: " + (it.name || it.category || "#" + (i + 1)),
-            filename: slug + "-custom-asset-" + (i + 1) + ".webp",
-            dataUrl: it.photoDataUrl
-          });
-        }
-      });
-    }
-
-    var galleryEl = document.getElementById("inspectPhotosGallery");
-    if (galleryEl && uploadedPhotos.length > 0) {
-      galleryEl.style.display = "grid";
-      galleryEl.innerHTML = "";
-      uploadedPhotos.forEach(function (ph) {
-        var card = document.createElement("div");
-        card.style.cssText =
-          "background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center";
-        card.innerHTML =
-          '<img src="' +
-          ph.dataUrl +
-          '" alt="" style="width:100%;height:110px;object-fit:contain;background:#fff;border-radius:6px;padding:4px">' +
-          '<div style="font-size:11.5px;font-weight:700;line-height:1.25">' +
-          ph.label +
-          "</div>" +
-          '<button type="button" style="background:#fff;color:#432d3f;border-radius:99px;padding:5px 12px;font-size:11px;font-weight:800;width:100%">⬇ Save Image</button>';
-        card.querySelector("button").onclick = function () {
-          downloadDataUrlFile(ph.filename, ph.dataUrl);
-        };
-        galleryEl.appendChild(card);
-      });
-    }
-
-    var meta = document.getElementById("inspectMeta");
-    meta.textContent =
-      "Loaded: " +
-      data.shopName +
-      " · Plan: $" +
-      (data.plan && data.plan.monthlyUsd) +
-      "/mo · Phone: " +
-      data.phone +
-      " · Uploaded Photos: " +
-      uploadedPhotos.length +
-      " · ID: " +
-      inspectId;
-
-    var dlAllBtn = document.getElementById("inspectDownloadAllPhotos");
-    if (dlAllBtn) {
-      dlAllBtn.textContent = "🖼 Download All Photos (" + uploadedPhotos.length + ")";
-      dlAllBtn.onclick = function () {
-        uploadedPhotos.forEach(function (ph, idx) {
-          setTimeout(function () {
-            downloadDataUrlFile(ph.filename, ph.dataUrl);
-          }, idx * 250);
-        });
-      };
-    }
-
-    document.getElementById("inspectDownloadConfig").onclick = function () {
-      var latest = buildOnboardingPayload();
-      downloadFile(latest.slug + "-shop-config.js", latest.shopConfigJsText, "application/javascript");
-    };
-    document.getElementById("inspectDownloadJson").onclick = function () {
-      var latest = buildOnboardingPayload();
-      downloadFile(latest.slug + "-onboarding-full.json", JSON.stringify(latest, null, 2), "application/json");
-    };
-    document.getElementById("generatedConfigPreview").textContent = buildOnboardingPayload().shopConfigJsText;
-  }
-
   function downloadFile(filename, text, mime) {
     var blob = new Blob([text], { type: mime || "text/plain;charset=utf-8" });
     var url = URL.createObjectURL(blob);
@@ -2085,66 +1895,90 @@
       var fbRes = results[0];
       var emailRes = await sendToFormspreeEmail(payload, fbRes);
 
-      // Show confirmation & export panel
+      var fbOk = !!(fbRes && fbRes.ok);
+      var mailOk = !!(emailRes && emailRes.ok);
+      var isEs = currentLang === "es";
+
+      // Nothing reached us at all: do NOT pretend it worked.
+      if (!fbOk && !mailOk) {
+        errBox.textContent = isEs
+          ? "No pudimos enviar tu configuración (revisa tu conexión). No se perdió nada: inténtalo de nuevo en unos segundos."
+          : "We couldn't send your setup (please check your connection). Nothing is lost: try again in a few seconds.";
+        errBox.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "<span>" + (isEs ? "Enviar mi configuración" : "Submit My Shop Setup") + "</span> <span>→</span>";
+        return;
+      }
+
       var successPanel = document.getElementById("successPanel");
       successPanel.hidden = false;
-      document.getElementById("generatedConfigPreview").textContent = payload.shopConfigJsText;
+
+      var ref = fbRes && fbRes.designId ? fbRes.designId : "";
+      document.getElementById("successHeading").textContent = isEs
+        ? "¡Recibimos la configuración de tu florería!"
+        : "Your shop setup has been received!";
+      document.getElementById("successSub").textContent = isEs
+        ? "Guardamos tus precios, logo y fotos. Nuestro equipo ya los está revisando."
+        : "We saved your prices, logo and photos. Our team is reviewing them now.";
+
+      var steps = isEs
+        ? [
+            "<b>Construimos tu estudio</b> con tus precios, logo y los 4 ramos incluidos (normalmente en 48 horas).",
+            "<b>Te enviamos un enlace de vista previa</b> por WhatsApp o correo para que lo pruebes como si fueras tu cliente.",
+            "<b>Pides los cambios que quieras</b> (los ajustes de precios son gratis). Solo pagas cuando lo apruebes y quedes feliz.",
+            "<b>Publicamos tu estudio</b> y tus clientas empiezan a diseñar y pedir ramos."
+          ]
+        : [
+            "<b>We build your studio</b> with your prices, logo and the 4 included bouquets (usually within 48 hours).",
+            "<b>We send you a preview link</b> on WhatsApp or email so you can try it like one of your customers.",
+            "<b>You ask for any changes</b> (price adjustments are free). You only pay once you approve and love it.",
+            "<b>We publish your studio</b> and your customers start designing and ordering bouquets."
+          ];
+      document.getElementById("nextSteps").innerHTML = steps
+        .map(function (s) {
+          return "<li><span>" + s + "</span></li>";
+        })
+        .join("");
+
+      var warnEl = document.getElementById("photoWarnBox");
+      var failedPhotos = (fbRes && fbRes.photoFailures) || [];
+      if (failedPhotos.length) {
+        warnEl.hidden = false;
+        warnEl.textContent = isEs
+          ? "No pudimos guardar estas fotos: " + failedPhotos.join(", ") + ". Por favor envíalas por WhatsApp o correo y las agregamos."
+          : "These photos could not be saved: " + failedPhotos.join(", ") + ". Please send them to us on WhatsApp or email and we will add them.";
+      } else {
+        warnEl.hidden = true;
+      }
 
       var badgesEl = document.getElementById("deliveryBadges");
       badgesEl.innerHTML = "";
-      if (fbRes && fbRes.ok) {
+      if (ref) {
         badgesEl.innerHTML +=
-          '<span class="hero-badge"><b>✓</b> Saved to Nebula Firebase Cloud (ID: <code>' +
-          fbRes.designId +
-          "</code>)</span>";
+          '<span class="hero-badge"><b>#</b> ' + (isEs ? "Tu referencia" : "Your reference") + ": <code>" + ref + "</code></span>";
       }
-      if (emailRes && emailRes.ok) {
+      if (mailOk) {
         badgesEl.innerHTML +=
-          '<span class="hero-badge"><b>✓</b> Sent to Nebula Studio Email (<code>nebulastudiosite@gmail.com</code>)</span>';
+          '<span class="hero-badge"><b>✓</b> ' + (isEs ? "Copia enviada al equipo Nebula" : "Copy sent to the Nebula team") + "</span>";
       }
-
-      // Wire Download & Copy & WhatsApp/Email backup buttons
-      document.getElementById("btnDownloadShopConfig").onclick = function () {
-        downloadFile(payload.slug + "-shop-config.js", payload.shopConfigJsText, "application/javascript");
-      };
-      document.getElementById("btnCopyShopConfig").onclick = function () {
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(payload.shopConfigJsText);
-          document.getElementById("btnCopyShopConfig").textContent = "✓ Copied shop-config.js!";
-        }
-      };
 
       var waSummary =
         "Hi Nebula Studio! 🌸 I just submitted my flower shop setup:\n" +
-        "• Shop: " +
-        payload.shopName +
-        " (" +
-        payload.ownerName +
-        ")\n" +
-        "• Plan: $" +
-        payload.plan.monthlyUsd +
-        "/mo (" +
-        payload.plan.siteUrl +
-        ")\n" +
-        "• Order Phone: " +
-        payload.phone +
-        "\n" +
-        (fbRes && fbRes.designId ? "• Setup Link: " + fbRes.inspectUrl : "");
+        "• Shop: " + payload.shopName + " (" + payload.ownerName + ")\n" +
+        "• Plan: $" + payload.plan.monthlyUsd + "/mo (" + payload.plan.siteUrl + ")\n" +
+        "• Order Phone: " + payload.phone + "\n" +
+        (ref ? "• Reference: " + ref : "");
 
       document.getElementById("btnWhatsappBackup").href =
         "https://wa.me/15713367129?text=" + encodeURIComponent(waSummary);
-
       document.getElementById("btnEmailBackup").href =
         "mailto:nebulastudiosite@gmail.com?subject=" +
         encodeURIComponent("Shop Setup — " + payload.shopName) +
         "&body=" +
-        encodeURIComponent(waSummary + "\n\n" + payload.shopConfigJsText);
+        encodeURIComponent(waSummary);
 
       submitBtn.disabled = false;
-      submitBtn.innerHTML =
-        "<span>✓ " +
-        (currentLang === "es" ? "Configuración Enviada" : "Shop Setup Submitted") +
-        "</span>";
+      submitBtn.innerHTML = "<span>✓ " + (isEs ? "Configuración Enviada" : "Shop Setup Submitted") + "</span>";
 
       successPanel.scrollIntoView({ behavior: "smooth" });
     });
