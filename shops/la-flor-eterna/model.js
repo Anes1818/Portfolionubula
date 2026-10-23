@@ -154,7 +154,7 @@ function validateV4(raw){
  for(const [key,max] of [['ghostCount',6],['thistleCount',3]])if(f[key]!==undefined&&(!Number.isInteger(f[key])||f[key]<0||f[key]>max))return null;
  if(f.fillerCount!==undefined&&(!Number.isInteger(f.fillerCount)||f.fillerCount<0||f.fillerCount>12))return null;
  if(f.fillerPattern!==undefined&&!['scatter','border'].includes(f.fillerPattern))return null;
- if(f.roseArtwork!==undefined&&(!['blush-v1','reference-v1','reference-v2','reference-v3','lily-study-v1','lily-mixed-v1','sunflower-classic-v1','crimson-classic-v1'].includes(f.roseArtwork)||!g.NebulaRoseArt))return null;
+ if(f.roseArtwork!==undefined&&(!['blush-v1','reference-v1','reference-v2','reference-v3','lily-study-v1','lily-mixed-v1','sunflower-classic-v1','crimson-classic-v1','celebration-v1'].includes(f.roseArtwork)||!g.NebulaRoseArt))return null;
  if(f.greeneryCount!==undefined&&(!Number.isInteger(f.greeneryCount)||f.greeneryCount<0||f.greeneryCount>12))return null;
  if(f.initial!==undefined&&(typeof f.initial!=='string'||!/^([A-Z])?$/.test(f.initial)))return null;
  if(f.initialScale!==undefined&&(!Number.isFinite(f.initialScale)||f.initialScale<.7||f.initialScale>1.3))return null;

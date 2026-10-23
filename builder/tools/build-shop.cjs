@@ -20,7 +20,7 @@ for(const file of files.sort()){
  let bytes=fs.readFileSync(path.join(source,file));
  if(file.endsWith('.html')){
   let html=bytes.toString().replace('<script src="demo-route.js"></script>','').replaceAll('Nebula',profile.name).replaceAll('nebula bouquet',profile.name+' bouquet').replaceAll('https://nebulastudio.site','index.html').replaceAll('type="image/svg+xml"','type="image/png"').replaceAll('href="favicon.svg"','href="assets/client/logo.png"').replaceAll('assets/brand/logo-mark.webp',profile.logo);
-  html=html.replaceAll('v=20261016d','v=20261023-wrap-fit');
+  html=html.replaceAll('v=20261016d','v=20261023-celebration');
   html=html.replace('name="theme-color" content="#f7f5ef"','name="theme-color" content="#FFF9F6"');
   html=html.replace('</head>','<meta name="robots" content="noindex,nofollow"><meta property="og:title" content="La Flor Eterna — A bouquet, made personal."><meta property="og:description" content="Customize a bouquet and prepare a text request. Owner preview with sample prices."><meta property="og:image" content="assets/client/logo.png"><link rel="stylesheet" href="theme.css"></head>');
   if(profile.demo===false)html=html.replace('Owner preview with sample prices.','Final availability and price require confirmation.');
@@ -32,7 +32,7 @@ for(const file of files.sort()){
   }
   if(file==='index.html'&&profile.demo===false)html=html.replace(/<article class="bouquet-card" data-id="([a-z-]+)"[\s\S]*?<\/article>/g,(card,id)=>policy.recipeAllowed(id)?card:'');
   if(['studio.html','order.html'].includes(file))html=html.replace(/(<script src="(?:app|order)\.js)/,'<script src="../../b/config.js" defer></script><script src="../../b/database.js" defer></script><script src="short-links.js" defer></script>$1');
-  if(['studio.html','order.html'].includes(file))html=html.replace('<script src="model.js','<script src="pink-recipe.js" defer></script><script src="rose-artwork.js" defer></script><script src="lily-arrangement.js" defer></script><script src="sunflower-arrangement.js" defer></script><script src="gift-options.js" defer></script><script src="infill-layout.js" defer></script><script src="midnight-artwork.js" defer></script><script src="crimson-arrangement.js" defer></script><script src="classic-wrapping.js?v=20261023-wrap-fit" defer></script><script src="customization.js?v=20261023-wrap-fit" defer></script><script src="customization-ui.js" defer></script><script src="floral-lettering.js" defer></script><script src="model.js');
+  if(['studio.html','order.html'].includes(file))html=html.replace('<script src="model.js','<script src="pink-recipe.js" defer></script><script src="rose-artwork.js" defer></script><script src="lily-arrangement.js" defer></script><script src="sunflower-arrangement.js" defer></script><script src="gift-options.js" defer></script><script src="infill-layout.js" defer></script><script src="midnight-artwork.js" defer></script><script src="crimson-arrangement.js" defer></script><script src="celebration-arrangement.js" defer></script><script src="classic-wrapping.js?v=20261023-celebration" defer></script><script src="customization.js?v=20261023-celebration" defer></script><script src="customization-ui.js" defer></script><script src="floral-lettering.js" defer></script><script src="model.js');
   if(file==='index.html'&&profile.demo&&profile.features?.pinkStudy)html=html.replace('<main', '<aside style="padding:16px;text-align:center;background:#f8e8ed"><a href="pink-proof.html" style="color:#76394e">Explore the new pink bouquet study →</a></aside><main');
   if(file==='order.html')html=html.replace('<div class="os-top">','<img class="sheet-logo" src="assets/client/logo.png" alt="La Flor Eterna — By Maritza Gomez" width="170" height="170"><div class="os-top">');
   if(file==='studio.html')html=html.replace(/(<p class="helper order-fine" data-i18n="orderFine">[\s\S]*?<\/p>)/,`$1
@@ -58,7 +58,7 @@ for(const file of files.sort()){
 const thumbs=path.join(client,'assets/thumbs');
 if(fs.existsSync(thumbs))for(const name of fs.readdirSync(thumbs).sort())if(/^[a-z-]+\.webp$/.test(name))write('assets/catalog/thumbs/'+name,fs.readFileSync(path.join(thumbs,name)));
 write('shop-config.js','/* Generated profile; sample price inputs inherited from builder/shop-config.js. */\nwindow.NEBULA_SHOP='+JSON.stringify(shop,null,2)+';\n');
-for(const name of ['client-ui.js','theme.css','rose-artwork.js','lily-arrangement.js','sunflower-arrangement.js','gift-options.js','infill-layout.js','midnight-artwork.js','crimson-arrangement.js','classic-wrapping.js','customization.js','customization-ui.js','floral-lettering.js','pink-recipe.js','pink-proof.html','pink-proof.css','pink-proof.js'])write(name,fs.readFileSync(path.join(client,name)));
+for(const name of ['client-ui.js','theme.css','rose-artwork.js','lily-arrangement.js','sunflower-arrangement.js','gift-options.js','infill-layout.js','midnight-artwork.js','crimson-arrangement.js','classic-wrapping.js','celebration-arrangement.js','customization.js','customization-ui.js','floral-lettering.js','pink-recipe.js','pink-proof.html','pink-proof.css','pink-proof.js'])write(name,fs.readFileSync(path.join(client,name)));
 write(profile.logo,fs.readFileSync(path.join(client,'assets/logo.png')));
 for(const item of JSON.parse(fs.readFileSync(path.join(client,'top-sellers.json'),'utf8'))){
  if(!/^assets\/client\/featured\/[a-z-]+\.jpg$/.test(item.image))throw Error('Invalid featured photo path');
@@ -99,6 +99,8 @@ for(const a of JSON.parse(fs.readFileSync(path.join(refinementRoot,'manifest.jso
  if(crypto.createHash('sha256').update(bytes).digest('hex')!==a.sha256)throw Error('Refinement asset changed: '+a.file);
  write('assets/client/refinements-oct19/'+a.file,bytes);
 }
+write('assets/client/celebration/lily-bud.png',fs.readFileSync(path.join(client,'assets/celebration/lily-bud.png')));
+write('assets/client/celebration/lily-pink.png',fs.readFileSync(path.join(client,'assets/celebration/lily-pink.png')));
 for(const file of ['smoke-wrap.png','rose-crimson.png'])write('assets/client/crimson-velvet/'+file,fs.readFileSync(path.join(client,'assets/crimson-velvet',file)));
 write('build-manifest.json',JSON.stringify({profile:profile.id,files:hashes},null,2)+'\n');
 console.log('Built shops/la-flor-eterna/ ('+Object.keys(hashes).length+' explicit runtime files).');

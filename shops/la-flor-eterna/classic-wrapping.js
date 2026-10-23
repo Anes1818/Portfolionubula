@@ -1,6 +1,7 @@
 /* One fitted transform per upright paper, shared by its front, back and tie. */
 (function(g){'use strict';
 const definitions={
+ 'blush-layered':{url:'assets/client/lily-family/wrap-peach-blush.webp',width:855,height:786,opening:1.02,rim:1.0,neck:.94,top:0,bottom:1,mask:'M 0 780 L 855 780 L 855 786 L 0 786 Z'},
  fan:{url:'assets/halloween/black-fan-wrap.webp',width:754,height:1042,opening:.78,rim:.50,neck:.765,top:0,bottom:1,mask:'M 0 440 Q 360 610 754 430 L 754 1042 L 0 1042 Z'},
  'ivory-upright':{url:'assets/classic/wrap-ivory-back.webp',front:'assets/classic/wrap-ivory-front.webp',width:896,height:1200,opening:.80,rim:.50,neck:.70,top:.14,bottom:.86,mask:'M 0 558 Q 448 650 896 558 L 896 1200 L 0 1200 Z'},
  'kraft-upright':{url:'assets/classic/wrap-kraft-back.webp',front:'assets/classic/wrap-kraft-front.webp',width:896,height:1200,opening:.80,rim:.50,neck:.70,top:.14,bottom:.86,mask:'M 0 558 Q 448 650 896 558 L 896 1200 L 0 1200 Z'},

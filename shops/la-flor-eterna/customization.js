@@ -10,10 +10,10 @@ const pinkBow={url:'assets/client/refinements-oct19/bow-pink-reference-v2.png',w
 const pinkReference=s=>s.mode==='dome'&&s.finishes.roseArtwork==='reference-v3';
 const detailArt=(s,id)=>id==='satin_bow'&&pinkReference(s)?pinkBow:meta.finishes[id];
 const wraps={
- classic:['fan','ivory-upright','kraft-upright','yellow-upright','smoke-upright'],
+ classic:['blush-layered','fan','ivory-upright','kraft-upright','yellow-upright','smoke-upright'],
  dome:['round','ruffle','cocoa','gingham','peach'],heart:['heart']
 };
-const wrapNames={'smoke-upright':['Smoke-black cellophane','Celofán negro humo'],'fan':['Fan folds','Pliegues en abanico'],'ivory-upright':['Ivory folded paper','Papel marfil'],'kraft-upright':['Kraft folded paper','Papel kraft'],'yellow-upright':['Yellow gathered paper','Papel amarillo'],round:['Round folds','Pliegues redondos'],ruffle:['Ivory ruffles','Volantes marfil'],cocoa:['Cocoa folds','Pliegues cacao'],gingham:['Peach gingham','Cuadros durazno'],peach:['Peach & blush folds','Durazno y rosa'],heart:['Heart-shaped wrap','Envoltura de corazón']};
+const wrapNames={'blush-layered':['Layered blush paper','Papel rosa en capas'],'smoke-upright':['Smoke-black cellophane','Celofán negro humo'],'fan':['Fan folds','Pliegues en abanico'],'ivory-upright':['Ivory folded paper','Papel marfil'],'kraft-upright':['Kraft folded paper','Papel kraft'],'yellow-upright':['Yellow gathered paper','Papel amarillo'],round:['Round folds','Pliegues redondos'],ruffle:['Ivory ruffles','Volantes marfil'],cocoa:['Cocoa folds','Pliegues cacao'],gingham:['Peach gingham','Cuadros durazno'],peach:['Peach & blush folds','Durazno y rosa'],heart:['Heart-shaped wrap','Envoltura de corazón']};
 const bowIds=['satin_bow','satin_black','satin_cocoa','satin_burgundy','satin_sage'];
 for(const [id,art,label,es] of [['pumpkin_plush','plush_pumpkin','Pumpkin plush','Peluche de calabaza'],['satin_black','black-bow-tails','Black satin bow','Lazo negro'],['satin_cocoa','bow_cocoa','Cocoa satin bow','Lazo cacao'],['satin_burgundy','ribbon_burgundy','Burgundy satin bow','Lazo burdeos'],['satin_sage','ribbon_sage','Sage satin bow','Lazo verde salvia']]){
  meta.finishes[id]={...meta.finishes[art]};
@@ -41,6 +41,7 @@ function giftLayout(s,f){
 }
 function detailFrame(s,f,d){
  if(s.mode!=='classic')return f;
+ if(g.NebulaCelebration?.active(s)&&d.id==='satin_bow')return {center:{x:350,y:440},radius:160};
  const defaults=NebulaDetails.types[d.id],bow=bowIds.includes(d.id),h=detailHeight(s,f,d);
  const gift=bow?null:giftLayout(s,f)[d.id];
  // Gifts form a centered presentation at the paper base. User adjustments
@@ -84,7 +85,7 @@ function borderScatter(s,sc,count){
 function classicFlowers(s,nodes){
  const f=s.frames.classic,sc={nodes};
  sc.nodes=sc.nodes.map(n=>{const m=meta.flowers[n.id];if(n.id==='sunflower')return NebulaSunflower.flower(n,f.center.x);if(n.id==='lily')return NebulaMidnightArt.flower(s,n);if(n.decorative||!m?.classicAvailable)return n;if(m.heads?.length>1&&NebulaClassic.active(s))return n;const w=n.d;return {...n,url:n.id==='rose_pink'?salmon.url:m.classicBloom,w,h:w*(n.id==='rose_pink'?salmon.height/salmon.width:m.bloomHeight/m.bloomWidth),rot:(n.x-f.center.x)/1600,z:n.y};});
- g.NebulaCrimson?.flowers(s,sc);return sc.nodes;
+ g.NebulaCrimson?.flowers(s,sc);g.NebulaCelebration?.flowers(s,sc);return sc.nodes;
 }
 function complete(s,sc){
  const f=sc.frame,o=s.finishes.studio||{};

@@ -10,7 +10,7 @@ const base=process.env.BUILDER_URL||'http://127.0.0.1:4175/demo/nebula-builder/'
   const large=NebulaCrimson.create();while(large.items.length<36){if(!M.add(large,'rose_red').ok)break;}cases.push(['Large roses',large]);
   cases[3][1].items=cases[3][1].items.slice(0,5);M.arrange(cases[3][1],'classic',{fresh:true});
   for(const [label,original]of cases){
-   const cv=document.createElement('canvas');cv.width=1500;cv.height=450;const ctx=cv.getContext('2d');ctx.fillStyle='#fcfaf8';ctx.fillRect(0,0,1500,450);
+   const cv=document.createElement('canvas');cv.width=1800;cv.height=450;const ctx=cv.getContext('2d');ctx.fillStyle='#fcfaf8';ctx.fillRect(0,0,1800,450);
    const saved=JSON.stringify(original.items);
    for(let i=0;i<U.wraps.classic.length;i++){
     const s=M.clone(original),wrap=U.wraps.classic[i];s.finishes.studio={...s.finishes.studio,v:1,wrap};s.finishes.paper=['fan','smoke-upright'].includes(wrap)?'black':'ivory';
@@ -32,5 +32,5 @@ const base=process.env.BUILDER_URL||'http://127.0.0.1:4175/demo/nebula-builder/'
   return {out,issues};
  });
  fs.mkdirSync('clients/la-flor-eterna/qa/wrap-fit',{recursive:true});for(const a of result.out)fs.writeFileSync('clients/la-flor-eterna/qa/wrap-fit/'+a.name+'.png',Buffer.from(a.data.split(',')[1],'base64'));
- assert.deepEqual(result.issues,[]);assert.deepEqual(errors,[]);console.log('PASS 30 wrap/recipe combinations: unchanged flowers, aligned layers, assets, shares and mobile framing.');
+ assert.deepEqual(result.issues,[]);assert.deepEqual(errors,[]);console.log('PASS 36 wrap/recipe combinations: unchanged flowers, aligned layers, assets, shares and mobile framing.');
  }finally{await b.close()}})().catch(e=>{console.error(e);process.exit(1)});

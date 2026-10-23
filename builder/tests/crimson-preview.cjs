@@ -36,7 +36,7 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
  await page.goto(testOrigin+'/demo/nebula-builder/index.html');
  const card=page.locator('[data-featured-id="crimson-velvet"]');await card.scrollIntoViewIfNeeded();
  await card.screenshot({path:path.join(out,'cover.png')});
- assert.equal(await page.locator('.featured-card').count(),4);
+ assert.equal(await page.locator('.featured-card').count(),5);
  await card.locator('.featured-photo').click();await page.waitForFunction(()=>window.__ready);
  assert.equal(await page.evaluate(()=>NebulaApp.state.title),'Crimson Velvet');
  assert.deepEqual(errors,[]);assert.deepEqual(bad,[]);
