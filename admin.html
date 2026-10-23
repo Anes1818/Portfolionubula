@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Nebula Studio Admin — Client Orders, Leads &amp; Shop Setups</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&amp;family=DM+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f7f5ef;
+      --surface: #ffffff;
+      --warm: #f0ece1;
+      --ink: #2c2029;
+      --muted: #6e666b;
+      --plum: #432d3f;
+      --plum-soft: #f5eef3;
+      --green: #2f6846;
+      --green-soft: #e6f2eb;
+      --accent: #b85374;
+      --accent-soft: #fdf2f6;
+      --line: #dfdbd2;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+      --radius: 12px;
+      --shadow: 0 6px 24px rgba(44, 32, 41, 0.07);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14.5px;
+      line-height: 1.55;
+      padding-bottom: 80px;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; color: inherit; }
+    button { cursor: pointer; border: 0; background: none; }
+    .wrap { width: min(1220px, calc(100% - 36px)); margin-inline: auto; }
+
+    /* Header */
+    .hdr {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(247, 245, 239, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 0;
+    }
+    .hdr-in {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--serif); font-size: 28px; font-weight: 600;
+    }
+    .brand-badge {
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      background: var(--plum); color: #fff; padding: 4px 10px; border-radius: 99px;
+    }
+    .hdr-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 15px; border-radius: 99px; font-size: 13px; font-weight: 700;
+      background: var(--plum); color: #fff; border: 1.5px solid var(--plum);
+      transition: all 0.16s ease;
+    }
+    .btn.sec { background: #fff; color: var(--plum); border-color: var(--line); }
+    .btn.sec:hover { border-color: var(--plum); }
+    .btn.green { background: var(--green); border-color: var(--green); color: #fff; }
+
+    /* Stats & Tools */
+    .top-panel {
+      margin: 26px 0 22px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .stat-card {
+      background: var(--surface); border: 1.5px solid var(--line);
+      border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow);
+      cursor: pointer; transition: border-color 0.18s, transform 0.18s;
+    }
+    .stat-card.active {
+      border-color: var(--plum);
+      background: linear-gradient(180deg, var(--plum-soft), #fff 90px);
+    }
+    .stat-card .kicker {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+    }
+    .stat-card .num {
+      font-family: var(--serif); font-size: 46px; font-weight: 600; line-height: 1.05; margin: 4px 0;
+    }
+    .stat-card .sub { font-size: 12.5px; color: var(--muted); }
+
+    /* Lookup & Secret Bar */
+    .tools-bar {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 14px 18px; margin-bottom: 22px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .tool-input-group {
+      display: flex; align-items: center; gap: 8px; flex: 1; min-width: 280px;
+    }
+    .text-in {
+      flex: 1; padding: 9px 12px; border: 1.5px solid var(--line);
+      border-radius: 8px; font-size: 13.5px; background: var(--paper);
+    }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex; gap: 8px; border-bottom: 1px solid var(--line);
+      padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px; border-radius: 99px; font-size: 13.5px; font-weight: 700;
+      color: var(--muted); background: var(--warm); transition: all 0.16s;
+    }
+    .tab-btn.active { background: var(--plum); color: #fff; }
+
+    /* Cards Grid */
+    .records-list { display: grid; gap: 14px; }
+    .rec-card {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
+      display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: start;
+    }
+    .rec-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; }
+    .pill {
+      font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 99px;
+      background: var(--warm); color: var(--ink);
+    }
+    .pill.green { background: var(--green-soft); color: var(--green); }
+    .pill.pink { background: var(--accent-soft); color: var(--accent); }
+    .pill.plum { background: var(--plum-soft); color: var(--plum); }
+    .rec-card h3 { font-family: var(--serif); font-size: 26px; margin-bottom: 4px; }
+    .rec-meta {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 8px 16px; margin: 10px 0; font-size: 13.5px;
+    }
+    .rec-meta div b { color: var(--muted); font-weight: 600; margin-right: 4px; }
+    .rec-box {
+      margin-top: 10px; padding: 11px 14px; background: var(--paper);
+      border: 1px solid var(--line); border-radius: 8px; font-size: 13px; white-space: pre-wrap;
+    }
+    .rec-actions { display: flex; flex-direction: column; gap: 8px; min-width: 210px; }
+    .empty-state {
+      text-align: center; padding: 48px 20px; background: var(--surface);
+      border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted);
+    }
+    @media (max-width: 820px) {
+      .top-panel, .rec-card { grid-template-columns: 1fr; }
+      .rec-actions { flex-direction: row; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hdr">
+    <div class="wrap hdr-in">
+      <div class="brand">
+        <span>✳ nebula.</span>
+        <span class="brand-badge">Studio Admin</span>
+      </div>
+      <div class="hdr-actions">
+        <span id="syncStatus" style="font-size:12.5px;color:var(--muted)">Connecting to Firebase…</span>
+        <button type="button" class="btn sec" id="btnRefresh">↻ Refresh Live Data</button>
+        <a href="shop-setup.html" class="btn sec">Open Shop Setup Page ↗</a>
+        <a href="shops/la-flor-eterna/" class="btn sec">Open La Flor Eterna ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Top Stats Cards -->
+    <section class="top-panel">
+      <div class="stat-card active" data-tab="orders">
+        <div class="kicker">🌸 Client Shop Orders</div>
+        <div class="num" id="countOrders">0</div>
+        <div class="sub">La Flor Eterna customer bouquet requests</div>
+      </div>
+      <div class="stat-card" data-tab="leads">
+        <div class="kicker">📩 Consultation &amp; Plan Leads</div>
+        <div class="num" id="countLeads">0</div>
+        <div class="sub">From flowers/index.html &amp; build-your-plan.html</div>
+      </div>
+      <div class="stat-card" data-tab="setups">
+        <div class="kicker">🏪 Florist Studio Setups</div>
+        <div class="num" id="countSetups">0</div>
+        <div class="sub">Full price &amp; photo setups from shop-setup.html</div>
+      </div>
+    </section>
+
+    <!-- Quick ID Lookup & Optional Firebase Secret -->
+    <section class="tools-bar">
+      <div class="tool-input-group">
+        <input type="text" id="lookupInput" class="text-in" placeholder="Paste any 22-char Firebase ID or https://nebulastudio.site/b/#... link to inspect">
+        <button type="button" class="btn" id="btnLookup">Inspect ID</button>
+      </div>
+      <div class="tool-input-group">
+        <input type="password" id="fbSecretInput" class="text-in" placeholder="Optional: Firebase Database Secret (to unlock raw historical /requests table)">
+        <button type="button" class="btn sec" id="btnSaveSecret">Unlock Raw DB</button>
+      </div>
+    </section>
+
+    <!-- Tab Switcher -->
+    <nav class="tab-bar" role="tablist">
+      <button type="button" class="tab-btn active" data-tab="orders">🌸 La Flor Eterna Orders</button>
+      <button type="button" class="tab-btn" data-tab="leads">📩 Consultation &amp; Builder Leads</button>
+      <button type="button" class="tab-btn" data-tab="setups">🏪 Florist Shop Setups (Prices + Photos)</button>
+    </nav>
+
+    <!-- Tab Panels -->
+    <section id="panel-orders" class="records-list"></section>
+    <section id="panel-leads" class="records-list" hidden></section>
+    <section id="panel-setups" class="records-list" hidden></section>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var DB_BASE = "https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/la-flor-eterna";
+    var activeTab = "orders";
+    var ordersData = [];
+    var leadsData = [];
+    var setupsData = [];
+
+    function fromBase64Url(b64u) {
+      try {
+        var b64 = String(b64u || "").replace(/-/g, "+").replace(/_/g, "/");
+        while (b64.length % 4) b64 += "=";
+        var bin = atob(b64);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder().decode(bytes);
+      } catch (_) {
+        return "";
+      }
+    }
+
+    function decodeBouquetCodeSummary(code) {
+      try {
+        var raw = JSON.parse(fromBase64Url(code));
+        if (Array.isArray(raw) && Array.isArray(raw[3])) {
+          var modeMap = { 1: "Classic Wrap", 2: "Round Dome", 3: "Heart Arrangement" };
+          var mode = modeMap[raw[1]] || "Bouquet";
+          var stems = raw[3].map(function (pair) { return pair[1] + " × " + pair[0].replace(/_/g, " "); }).join(", ");
+          return mode + " — " + stems;
+        }
+      } catch (_) {}
+      return "Custom Bouquet Design";
+    }
+
+    async function fetchSlots(prefix, maxScan) {
+      maxScan = maxScan || 60;
+      var items = [];
+      var batchSize = 10;
+      for (var start = 1; start <= maxScan; start += batchSize) {
+        var batchPromises = [];
+        for (var i = start; i < start + batchSize && i <= maxScan; i++) {
+          (function (slotIdx) {
+            var slotId = prefix + String(slotIdx).padStart(7, "0");
+            batchPromises.push(
+              fetch(DB_BASE + "/designs/" + slotId + ".json", { credentials: "omit" })
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (val) { return val ? { slotId: slotId, raw: val } : null; })
+                .catch(function () { return null; })
+            );
+          })(i);
+        }
+        var results = await Promise.all(batchPromises);
+        var foundInBatch = 0;
+        results.forEach(function (res) {
+          if (res && res.raw && res.raw.code) {
+            foundInBatch++;
+            try {
+              var parsed = JSON.parse(fromBase64Url(res.raw.code));
+              parsed._slotId = res.slotId;
+              parsed._createdAt = res.raw.createdAt || Date.now();
+              items.push(parsed);
+            } catch (_) {}
+          }
+        });
+        if (foundInBatch === 0) break;
+      }
+      return items;
+    }
+
+    async function fetchRawRequestsWithSecret(secret) {
+      if (!secret) return [];
+      try {
+        var r = await fetch(DB_BASE + "/requests.json?auth=" + encodeURIComponent(secret));
+        if (!r.ok) return [];
+        var obj = await r.json();
+        if (!obj || typeof obj !== "object") return [];
+        return Object.keys(obj).map(function (k) {
+          var rec = obj[k];
+          rec._id = k;
+          rec._createdAt = rec.createdAt || Date.now();
+          return rec;
+        });
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function formatDate(tsOrIso) {
+      if (!tsOrIso) return "—";
+      var d = new Date(tsOrIso);
+      if (isNaN(d.getTime())) return String(tsOrIso);
+      return d.toLocaleString();
+    }
+
+    function esc(s) {
+      return String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderOrders() {
+      var el = document.getElementById("panel-orders");
+      document.getElementById("countOrders").textContent = String(ordersData.length);
+      if (!ordersData.length) {
+        el.innerHTML =
+          '<div class="empty-state">' +
+          '<h3>No La Flor Eterna orders loaded yet</h3>' +
+          '<p style="margin-top:6px">New customer orders prepared in <code>shops/la-flor-eterna/studio.html</code> appear here automatically. You can also paste any order link or Firebase Database Secret above to view older historical requests.</p>' +
+          "</div>";
+        return;
+      }
+      el.innerHTML = ordersData
+        .map(function (o) {
+          var summary = decodeBouquetCodeSummary(o.code);
+          var sheetUrl = "shops/la-flor-eterna/order.html?d=" + encodeURIComponent(o.designId || "");
+          var studioUrl = "shops/la-flor-eterna/studio.html#b=" + encodeURIComponent(o.code || "");
+          return (
+            '<article class="rec-card">' +
+            "<div>" +
+            '<div class="rec-badges">' +
+            '<span class="pill green">🌸 La Flor Eterna Order</span>' +
+            '<span class="pill plum">' + esc(o.method || "Pickup") + "</span>" +
+            '<span class="pill">Ref: ' + esc(o.reference || "—") + "</span>" +
+            "</div>" +
+            "<h3>" + esc(o.customerName || "Customer") + "</h3>" +
+            '<div class="rec-meta">' +
+            "<div><b>Requested Date:</b> " + esc(o.requestedDate || "—") + "</div>" +
+            "<div><b>Created:</b> " + esc(formatDate(o.createdAt || o._createdAt)) + "</div>" +
+            "<div><b>Design ID:</b> <code>" + esc(o.designId || "—") + "</code></div>" +
+            "</div>" +
+            '<div class="rec-box"><b>Bouquet Recipe:</b> ' + esc(summary) + "</div>" +
+            "</div>" +
+            '<div class="rec-actions">' +
+            '<a class="btn" href="' + sheetUrl + '" target="_blank" rel="noopener">💐 Open Bouquet Sheet ↗</a>' +
+            '<a class="btn sec" href="' + studioUrl + '" target="_blank" rel="noopener">🎨 Open in Studio ↗</a>' +
+            '<a class="btn sec" href="' + esc(o.shortUrl || sheetUrl) + '" target="_blank" rel="noopener">🔗 Short Link ↗</a>' +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("");
+    }
+
+    function renderLeads() {
+      var el = document.getElementById("panel-leads");
+      document.getElementById("countLeads").textContent = String(leadsData.length);
+      if (!leadsData.length) {
+        el.innerHTML =
+          '<div class="empty-state">' +
+          '<h3>No consultation or plan leads yet</h3>' +
+          '<p style="margin-top:6px">Leads submitted on <code>flowers/index.html</code> and <code>build-your-plan.html</code> are saved straight to Firebase and appear here immediately.</p>' +
+          "</div>";
+        return;
+      }
+      el.innerHTML = leadsData
+        .map(function (l) {
+          var contact = l.contact || l.email || "";
+          var isEmail = contact.indexOf("@") !== -1;
+          var digits = contact.replace(/\D+/g, "");
+          return (
+            '<article class="rec-card">' +
+            "<div>" +
+            '<div class="rec-badges">' +
+            '<span class="pill pink">📩 ' + esc(l.source || "Website Lead") + "</span>" +
+            (l.plan ? '<span class="pill plum">' + esc(l.plan) + "</span>" : "") +
+            '<span class="pill">' + esc(formatDate(l.submittedAt || l._createdAt)) + "</span>" +
+            "</div>" +
+            "<h3>" + esc(l.shop || l.name || "New Florist Lead") + "</h3>" +
+            '<div class="rec-meta">' +
+            "<div><b>Name:</b> " + esc(l.name || "—") + "</div>" +
+            "<div><b>Shop:</b> " + esc(l.shop || "—") + "</div>" +
+            "<div><b>Contact:</b> " + esc(contact || "—") + "</div>" +
+            (l.city ? "<div><b>City:</b> " + esc(l.city) + "</div>" : "") +
+            "</div>" +
+            (l.message ? '<div class="rec-box">' + esc(l.message) + "</div>" : "") +
+            "</div>" +
+            '<div class="rec-actions">' +
+            (isEmail
+              ? '<a class="btn" href="mailto:' + esc(contact) + '?subject=' + encodeURIComponent("Your Nebula Bouquet Builder — " + (l.shop || l.name || "")) + '">✉ Reply by Email</a>'
+              : "") +
+            (digits.length >= 8
+              ? '<a class="btn green" href="https://wa.me/' + digits + '" target="_blank" rel="noopener">💬 Message on WhatsApp ↗</a>'
+              : "") +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("");
+    }
+
+    function renderSetups() {
+      var el = document.getElementById("panel-setups");
+      document.getElementById("countSetups").textContent = String(setupsData.length);
+      if (!setupsData.length) {
+        el.innerHTML =
+          '<div class="empty-state">' +
+          '<h3>No shop setup submissions yet</h3>' +
+          '<p style="margin-top:6px">When a florist submits their prices, logo, and bouquet photos on <code>shop-setup.html</code>, their full setup appears here.</p>' +
+          "</div>";
+        return;
+      }
+      el.innerHTML = setupsData
+        .map(function (s) {
+          var planPrice = s.plan && s.plan.monthlyUsd ? "$" + s.plan.monthlyUsd + "/mo" : "$29/mo";
+          var inspectLink = "shop-setup.html?inspect=" + encodeURIComponent(s.designId || "");
+          var ca = s.customAssetRequests || {};
+          return (
+            '<article class="rec-card">' +
+            "<div>" +
+            '<div class="rec-badges">' +
+            '<span class="pill green">🏪 Shop Setup Submitted</span>' +
+            '<span class="pill plum">' + esc(planPrice) + " · " + esc((s.plan && s.plan.siteUrl) || "") + "</span>" +
+            '<span class="pill">' + esc(s.currency || "USD") + "</span>" +
+            "</div>" +
+            "<h3>" + esc(s.shopName || "Flower Shop") + " <span style=\"font-size:16px;color:var(--muted);font-weight:400\">(" + esc(s.ownerName || "") + ")</span></h3>" +
+            '<div class="rec-meta">' +
+            "<div><b>Phone/WhatsApp:</b> " + esc(s.phone || "—") + "</div>" +
+            "<div><b>Email:</b> " + esc(s.email || "—") + "</div>" +
+            "<div><b>Instagram:</b> " + esc(s.instagram || "—") + "</div>" +
+            "<div><b>City:</b> " + esc(s.city || "—") + "</div>" +
+            "</div>" +
+            (ca.wantsNewAssets
+              ? '<div class="rec-box"><b>✨ Requested Custom Assets:</b> ' +
+                esc((ca.categories || []).join(", ")) +
+                (ca.notes ? "\nNotes: " + esc(ca.notes) : "") +
+                "</div>"
+              : "") +
+            "</div>" +
+            '<div class="rec-actions">' +
+            '<a class="btn" href="' + inspectLink + '" target="_blank" rel="noopener">🔍 Inspect &amp; Download Photos ↗</a>' +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("");
+    }
+
+    async function loadAllAdminData() {
+      var syncEl = document.getElementById("syncStatus");
+      syncEl.textContent = "Syncing with Firebase Realtime Database…";
+
+      var secret = localStorage.getItem("nebula_fb_secret") || "";
+      if (secret) document.getElementById("fbSecretInput").value = secret;
+
+      var results = await Promise.all([
+        fetchSlots("LFE_ORDER_SLOT_", 60),
+        fetchSlots("NEB_LEADS_SLOT_", 60),
+        fetchSlots("NEB_SETUP_SLOT_", 60),
+        fetchRawRequestsWithSecret(secret)
+      ]);
+
+      var slotOrders = results[0];
+      var slotLeads = results[1];
+      var slotSetups = results[2];
+      var rawRequests = results[3];
+
+      // Merge rawRequests (if secret provided) with slotOrders & slotSetups
+      var seenOrderDesigns = new Set(slotOrders.map(function (o) { return o.designId; }));
+      rawRequests.forEach(function (req) {
+        if (String(req.customerName || "").indexOf("SHOP SETUP:") === 0) {
+          if (!slotSetups.some(function (s) { return s.designId === req.designId; })) {
+            slotSetups.push({
+              designId: req.designId,
+              shopName: req.customerName.replace("SHOP SETUP:", "").trim(),
+              ownerName: "",
+              phone: "Click Inspect to view",
+              email: "",
+              city: "",
+              currency: "USD",
+              plan: { monthlyUsd: req.method === "Delivery" ? 35 : 29, siteUrl: req.reference },
+              submittedAt: req.createdAt,
+              _createdAt: req.createdAt
+            });
+          }
+        } else if (!seenOrderDesigns.has(req.designId)) {
+          seenOrderDesigns.add(req.designId);
+          slotOrders.push(req);
+        }
+      });
+
+      ordersData = slotOrders.sort(function (a, b) { return (b._createdAt || 0) - (a._createdAt || 0); });
+      leadsData = slotLeads.sort(function (a, b) { return (b._createdAt || 0) - (a._createdAt || 0); });
+      setupsData = slotSetups.sort(function (a, b) { return (b._createdAt || 0) - (a._createdAt || 0); });
+
+      renderOrders();
+      renderLeads();
+      renderSetups();
+
+      syncEl.textContent = "✓ Live · Updated " + new Date().toLocaleTimeString();
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll(".tab-btn, .stat-card").forEach(function (el) {
+        el.classList.toggle("active", el.dataset.tab === tab);
+      });
+      document.getElementById("panel-orders").hidden = tab !== "orders";
+      document.getElementById("panel-leads").hidden = tab !== "leads";
+      document.getElementById("panel-setups").hidden = tab !== "setups";
+    }
+
+    document.querySelectorAll(".tab-btn, .stat-card").forEach(function (el) {
+      el.addEventListener("click", function () {
+        switchTab(el.dataset.tab);
+      });
+    });
+
+    document.getElementById("btnRefresh").addEventListener("click", loadAllAdminData);
+
+    document.getElementById("btnSaveSecret").addEventListener("click", function () {
+      var val = document.getElementById("fbSecretInput").value.trim();
+      if (val) localStorage.setItem("nebula_fb_secret", val);
+      else localStorage.removeItem("nebula_fb_secret");
+      loadAllAdminData();
+    });
+
+    document.getElementById("btnLookup").addEventListener("click", async function () {
+      var raw = document.getElementById("lookupInput").value.trim();
+      var match = raw.match(/([A-Za-z0-9_-]{22})/);
+      if (!match) {
+        alert("Please enter a valid 22-character ID or https://nebulastudio.site/b/#... link.");
+        return;
+      }
+      var id = match[1];
+      var r = await fetch(DB_BASE + "/designs/" + id + ".json", { credentials: "omit" });
+      if (!r.ok) {
+        alert("Could not find design/setup record with ID: " + id);
+        return;
+      }
+      var rec = await r.json();
+      if (!rec || !rec.code) return;
+      var decoded = fromBase64Url(rec.code);
+      if (decoded.indexOf('"nebulaShopConfig"') !== -1) {
+        window.open("shop-setup.html?inspect=" + id, "_blank");
+      } else {
+        window.open("shops/la-flor-eterna/order.html?d=" + id, "_blank");
+      }
+    });
+
+    loadAllAdminData();
+  })();
+  </script>
+</body>
+</html>

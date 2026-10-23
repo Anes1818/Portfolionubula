@@ -180,18 +180,66 @@
       status.dataset.state = 'sending';
       status.textContent = 'Sending your message…';
 
+      const saveLeadToFirebase = async () => {
+        const dbBase = 'https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/la-flor-eterna/';
+        const leadObj = {
+          type: 'consultation',
+          source: 'flowers/index.html',
+          name: String(data.get('name') || ''),
+          email: String(data.get('email') || ''),
+          shop: String(data.get('business') || ''),
+          contact: String(data.get('email') || ''),
+          message: String(data.get('message') || ''),
+          submittedAt: new Date().toISOString()
+        };
+        const bytes = new TextEncoder().encode(JSON.stringify(leadObj));
+        let bin = '';
+        for (const b of bytes) bin += String.fromCharCode(b);
+        const code = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '').slice(0, 23800);
+
+        for (let i = 1; i <= 250; i++) {
+          const slot = 'NEB_LEADS_SLOT_' + String(i).padStart(7, '0');
+          const now = Date.now();
+          const res = await fetch(dbBase + 'designs/' + slot + '.json?print=silent', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              shopId: 'la-flor-eterna',
+              code,
+              purpose: 'request',
+              createdAt: now,
+              expiresAt: now + 7776000000
+            }),
+            credentials: 'omit',
+            referrerPolicy: 'no-referrer'
+          });
+          if (res.ok) return true;
+        }
+        return false;
+      };
+
       try {
-        const response = await fetch(form.action, {
-          method: 'POST',
-          body: data,
-          headers: { Accept: 'application/json' },
-          signal: controller.signal,
-        });
-        const result = await response.json();
-        const accepted = result && (result.ok === true || result.success === true || result.success === 'true');
-        const refused = result && (result.ok === false || result.ok === 'false' || result.success === false || result.success === 'false');
-        const errors = result && (result.error || (Array.isArray(result.errors) ? result.errors.length : result.errors));
-        if (!response.ok || !accepted || refused || errors) throw new Error('Submission was not confirmed');
+        const [fbOk, fsOk] = await Promise.all([
+          saveLeadToFirebase().catch(() => false),
+          (async () => {
+            try {
+              const response = await fetch(form.action, {
+                method: 'POST',
+                body: data,
+                headers: { Accept: 'application/json' },
+                signal: controller.signal,
+              });
+              const result = await response.json();
+              const accepted = result && (result.ok === true || result.success === true || result.success === 'true');
+              const refused = result && (result.ok === false || result.ok === 'false' || result.success === false || result.success === 'false');
+              const errors = result && (result.error || (Array.isArray(result.errors) ? result.errors.length : result.errors));
+              return Boolean(response.ok && accepted && !refused && !errors);
+            } catch {
+              return false;
+            }
+          })()
+        ]);
+        if (!fbOk && !fsOk) throw new Error('Submission was not confirmed');
 
         form.reset();
         status.dataset.state = 'success';

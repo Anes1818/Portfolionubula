@@ -26,11 +26,20 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
       const u = new URL(req.url());
       if (req.method() === 'PUT') {
         firebaseSaved = true;
-        mockDb.set(u.pathname, req.postDataJSON());
-        await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+        const key = u.pathname;
+        if (mockDb.has(key)) {
+          // Simulate Firebase !data.exists() rule: existing slot returns 403 so slot finder advances!
+          await route.fulfill({ status: 403, contentType: 'application/json', body: JSON.stringify({ error: 'Permission denied' }) });
+        } else {
+          mockDb.set(key, req.postDataJSON());
+          await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+        }
       } else {
-        const stored = mockDb.get(u.pathname) || null;
-        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(stored) });
+        if (mockDb.has(u.pathname)) {
+          await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockDb.get(u.pathname)) });
+        } else {
+          await route.fulfill({ status: 403, contentType: 'application/json', body: JSON.stringify({ error: 'Permission denied' }) });
+        }
       }
     });
     await context.route('**/*formspree.io/**', async route => {
@@ -112,9 +121,25 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     const generatedJs = await page.locator('#generatedConfigPreview').textContent();
     const report = audit(loadShop(generatedJs), { live: true });
     assert.equal(report.ok, true, 'Generated window.NEBULA_SHOP config must pass check-shop.cjs --live: ' + report.errors.join('; '));
-    assert.deepEqual(errors, []);
 
-    console.log('PASS florist-onboarding.cjs: UI, images, EN/ES, custom assets, Firebase+Email submission, and valid NEBULA_SHOP output');
+    // 4. Test flowers/index.html Consultation Form -> Firebase -> Admin Dashboard
+    const baseOrigin = new URL(url).origin;
+    await page.goto(baseOrigin + '/flowers/index.html', { waitUntil: 'networkidle' });
+    await page.fill('#fname', 'Sophie Laurent');
+    await page.fill('#femail', 'sophie@kfleurs.fr');
+    await page.fill('#fbusiness', 'K Fleurs 971');
+    await page.fill('#fmessage', 'Bonjour, we want the bouquet builder in French and EUR.');
+    await page.click('#formBtn');
+    await page.waitForFunction(() => document.getElementById('formStatus')?.dataset.state === 'success');
+
+    // 5. Test admin.html displays both the Lead and the Shop Setup
+    await page.goto(baseOrigin + '/admin.html', { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.getElementById('countLeads')?.textContent === '1');
+    assert.equal(await page.locator('#countLeads').textContent(), '1', 'Admin dashboard shows consultation lead');
+    assert.equal(await page.locator('#countSetups').textContent(), '1', 'Admin dashboard shows shop setup submission');
+
+    assert.deepEqual(errors, []);
+    console.log('PASS florist-onboarding.cjs: UI, images, EN/ES, custom assets, consultation form, Admin Dashboard, and valid NEBULA_SHOP output');
   } finally {
     await browser.close();
   }

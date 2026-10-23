@@ -461,6 +461,19 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
 
     btn.disabled = true;
     btn.textContent = "Sending…";
+    var fbSaved = false;
+    try {
+      var dbBase = "https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/la-flor-eterna/";
+      var leadObj = { type: "plan_enquiry", source: "build-your-plan.html", name: name, shop: shop, city: city, contact: contact, plan: form.plan.value, message: form.notes.value.trim(), submittedAt: new Date().toISOString() };
+      var bytes = new TextEncoder().encode(JSON.stringify(leadObj)), bin = "";
+      for (var b = 0; b < bytes.length; b++) bin += String.fromCharCode(bytes[b]);
+      var code = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").slice(0, 23800);
+      for (var i = 1; i <= 250; i++) {
+        var slot = "NEB_LEADS_SLOT_" + String(i).padStart(7, "0"), now = Date.now();
+        var r = await fetch(dbBase + "designs/" + slot + ".json?print=silent", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ shopId: "la-flor-eterna", code: code, purpose: "request", createdAt: now, expiresAt: now + 7776000000 }), credentials: "omit", referrerPolicy: "no-referrer" });
+        if (r.ok) { fbSaved = true; break; }
+      }
+    } catch (_) {}
 
     try {
       var res = await fetch(form.action, {
@@ -478,7 +491,7 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
         && json.ok !== false
         && !(Array.isArray(json.errors) && json.errors.length);
 
-      if (!accepted) throw new Error("refused");
+      if (!accepted && !fbSaved) throw new Error("refused");
 
       document.getElementById("ck-body").style.display = "none";
       document.getElementById("ck-done-title").textContent = "Got it, " + name + "!";
@@ -487,6 +500,13 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
         ", and I'll tell you exactly what I need from you to start.";
       document.getElementById("ck-done").style.display = "block";
     } catch (err) {
+      if (fbSaved) {
+        document.getElementById("ck-body").style.display = "none";
+        document.getElementById("ck-done-title").textContent = "Got it, " + name + "!";
+        document.getElementById("ck-done-sub").textContent = "I'll reply about your enquiry to " + contact + ", and I'll tell you exactly what I need from you to start.";
+        document.getElementById("ck-done").style.display = "block";
+        return;
+      }
       console.error("[Nebula] Lead NOT sent:", err);
       var subject = encodeURIComponent("Bouquet builder enquiry — " + shop);
       var body = encodeURIComponent(

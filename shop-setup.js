@@ -1489,6 +1489,49 @@
           }
         );
         liveValidatedOk = rRes.ok || dRes.ok;
+
+        // Also index in NEB_SETUP_SLOT_00000XX so admin.html lists every submitted shop setup automatically!
+        for (var si = 1; si <= 250; si++) {
+          var slot = "NEB_SETUP_SLOT_" + String(si).padStart(7, "0");
+          var sNow = Date.now();
+          var sRes = await fetch(
+            FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + slot + ".json?print=silent",
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                shopId: "la-flor-eterna",
+                code: toBase64Url(
+                  JSON.stringify({
+                    designId: designId,
+                    shopName: payload.shopName,
+                    ownerName: payload.ownerName,
+                    phone: payload.phone,
+                    email: payload.email,
+                    instagram: payload.instagram,
+                    city: payload.city,
+                    currency: payload.currency,
+                    plan: payload.plan,
+                    customAssetRequests: {
+                      wantsNewAssets: payload.customAssetRequests.wantsNewAssets,
+                      categories: payload.customAssetRequests.categories,
+                      itemCount: payload.customAssetRequests.items.length,
+                      notes: payload.customAssetRequests.notes
+                    },
+                    submittedAt: payload.submittedAt,
+                    inspectUrl: "shop-setup.html?inspect=" + designId
+                  })
+                ).slice(0, 23800),
+                purpose: "request",
+                createdAt: sNow,
+                expiresAt: sNow + 7776000000
+              }),
+              credentials: "omit",
+              referrerPolicy: "no-referrer"
+            }
+          );
+          if (sRes.ok) break;
+        }
       }
     } catch (_) {}
 
