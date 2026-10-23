@@ -3,6 +3,18 @@
     ".read": false,
     ".write": false,
     "nebula": {
+      "leads": {
+        ".read": true,
+        "$id": {
+          ".write": "!data.exists() && newData.exists()"
+        }
+      },
+      "setups": {
+        ".read": true,
+        "$id": {
+          ".write": "!data.exists() && newData.exists()"
+        }
+      },
       "la-flor-eterna": {
         "designs": {
           "$id": {
@@ -30,8 +42,9 @@
           }
         },
         "requests": {
+          ".read": true,
           "$id": {
-            ".read": false,
+            ".read": true,
             ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('designId').val() === data.child('designId').val() && newData.child('customerName').val() === data.child('customerName').val() && newData.child('requestedDate').val() === data.child('requestedDate').val() && newData.child('method').val() === data.child('method').val() && newData.child('reference').val() === data.child('reference').val() && newData.child('code').val() === data.child('code').val() && newData.child('shortUrl').val() === data.child('shortUrl').val() && newData.child('status').val() === data.child('status').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
             ".validate": "newData.hasChildren([\"shopId\", \"designId\", \"customerName\", \"requestedDate\", \"method\", \"reference\", \"code\", \"shortUrl\", \"status\", \"createdAt\", \"expiresAt\"]) && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).exists() && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val() > now && newData.child('code').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('code').val() && newData.child('expiresAt').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val()",
             "shopId": {

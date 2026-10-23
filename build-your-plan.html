@@ -463,13 +463,24 @@ footer a{color:var(--accent-ink);text-decoration:none;font-weight:600}
     btn.textContent = "Sending…";
     var fbSaved = false;
     try {
-      var dbBase = "https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/la-flor-eterna/";
-      var leadObj = { type: "plan_enquiry", source: "build-your-plan.html", name: name, shop: shop, city: city, contact: contact, plan: form.plan.value, message: form.notes.value.trim(), submittedAt: new Date().toISOString() };
+      var dbRoot = "https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/";
+      var dbBase = dbRoot + "la-flor-eterna/";
+      var now = Date.now();
+      var reqId = "LEAD_" + now.toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+      var leadObj = { id: reqId, type: "plan_enquiry", source: "build-your-plan.html", name: name, shop: shop, city: city, contact: contact, plan: form.plan.value, message: form.notes.value.trim(), submittedAt: new Date(now).toISOString() };
+      try {
+        var rDirect = await fetch(dbRoot + "leads/" + reqId + ".json?print=silent", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(leadObj), credentials: "omit", referrerPolicy: "no-referrer" });
+        if (rDirect.ok) fbSaved = true;
+      } catch (_) {}
+      try {
+        var rReq = await fetch(dbBase + "requests/" + reqId + ".json?print=silent", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ shopId: "la-flor-eterna", reference: "LEAD-PLAN", summaryText: ("[PLAN] " + name + " | " + shop + " (" + city + ") | " + contact + " | " + (form.notes.value.trim() || "-")).slice(0, 3900), customerName: name.slice(0, 120), customerPhone: contact.slice(0, 80), createdAt: now }), credentials: "omit", referrerPolicy: "no-referrer" });
+        if (rReq.ok) fbSaved = true;
+      } catch (_) {}
       var bytes = new TextEncoder().encode(JSON.stringify(leadObj)), bin = "";
       for (var b = 0; b < bytes.length; b++) bin += String.fromCharCode(bytes[b]);
       var code = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").slice(0, 23800);
       for (var i = 1; i <= 250; i++) {
-        var slot = "NEB_LEADS_SLOT_" + String(i).padStart(7, "0"), now = Date.now();
+        var slot = "NEB_LEADS_SLOT_" + String(i).padStart(7, "0");
         var r = await fetch(dbBase + "designs/" + slot + ".json?print=silent", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ shopId: "la-flor-eterna", code: code, purpose: "request", createdAt: now, expiresAt: now + 7776000000 }), credentials: "omit", referrerPolicy: "no-referrer" });
         if (r.ok) { fbSaved = true; break; }
       }
