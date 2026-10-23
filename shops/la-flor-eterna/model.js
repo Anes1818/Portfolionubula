@@ -39,7 +39,7 @@ function price(s){
  }
  if(s.mode==='dome'||g.NebulaCustomization)for(const d of s.finishes.decorations||[])extraLines.push({id:d.id,quantity:1,totalCents:CONFIG.extrasCents[d.id]});
  if(s.mode==='heart'&&g.NebulaCustomization&&s.finishes.initial)extraLines.push({id:'floralInitial',quantity:1,totalCents:CONFIG.extrasCents.floralInitial});
- if(g.NebulaCustomization)extraLines.push(...NebulaCustomization.extras(s));
+ if(g.NebulaCustomization)extraLines.push(...NebulaCustomization.extras(s).filter(e=>!e.summaryOnly));
  /* Butterflies are charged per butterfly; the crown is one. */
  const bf=wings(s.finishes.butterfly);
  if(bf)extraLines.push({id:'butterfly',quantity:bf,totalCents:bf*CONFIG.extrasCents.butterfly});
@@ -159,7 +159,7 @@ function validateV4(raw){
  if(f.initial!==undefined&&(typeof f.initial!=='string'||!/^([A-Z])?$/.test(f.initial)))return null;
  if(f.initialScale!==undefined&&(!Number.isFinite(f.initialScale)||f.initialScale<.7||f.initialScale>1.3))return null;
  if(f.initialOffset!==undefined&&(!Number.isFinite(f.initialOffset)||Math.abs(f.initialOffset)>.35))return null;
- if(raw.mode!=='dome'&&((f.greeneryCount||0)>0||(f.initial&&(!g.NebulaCustomization||raw.mode==='classic'))))return null;
+ if(raw.mode!=='dome'&&(((f.greeneryCount||0)>0&&!g.NebulaCustomization)||(f.initial&&(!g.NebulaCustomization||raw.mode==='classic'))))return null;
  if(f.decorations!==undefined&&!NebulaDetails.valid(f.decorations))return null;
  if(raw.mode!=='dome'&&((f.fillerCount||0)>0||(!g.NebulaCustomization&&(f.decorations||[]).length)))return null;
  if(f.paper==='cocoa'&&raw.mode!=='dome')return null;

@@ -93,7 +93,7 @@ function renderStudio(){
 }
 function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera,moveTargets:moveTargets()});positionDelete();}});}
 /* Some catalogue entries only read correctly from one camera angle. */
-function offered(id){if(window.NebulaCustomization&&['white_flower_spray','babys_breath'].includes(id))return false;if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
+function offered(id){if(window.NebulaCustomization&&['white_flower_spray','babys_breath','eucalyptus','lily_bud'].includes(id))return false;if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
 function fillChoices(el,current,{empty=false,classic=false}={}){
  const ids=Object.keys(CAT).filter(id=>offered(id)&&(!classic||CAT[id].classic)),sig=lang+':'+classic+':'+empty+':'+st.mode;
  if(el.dataset.choiceSignature!==sig){el.replaceChildren();if(empty){const o=document.createElement('option');o.value='';o.textContent=t('emptySlot');el.append(o);}for(const id of ids){const o=document.createElement('option');o.value=id;o.textContent=name(id)+' · '+M.money(CAT[id].priceCents,lang);el.append(o);}el.dataset.choiceSignature=sig;}
@@ -556,6 +556,7 @@ function setMoveMode(on){
  render(false);
 }
 function tapMove(p){
+
  if(st.mode!=='classic'){
   const v=R.view(st,camera),scale=$('bouquet').getBoundingClientRect().width/720*v.scale;
   const target=moveTargets().map(n=>({...n,dist:Math.hypot(n.x-p.x,n.y-p.y)})).sort((a,b)=>a.dist-b.dist)[0];
@@ -566,7 +567,7 @@ function tapMove(p){
  if(result.ok){selected=null;selectedSlot=null;render(false);toast(t('moveDone'));}
 }
 function beginPointer(e){
- if(!isReady||e.button!==0||gesture)return;const p=point(e),detail=!panMode&&!brush?R.detailHit(sc,p):null,node=detail?null:R.hit(sc,p);hover=null;
+ if(!isReady||e.button!==0||gesture)return;const p=point(e),detail=!panMode&&!brush?R.detailHit(sc,p):null,filler=!detail&&!panMode&&!brush?window.NebulaFillerOptions?.hit(sc,p):null,node=detail||filler?null:R.hit(sc,p);hover=null;
  if(detail){selectedDetail=detail.detailId;selected=null;renderDetails();}else selectedDetail=null;
  /* A finger is coarser than a mouse: give touch more slack before a tap counts as a drag.
     Measured in real CSS pixels, not canvas units, so it does not change with preview size. */
@@ -574,7 +575,7 @@ function beginPointer(e){
  /* Classic: a bloom under the finger may be dragged, so hold the paint until we know
     whether this gesture is a tap or a drag. Dome/Heart keep instant brush strokes. */
  const holdPaint=!!brush&&st.mode==='classic'&&!!node;
- gesture={detailId:detail?.detailId,pointerId:e.pointerId,start:p,screenStart:canvasPoint(e),cameraBefore:{...camera},before:snap(),uid:node?.uid||null,moved:false,changed:false,touched:new Set(),pan:panMode,offset:detail?{x:p.x-detail.x,y:p.y-detail.y}:node?{x:p.x-node.x,y:p.y-node.y}:{x:0,y:0},painting:!!brush&&!holdPaint,pendingPaint:holdPaint,slop,rawStart:{x:e.clientX,y:e.clientY}};
+ gesture={fillerId:filler?.uid,fillerStart:filler?{x:filler.x,y:filler.y}:null,detailId:detail?.detailId,pointerId:e.pointerId,start:p,screenStart:canvasPoint(e),cameraBefore:{...camera},before:snap(),uid:node?.uid||null,moved:false,changed:false,touched:new Set(),pan:panMode,offset:detail?{x:p.x-detail.x,y:p.y-detail.y}:node?{x:p.x-node.x,y:p.y-node.y}:{x:0,y:0},painting:!!brush&&!holdPaint,pendingPaint:holdPaint,slop,rawStart:{x:e.clientX,y:e.clientY}};
  if(window.NebulaCustomization&&!panMode)camera.lockedView=R.view(st,camera);
  gesture.moveSelection=moveMode?selected:null;
  if(!panMode){if(gesture.painting)paintAt(p);else if(!brush&&!(moveMode&&selected)){selected=node?.uid||null;selectedSlot=node?.slot??null;}}
@@ -584,6 +585,7 @@ function movePointer(e){
  if(!isReady||!gesture||e.pointerId!==gesture.pointerId)return;const p=point(e);
  if(Math.hypot(e.clientX-gesture.rawStart.x,e.clientY-gesture.rawStart.y)>gesture.slop)gesture.moved=true;
  if(gesture.pan){const q=canvasPoint(e),lim=(camera.zoom-1)*300;camera.x=G.clamp(gesture.cameraBefore.x+q.x-gesture.screenStart.x,-lim,lim);camera.y=G.clamp(gesture.cameraBefore.y+q.y-gesture.screenStart.y,-lim,lim);scheduleCanvas();return;}
+ if(gesture.fillerId){if(gesture.moved){NebulaFillerOptions.move(st,gesture.fillerId,gesture.before,p.x-gesture.start.x,p.y-gesture.start.y);gesture.changed=true;scheduleCanvas();}return;}
  if(gesture.detailId){
   if(gesture.moved){const d=currentDetail(),f=window.NebulaCustomization?NebulaCustomization.detailFrame(st,sc.frame,d):sc.frame;
    d.x=G.clamp(+((p.x-gesture.offset.x-f.center.x)/f.radius).toFixed(4),-1,1);
@@ -602,6 +604,7 @@ function endPointer(e,canceled=false){
  if(!gesture||e.pointerId!==gesture.pointerId)return;const g=gesture;gesture=null;delete camera.lockedView;hover=null;try{$('bouquet').releasePointerCapture(e.pointerId);}catch(err){}
  if(canceled){st=JSON.parse(g.before);camera=g.cameraBefore;selected=null;render(false);return;}
  if(g.pan){render(false);return;}
+ if(g.fillerId){storeHistory(g.before);render();return;}
  if(g.detailId){storeHistory(g.before);render();return;}
  if(moveMode&&!g.moved&&g.moveSelection&&!g.pan){selected=g.moveSelection;tapMove(point(e));return;}
  /* A held paint that never became a drag was a tap after all: paint it now. */

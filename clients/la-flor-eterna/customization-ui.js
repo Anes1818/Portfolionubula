@@ -12,7 +12,7 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
  for(let i=0;i<4;i++){const b=el('button');b.type='button';b.dataset.breath=i;b.onclick=()=>edit(s=>{studio(s).breath=i;s.finishes.fillerCount=0;});$('breathLevels').append(b);}
  const row=el('div',null,'toggle-row'),label=el('span','whiteSprayHeading'),step=el('span',null,'stepper');row.append(label,step);
  for(const [id,delta] of [['whiteSprayLess',-1],['whiteSprayMore',1]]){const b=el('button',id);b.type='button';b.textContent=delta<0?'−':'+';b.setAttribute('aria-label',delta<0?'Fewer white flowering accents':'More white flowering accents');b.onclick=()=>edit(s=>{const o=studio(s);o.sprays=Math.max(0,Math.min(8,(o.sprays||0)+delta));});step.append(b);if(delta<0)step.append(el('output','whiteSprayCount'));}
- fillers.append(row,el('small','fillerCost','helper'));
+ fillers.append(row,el('small','fillerCost','helper'));g.NebulaFillerOptions?.buildControls(fillers);
  const migrate=el('button','convertLegacySprays','text-button');migrate.type='button';migrate.onclick=()=>edit(s=>{
   const o=studio(s),ids=s.items.filter(n=>n.id==='white_flower_spray').slice(0,8-(o.sprays||0)).map(n=>n.uid);o.sprays=(o.sprays||0)+ids.length;for(const id of ids)NebulaModel.remove(s,id);
  });fillers.append(migrate);
@@ -54,7 +54,8 @@ function render(s,lang,ready){build();if(!built)return;const o=s.finishes.studio
  for(const b of $('detailChoices').querySelectorAll('[data-detail]'))b.hidden=U.bowIds.includes(b.dataset.detail);
  $('simpleToys').querySelector('h3').textContent=text(s.mode==='classic'?'Accompanying toys & bouquet tie':'Toys & satin bows',s.mode==='classic'?'Peluches aparte y lazo del ramo':'Peluches y lazos',lang);$('simpleDragHint').textContent=s.mode==='classic'?text('Toys accompany the bouquet separately. Drag gifts in the area below; the satin bow ties the stems. Tap a toy or bow, then × to remove it.','Los peluches acompañan el ramo por separado. Arrástralos en la zona inferior; el lazo ata los tallos. Toca un peluche o lazo y después × para quitarlo.',lang):text('Add a detail, then drag it directly on the bouquet. Tap it, then × to remove it.','Añade un detalle y arrástralo sobre el ramo. Tócalo y después × para quitarlo.',lang);
  $('detailLayer').closest('label').hidden=s.mode==='classic';
- $('greeneryCount').closest('.toggle-row').hidden=s.mode!=='dome';
+ $('greeneryCount').closest('.toggle-row').hidden=false;
+ g.NebulaFillerOptions?.renderControls(s,lang,ready);
  $('convertLegacyPumpkin').hidden=!s.finishes.pumpkin;$('convertLegacyPumpkin').textContent=text('Make the existing pumpkin draggable','Activar arrastre de la calabaza existente',lang);
  const bow=s.finishes.decorations.find(d=>U.bowIds.includes(d.id));$('bowColorTitle').textContent=text('Satin bow','Lazo de satén',lang);
  const legacyBow=s.finishes.spookyBow?'satin_black':s.finishes.bow?'satin_cocoa':({blush:'satin_bow',burgundy:'satin_burgundy',sage:'satin_sage'})[s.finishes.ribbon];

@@ -16,15 +16,13 @@ function flowers(s,sc){if(!active(s))return;sc.nodes=sc.nodes.map(n=>{
  return {...n,url,w,h,d:Math.max(w,h)*.8,rot,z,flipX:n.x>360};
  });}
 function create(){const M=NebulaModel,s=M.empty();s.title='Pink Celebration';s.frames.classic=NebulaClassic.frame();
- Object.assign(s.finishes,{roseArtwork:'celebration-v1',paper:'custom',tint:'#d4a0b4',studio:{v:1,wrap:'blush-layered',breath:0,sprays:6},ribbon:'none'});
+ Object.assign(s.finishes,{roseArtwork:'celebration-v1',paper:'custom',tint:'#d4a0b4',studio:{v:1,wrap:'blush-layered',breath:0,sprays:4,buds:7},ribbon:'none',greeneryCount:7});
  const add=(id,points)=>points.forEach(([x,y])=>{const n=M.newItem(s,id);n.anchors.classic={x,y,manual:true};s.items.push(n);});
  add('rose_cream',[[271,306],[333,292],[399,307],[242,363],[241,310],[371,360],[435,354],[266,413],[333,413],[454,308],[444,458],[303,475],[369,474],[282,526],[400,531],[310,573]]);
  add('rose_pink',[[306,350],[402,415],[237,470],[348,531]]);
  add('lily',[[200,317],[354,254],[494,352],[490,455],[382,558]]);
- add('lily_bud',[[252,235],[426,218],[462,277],[201,407],[200,500],[515,503],[329,587]]);
- add('eucalyptus',[[306,235],[507,283],[166,354],[548,433],[183,517],[472,558],[273,591]]);
  s.finishes.decorations=[{id:'satin_bow',x:-.40,y:.13,scale:.82,rotation:-24,layer:'front'}];return s;}
 g.NebulaCelebration={active,assets,flowers,create};
-NebulaClassic.recipes.push({id:'pink-celebration',en:'Pink Celebration',es:'Celebración rosa',description:'Pink lilies and buds, ivory and blush roses, eucalyptus and layered pink paper.',count:39,preview:true});
+NebulaClassic.recipes.push({id:'pink-celebration',en:'Pink Celebration',es:'Celebración rosa',description:'Pink lilies and buds, ivory and blush roses, eucalyptus and layered pink paper.',count:25,preview:true});
 const previous=NebulaClassic.create;NebulaClassic.create=id=>id==='pink-celebration'?create():previous(id);
 })(window);
