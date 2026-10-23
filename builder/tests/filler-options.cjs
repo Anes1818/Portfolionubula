@@ -17,6 +17,15 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
  await p.evaluate(()=>NebulaApp.undo());assert.equal(await p.evaluate(()=>Object.keys(NebulaApp.state.finishes.studio.positions||{}).length),1);
  await p.locator('#resetFillerPositions').click();assert.equal(await p.evaluate(()=>Object.keys(NebulaApp.state.finishes.studio.positions||{}).length),0);
  await p.locator('#budLess').click();assert.equal(await p.evaluate(()=>NebulaApp.state.finishes.studio.buds),6);
+ for(const [key,counts] of Object.entries({buds:[0,3,7,10],greenery:[0,3,7,12]})){
+  for(let level=0;level<4;level++){
+   await p.locator('#'+key+'Density button').nth(level).click();
+   const state=await p.evaluate(key=>({count:key==='buds'?NebulaApp.state.finishes.studio.buds:NebulaApp.state.finishes.greeneryCount,items:NebulaApp.state.items,valid:!!NebulaLink.decode(NebulaLink.encode(NebulaApp.state))}),key);
+   assert.equal(state.count,counts[level]);assert.deepEqual(state.items,initial.items);assert.ok(state.valid);
+   assert.equal(await p.locator('#'+key+'Density button[aria-pressed="true"]').count(),1);
+  }
+ }
+ const stable=await p.evaluate(()=>{const s=NebulaApp.state;s.finishes.studio.buds=3;const a=NebulaRenderer.scene(s).layeredFlowers.filter(n=>n.uid.startsWith('bud-option'));s.finishes.studio.buds=7;const b=NebulaRenderer.scene(s).layeredFlowers.filter(n=>n.uid.startsWith('bud-option'));return a.every(n=>{const q=b.find(x=>x.uid===n.uid);return q&&q.x===n.x&&q.y===n.y&&q.rot===n.rot;});});assert.ok(stable,'increasing bud density preserves existing placements');
  for(const mode of ['dome','heart']){assert.ok(await p.evaluate(mode=>{const s=NebulaModel.defaultMode(mode);s.finishes.greeneryCount=3;s.finishes.studio={v:1,buds:2,sprays:2};return !!NebulaModel.validate(s)&&!!NebulaLink.decode(NebulaLink.encode(s));},mode));}
  assert.deepEqual(errors,[]);console.log('PASS filler-only options, real eucalyptus/white-spray pointer drags, locked buds, unchanged main flowers, saved offsets, undo/reset, toggles and all-mode links.');
 }finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

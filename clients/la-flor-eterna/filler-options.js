@@ -5,10 +5,21 @@ function validPositions(p){return p&&typeof p==='object'&&!Array.isArray(p)&&Obj
 function compose(s,sc,all){
  const o=s.finishes.studio||{},positions=o.positions||{},out=all.map(n=>{const a=positions[n.uid];return a?{...n,x:n.x+a[0],y:n.y+a[1],pocket:n.pocket?{...n.pocket,x:n.pocket.x+a[0],y:n.pocket.y+a[1]}:undefined}:{...n};});
  if(o.buds&&sc.nodes.length){
-  const {points}=NebulaInfill.pockets(sc),chosen=[];
-  for(const p of [...points].sort((a,b)=>b.quality-a.quality)){if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>sc.frame.unit*.58))chosen.push(p);if(chosen.length>=o.buds)break;}
-  chosen.forEach((p,i)=>{const near=sc.nodes.reduce((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)<Math.hypot(b.x-p.x,b.y-p.y)?a:b),h=sc.frame.unit*(1.22+(i%3)*.08),w=h*2/3,angle=Math.atan2(p.y-sc.frame.center.y,p.x-sc.frame.center.x)+Math.PI/2;
-   out.push({uid:'bud-option-'+i,url:'assets/client/celebration/lily-bud.png',x:p.x+Math.sin(angle)*h*.16,y:p.y-Math.cos(angle)*h*.16,w,h,d:w,rot:angle,bright:1,z:Math.max(...sc.nodes.map(n=>n.z??n.y))+5,softDetail:true});
+  const {points,flowers}=NebulaInfill.pockets(sc),chosen=[],unit=sc.frame.unit;
+  // A bud's crown belongs in a petal valley. Its short basal stem points back
+  // into the bouquet; upright bouquets never become a radial ring of spikes.
+  const candidates=points.map(p=>{
+   const angle=s.mode==='classic'?Math.max(-1.12,Math.min(1.12,(p.x-sc.frame.center.x)/unit*.42)):Math.atan2(p.y-sc.frame.center.y,p.x-sc.frame.center.x)+Math.PI/2;
+   const h=Math.min(unit*1.10,p.local*.96),w=h*2/3;
+   const nearLily=flowers.filter(n=>n.id==='lily').reduce((d,n)=>Math.min(d,Math.hypot(n.x-p.x,n.y-p.y)),unit*4);
+   const crowd=out.filter(n=>n.infillKind==='spray'||n.infillKind==='greenery').reduce((v,n)=>v+Math.max(0,1-Math.hypot(n.x-p.x,n.y-p.y)/(unit*.55)),0);
+   const core=flowers.reduce((v,n)=>v+Math.max(0,-NebulaInfill.clearance(p,n)/unit),0);
+   return {...p,h,w,angle,score:p.quality-core*3-crowd*.12+Math.max(0,1-nearLily/(unit*2))*.20};
+  }).sort((a,b)=>b.score-a.score||a.y-b.y||a.x-b.x);
+  for(const p of candidates){if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>unit*.58))chosen.push(p);if(chosen.length>=o.buds)break;}
+  chosen.forEach((p,i)=>{
+   // The crown is above the image centre; solve the centre from the gap anchor.
+   out.push({uid:'bud-option-'+i,url:'assets/client/celebration/lily-bud.png',x:p.x-Math.sin(p.angle)*p.h*.14,y:p.y+Math.cos(p.angle)*p.h*.14,w:p.w,h:p.h,d:p.w,rot:p.angle,bright:1,z:Math.max(...sc.nodes.map(n=>n.z??n.y))+5,softDetail:true});
   });
  }
  return out;
@@ -24,17 +35,29 @@ function hit(sc,p){
  }return null;
 }
 function move(s,id,before,dx,dy){if(!allowed.test(id))return;const old=JSON.parse(before).finishes.studio?.positions?.[id]||[0,0],o=s.finishes.studio||(s.finishes.studio={v:1});o.positions={...o.positions,[id]:[Math.max(-220,Math.min(220,Math.round(old[0]+dx))),Math.max(-220,Math.min(220,Math.round(old[1]+dy)))]};}
+const densities={buds:[0,3,7,10],greenery:[0,3,7,12]};
+function densityControls(host,key){
+ const group=document.createElement('div');group.id=key+'Density';group.className='custom-segments';
+ group.setAttribute('role','group');
+ densities[key].forEach((count,i)=>{const button=document.createElement('button');button.type='button';button.dataset.level=i;
+ button.onclick=()=>{const s=NebulaApp.state;if(key==='greenery')s.finishes.greeneryCount=count;else(s.finishes.studio||(s.finishes.studio={v:1})).buds=count;NebulaApp.setState(s);};group.append(button);});host.append(group);
+}
 function buildControls(host){
- const row=document.createElement('div');row.className='toggle-row';row.innerHTML='<span id="budOptionLabel"></span><span class="stepper"><button type="button" id="budLess">−</button><output id="budOptionCount"></output><button type="button" id="budMore">+</button></span>';host.append(row);
+ const row=document.createElement('div');row.className='toggle-row';row.innerHTML='<span id="budOptionLabel"></span><span class="stepper"><button type="button" id="budLess">âˆ’</button><output id="budOptionCount"></output><button type="button" id="budMore">+</button></span>';host.append(row);densityControls(host,'buds');
  for(const [id,delta]of [['budLess',-1],['budMore',1]])document.getElementById(id).onclick=()=>{const s=NebulaApp.state,o=s.finishes.studio||(s.finishes.studio={v:1});o.buds=Math.max(0,Math.min(10,(o.buds||0)+delta));NebulaApp.setState(s);};
  const reset=document.createElement('button');reset.id='resetFillerPositions';reset.type='button';reset.className='text-button';reset.onclick=()=>{const s=NebulaApp.state;if(s.finishes.studio)delete s.finishes.studio.positions;NebulaApp.setState(s);};host.append(reset);
  const hint=document.createElement('p');hint.id='fillerDragHint';hint.className='helper';host.append(hint);
 }
 function renderControls(s,lang,ready){const es=lang==='es',$=id=>document.getElementById(id),n=s.finishes.studio?.buds||0;
+ if(!$('greeneryDensity'))densityControls($('greeneryCount').closest('.toggle-row').parentElement,'greenery');
+ for(const key of ['buds','greenery']){const count=key==='buds'?n:s.finishes.greeneryCount||0,levels=densities[key],active=count===0?0:count<=3?1:count<=7?2:3;
+ const group=$(key+'Density');group.setAttribute('aria-label',key==='buds'?(es?'Cantidad de capullos':'Lily bud density'):(es?'Cantidad de eucalipto':'Eucalyptus density'));
+ for(const button of group.children){const i=+button.dataset.level;button.textContent=(es?['Ninguno','Ligero','Medio','Abundante']:['None','Light','Medium','Full'])[i];button.setAttribute('aria-pressed',String(i===active));button.disabled=!ready;}
+ }
  $('budOptionLabel').textContent=es?'Capullos de lirio':'Closed lily buds';$('budOptionCount').textContent=n;
  $('budLess').disabled=!ready||!n;$('budMore').disabled=!ready||n>=10;
- $('budLess').setAttribute('aria-label',es?'Menos capullos':'Fewer lily buds');$('budMore').setAttribute('aria-label',es?'Más capullos':'More lily buds');
- $('fillerDragHint').textContent=es?'Arrastra el eucalipto y las ramas blancas entre las flores. Los capullos se colocan automáticamente.':'Drag eucalyptus and white accents between the flowers. Closed lily buds are placed automatically.';
+ $('budLess').setAttribute('aria-label',es?'Menos capullos':'Fewer lily buds');$('budMore').setAttribute('aria-label',es?'MÃ¡s capullos':'More lily buds');
+ $('fillerDragHint').textContent=es?'Arrastra el eucalipto y las ramas blancas entre las flores. Los capullos se colocan automÃ¡ticamente.':'Drag eucalyptus and white accents between the flowers. Closed lily buds are placed automatically.';
  $('resetFillerPositions').textContent=es?'Restablecer posiciones del relleno':'Reset filler positions';$('resetFillerPositions').disabled=!ready||!Object.keys(s.finishes.studio?.positions||{}).length;
 }
 document.addEventListener('DOMContentLoaded',()=>{NebulaI18n.en.lily_bud='Closed lily buds';NebulaI18n.es.lily_bud='Capullos de lirio';});
