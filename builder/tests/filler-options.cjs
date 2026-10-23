@@ -17,7 +17,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
  await p.evaluate(()=>NebulaApp.undo());assert.equal(await p.evaluate(()=>Object.keys(NebulaApp.state.finishes.studio.positions||{}).length),1);
  await p.locator('#resetFillerPositions').click();assert.equal(await p.evaluate(()=>Object.keys(NebulaApp.state.finishes.studio.positions||{}).length),0);
  await p.locator('#budLess').click();assert.equal(await p.evaluate(()=>NebulaApp.state.finishes.studio.buds),6);
- for(const [key,counts] of Object.entries({buds:[0,3,7,10],greenery:[0,3,7,12]})){
+ assert.equal(await p.locator('#budsDensity').count(),0,'buds use quantity only');
+ assert.equal(await p.locator('#budsDensity').count(),0,'buds use quantity only');
+ for(const [key,counts] of Object.entries({greenery:[0,3,7,12]})){
   for(let level=0;level<4;level++){
    await p.locator('#'+key+'Density button').nth(level).click();
    const state=await p.evaluate(key=>({count:key==='buds'?NebulaApp.state.finishes.studio.buds:NebulaApp.state.finishes.greeneryCount,items:NebulaApp.state.items,valid:!!NebulaLink.decode(NebulaLink.encode(NebulaApp.state))}),key);

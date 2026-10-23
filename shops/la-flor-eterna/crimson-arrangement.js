@@ -3,16 +3,23 @@
 const root='assets/client/crimson-velvet/';
 const wrap={url:root+'smoke-wrap.png',width:1122,height:1402};
 const rose={url:root+'rose-crimson.png',width:1024,height:1024};
+// One current red-rose photograph throughout the picker and all bouquet modes.
+// Preserve the existing item ID so saved designs, quantities and prices survive.
+Object.assign(g.NEBULA_META.flowers.rose_red,{
+ head:rose.url,headWidth:1024,headHeight:1024,heads:[rose.url],
+ classicBloom:rose.url,classicBlooms:[rose.url],bloomWidth:1024,bloomHeight:1024,
+ domeHeads:[rose.url],domeEdgeHeads:[],domeStyle:'natural',romanceHeads:[rose.url,rose.url]
+});
 const active=s=>s?.mode==='classic'&&s.finishes.roseArtwork==='crimson-classic-v1';
 function assets(s){return active(s)&&s.items.some(n=>n.id==='rose_red')?[rose.url]:[];}
 function flowers(s,sc){
  if(!active(s))return;
  sc.nodes=sc.nodes.map(n=>{
   if(n.id!=='rose_red')return n;
-  const k=Number(n.uid.slice(1)),edge=Math.abs(n.x-360)>125;
-  // Back and side cups retain the oblique photo; open cups face the viewer.
-  const m=g.NEBULA_META.flowers.rose_red,useCup=edge||n.y<235,w=112+(k%3-1)*5;
-  return {...n,url:useCup?m.classicBloom:rose.url,w,h:useCup?w*m.bloomHeight/m.bloomWidth:w*rose.height/rose.width,d:w,flipX:n.x>360,rot:(n.x-360)/1600+Math.sin(k*2.4)*.10,z:n.y};
+  const k=Number(n.uid.slice(1));
+  // Keep the authored arrangement, using the same current rose throughout.
+  const w=112+(k%3-1)*5;
+  return {...n,url:rose.url,w,h:w*rose.height/rose.width,d:w,flipX:n.x>360,rot:(n.x-360)/1600+Math.sin(k*2.4)*.10,z:n.y};
  });
 }
 function paper(s,f){

@@ -35,7 +35,7 @@ function hit(sc,p){
  }return null;
 }
 function move(s,id,before,dx,dy){if(!allowed.test(id))return;const old=JSON.parse(before).finishes.studio?.positions?.[id]||[0,0],o=s.finishes.studio||(s.finishes.studio={v:1});o.positions={...o.positions,[id]:[Math.max(-220,Math.min(220,Math.round(old[0]+dx))),Math.max(-220,Math.min(220,Math.round(old[1]+dy)))]};}
-const densities={buds:[0,3,7,10],greenery:[0,3,7,12]};
+const densities={greenery:[0,3,7,12]};
 function densityControls(host,key){
  const group=document.createElement('div');group.id=key+'Density';group.className='custom-segments';
  group.setAttribute('role','group');
@@ -43,14 +43,14 @@ function densityControls(host,key){
  button.onclick=()=>{const s=NebulaApp.state;if(key==='greenery')s.finishes.greeneryCount=count;else(s.finishes.studio||(s.finishes.studio={v:1})).buds=count;NebulaApp.setState(s);};group.append(button);});host.append(group);
 }
 function buildControls(host){
- const row=document.createElement('div');row.className='toggle-row';row.innerHTML='<span id="budOptionLabel"></span><span class="stepper"><button type="button" id="budLess">âˆ’</button><output id="budOptionCount"></output><button type="button" id="budMore">+</button></span>';host.append(row);densityControls(host,'buds');
+ const row=document.createElement('div');row.className='toggle-row';row.innerHTML='<span id="budOptionLabel"></span><span class="stepper"><button type="button" id="budLess">âˆ’</button><output id="budOptionCount"></output><button type="button" id="budMore">+</button></span>';host.append(row);
  for(const [id,delta]of [['budLess',-1],['budMore',1]])document.getElementById(id).onclick=()=>{const s=NebulaApp.state,o=s.finishes.studio||(s.finishes.studio={v:1});o.buds=Math.max(0,Math.min(10,(o.buds||0)+delta));NebulaApp.setState(s);};
  const reset=document.createElement('button');reset.id='resetFillerPositions';reset.type='button';reset.className='text-button';reset.onclick=()=>{const s=NebulaApp.state;if(s.finishes.studio)delete s.finishes.studio.positions;NebulaApp.setState(s);};host.append(reset);
  const hint=document.createElement('p');hint.id='fillerDragHint';hint.className='helper';host.append(hint);
 }
 function renderControls(s,lang,ready){const es=lang==='es',$=id=>document.getElementById(id),n=s.finishes.studio?.buds||0;
  if(!$('greeneryDensity'))densityControls($('greeneryCount').closest('.toggle-row').parentElement,'greenery');
- for(const key of ['buds','greenery']){const count=key==='buds'?n:s.finishes.greeneryCount||0,levels=densities[key],active=count===0?0:count<=3?1:count<=7?2:3;
+ for(const key of ['greenery']){const count=key==='buds'?n:s.finishes.greeneryCount||0,levels=densities[key],active=count===0?0:count<=3?1:count<=7?2:3;
  const group=$(key+'Density');group.setAttribute('aria-label',key==='buds'?(es?'Cantidad de capullos':'Lily bud density'):(es?'Cantidad de eucalipto':'Eucalyptus density'));
  for(const button of group.children){const i=+button.dataset.level;button.textContent=(es?['Ninguno','Ligero','Medio','Abundante']:['None','Light','Medium','Full'])[i];button.setAttribute('aria-pressed',String(i===active));button.disabled=!ready;}
  }
