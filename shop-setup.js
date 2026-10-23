@@ -2107,6 +2107,23 @@
     });
   }
 
+  function checkClientPrefill() {
+    var params = new URLSearchParams(window.location.search);
+    var client = (params.get("client") || params.get("shop") || "").toLowerCase();
+    if (client === "la-flor-eterna" || client === "lafloreterna") {
+      document.getElementById("shopName").value = "La Flor Eterna";
+      document.getElementById("ownerName").value = "Maritza Gomez";
+      document.getElementById("orderChannel").value = "sms";
+      document.getElementById("shopPhone").value = "+1 310 872 9856";
+      document.getElementById("shopInstagram").value = "@laflor_eterna";
+      document.getElementById("shopCity").value = "Los Angeles, CA";
+      var roseThemeBtn = document.querySelector('.theme-swatch-btn[data-theme="rose"]');
+      if (roseThemeBtn) roseThemeBtn.click();
+      updateSlugPreview();
+      updateLiveSampleCalculator();
+    }
+  }
+
   /* -----------------------------------------------------------------------
      12. INITIALIZE
      ----------------------------------------------------------------------- */
@@ -2118,5 +2135,6 @@
   updateSlugPreview();
   updateLiveSampleCalculator();
   initEvents();
+  checkClientPrefill();
   checkOwnerInspectMode();
 })();
