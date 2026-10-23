@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f5ef">
+  <title>Florist Studio Setup &amp; Price Configuration | Nebula Sites Studio</title>
+  <meta name="description" content="Configure your flower shop's Nebula Bouquet Builder in minutes. Set your stem prices, upload your logo and 4 free signature bouquets, request custom toys or flowers, and choose your $29 or $35 monthly plan.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=DM+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shop-setup.css">
+  <script src="b/config.js" defer></script>
+  <script src="shop-setup.js" defer></script>
+</head>
+<body>
+
+  <!-- ======================= STICKY HEADER ======================= -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="flowers/index.html" aria-label="Nebula home">
+        <span class="brand-flower" aria-hidden="true">✳</span>nebula<span class="wordmark-dot">.</span>
+        <span class="wordmark-sub" data-i18n="headerSub">Florist Studio Setup</span>
+      </a>
+
+      <nav class="step-pills" aria-label="Setup steps">
+        <a class="step-pill" href="#step-identity" data-i18n="navStep1">1. Shop &amp; Logo</a>
+        <a class="step-pill" href="#step-flowers" data-i18n="navStep2">2. Flower Prices</a>
+        <a class="step-pill" href="#step-extras" data-i18n="navStep3">3. Toys &amp; New Assets</a>
+        <a class="step-pill" href="#step-plan" data-i18n="navStep4">4. Bouquets &amp; Plan</a>
+      </nav>
+
+      <div class="header-controls">
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" data-lang="es">ES</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ======================= OWNER INSPECTOR BANNER ======================= -->
+    <aside id="inspectBanner" class="inspect-banner" hidden>
+      <div>
+        <strong id="inspectTitle">Studio Owner Inspector — Loaded Client Submission</strong>
+        <div id="inspectMeta" style="font-size:12.5px;opacity:0.9;margin-top:2px"></div>
+      </div>
+      <div class="inspect-actions">
+        <button type="button" id="inspectDownloadConfig" class="action-btn secondary">⬇ Download shop-config.js</button>
+        <button type="button" id="inspectDownloadJson" class="action-btn secondary">⬇ Download Full JSON + Assets</button>
+      </div>
+    </aside>
+
+    <!-- ======================= HERO ======================= -->
+    <section class="setup-hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span data-i18n="heroEyebrow">Florist Onboarding · Takes 4 Minutes</span>
+          </div>
+          <h1 data-i18n-html="heroTitle">Your flowers.<br>Your prices.<br><em>Your own studio.</em></h1>
+          <p class="hero-lead" data-i18n="heroLead">
+            We already filled in standard florist market prices below so you don’t have to start from scratch. Simply adjust the flowers you want to change, turn off anything you don’t carry, upload your logo, and we’ll build your shop’s version.
+          </p>
+          <div class="hero-badges">
+            <span class="hero-badge"><b>✓</b> <span data-i18n="badgePreFilled">Pre-filled smart prices</span></span>
+            <span class="hero-badge"><b>✓</b> <span data-i18n="badgeFreeBouquets">4 custom bouquets included FREE</span></span>
+            <span class="hero-badge"><b>✓</b> <span data-i18n="badgePayAfter">Pay $0 today — only after your studio is live</span></span>
+          </div>
+        </div>
+
+        <aside class="hero-promise-card">
+          <span class="card-tag" data-i18n="promiseTag">Included with your setup</span>
+          <h2 data-i18n="promiseTitle">Fair, simple &amp; built for florists</h2>
+          <ul class="promise-list">
+            <li><span class="tick">✓</span><span data-i18n-html="promise1"><b>Your branding &amp; prices:</b> Your logo, shop name, WhatsApp/SMS number, and exact stem &amp; wrapping prices.</span></li>
+            <li><span class="tick">✓</span><span data-i18n-html="promise2"><b>4 custom signature bouquets FREE:</b> Send us 4 photos of your best-selling bouquets — we build them into your studio for free, plus free seasonal refreshes.</span></li>
+            <li><span class="tick">✓</span><span data-i18n-html="promise3"><b>Want new toys or flowers?</b> Tell us in Step 4 if you want custom plush toys, flowers, or wraps added.</span></li>
+            <li><span class="tick">✓</span><span data-i18n-html="promise4"><b>Choose your link:</b> <b>$29/mo</b> on <code>nebulastudio.site/your-shop</code> or <b>$35/mo</b> with your own custom <code>.com</code> domain.</span></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <form id="onboardingForm" novalidate>
+
+      <!-- ======================= STEP 1: SHOP IDENTITY & BRANDING ======================= -->
+      <section class="setup-step" id="step-identity">
+        <div class="step-header">
+          <div>
+            <div class="step-kicker"><span class="step-num">01</span> <span data-i18n="step1Kicker">Shop Identity &amp; Branding</span></div>
+            <h2 data-i18n="step1Title">Tell us about your flower shop</h2>
+            <p data-i18n="step1Sub">Your logo, shop name, and phone number appear on your studio and receive customer bouquet requests.</p>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label class="field-label" for="shopName"><span data-i18n="lblShopName">Flower Shop Name *</span></label>
+              <input class="text-input" id="shopName" name="shopName" type="text" placeholder="e.g. La Flor Eterna" required>
+              <div class="url-preview-bar">
+                <span data-i18n="lblYourLink">Your studio link preview:</span>
+                <code id="liveSlugPreview">nebulastudio.site/your-flower-shop</code>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="ownerName">
+                <span data-i18n="lblOwnerName">Your Name / Florist Byline *</span>
+                <span class="opt" data-i18n="lblOwnerHint">e.g. By Maritza Gomez</span>
+              </label>
+              <input class="text-input" id="ownerName" name="ownerName" type="text" placeholder="e.g. Maritza Gomez" required>
+              <span class="field-hint" data-i18n="hintOwner">Shown as a warm signature under your shop title and for our setup communication.</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="orderChannel"><span data-i18n="lblChannel">How do you want to receive bouquet orders? *</span></label>
+              <select class="select-input" id="orderChannel" name="orderChannel">
+                <option value="whatsapp" data-i18n="optWhatsapp">WhatsApp Message (Recommended)</option>
+                <option value="sms" data-i18n="optSms">SMS Text Message (iMessage / Android Text)</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="shopPhone">
+                <span data-i18n="lblPhone">WhatsApp / Order Phone Number *</span>
+                <span class="opt" data-i18n="lblPhoneHint">With country/area code</span>
+              </label>
+              <input class="text-input" id="shopPhone" name="shopPhone" type="tel" placeholder="e.g. +1 (310) 872-9856" required>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="shopEmail"><span data-i18n="lblEmail">Your Email Address *</span></label>
+              <input class="text-input" id="shopEmail" name="shopEmail" type="email" placeholder="you@yourflowershop.com" required>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="shopInstagram">
+                <span data-i18n="lblInsta">Instagram Handle</span>
+                <span class="opt" data-i18n="lblOptional">(optional)</span>
+              </label>
+              <input class="text-input" id="shopInstagram" name="shopInstagram" type="text" placeholder="@yourflowershop">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="shopCity"><span data-i18n="lblCity">City &amp; State / Country *</span></label>
+              <input class="text-input" id="shopCity" name="shopCity" type="text" placeholder="e.g. Los Angeles, CA" required>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="shopCurrency"><span data-i18n="lblCurrency">Shop Currency *</span></label>
+              <select class="select-input" id="shopCurrency" name="shopCurrency">
+                <option value="USD">USD ($) — US Dollar</option>
+                <option value="CAD">CAD ($) — Canadian Dollar</option>
+                <option value="EUR">EUR (€) — Euro</option>
+                <option value="GBP">GBP (£) — British Pound</option>
+                <option value="MXN">MXN ($) — Peso Mexicano</option>
+                <option value="COP">COP ($) — Peso Colombiano</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="brand-row">
+            <!-- Logo Upload -->
+            <div>
+              <span class="field-label" style="margin-bottom:8px" data-i18n="lblLogoUpload">Shop Logo (PNG, JPG or WebP)</span>
+              <label class="upload-zone" for="logoInput">
+                <div class="logo-preview-circle" id="logoPreviewBox">
+                  <span id="logoInitials">✳</span>
+                </div>
+                <div class="upload-meta">
+                  <h4 id="logoFileName" data-i18n="lblLogoClick">Click to upload your shop logo</h4>
+                  <p data-i18n="lblLogoSub">Appears in your studio header &amp; order sheet. Don’t have it handy? You can send it later on WhatsApp.</p>
+                </div>
+                <input id="logoInput" type="file" accept="image/*" hidden>
+              </label>
+            </div>
+
+            <!-- Theme Palette -->
+            <div>
+              <span class="field-label" data-i18n="lblTheme">Studio Color Atmosphere</span>
+              <p class="field-hint" data-i18n="lblThemeSub">Pick the color mood that best matches your flower shop:</p>
+              <div class="theme-swatches" id="themePicker">
+                <button type="button" class="theme-swatch-btn active" data-theme="plum" data-primary="#432d3f" data-soft="#efe5e3">
+                  <span class="swatch-dot" style="background:linear-gradient(135deg,#432d3f 50%,#efe5e3 50%)"></span>
+                  <span>Nebula Plum</span>
+                </button>
+                <button type="button" class="theme-swatch-btn" data-theme="rose" data-primary="#76394E" data-soft="#F8E8ED">
+                  <span class="swatch-dot" style="background:linear-gradient(135deg,#76394E 50%,#F8E8ED 50%)"></span>
+                  <span>Romantic Rose</span>
+                </button>
+                <button type="button" class="theme-swatch-btn" data-theme="sage" data-primary="#3d5a47" data-soft="#e7efe9">
+                  <span class="swatch-dot" style="background:linear-gradient(135deg,#3d5a47 50%,#e7efe9 50%)"></span>
+                  <span>Botanical Sage</span>
+                </button>
+                <button type="button" class="theme-swatch-btn" data-theme="espresso" data-primary="#4a3525" data-soft="#f3ebe2">
+                  <span class="swatch-dot" style="background:linear-gradient(135deg,#4a3525 50%,#f3ebe2 50%)"></span>
+                  <span>Warm Latte</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= STEP 2: BASE WRAPPING & ARRANGEMENT LABOR ======================= -->
+      <section class="setup-step" id="step-labor">
+        <div class="step-header">
+          <div>
+            <div class="step-kicker"><span class="step-num">02</span> <span data-i18n="step2Kicker">Base Wrapping &amp; Arrangement Labor</span></div>
+            <h2 data-i18n="step2Title">Wrapping &amp; bouquet style fees</h2>
+            <p data-i18n="step2Sub">Every non-empty bouquet starts with your Base Wrapping fee plus the labor fee for the bouquet shape the customer chooses.</p>
+          </div>
+        </div>
+
+        <div class="labor-grid">
+          <!-- Base Wrapping -->
+          <div class="labor-card">
+            <div>
+              <div class="labor-card-top">
+                <h3 data-i18n="baseTitle">Base Preparation &amp; Wrapping</h3>
+              </div>
+              <p data-i18n="baseDesc">Added once to every bouquet (includes wrapping paper, water tube/hydration, care card &amp; tissue).</p>
+            </div>
+            <div class="price-control">
+              <button type="button" class="step-btn" data-step="-1" data-target="basePrice">−</button>
+              <span class="currency-prefix">$</span>
+              <input type="number" id="basePrice" class="price-input" value="25.00" min="0" step="0.50">
+              <span class="unit-suffix" data-i18n="perBouquet">/ bouquet</span>
+              <button type="button" class="step-btn" data-step="1" data-target="basePrice">+</button>
+            </div>
+          </div>
+
+          <!-- Classic Mode -->
+          <div class="labor-card" id="modeCard-classic">
+            <div>
+              <div class="labor-card-top">
+                <h3 data-i18n="laborClassicTitle">Classic Hand-Tied</h3>
+                <label class="toggle-pill">
+                  <input type="checkbox" id="modeToggle-classic" checked>
+                  <span class="toggle-track"></span>
+                  <span class="toggle-state-text" data-i18n="offered">Offered</span>
+                </label>
+              </div>
+              <p data-i18n="laborClassicDesc">Layered front-facing hand-tied wrap (Ivory, Kraft, Cocoa or Black paper).</p>
+            </div>
+            <div class="price-control">
+              <button type="button" class="step-btn" data-step="-1" data-target="laborClassic">−</button>
+              <span class="currency-prefix">$</span>
+              <input type="number" id="laborClassic" class="price-input" value="10.00" min="0" step="0.50">
+              <span class="unit-suffix" data-i18n="laborFee">labor</span>
+              <button type="button" class="step-btn" data-step="1" data-target="laborClassic">+</button>
+            </div>
+          </div>
+
+          <!-- Dome Mode -->
+          <div class="labor-card" id="modeCard-dome">
+            <div>
+              <div class="labor-card-top">
+                <h3 data-i18n="laborDomeTitle">Round Dome / Buchón</h3>
+                <label class="toggle-pill">
+                  <input type="checkbox" id="modeToggle-dome" checked>
+                  <span class="toggle-track"></span>
+                  <span class="toggle-state-text" data-i18n="offered">Offered</span>
+                </label>
+              </div>
+              <p data-i18n="laborDomeDesc">Overhead sculpted round dome bouquet with ruffled paper collar.</p>
+            </div>
+            <div class="price-control">
+              <button type="button" class="step-btn" data-step="-1" data-target="laborDome">−</button>
+              <span class="currency-prefix">$</span>
+              <input type="number" id="laborDome" class="price-input" value="10.00" min="0" step="0.50">
+              <span class="unit-suffix" data-i18n="laborFee">labor</span>
+              <button type="button" class="step-btn" data-step="1" data-target="laborDome">+</button>
+            </div>
+          </div>
+
+          <!-- Heart Mode -->
+          <div class="labor-card" id="modeCard-heart">
+            <div>
+              <div class="labor-card-top">
+                <h3 data-i18n="laborHeartTitle">Heart Silhouette</h3>
+                <label class="toggle-pill">
+                  <input type="checkbox" id="modeToggle-heart" checked>
+                  <span class="toggle-track"></span>
+                  <span class="toggle-state-text" data-i18n="offered">Offered</span>
+                </label>
+              </div>
+              <p data-i18n="laborHeartDesc">Romantic sculpted heart-shaped rose &amp; floral arrangement.</p>
+            </div>
+            <div class="price-control">
+              <button type="button" class="step-btn" data-step="-1" data-target="laborHeart">−</button>
+              <span class="currency-prefix">$</span>
+              <input type="number" id="laborHeart" class="price-input" value="15.00" min="0" step="0.50">
+              <span class="unit-suffix" data-i18n="laborFee">labor</span>
+              <button type="button" class="step-btn" data-step="1" data-target="laborHeart">+</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= STEP 3: VISUAL FLOWER & GREENERY CATALOG ======================= -->
+      <section class="setup-step" id="step-flowers">
+        <div class="step-header">
+          <div>
+            <div class="step-kicker"><span class="step-num">03</span> <span data-i18n="step3Kicker">Visual Flower &amp; Stem Pricing</span></div>
+            <h2 data-i18n="step3Title">Your price per stem (grouped for speed)</h2>
+            <p data-i18n="step3Sub">Set one price per flower family, or click “+ Customize individual colors” if a specific color (like Black Roses or Strawberries) costs more. Toggle off any flower you don’t carry.</p>
+          </div>
+          <div class="step-quick-actions">
+            <button type="button" class="chip-btn" id="btnResetDefaults" data-i18n="btnResetDefaults">↺ Reset to Standard Defaults</button>
+            <button type="button" class="chip-btn" id="btnAdjustMinus" data-i18n="btnAdjustMinus">−10% All Stems</button>
+            <button type="button" class="chip-btn" id="btnAdjustPlus" data-i18n="btnAdjustPlus">+10% All Stems</button>
+          </div>
+        </div>
+
+        <!-- Rendered dynamically by shop-setup.js from the 8 visual families -->
+        <div class="flower-family-grid" id="flowerFamiliesContainer"></div>
+      </section>
+
+      <!-- ======================= STEP 4: ADD-ONS, TOYS & CUSTOM ASSET REQUESTS ======================= -->
+      <section class="setup-step" id="step-extras">
+        <div class="step-header">
+          <div>
+            <div class="step-kicker"><span class="step-num">04</span> <span data-i18n="step4Kicker">Plush Toys, Ribbons, Crowns &amp; New Assets</span></div>
+            <h2 data-i18n="step4Title">Finishing touches &amp; plush toys</h2>
+            <p data-i18n="step4Sub">Toggle off any accessory you don’t keep in stock. Set $0.00 if an item (like a ribbon or dedication sash) is included free with the bouquet.</p>
+          </div>
+        </div>
+
+        <!-- Rendered dynamically by shop-setup.js with real studio images -->
+        <div class="extras-grid" id="extrasContainer"></div>
+
+        <!-- 🌟 SPECIAL SECTION: DO YOU WANT TO ADD NEW CUSTOM ASSETS? 🌟 -->
+        <div class="custom-assets-box" id="customAssetsSection">
+          <span class="custom-assets-badge">✨ <span data-i18n="customAssetBadge">Custom Studio Additions</span></span>
+          <h3 data-i18n="customAssetTitle">Do you want to add some new assets? (Like new plush toys, new flowers, custom wraps, etc.)</h3>
+          <p data-i18n="customAssetDesc">
+            Does your flower shop sell special plush toys (Teddy bears, Stitch, Graduation bears), unique flowers (Orchids, Peonies, Blue Roses), or your own branded wrapping paper &amp; boxes? Select what you’d like to add and list them below!
+          </p>
+
+          <div class="asset-category-chips" role="group" aria-label="Custom asset categories">
+            <button type="button" class="cat-chip" data-cat="New Plush Toys" aria-pressed="false">🧸 <span data-i18n="catChipToys">+ New Plush Toys</span></button>
+            <button type="button" class="cat-chip" data-cat="New Flowers / Colors" aria-pressed="false">🌸 <span data-i18n="catChipFlowers">+ New Flowers / Colors</span></button>
+            <button type="button" class="cat-chip" data-cat="Custom Wrapping Paper" aria-pressed="false">🎁 <span data-i18n="catChipWraps">+ Custom Wrapping Paper</span></button>
+            <button type="button" class="cat-chip" data-cat="Custom Ribbons / Toppers" aria-pressed="false">🎀 <span data-i18n="catChipToppers">+ Ribbons / Crowns / Toppers</span></button>
+            <button type="button" class="cat-chip" data-cat="Chocolates / Gift Boxes" aria-pressed="false">🍫 <span data-i18n="catChipGifts">+ Chocolates / Gift Boxes</span></button>
+          </div>
+
+          <div class="custom-items-list" id="customItemsList"></div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px">
+            <button type="button" class="add-custom-item-btn" id="addCustomItemBtn">
+              <span>+</span> <span data-i18n="btnAddCustomItem">Add a New Toy, Flower or Custom Asset</span>
+            </button>
+            <span class="field-hint" data-i18n="customItemHint">You can attach a photo of your toy, flower, or paper right on each row.</span>
+          </div>
+
+          <div class="field-group full">
+            <label class="field-label" for="customAssetsNotes">
+              <span data-i18n="lblCustomNotes">Describe any new toys, flowers, or special ideas you want in your studio</span>
+              <span class="opt" data-i18n="lblOptional">(optional)</span>
+            </label>
+            <textarea class="area-input" id="customAssetsNotes" rows="3" placeholder="e.g. We sell a 12-inch Graduation Bear for $25, Ferrero Rocher 12-pack add-on for $18, and pink Korean waterproof wrapping paper with gold edges..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= STEP 5: 4 FREE SIGNATURE BOUQUETS & PLAN SELECTION ======================= -->
+      <section class="setup-step" id="step-plan">
+        <div class="step-header">
+          <div>
+            <div class="step-kicker"><span class="step-num">05</span> <span data-i18n="step5Kicker">Signature Bouquets &amp; Monthly Plan</span></div>
+            <h2 data-i18n="step5Title">Your 4 free custom bouquets &amp; plan choice</h2>
+            <p data-i18n="step5Sub">We recreate 4 of your shop’s signature bouquets inside your builder at no extra cost — plus free seasonal updates (Valentine’s, Mother’s Day, Fall &amp; Christmas).</p>
+          </div>
+        </div>
+
+        <div class="included-banner">
+          <div>
+            <strong data-i18n="freeBouquetsBannerTitle">✓ 4 Custom Signature Bouquets Included FREE (+ Free Seasonal Updates)</strong>
+            <div style="font-size:13px;color:var(--ink-soft)" data-i18n="freeBouquetsBannerSub">Upload a photo of up to 4 of your best-selling bouquets below, or leave any slot blank to use Nebula’s top-selling studio recipes.</div>
+          </div>
+        </div>
+
+        <!-- 4 Free Bouquet Slots -->
+        <div class="bouquet-slots-grid" id="bouquetSlotsContainer"></div>
+
+        <!-- Need more than 4 custom bouquets? -->
+        <div class="extra-bouquets-card">
+          <div>
+            <h4 data-i18n="extraBouquetsTitle">Want more than 4 custom signature bouquets?</h4>
+            <p data-i18n="extraBouquetsSub">Your first 4 custom bouquets (and seasonal refreshes) are 100% free. Additional custom-engineered bouquets are a one-time setup fee of $35 each (or 3 extra for $85).</p>
+          </div>
+          <div style="min-width:260px">
+            <label class="field-label" for="extraBouquetsSelect" data-i18n="lblExtraBouquets">Extra Custom Bouquets</label>
+            <select class="select-input" id="extraBouquetsSelect" name="extraBouquets">
+              <option value="0" data-i18n="optExtra0">4 Free Signature Bouquets ($0 — Included)</option>
+              <option value="1" data-i18n="optExtra1">+1 Extra Custom Bouquet — 5 total ($35 one-time)</option>
+              <option value="2" data-i18n="optExtra2">+2 Extra Custom Bouquets — 6 total ($70 one-time)</option>
+              <option value="3" data-i18n="optExtra3">+3 Extra Custom Bouquets Bundle — 7 total ($85 one-time · Save $20)</option>
+              <option value="4" data-i18n="optExtra4">+4 Extra Custom Bouquets — 8 total ($115 one-time · Save $25)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Plan Choice ($29 Subdomain vs $35 Custom Domain) -->
+        <h3 style="font-family:var(--serif);font-size:32px;margin-bottom:14px" data-i18n="choosePlanHeading">Choose your monthly hosting plan</h3>
+        <div class="plans-choice-grid">
+          <!-- $29 Plan -->
+          <div class="plan-choice-card selected" data-plan-choice="subdomain" tabindex="0" role="radio" aria-checked="true">
+            <div>
+              <span class="plan-badge" data-i18n="planPopularBadge">Most Popular</span>
+              <div class="plan-radio-line">
+                <span class="plan-radio-dot"></span>
+                <h3 data-i18n="plan29Title">Nebula Studio Link</h3>
+              </div>
+              <div class="plan-price-big">
+                <b>$29</b><span data-i18n="perMonth">/ month</span>
+              </div>
+              <div class="plan-url-example" id="plan29UrlExample">nebulastudio.site/your-flower-shop</div>
+              <ul class="plan-bullets">
+                <li data-i18n="plan29Bullet1">Your custom-configured Bouquet Builder (Classic, Dome &amp; Heart)</li>
+                <li data-i18n="plan29Bullet2">4 custom signature bouquets FREE + free seasonal updates</li>
+                <li data-i18n="plan29Bullet3">Perfect for your Instagram bio, TikTok, Facebook &amp; QR codes</li>
+                <li data-i18n="plan29Bullet4">Pay $0 today — subscription starts only after your shop is live</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- $35 Plan -->
+          <div class="plan-choice-card" data-plan-choice="custom_domain" tabindex="0" role="radio" aria-checked="false">
+            <div>
+              <div class="plan-radio-line">
+                <span class="plan-radio-dot"></span>
+                <h3 data-i18n="plan35Title">Your Own Custom Domain</h3>
+              </div>
+              <div class="plan-price-big">
+                <b>$35</b><span data-i18n="perMonth">/ month</span>
+              </div>
+              <div class="plan-url-example" id="plan35UrlExample">www.yourflowershop.com</div>
+              <ul class="plan-bullets">
+                <li data-i18n="plan35Bullet1">Everything in the $29 plan + your own dedicated .com domain</li>
+                <li data-i18n="plan35Bullet2">We register &amp; renew a new domain for you (or connect your existing one)</li>
+                <li data-i18n="plan35Bullet3">Full HTTPS SSL security &amp; branded short order links</li>
+                <li data-i18n="plan35Bullet4">Pay $0 today — subscription starts only after your shop is live</li>
+              </ul>
+
+              <div class="field-group" id="customDomainInputWrap" style="margin-top:14px">
+                <label class="field-label" for="desiredDomain" data-i18n="lblDesiredDomain">Preferred .com Domain Name (if choosing $35/mo)</label>
+                <input class="text-input" id="desiredDomain" name="desiredDomain" type="text" placeholder="e.g. www.lafloreterna.com">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Final Submit Block -->
+        <div class="submit-card">
+          <div>
+            <h3 data-i18n="submitCardTitle">Ready to build your flower shop’s studio?</h3>
+            <p data-i18n="submitCardDesc">
+              Pressing submit sends your complete price list, logo, custom asset requests, and bouquet photos directly to Nebula Studio. No credit card is asked today — you only pay after you preview and approve your live studio!
+            </p>
+            <div id="submitErrorBox" style="display:none;margin-top:14px;padding:12px 15px;border-radius:8px;background:#fdeef1;color:#8d2b45;font-weight:600;font-size:13.5px"></div>
+          </div>
+
+          <div class="submit-actions">
+            <button type="submit" class="submit-main-btn" id="submitSetupBtn">
+              <span data-i18n="btnSubmitSetup">Submit My Shop Setup</span> <span>→</span>
+            </button>
+            <span class="submit-note" data-i18n="submitFinePrint">Saves securely to Nebula Cloud (Firebase) &amp; emails nebulastudiosite@gmail.com</span>
+          </div>
+        </div>
+      </section>
+
+    </form>
+
+    <!-- ======================= CONFIRMATION / EXPORT PANEL ======================= -->
+    <section id="successPanel" class="success-panel" hidden aria-live="polite">
+      <div class="success-header">
+        <div class="success-check">✓</div>
+        <div>
+          <h2 style="font-family:var(--serif);font-size:34px" id="successHeading">Your shop setup has been received!</h2>
+          <p style="color:var(--ink-soft);font-size:14.5px" id="successSub">We saved your configuration to Nebula’s database and sent a copy to our studio team.</p>
+        </div>
+      </div>
+
+      <div id="deliveryBadges" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px"></div>
+
+      <div class="success-actions-row">
+        <button type="button" class="action-btn" id="btnDownloadShopConfig">⬇ Download Ready-to-Use shop-config.js</button>
+        <button type="button" class="action-btn secondary" id="btnCopyShopConfig">📋 Copy Configuration Code</button>
+        <a class="action-btn secondary" id="btnWhatsappBackup" href="#" target="_blank" rel="noopener">💬 Send Confirmation on WhatsApp ↗</a>
+        <a class="action-btn secondary" id="btnEmailBackup" href="#">✉ Send Copy via Email App ↗</a>
+      </div>
+
+      <details style="margin-top:14px">
+        <summary style="cursor:pointer;font-weight:700;font-size:13px;color:var(--plum)">Preview generated <code>window.NEBULA_SHOP</code> configuration (for developer / instant build)</summary>
+        <pre class="code-preview-box" id="generatedConfigPreview" style="margin-top:10px"></pre>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- ======================= STICKY LIVE BOUQUET PRICE CALCULATOR ======================= -->
+  <aside class="live-calc-bar" aria-label="Live sample bouquet price calculator">
+    <div class="container calc-inner">
+      <div class="calc-label">
+        <span>✳</span>
+        <span data-i18n="calcTitle">Live Estimate With Your Prices:</span>
+      </div>
+      <div class="calc-samples">
+        <div class="calc-pill">
+          <span data-i18n="sample1Label">12-Rose Classic:</span>
+          <b id="samplePrice1">$89.00</b>
+        </div>
+        <div class="calc-pill">
+          <span data-i18n="sample2Label">24-Rose Dome + Bow:</span>
+          <b id="samplePrice2">$135.00</b>
+        </div>
+        <div class="calc-pill">
+          <span data-i18n="sample3Label">Lily &amp; Rose Mix:</span>
+          <b id="samplePrice3">$104.00</b>
+        </div>
+        <div class="calc-pill">
+          <span data-i18n="samplePlanLabel">Plan:</span>
+          <b id="samplePlanPrice">$29/mo</b>
+        </div>
+      </div>
+      <a href="#step-plan" class="calc-cta" data-i18n="calcFinishBtn">Finish &amp; Submit ↓</a>
+    </div>
+  </aside>
+
+</body>
+</html>
