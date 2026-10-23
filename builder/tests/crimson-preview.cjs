@@ -1,9 +1,10 @@
+const testOrigin=process.env.TEST_ORIGIN||'http://127.0.0.1:4175';
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2}),errors=[],bad=[];
  page.on('pageerror',e=>errors.push(e.message));
  page.on('response',r=>{if(r.status()>=400)bad.push(r.url());});
- await page.goto('http://127.0.0.1:4175/demo/nebula-builder/studio.html?template=crimson-velvet');
+ await page.goto(testOrigin+'/demo/nebula-builder/studio.html?template=crimson-velvet');
  await page.waitForFunction(()=>window.__ready);
  await page.evaluate(()=>NebulaRenderer.awaitAssets(NebulaApp.state));
  const out=path.resolve('clients/la-flor-eterna/qa/crimson');fs.mkdirSync(out,{recursive:true});
@@ -32,7 +33,7 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
  assert.ok(Object.values(edits).every(Boolean),JSON.stringify(edits));
  for(const level of [0,1,3,2]){await page.locator('[data-breath="'+level+'"]').click();assert.equal(await page.evaluate(()=>NebulaApp.state.finishes.studio.breath),level);}
  // Cover is the supplied image, framed on a two-column phone catalog.
- await page.goto('http://127.0.0.1:4175/demo/nebula-builder/index.html');
+ await page.goto(testOrigin+'/demo/nebula-builder/index.html');
  const card=page.locator('[data-featured-id="crimson-velvet"]');await card.scrollIntoViewIfNeeded();
  await card.screenshot({path:path.join(out,'cover.png')});
  assert.equal(await page.locator('.featured-card').count(),4);
