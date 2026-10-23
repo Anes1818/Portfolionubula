@@ -2121,6 +2121,24 @@
       if (roseThemeBtn) roseThemeBtn.click();
       updateSlugPreview();
       updateLiveSampleCalculator();
+    } else if (client === "raysbouquetz" || client === "rays") {
+      document.getElementById("shopName").value = "Ray's Bouquetz";
+      document.getElementById("shopInstagram").value = "@raysbouquetz";
+      document.getElementById("shopCity").value = "Canada";
+      document.getElementById("shopCurrency").value = "CAD";
+      var roseBtn = document.querySelector('.theme-swatch-btn[data-theme="rose"]');
+      if (roseBtn) roseBtn.click();
+      customAssetsRows = [
+        { id: "ca_ray_1", category: "New Flowers / Colors", name: "Ribbon Rose (per stem)", priceDollars: "4.00", photoDataUrl: "", fileName: "" },
+        { id: "ca_ray_2", category: "New Flowers / Colors", name: "Foam Rose (per stem)", priceDollars: "3.50", photoDataUrl: "", fileName: "" },
+        { id: "ca_ray_3", category: "Custom Wrapping Paper", name: "Money Bouquet Fold / Styling Fee", priceDollars: "35.00", photoDataUrl: "", fileName: "" },
+        { id: "ca_ray_4", category: "Chocolates / Gift Boxes", name: "Custom Shirt Add-on / Order", priceDollars: "25.00", photoDataUrl: "", fileName: "" }
+      ];
+      document.getElementById("customAssetsNotes").value =
+        "Square Payments (CAD): Include both Option #1 (Review + Square Deposit Link) and Option #2 (Direct Square Checkout).";
+      renderCustomAssetRows();
+      updateSlugPreview();
+      updateLiveSampleCalculator();
     }
   }
 
