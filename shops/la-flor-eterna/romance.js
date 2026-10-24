@@ -68,3 +68,5 @@ function initialNode(s,f){
 const assetsReady=location.protocol==='file:'?Promise.resolve(g.NEBULA_EMBED_READY).then(()=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='romance-embedded.js';script.onload=resolve;script.onerror=()=>reject(new Error('Romantic artwork bundle unavailable'));document.head.append(script);})):Promise.resolve();
 g.NebulaRomance={recipes,create,greenery,initialCanvas,initialNode,assetsReady};
 })(window);
+
+(()=>{const old=NebulaRomance.create;NebulaRomance.create=id=>id==="pink-promise"?NebulaLink.decode("WzcsMSwxMSxbWyJyb3NlX3BpbmsiLDMyXV0seyJjIjozMiwiZiI6eyJwIjoiaXZvcnkiLCJjeCI6eyJ2IjoxLCJicmVhdGgiOjMsIndyYXAiOiJnaW5naGFtIn0sInJhIjoicmVmZXJlbmNlLXYzIiwiZGMiOltbInNhdGluX2JvdyIsLTAuMzgsMCwxLjE1LC02LCJmcm9udCJdXSwibCI6ImF1dG8ifSwidCI6IlBpbmsgUHJvbWlzZSIsImwiOiJvcmdhbmljIn1d").design:old(id);const r=NebulaRomance.recipes.find(r=>r.id==="pink-promise");if(r)r.count=32;})();
