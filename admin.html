@@ -959,6 +959,8 @@
         kv("City", d.city) +
         kv("Country", d.country) +
         kv("Builder languages", (d.builderLanguages || []).join(", ").toUpperCase()) +
+        kv("Fulfillment", d.fulfillment || "both") +
+        kv("Customer payment", d.customerPayment || "confirm_first") +
         kv("Currency", d.currency) +
         "</div>" +
         '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">' +

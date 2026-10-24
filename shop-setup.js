@@ -359,14 +359,29 @@
       lblCountry: "Country *",
       hintCountry: "We set your currency and phone format automatically.",
       lblLanguages: "Builder language(s) for your customers *",
-      previewKicker: "Live preview",
-      previewTitle: "This is what your customers will use",
-      previewSub: "Try it right here: pick flowers, change the wrap, add a plush toy, and watch the price update live. Your version gets your logo, colors, flowers and prices.",
+      lblFulfillment: "Pickup & Delivery Options *",
+      optFulfillBoth: "Both In-Store Pickup & Local Delivery",
+      optFulfillDelivery: "Local Delivery Only",
+      optFulfillPickup: "In-Store / Home Pickup Only",
+      lblCustomerPayment: "How do your customers pay you? *",
+      optPayConfirm: "Confirm order on WhatsApp/SMS first (Zelle, Cash App, Bank Transfer, Cash)",
+      optPayOnline: "Online Checkout Link (Square, Stripe, PayPal)",
+      optPayBoth: "Both options (Customer chooses)",
+      previewKicker: "Instant Builder Preview",
+      previewTitle: "See what your customers will use — right here",
+      previewSub: "Here is the exact Bouquet Builder screen your customers open from your bio. They pick their bouquet shape, add flowers, wraps & plushies, see your live price, and send the finished order straight to your WhatsApp.",
+      modeCard1Title: "1. Classic Wrap",
+      modeCard1Sub: "Layered paper, ribbons & stems",
+      modeCard2Title: "2. Round Dome",
+      modeCard2Sub: "Full 360° buchón arrangement",
+      modeCard3Title: "3. Heart & Extras",
+      modeCard3Sub: "Crowns, plushies, letters & chocolates",
       previewPoint1: "<b>Customers design it themselves</b> on their phone, no app needed",
       previewPoint2: "<b>Live price</b> with every stem and add-on, using your prices",
       previewPoint3: "<b>The finished order arrives on your WhatsApp</b> with the picture, the recipe and the total",
+      previewTryInline: "▶ Try Interactive Builder Here",
       previewOpen: "Open full screen ↗",
-      previewTap: "Tap to try the builder",
+      previewTap: "Tap to test live on this screen",
       lblLogoUpload: "Shop Logo (PNG, JPG or WebP)",
       lblLogoClick: "Click to upload your shop logo",
       lblLogoSub: "Appears in your studio header & order sheet. Don’t have it handy? You can send it later on WhatsApp.",
@@ -485,14 +500,29 @@
       lblCountry: "País *",
       hintCountry: "Ajustamos tu moneda y formato de teléfono automáticamente.",
       lblLanguages: "Idioma(s) del constructor para tus clientes *",
-      previewKicker: "Vista previa en vivo",
-      previewTitle: "Esto es lo que usarán tus clientes",
-      previewSub: "Pruébalo aquí mismo: elige flores, cambia la envoltura, agrega un peluche y mira cómo el precio se actualiza en vivo. Tu versión tendrá tu logo, colores, flores y precios.",
+      lblFulfillment: "Opciones de Entrega y Recogida *",
+      optFulfillBoth: "Ambos: Recogida en Tienda y Entrega a Domicilio",
+      optFulfillDelivery: "Solo Entrega a Domicilio",
+      optFulfillPickup: "Solo Recogida (Pickup)",
+      lblCustomerPayment: "¿Cómo te pagan tus clientes? *",
+      optPayConfirm: "Confirmar por WhatsApp/SMS primero (Zelle, Transferencia, Efectivo)",
+      optPayOnline: "Enlace de Pago en Línea (Square, Stripe, PayPal)",
+      optPayBoth: "Ambas opciones (El cliente elige)",
+      previewKicker: "Vista previa instantánea",
+      previewTitle: "Mira lo que usarán tus clientes — aquí mismo",
+      previewSub: "Esta es la pantalla exacta que tus clientes abren desde tu biografía. Eligen la forma del ramo, agregan flores, envolturas y peluches, ven tu precio en vivo y te envían el pedido listo a tu WhatsApp.",
+      modeCard1Title: "1. Ramo Clásico",
+      modeCard1Sub: "Papel coreano en capas y listón",
+      modeCard2Title: "2. Domo Redondo",
+      modeCard2Sub: "Arreglo buchón completo 360°",
+      modeCard3Title: "3. Corazón y Extras",
+      modeCard3Sub: "Coronas, peluches, letras y chocolates",
       previewPoint1: "<b>Tus clientes lo diseñan solos</b> desde su teléfono, sin descargar nada",
       previewPoint2: "<b>Precio en vivo</b> con cada tallo y extra, usando tus precios",
       previewPoint3: "<b>El pedido final te llega por WhatsApp</b> con la imagen, la receta y el total",
+      previewTryInline: "▶ Probar Constructor Interactivo Aquí",
       previewOpen: "Abrir en pantalla completa ↗",
-      previewTap: "Toca para probar el constructor",
+      previewTap: "Toca para probar en vivo aquí",
       lblLogoUpload: "Logo de tu Florería (PNG, JPG o WebP)",
       lblLogoClick: "Haz clic para subir el logo de tu florería",
       lblLogoSub: "Aparece en el encabezado y hoja de pedido. ¿No lo tienes a la mano? Puedes enviarlo luego por WhatsApp.",
@@ -1226,6 +1256,8 @@
     var country = document.getElementById("shopCountry").value || "";
     var currency = document.getElementById("shopCurrency").value || "USD";
     var builderLanguages = selectedBuilderLanguages();
+    var fulfillment = (document.getElementById("shopFulfillment") && document.getElementById("shopFulfillment").value) || "both";
+    var customerPayment = (document.getElementById("shopCustomerPayment") && document.getElementById("shopCustomerPayment").value) || "confirm_first";
     var slug = slugify(shopName);
     var desiredDomain = document.getElementById("desiredDomain").value.trim();
     var siteUrl =
@@ -1327,6 +1359,8 @@
       country: country,
       currency: currency,
       builderLanguages: builderLanguages,
+      fulfillment: fulfillment,
+      customerPayment: customerPayment,
       plan: {
         type: selectedPlan,
         monthlyUsd: selectedPlan === "custom_domain" ? 35 : 29,
@@ -2172,13 +2206,16 @@
 
   function initBuilderPreview() {
     var btn = document.getElementById("builderPreviewStart");
+    var btnLeft = document.getElementById("builderPreviewBtnLeft");
     var frame = document.getElementById("builderPreviewFrame");
     if (!btn || !frame) return;
-    btn.addEventListener("click", function () {
+    function activatePreview() {
       if (!frame.src) frame.src = frame.dataset.src;
       frame.closest(".phone-frame").classList.add("is-live");
       frame.focus();
-    });
+    }
+    btn.addEventListener("click", activatePreview);
+    if (btnLeft) btnLeft.addEventListener("click", activatePreview);
   }
 
   /* -----------------------------------------------------------------------
