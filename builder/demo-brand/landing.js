@@ -1,14 +1,16 @@
 /* A short enquiry uses the existing email service; no database writes or payment. */
 (()=>{'use strict';
  const language=document.getElementById('language'),form=document.getElementById('interestForm'),status=document.getElementById('interestStatus'),submit=document.getElementById('interestSubmit'),success=document.getElementById('interestSuccess');
+ const languageKey=window.NebulaShop?.key('nebulaLanguageV4')||'shop:nebula-demo:nebulaLanguageV4';
  let lang='en',busy=false,submitted=false;
- try{lang=localStorage.getItem('nebula-demo:landing-language')==='es'?'es':'en';}catch{}
+ try{lang=(localStorage.getItem(languageKey)||localStorage.getItem('nebula-demo:landing-language'))==='es'?'es':'en';localStorage.setItem(languageKey,lang);}catch{}
  function translate(){document.documentElement.lang=lang;language.value=lang;for(const el of document.querySelectorAll('[data-en][data-es]'))el.textContent=el.dataset[lang];if(busy)submit.textContent=lang==='es'?'Enviando…':'Sending…';}
- language.addEventListener('change',()=>{lang=language.value==='es'?'es':'en';try{localStorage.setItem('nebula-demo:landing-language',lang);}catch{}translate();});translate();
+ language.addEventListener('change',()=>{lang=language.value==='es'?'es':'en';try{localStorage.setItem(languageKey,lang);localStorage.setItem('nebula-demo:landing-language',lang);}catch{}translate();});translate();
  // Keep the mobile action available without obscuring the form or its keyboard.
  const mobile=document.querySelector('.mobile-cta'),start=document.getElementById('get-started');
  if('IntersectionObserver'in window)new IntersectionObserver(entries=>mobile.classList.toggle('is-hidden',entries[0].isIntersecting),{threshold:0}).observe(start);
- document.querySelectorAll('a[href="#get-started"]').forEach(a=>a.addEventListener('click',()=>{setTimeout(()=>document.getElementById('interestShop').focus({preventScroll:true}),350);}));
+ document.querySelectorAll('a[href="#get-started"]').forEach(a=>a.addEventListener('click',()=>{start.focus({preventScroll:true});}));
+ window.addEventListener('pageshow',()=>{try{lang=localStorage.getItem(languageKey)==='es'?'es':'en';}catch{}translate();});
  form.addEventListener('submit',async e=>{
   e.preventDefault();if(busy||submitted||!form.reportValidity())return;
   const data=new FormData(form);if(data.get('_gotcha'))return;

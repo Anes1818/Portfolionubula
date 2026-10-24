@@ -246,7 +246,8 @@
     .lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.85); display: grid; place-items: center; padding: 20px; cursor: zoom-out; }
     .lightbox[hidden] { display: none; }
     .lightbox img { max-width: 100%; max-height: 100%; background: #fff; border-radius: 10px; }
-  </style>
+  [hidden]{display:none!important}
+</style>
 </head>
 <body>
 
@@ -257,7 +258,7 @@
         <span class="brand-badge">Studio Admin</span>
       </div>
       <div class="hdr-actions">
-        <span id="syncStatus" style="font-size:12.5px;color:var(--muted)">Connecting to Firebase…</span>
+        <button type="button" class="btn sec" id="adminSignOut" hidden>Sign out</button><span id="syncStatus" style="font-size:12.5px;color:var(--muted)">Connecting to Firebase…</span>
         <button type="button" class="btn sec" id="btnRefresh">↻ Refresh Live Data</button>
         <a href="shop-setup.html" class="btn sec">Open Shop Setup Page ↗</a>
         <a href="shops/la-flor-eterna/" class="btn sec">Open La Flor Eterna ↗</a>
@@ -265,25 +266,14 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <section id="adminLogin" class="wrap" style="padding-block:32px"><h1>Private workspace</h1><p id="adminAuthStatus" role="status">Loading sign-in…</p><button class="btn" id="adminSignIn" type="button">Sign in with Google</button></section>
+  <main class="wrap" id="adminContent" hidden>
     <!-- Shown automatically if Firebase Rules still have ".read": false on /requests -->
-    <aside id="rulesLockedBanner" class="rules-alert" hidden>
-      <div>
-        <h2>🔓 Unlock Your 3 Existing Firebase Requests (Takes 10 Seconds)</h2>
-        <p>
-          Your Firebase Realtime Database currently has <code>".read": false</code> on <code>nebula/la-flor-eterna/requests</code>, which hides existing requests (like <code>a-YothfwUWmcfIrEGzZB8g</code>, <code>cMbKx9Td_3nedhP0J2F3JA</code>, <code>lr5vyA6zVY6-y-pba8AR9Q</code>) from browser pages.
-          <br><b>To unlock them permanently:</b> Click <b>"📋 Copy Updated Firebase Rules"</b> right here $\rightarrow$ go to your open Firebase Console window $\rightarrow$ click the <b>Rules</b> tab (next to Data) $\rightarrow$ Paste &amp; click <b>Publish</b>!
-        </p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;min-width:250px">
-        <button type="button" class="btn pink" id="btnCopyRules" style="justify-content:center;padding:12px 18px">📋 Copy Updated Firebase Rules</button>
-        <button type="button" class="btn sec" id="btnRefreshAfterRules" style="justify-content:center">✓ I Published Rules — Refresh Now</button>
-      </div>
-    </aside>
+    <aside id="rulesLockedBanner" class="rules-alert" hidden><h2>Database access needs attention</h2><p>Confirm that your account is approved in adminUids and the protected rules are published. Do not enable public reads.</p><a class="btn sec" href="firebase/realtime.rules.json" target="_blank" rel="noopener">View protected rules</a><button class="btn sec" id="btnRefreshAfterRules">Retry</button></aside>
 
     <!-- Top Stats Cards -->
     <section class="top-panel">
-      <div class="stat-card active" data-tab="orders">
+      <div class="stat-card" data-tab="orders">
         <div class="kicker">🌸 Client Shop Orders</div>
         <div class="num" id="countOrders">0</div>
         <div class="sub">La Flor Eterna customer bouquet requests</div>
@@ -293,36 +283,34 @@
         <div class="num" id="countLeads">0</div>
         <div class="sub">From flowers/index.html &amp; build-your-plan.html</div>
       </div>
-      <div class="stat-card" data-tab="setups">
+      <div class="stat-card active" data-tab="setups">
         <div class="kicker">🏪 Florist Studio Setups</div>
         <div class="num" id="countSetups">0</div>
         <div class="sub">Full price &amp; photo setups from shop-setup.html</div>
       </div>
     </section>
 
-    <!-- Quick ID Lookup & Optional Firebase Secret -->
+    <label for="setupSearch">Find a website request</label><input id="setupSearch" class="text-in" type="search" placeholder="Shop, owner, email or phone" style="width:100%;margin:8px 0 16px">
+    <!-- Quick ID Lookup -->
     <section class="tools-bar">
       <div class="tool-input-group">
         <input type="text" id="lookupInput" class="text-in" placeholder="Paste any 22-char Firebase ID or https://nebulastudio.site/b/#... link to inspect">
         <button type="button" class="btn" id="btnLookup">Inspect ID</button>
       </div>
-      <div class="tool-input-group">
-        <input type="password" id="fbSecretInput" class="text-in" placeholder="Optional: Firebase Database Secret (if you keep .read: false in Rules)">
-        <button type="button" class="btn sec" id="btnSaveSecret">Unlock with Secret</button>
-      </div>
+
     </section>
 
     <!-- Tab Switcher -->
     <nav class="tab-bar" role="tablist">
-      <button type="button" class="tab-btn active" data-tab="orders">🌸 La Flor Eterna Orders</button>
+      <button type="button" class="tab-btn" data-tab="orders">🌸 La Flor Eterna Orders</button>
       <button type="button" class="tab-btn" data-tab="leads">📩 Consultation &amp; Builder Leads</button>
-      <button type="button" class="tab-btn" data-tab="setups">🏪 Florist Shop Setups (Prices + Photos)</button>
+      <button type="button" class="tab-btn active" data-tab="setups">🏪 Florist Shop Setups (Prices + Photos)</button>
     </nav>
 
     <!-- Tab Panels -->
-    <section id="panel-orders" class="records-list"></section>
+    <section id="panel-orders" class="records-list" hidden></section>
     <section id="panel-leads" class="records-list" hidden></section>
-    <section id="panel-setups" class="records-list" hidden></section>
+    <section id="panel-setups" class="records-list"></section>
   </main>
 
   <div id="dossier" class="dossier" hidden role="dialog" aria-modal="true" aria-label="Client shop setup">
@@ -344,68 +332,20 @@
   </div>
   <div id="lightbox" class="lightbox" hidden><img alt=""></div>
 
+  <script src="b/config.js"></script>
+  <script type="module" src="admin-auth.js?v=20261024"></script>
   <script>
   (function () {
     "use strict";
 
+    async function adminFetch(url, options) { return window.NebulaAdminAuth.fetch(url, options); }
     var ROOT_DB = "https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula";
     var DB_BASE = ROOT_DB + "/la-flor-eterna";
-    var activeTab = "orders";
+    var activeTab = "setups";
+    var collectionErrors = [];
     var ordersData = [];
     var leadsData = [];
     var setupsData = [];
-
-    var UPDATED_FIREBASE_RULES = JSON.stringify({
-      rules: {
-        ".read": false,
-        ".write": false,
-        nebula: {
-          leads: {
-            ".read": true,
-            "$id": { ".write": "!data.exists() && newData.exists()" }
-          },
-          setups: {
-            ".read": true,
-            "$id": { ".write": "!data.exists() && newData.exists()" }
-          },
-          "la-flor-eterna": {
-            designs: {
-              "$id": {
-                ".read": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && data.exists() && data.child('expiresAt').val() > now",
-                ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('code').val() === data.child('code').val() && newData.child('purpose').val() === data.child('purpose').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
-                ".validate": "newData.hasChildren([\"shopId\", \"code\", \"purpose\", \"createdAt\", \"expiresAt\"]) && true",
-                shopId: { ".validate": "newData.val() === 'la-flor-eterna'" },
-                code: { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24000 && newData.val().matches(/^[A-Za-z0-9_-]+$/)" },
-                purpose: { ".validate": "newData.val() === 'share' || newData.val() === 'request'" },
-                createdAt: { ".validate": "newData.isNumber() && (data.exists() || (newData.val() >= now - 300000 && newData.val() <= now + 300000))" },
-                expiresAt: { ".validate": "newData.isNumber() && newData.val() === newData.parent().child('createdAt').val() + 7776000000" },
-                "$other": { ".validate": false }
-              }
-            },
-            requests: {
-              ".read": true,
-              "$id": {
-                ".read": true,
-                ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('designId').val() === data.child('designId').val() && newData.child('customerName').val() === data.child('customerName').val() && newData.child('requestedDate').val() === data.child('requestedDate').val() && newData.child('method').val() === data.child('method').val() && newData.child('reference').val() === data.child('reference').val() && newData.child('code').val() === data.child('code').val() && newData.child('shortUrl').val() === data.child('shortUrl').val() && newData.child('status').val() === data.child('status').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
-                ".validate": "newData.hasChildren([\"shopId\", \"designId\", \"customerName\", \"requestedDate\", \"method\", \"reference\", \"code\", \"shortUrl\", \"status\", \"createdAt\", \"expiresAt\"]) && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).exists() && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val() > now && newData.child('code').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('code').val() && newData.child('expiresAt').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val()",
-                shopId: { ".validate": "newData.val() === 'la-flor-eterna'" },
-                designId: { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_-]{22}$/)" },
-                customerName: { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120" },
-                requestedDate: { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)" },
-                method: { ".validate": "newData.val() === 'Pickup' || newData.val() === 'Delivery'" },
-                reference: { ".validate": "newData.isString() && newData.val().matches(/^[-A-Z0-9]{1,50}$/)" },
-                code: { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24000 && newData.val().matches(/^[A-Za-z0-9_-]+$/)" },
-                shortUrl: { ".validate": "newData.val() === 'https://nebulastudio.site/b/#' + newData.parent().child('designId').val()" },
-                status: { ".validate": "newData.val() === 'prepared'" },
-                createdAt: { ".validate": "newData.isNumber() && (data.exists() || (newData.val() >= now - 300000 && newData.val() <= now + 300000))" },
-                expiresAt: { ".validate": "newData.isNumber()" },
-                "$other": { ".validate": false }
-              }
-            }
-          }
-        }
-      }
-    }, null, 2);
 
     function fromBase64Url(b64u) {
       try {
@@ -443,7 +383,7 @@
           (function (slotIdx) {
             var slotId = prefix + String(slotIdx).padStart(7, "0");
             batchPromises.push(
-              fetch(DB_BASE + "/designs/" + slotId + ".json", { credentials: "omit" })
+              adminFetch(DB_BASE + "/designs/" + slotId + ".json", { credentials: "omit" })
                 .then(function (r) { return r.ok ? r.json() : null; })
                 .then(function (val) { return val ? { slotId: slotId, raw: val } : null; })
                 .catch(function () { return null; })
@@ -473,7 +413,7 @@
     async function fetchRequestsTable(secret) {
       var q = secret ? "?auth=" + encodeURIComponent(secret) : "";
       try {
-        var r = await fetch(DB_BASE + "/requests.json" + q, { credentials: "omit" });
+        var r = await adminFetch(DB_BASE + "/requests.json" + q, { credentials: "omit" });
         if (r.status === 401 || r.status === 403) {
           return { locked: true, items: [] };
         }
@@ -495,17 +435,19 @@
     async function fetchDirectCollection(nodeName, secret) {
       var q = secret ? "?auth=" + encodeURIComponent(secret) : "";
       try {
-        var r = await fetch(ROOT_DB + "/" + nodeName + ".json" + q, { credentials: "omit" });
-        if (!r.ok) return [];
+        var r = await adminFetch(ROOT_DB + "/" + nodeName + ".json" + q, { credentials: "omit" });
+        if (!r.ok) throw Error("Collection unavailable");
         var obj = await r.json();
         if (!obj || typeof obj !== "object") return [];
         return Object.keys(obj).map(function (k) {
           var item = obj[k];
+          if (nodeName === "setups" && item.code) { try { item = Object.assign(JSON.parse(fromBase64Url(item.code)), { designId: k, createdAt: item.createdAt }); } catch { return null; } }
           item._id = k;
           item._createdAt = item.createdAt || Date.now();
           return item;
-        });
+        }).filter(Boolean);
       } catch (_) {
+        collectionErrors.push(nodeName);
         return [];
       }
     }
@@ -532,7 +474,7 @@
         el.innerHTML =
           '<div class="empty-state">' +
           '<h3>No La Flor Eterna orders loaded yet</h3>' +
-          '<p style="margin-top:6px">If you see records under <code>nebula/la-flor-eterna/requests</code> in your Firebase Console (like <code>a-YothfwUWmcfIrEGzZB8g</code>), click <b>"📋 Copy Updated Firebase Rules"</b> in the purple banner above and paste it into your Firebase <b>Rules</b> tab so this dashboard can read them!</p>' +
+          '<p style="margin-top:6px">If you see records under <code>nebula/la-flor-eterna/requests</code> in your Firebase Console (like <code>a-YothfwUWmcfIrEGzZB8g</code>), verify your admin account and publish the protected rules.</p>' +
           "</div>";
         return;
       }
@@ -627,11 +569,14 @@
           "</div>";
         return;
       }
-      el.innerHTML = setupsData
+      var query = document.getElementById("setupSearch").value.trim().toLowerCase();
+      var visible = setupsData.filter(function (s) { return [s.shopName, s.ownerName, s.phone, s.email, s.instagram, s.city].join(" ").toLowerCase().includes(query); });
+      if (!visible.length) { el.innerHTML = '<div class="empty-state">No matching website requests. Try another name or contact detail.</div>'; return; }
+      el.innerHTML = visible
         .map(function (s) {
           var planPrice = s.plan && s.plan.monthlyUsd ? "$" + s.plan.monthlyUsd + "/mo" : "$29/mo";
           var ca = s.customAssetRequests || {};
-          var photoCount = Number(s.photosAttempted || 0) - ((s.photoUploadFailures || []).length);
+          var photoCount = s.photosAttempted != null ? Number(s.photosAttempted) - ((s.photoUploadFailures || []).length) : (safeImage(s.logoDataUrl) ? 1 : 0) + (s.signatureBouquets || []).filter(function (b) { return safeImage(b.photoDataUrl); }).length + (ca.items || []).filter(function (item) { return safeImage(item.photoDataUrl); }).length;
           return (
             '<article class="rec-card">' +
             '<div class="rec-main">' +
@@ -646,6 +591,7 @@
             "</div>" +
             "<h3>" + esc(s.shopName || "Flower Shop") + " <span style=\"font-size:16px;color:var(--muted);font-weight:400\">(" + esc(s.ownerName || "") + ")</span></h3>" +
             '<div class="rec-meta">' +
+            "<div><b>Submitted:</b> " + esc(formatDate(s._createdAt || s.submittedAt)) + "</div>" +
             "<div><b>Phone/WhatsApp:</b> " + esc(s.phone || "—") + "</div>" +
             "<div><b>Email:</b> " + esc(s.email || "—") + "</div>" +
             "<div><b>Instagram:</b> " + esc(s.instagram || "—") + "</div>" +
@@ -668,11 +614,13 @@
     }
 
     async function loadAllAdminData() {
+      if (!window.NebulaAdminAuth || document.getElementById("adminContent").hidden) return;
+      collectionErrors = [];
       var syncEl = document.getElementById("syncStatus");
       syncEl.textContent = "Syncing with Firebase Realtime Database…";
 
-      var secret = localStorage.getItem("nebula_fb_secret") || "";
-      if (secret) document.getElementById("fbSecretInput").value = secret;
+      var secret = "";
+
 
       var results = await Promise.all([
         fetchRequestsTable(secret),
@@ -752,7 +700,7 @@
       renderLeads();
       renderSetups();
 
-      syncEl.textContent = "✓ Live · Updated " + new Date().toLocaleTimeString();
+      syncEl.textContent = collectionErrors.length ? "Could not load " + collectionErrors.join(", ") + ". Please retry; empty lists may be incomplete." : "✓ Live · Updated " + new Date().toLocaleTimeString();
     }
 
     function switchTab(tab) {
@@ -771,22 +719,9 @@
       });
     });
 
+    document.getElementById("setupSearch").addEventListener("input", function () { switchTab("setups"); renderSetups(); });
     document.getElementById("btnRefresh").addEventListener("click", loadAllAdminData);
     document.getElementById("btnRefreshAfterRules").addEventListener("click", loadAllAdminData);
-
-    document.getElementById("btnCopyRules").addEventListener("click", function () {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(UPDATED_FIREBASE_RULES);
-        document.getElementById("btnCopyRules").textContent = "✓ Copied! Paste in Firebase Rules tab & Publish";
-      }
-    });
-
-    document.getElementById("btnSaveSecret").addEventListener("click", function () {
-      var val = document.getElementById("fbSecretInput").value.trim();
-      if (val) localStorage.setItem("nebula_fb_secret", val);
-      else localStorage.removeItem("nebula_fb_secret");
-      loadAllAdminData();
-    });
 
     document.getElementById("btnLookup").addEventListener("click", async function () {
       var raw = document.getElementById("lookupInput").value.trim();
@@ -796,18 +731,18 @@
         return;
       }
       var id = match[1];
-      var secret = localStorage.getItem("nebula_fb_secret") || "";
+      var secret = "";
       var q = secret ? "?auth=" + encodeURIComponent(secret) : "";
 
       // Try designs/<id> first, then requests/<id>
-      var r = await fetch(DB_BASE + "/designs/" + id + ".json" + q, { credentials: "omit" });
+      var r = await adminFetch(DB_BASE + "/designs/" + id + ".json" + q, { credentials: "omit" });
       var rec = r.ok ? await r.json() : null;
       if (!rec) {
-        var r2 = await fetch(DB_BASE + "/requests/" + id + ".json" + q, { credentials: "omit" });
+        var r2 = await adminFetch(DB_BASE + "/requests/" + id + ".json" + q, { credentials: "omit" });
         rec = r2.ok ? await r2.json() : null;
       }
       if (!rec || !rec.code) {
-        alert("Could not read ID: " + id + ". Make sure you published the updated Firebase Rules (or entered your Database Secret) if this is a /requests ID.");
+        alert("Could not read ID: " + id + ". Check the protected rules and your admin access.");
         return;
       }
       var looksLikeSetup = false;
@@ -828,7 +763,7 @@
     function toDataUrlChunks(ids) {
       if (!Array.isArray(ids) || !ids.length) return Promise.resolve("");
       return Promise.all(ids.map(function (cid) {
-        return fetch(DB_BASE + "/designs/" + cid + ".json", { credentials: "omit" })
+        return adminFetch(DB_BASE + "/designs/" + cid + ".json", { credentials: "omit" })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (j) { return (j && j.code) || ""; })
           .catch(function () { return ""; });
@@ -839,12 +774,12 @@
     }
 
     async function loadSetupRecord(designId) {
-      var secret = localStorage.getItem("nebula_fb_secret") || "";
+      var secret = "";
       var q = secret ? "?auth=" + encodeURIComponent(secret) : "";
-      var r = await fetch(DB_BASE + "/designs/" + encodeURIComponent(designId) + ".json" + q, { credentials: "omit" });
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      var rec = await r.json();
-      if (!rec || !rec.code) throw new Error("Record not found or expired (records expire after 90 days)");
+      var r = await adminFetch(ROOT_DB + "/setups/" + encodeURIComponent(designId) + ".json", { credentials: "omit" });
+      var rec = r.ok ? await r.json() : null;
+      if (!rec) { r = await adminFetch(DB_BASE + "/designs/" + encodeURIComponent(designId) + ".json", { credentials: "omit" }); rec = r.ok ? await r.json() : null; }
+      if (!rec || !rec.code) throw new Error("Record not found or unavailable");
       var data = JSON.parse(fromBase64Url(rec.code));
       data._designId = designId;
       data._createdAt = rec.createdAt;
@@ -872,11 +807,11 @@
       });
       await Promise.all(jobs);
 
-      if (data.logoDataUrl) {
+      if (safeImage(data.logoDataUrl)) {
         photos.push({ label: "Shop logo", filename: slug + "-logo.webp", dataUrl: data.logoDataUrl });
       }
       (data.signatureBouquets || []).forEach(function (sb, i) {
-        if (sb.photoDataUrl) {
+        if (safeImage(sb.photoDataUrl)) {
           photos.push({
             label: "Bouquet #" + (i + 1) + ": " + (sb.name || "") + (sb.targetPrice ? " ($" + sb.targetPrice + ")" : ""),
             filename: slug + "-bouquet-" + (i + 1) + ".webp",
@@ -885,7 +820,7 @@
         }
       });
       items.forEach(function (it, i) {
-        if (it.photoDataUrl) {
+        if (safeImage(it.photoDataUrl)) {
           photos.push({
             label: "Custom: " + (it.name || it.category || "#" + (i + 1)) + (it.priceDollars ? " ($" + it.priceDollars + ")" : ""),
             filename: slug + "-custom-" + (i + 1) + ".webp",
@@ -919,6 +854,7 @@
       a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 400);
     }
+    function safeImage(url) { return typeof url === "string" && /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(url); }
     function downloadUrl(name, url) {
       var a = document.createElement("a");
       a.href = url;
@@ -974,15 +910,15 @@
         kv("Plan", "$" + (plan.monthlyUsd || 29) + "/month — " + (plan.type === "custom_domain" ? "Custom domain" : "Subdomain")) +
         kv("Site URL", plan.siteUrl) +
         (plan.desiredDomain ? kv("Desired domain", plan.desiredDomain) : "") +
-        kv("Included bouquets", (plan.includedFreeBouquets || 4) + " free") +
-        kv("Extra bouquets", extraN + (plan.oneTimeExtraBouquetsUsd ? " → one-time $" + plan.oneTimeExtraBouquetsUsd : "")) +
+        kv("Included bouquets", (plan.offerVersion ? "Existing library; custom work quoted separately" : String(plan.includedFreeBouquets ?? 4) + " (legacy agreement)")) +
+        kv("Extra bouquets", extraN + (plan.customWorkRequiresQuote ? " — separate quote requested" : plan.oneTimeExtraBouquetsUsd ? " → one-time $" + plan.oneTimeExtraBouquetsUsd : "")) +
         "</div></section>";
 
       // Photos
       html += '<section class="dossier-sec"><h3>📷 Uploaded photos (' + photos.length + ")</h3>";
       if (photos.length) {
         html += '<div class="photo-grid">' + photos.map(function (p, i) {
-          return '<div class="photo-card"><img src="' + p.dataUrl + '" alt="" data-zoom="' + i + '">' +
+          return '<div class="photo-card"><img src="' + esc(p.dataUrl) + '" alt="" data-zoom="' + i + '">' +
             '<div class="cap">' + esc(p.label) + "</div>" +
             '<button type="button" class="btn sec" data-dl="' + i + '">⬇ Save image</button></div>';
         }).join("") + "</div>";
@@ -1134,8 +1070,9 @@
         var id = el.dataset.logoDesign;
         if (!id || el.dataset.loaded) return;
         el.dataset.loaded = "1";
-        fetch(DB_BASE + "/designs/" + encodeURIComponent(id) + ".json", { credentials: "omit" })
+        adminFetch(ROOT_DB + "/setups/" + encodeURIComponent(id) + ".json", { credentials: "omit" })
           .then(function (r) { return r.ok ? r.json() : null; })
+          .then(async function (rec) { if (rec) return rec; var r = await adminFetch(DB_BASE + "/designs/" + encodeURIComponent(id) + ".json"); return r.ok ? r.json() : null; })
           .then(function (rec) {
             if (!rec || !rec.code) return null;
             var data = JSON.parse(fromBase64Url(rec.code));
@@ -1144,7 +1081,7 @@
             return toDataUrlChunks(ids);
           })
           .then(function (u) {
-            if (u) el.innerHTML = '<img alt="" src="' + u + '">';
+            if (safeImage(u)) el.innerHTML = '<img alt="" src="' + esc(u) + '">';
           })
           .catch(function () {});
       });
@@ -1152,10 +1089,10 @@
     var _renderSetups = renderSetups;
     renderSetups = function () { _renderSetups(); loadLogoThumbs(); };
 
-    loadAllAdminData().then(function () {
+    window.addEventListener("nebula-admin-auth", function () { loadAllAdminData().then(function () {
       var m = location.search.match(/[?&]setup=([A-Za-z0-9_-]{22})/);
       if (m) openDossier(m[1]);
-    });
+    }); });
   })();
   </script>
 </body>

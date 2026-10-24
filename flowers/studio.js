@@ -182,7 +182,6 @@
 
       const saveLeadToFirebase = async () => {
         const rootUrl = 'https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/';
-        const dbBase = rootUrl + 'la-flor-eterna/';
         const leadObj = {
           type: 'consultation',
           source: 'flowers/index.html',
@@ -193,11 +192,6 @@
           message: String(data.get('message') || ''),
           submittedAt: new Date().toISOString()
         };
-        const bytes = new TextEncoder().encode(JSON.stringify(leadObj));
-        let bin = '';
-        for (const b of bytes) bin += String.fromCharCode(b);
-        const code = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '').slice(0, 23800);
-
         const rand22 = () => {
           const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
           const arr = crypto.getRandomValues(new Uint8Array(22));
@@ -205,10 +199,8 @@
           for (let i = 0; i < 22; i++) s += chars[arr[i] % 64];
           return s;
         };
-        const designId = rand22();
         const reqId = rand22();
         const now = Date.now();
-        const expiresAt = now + 7776000000;
         let savedAny = false;
 
         // 1. Write to nebula/leads/<id> (if updated rules published)
@@ -217,67 +209,13 @@
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...leadObj, id: reqId, createdAt: now }),
+            signal: controller.signal,
             credentials: 'omit',
             referrerPolicy: 'no-referrer'
           });
           if (rLead.ok) savedAny = true;
         } catch {}
 
-        // 2. Write to live validated nebula/la-flor-eterna/designs & requests so it appears in /requests right away!
-        try {
-          const dRes = await fetch(dbBase + 'designs/' + designId + '.json?print=silent', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ shopId: 'la-flor-eterna', code, purpose: 'request', createdAt: now, expiresAt }),
-            credentials: 'omit',
-            referrerPolicy: 'no-referrer'
-          });
-          if (dRes.ok) {
-            savedAny = true;
-            await fetch(dbBase + 'requests/' + reqId + '.json?print=silent', {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                shopId: 'la-flor-eterna',
-                designId,
-                customerName: ('LEAD: ' + leadObj.name + (leadObj.shop ? ' (' + leadObj.shop + ')' : '')).slice(0, 120),
-                requestedDate: new Date().toISOString().slice(0, 10),
-                method: 'Pickup',
-                reference: 'LEAD-CONSULTATION',
-                code,
-                shortUrl: 'https://nebulastudio.site/b/#' + designId,
-                status: 'prepared',
-                createdAt: now,
-                expiresAt
-              }),
-              credentials: 'omit',
-              referrerPolicy: 'no-referrer'
-            });
-          }
-        } catch {}
-
-        // 3. Also index in NEB_LEADS_SLOT_00000XX
-        for (let i = 1; i <= 250; i++) {
-          const slot = 'NEB_LEADS_SLOT_' + String(i).padStart(7, '0');
-          const slotNow = Date.now();
-          const res = await fetch(dbBase + 'designs/' + slot + '.json?print=silent', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              shopId: 'la-flor-eterna',
-              code,
-              purpose: 'request',
-              createdAt: slotNow,
-              expiresAt: slotNow + 7776000000
-            }),
-            credentials: 'omit',
-            referrerPolicy: 'no-referrer'
-          });
-          if (res.ok) {
-            savedAny = true;
-            break;
-          }
-        }
         return savedAny;
       };
 

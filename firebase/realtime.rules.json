@@ -4,28 +4,87 @@
     ".write": false,
     "nebula": {
       "leads": {
-        ".read": true,
+        ".read": false,
         "$id": {
-          ".write": "!data.exists() && newData.exists()"
+          ".write": "$id.matches(/^[A-Za-z0-9_-]{1,64}$/) && !data.exists() && newData.exists()",
+          ".validate": "newData.hasChildren(['source','createdAt'])",
+          "createdAt": {
+            ".validate": "newData.isNumber() && newData.val() >= now - 300000 && newData.val() <= now + 300000"
+          },
+          "$other": {
+            ".validate": false
+          },
+          "id": {
+            ".validate": "newData.isString() && newData.val().length <= 64"
+          },
+          "source": {
+            ".validate": "newData.isString() && newData.val().length <= 120"
+          },
+          "type": {
+            ".validate": "newData.isString() && newData.val().length <= 60"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length <= 160"
+          },
+          "shop": {
+            ".validate": "newData.isString() && newData.val().length <= 160"
+          },
+          "city": {
+            ".validate": "newData.isString() && newData.val().length <= 160"
+          },
+          "contact": {
+            ".validate": "newData.isString() && newData.val().length <= 180"
+          },
+          "email": {
+            ".validate": "newData.isString() && newData.val().length <= 180"
+          },
+          "plan": {
+            ".validate": "newData.isString() && newData.val().length <= 500"
+          },
+          "message": {
+            ".validate": "newData.isString() && newData.val().length <= 4000"
+          },
+          "submittedAt": {
+            ".validate": "newData.isString() && newData.val().length <= 40"
+          },
+          "currency": {
+            ".validate": "newData.isString() && newData.val().length <= 16"
+          }
         }
       },
       "setups": {
-        ".read": true,
+        ".read": false,
         "$id": {
-          ".write": "!data.exists() && newData.exists()"
+          ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && !data.exists() && newData.exists()",
+          ".validate": "newData.hasChildren(['id','code','createdAt','expiresAt'])",
+          "id": {
+            ".validate": "newData.val() === $id"
+          },
+          "code": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1500000"
+          },
+          "createdAt": {
+            ".validate": "newData.isNumber() && newData.val() >= now - 300000 && newData.val() <= now + 300000"
+          },
+          "expiresAt": {
+            ".validate": "newData.isNumber() && newData.val() === newData.parent().child('createdAt').val() + 7776000000"
+          },
+          "$other": {
+            ".validate": false
+          }
         }
       },
       "la-flor-eterna": {
         "designs": {
           "$id": {
-            ".read": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && data.exists() && data.child('expiresAt').val() > now",
+            ".read": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && data.exists() && data.child('expiresAt').val() > now && data.child('code').isString() && data.child('code').val().matches(/^(Wz|eyJ2Ijo2|z1_)[A-Za-z0-9_-]+$/)",
             ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('code').val() === data.child('code').val() && newData.child('purpose').val() === data.child('purpose').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
-            ".validate": "newData.hasChildren([\"shopId\", \"code\", \"purpose\", \"createdAt\", \"expiresAt\"]) && true",
+            ".validate": "newData.hasChildren([\"shopId\", \"code\", \"purpose\", \"createdAt\", \"expiresAt\"])",
             "shopId": {
               ".validate": "newData.val() === 'la-flor-eterna'"
             },
             "code": {
-              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24000 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24000 && newData.val().matches(/^(Wz|eyJ2Ijo2|z1_)[A-Za-z0-9_-]+$/)"
             },
             "purpose": {
               ".validate": "newData.val() === 'share' || newData.val() === 'request'"
@@ -42,9 +101,9 @@
           }
         },
         "requests": {
-          ".read": true,
+          ".read": false,
           "$id": {
-            ".read": true,
+            ".read": false,
             ".write": "$id.matches(/^[A-Za-z0-9_-]{22}$/) && newData.exists() && (!data.exists() || (newData.child('shopId').val() === data.child('shopId').val() && newData.child('designId').val() === data.child('designId').val() && newData.child('customerName').val() === data.child('customerName').val() && newData.child('requestedDate').val() === data.child('requestedDate').val() && newData.child('method').val() === data.child('method').val() && newData.child('reference').val() === data.child('reference').val() && newData.child('code').val() === data.child('code').val() && newData.child('shortUrl').val() === data.child('shortUrl').val() && newData.child('status').val() === data.child('status').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('expiresAt').val() === data.child('expiresAt').val()))",
             ".validate": "newData.hasChildren([\"shopId\", \"designId\", \"customerName\", \"requestedDate\", \"method\", \"reference\", \"code\", \"shortUrl\", \"status\", \"createdAt\", \"expiresAt\"]) && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).exists() && root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val() > now && newData.child('code').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('code').val() && newData.child('expiresAt').val() === root.child('nebula/la-flor-eterna/designs').child(newData.child('designId').val()).child('expiresAt').val()",
             "shopId": {
@@ -85,6 +144,13 @@
             }
           }
         }
+      },
+      ".read": "auth != null && root.child('adminUids').child(auth.uid).val() === true"
+    },
+    "adminUids": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
       }
     }
   }

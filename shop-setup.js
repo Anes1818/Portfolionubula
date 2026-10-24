@@ -14,7 +14,7 @@
     "https://la-flora-6ed47-default-rtdb.firebaseio.com";
 
   var currentLang = "en";
-  var selectedPlan = "subdomain"; // 'subdomain' ($29) or 'custom_domain' ($35)
+  var selectedPlan = "subdomain"; // Standard $29 hosting; custom_domain requests a separate quote
   var selectedTheme = {
     id: "plum",
     primary: "#432d3f",
@@ -320,24 +320,25 @@
      ----------------------------------------------------------------------- */
   var I18N = {
     en: {
+      domainQuoteLabel: "Separate quote",
       headerSub: "Florist Studio Setup",
       navStep1: "1. Shop & Logo",
       navStep2: "2. Flower Prices",
       navStep3: "3. Toys & New Assets",
-      navStep4: "4. Bouquets & Plan",
-      heroEyebrow: "Florist Onboarding · Takes 4 Minutes",
+      navStep4: "4. Collection & Scope",
+      heroEyebrow: "Your flower shop, ready for setup",
       heroTitle: "Your flowers.<br>Your prices.<br><em>Your own studio.</em>",
       heroLead:
-        "We already filled in standard florist market prices below so you don’t have to start from scratch. Simply adjust the flowers you want to change, turn off anything you don’t carry, upload your logo, and we’ll build your shop’s version.",
+        "Start with the example prices below, then enter your actual prices and available products. We confirm your collection and setup scope before building your shop’s version.",
       badgePreFilled: "Pre-filled smart prices",
-      badgeFreeBouquets: "4 custom bouquets included FREE",
+      badgeFreeBouquets: "Your branding and prices",
       badgePayAfter: "Pay $0 today — only after your studio is live",
       promiseTag: "Included with your setup",
       promiseTitle: "Fair, simple & built for florists",
       promise1: "<b>Your branding & prices:</b> Your logo, shop name, WhatsApp/SMS number, and exact stem & wrapping prices.",
-      promise2: "<b>4 custom signature bouquets FREE:</b> Send us 4 photos of your best-selling bouquets — we build them into your studio for free, plus free seasonal refreshes.",
+      promise2: "<b>Your collection:</b> Choose existing designs or share bouquet photos for review. Custom recreations and seasonal changes are quoted before work starts.",
       promise3: "<b>Want new toys or flowers?</b> Tell us in Step 4 if you want custom plush toys, flowers, or wraps added.",
-      promise4: "<b>Choose your link:</b> <b>$29/mo</b> on <code>nebulastudio.site/your-shop</code> or <b>$35/mo</b> with your own custom <code>.com</code> domain.",
+      promise4: "<b>$29 USD/month:</b> One Nebula-hosted studio. Custom domain connection and renewal are quoted separately.",
       step1Kicker: "Shop Identity & Branding",
       step1Title: "Tell us about your flower shop",
       step1Sub: "Your logo, shop name, and phone number appear on your studio and receive customer bouquet requests.",
@@ -369,7 +370,7 @@
       optPayBoth: "Both options (Customer chooses)",
       previewKicker: "Instant Builder Preview",
       previewTitle: "See what your customers will use — right here",
-      previewSub: "Here is the exact Bouquet Builder screen your customers open from your bio. They pick their bouquet shape, add flowers, wraps & plushies, see your live price, and send the finished order straight to your WhatsApp.",
+      previewSub: "Customers personalize a bouquet, review an estimate and prepare a request for your shop. You confirm availability and the final price.",
       modeCard1Title: "1. Classic Wrap",
       modeCard1Sub: "Layered paper, ribbons & stems",
       modeCard2Title: "2. Round Dome",
@@ -422,37 +423,37 @@
       btnAddCustomItem: "Add a New Toy, Flower or Custom Asset",
       customItemHint: "You can attach a photo of your toy, flower, or paper right on each row.",
       lblCustomNotes: "Describe any new toys, flowers, or special ideas you want in your studio",
-      step5Kicker: "Signature Bouquets & Monthly Plan",
-      step5Title: "Your 4 free custom bouquets & plan choice",
-      step5Sub: "We recreate 4 of your shop’s signature bouquets inside your builder at no extra cost — plus free seasonal updates (Valentine’s, Mother’s Day, Fall & Christmas).",
-      freeBouquetsBannerTitle: "✓ 4 Custom Signature Bouquets Included FREE (+ Free Seasonal Updates)",
-      freeBouquetsBannerSub: "Upload a photo of up to 4 of your best-selling bouquets below, or leave any slot blank to use Nebula’s top-selling studio recipes.",
-      extraBouquetsTitle: "Want more than 4 custom signature bouquets?",
-      extraBouquetsSub: "Your first 4 custom bouquets (and seasonal refreshes) are 100% free. Additional custom-engineered bouquets are a one-time setup fee of $35 each (or 3 extra for $85).",
+      step5Kicker: "Your collection and setup scope",
+      step5Title: "Choose your starting collection",
+      step5Sub: "Use designs from the existing library, or upload references for a custom-work quote. Photos are optional and do not authorize paid work.",
+      freeBouquetsBannerTitle: "Your bouquet references · optional",
+      freeBouquetsBannerSub: "Share up to 4 references below. We confirm which existing designs fit and quote any new artwork or custom bouquet work separately.",
+      extraBouquetsTitle: "Planning a larger collection?",
+      extraBouquetsSub: "Tell us how many additional custom designs you have in mind. We will confirm the artwork, scope and quote before starting.",
       lblExtraBouquets: "Extra Custom Bouquets",
-      optExtra0: "4 Free Signature Bouquets ($0 — Included)",
-      optExtra1: "+1 Extra Custom Bouquet — 5 total ($35 one-time)",
-      optExtra2: "+2 Extra Custom Bouquets — 6 total ($70 one-time)",
-      optExtra3: "+3 Extra Custom Bouquets Bundle — 7 total ($85 one-time · Save $20)",
-      optExtra4: "+4 Extra Custom Bouquets — 8 total ($115 one-time · Save $25)",
-      choosePlanHeading: "Choose your monthly hosting plan",
-      planPopularBadge: "Most Popular",
+      optExtra0: "No additional custom designs",
+      optExtra1: "1 additional custom design(s) — quote requested",
+      optExtra2: "2 additional custom design(s) — quote requested",
+      optExtra3: "3 additional custom design(s) — quote requested",
+      optExtra4: "4 additional custom design(s) — quote requested",
+      choosePlanHeading: "Your hosting and domain preference",
+      planPopularBadge: "Standard plan",
       plan29Title: "Nebula Studio Link",
-      plan35Title: "Your Own Custom Domain",
+      plan35Title: "Request a custom-domain quote",
       perMonth: "/ month",
       plan29Bullet1: "Your custom-configured Bouquet Builder (Classic, Dome & Heart)",
-      plan29Bullet2: "4 custom signature bouquets FREE + free seasonal updates",
-      plan29Bullet3: "Perfect for your Instagram bio, TikTok, Facebook & QR codes",
+      plan29Bullet2: "One monthly batch of up to 10 price, text or contact edits",
+      plan29Bullet3: "One setup review round + up to 20 minutes of monthly asynchronous support",
       plan29Bullet4: "Pay $0 today — subscription starts only after your shop is live",
-      plan35Bullet1: "Everything in the $29 plan + your own dedicated .com domain",
-      plan35Bullet2: "We register & renew a new domain for you (or connect your existing one)",
-      plan35Bullet3: "Full HTTPS SSL security & branded short order links",
+      plan35Bullet1: "The $29 USD/month studio, plus separately quoted domain work",
+      plan35Bullet2: "Registration, connection and renewal costs confirmed in writing",
+      plan35Bullet3: "Existing website compatibility reviewed before we commit",
       plan35Bullet4: "Pay $0 today — subscription starts only after your shop is live",
-      lblDesiredDomain: "Preferred .com Domain Name (if choosing $35/mo)",
+      lblDesiredDomain: "Preferred domain · optional, subject to availability",
       submitCardTitle: "Ready to build your flower shop’s studio?",
-      submitCardDesc: "Pressing submit sends your complete price list, logo, custom asset requests, and bouquet photos directly to Nebula Studio. No credit card is asked today — you only pay after you preview and approve your live studio!",
+      submitCardDesc: "Send your setup details for review. We confirm scope, any separate quotes and the launch date with you. No payment or subscription is started by this form.",
       btnSubmitSetup: "Submit My Shop Setup",
-      submitFinePrint: "Saves securely to Nebula Cloud (Firebase) & emails nebulastudiosite@gmail.com",
+      submitFinePrint: "Saves your setup and photos to Firebase and emails a summary to Nebula.",
       calcTitle: "Live Estimate With Your Prices:",
       sample1Label: "12-Rose Classic:",
       sample2Label: "24-Rose Dome + Bow:",
@@ -461,24 +462,25 @@
       calcFinishBtn: "Finish & Submit ↓"
     },
     es: {
+      domainQuoteLabel: "Presupuesto aparte",
       headerSub: "Configuración de Florería",
       navStep1: "1. Tu Florería",
       navStep2: "2. Precios de Flores",
       navStep3: "3. Peluches y Nuevos",
-      navStep4: "4. Tus 4 Ramos y Plan",
-      heroEyebrow: "Registro para Florerías · Toma 4 Minutos",
+      navStep4: "4. Colección y alcance",
+      heroEyebrow: "Tu floristería, lista para configurar",
       heroTitle: "Tus flores.<br>Tus precios.<br><em>Tu propio estudio.</em>",
       heroLead:
-        "Ya pre-llenamos precios promedio del mercado para que no empieces desde cero. Solo ajusta los precios que quieras cambiar, desactiva lo que no manejes, sube tu logo y crearemos la versión de tu florería.",
+        "Empieza con los precios de ejemplo y añade tus precios reales y productos disponibles. Confirmamos tu colección y el alcance antes de crear tu estudio.",
       badgePreFilled: "Precios pre-llenados fáciles de editar",
-      badgeFreeBouquets: "4 ramos personalizados GRATIS",
+      badgeFreeBouquets: "Tu marca y tus precios",
       badgePayAfter: "Pagas $0 hoy — solo cuando tu estudio esté listo",
       promiseTag: "Incluido con tu configuración",
       promiseTitle: "Justo, claro y pensado para florerías",
       promise1: "<b>Tu marca y tus precios:</b> Tu logo, nombre de florería, WhatsApp/SMS y precios exactos por tallo y envoltura.",
-      promise2: "<b>4 ramos estrella GRATIS:</b> Sube 4 fotos de tus ramos más vendidos — los recreamos en tu estudio gratis, con cambios de temporada gratis.",
+      promise2: "<b>Tu colección:</b> Elige diseños existentes o comparte fotos para revisión. Las recreaciones y cambios de temporada se cotizan antes de empezar.",
       promise3: "<b>¿Quieres nuevos peluches o flores?</b> Dinos en el Paso 4 si deseas agregar peluches, flores o papeles nuevos.",
-      promise4: "<b>Elige tu enlace:</b> <b>$29/mes</b> en <code>nebulastudio.site/tu-floreria</code> o <b>$35/mes</b> con tu propio dominio <code>.com</code>.",
+      promise4: "<b>$29 USD/mes:</b> Un estudio alojado en Nebula. La conexión y renovación de dominio se cotizan aparte.",
       step1Kicker: "Identidad y Marca de tu Florería",
       step1Title: "Cuéntanos sobre tu florería",
       step1Sub: "Tu logo, nombre y número de WhatsApp/teléfono aparecerán en tu estudio para recibir los pedidos de tus clientes.",
@@ -510,7 +512,7 @@
       optPayBoth: "Ambas opciones (El cliente elige)",
       previewKicker: "Vista previa instantánea",
       previewTitle: "Mira lo que usarán tus clientes — aquí mismo",
-      previewSub: "Esta es la pantalla exacta que tus clientes abren desde tu biografía. Eligen la forma del ramo, agregan flores, envolturas y peluches, ven tu precio en vivo y te envían el pedido listo a tu WhatsApp.",
+      previewSub: "Tus clientes personalizan un ramo, revisan una estimación y preparan una solicitud. Tú confirmas disponibilidad y precio final.",
       modeCard1Title: "1. Ramo Clásico",
       modeCard1Sub: "Papel coreano en capas y listón",
       modeCard2Title: "2. Domo Redondo",
@@ -563,37 +565,37 @@
       btnAddCustomItem: "Agregar Nuevo Peluche, Flor o Accesorio",
       customItemHint: "Puedes adjuntar una foto de tu peluche, flor o papel en cada fila.",
       lblCustomNotes: "Describe cualquier nuevo peluche, flor o idea especial que quieras en tu estudio",
-      step5Kicker: "Tus 4 Ramos Estrella y Plan Mensual",
-      step5Title: "Tus 4 ramos personalizados gratis y elección de plan",
-      step5Sub: "Recreamos 4 de los ramos más vendidos de tu florería dentro de tu estudio sin costo adicional — más actualizaciones gratis por temporada (San Valentín, Día de las Madres, Otoño y Navidad).",
-      freeBouquetsBannerTitle: "✓ 4 Ramos Personalizados de tu Tienda Incluidos GRATIS (+ Cambios por Temporada Gratis)",
-      freeBouquetsBannerSub: "Sube hasta 4 fotos de tus ramos más vendidos abajo, o deja cualquier espacio con las recetas estrella de Nebula.",
-      extraBouquetsTitle: "¿Necesitas más de 4 ramos personalizados?",
-      extraBouquetsSub: "Tus primeros 4 ramos personalizados (y cambios de temporada) son 100% gratis. Si deseas más de 4 al inicio, cada ramo extra cuesta $35 pago único (o paquete de 3 extras por $85).",
+      step5Kicker: "Tu colección y alcance",
+      step5Title: "Elige tu colección inicial",
+      step5Sub: "Usa diseños de la biblioteca o sube referencias para cotizar un trabajo personalizado. Las fotos son opcionales y no autorizan trabajos de pago.",
+      freeBouquetsBannerTitle: "Referencias de tus ramos · opcionales",
+      freeBouquetsBannerSub: "Comparte hasta 4 referencias. Confirmamos qué diseños existentes encajan y cotizamos aparte las imágenes nuevas y los ramos personalizados.",
+      extraBouquetsTitle: "¿Quieres una colección más amplia?",
+      extraBouquetsSub: "Indica cuántos diseños personalizados adicionales necesitas. Confirmaremos imágenes, alcance y presupuesto antes de empezar.",
       lblExtraBouquets: "Ramos Personalizados Adicionales",
-      optExtra0: "4 Ramos Personalizados Gratis ($0 — Incluido)",
-      optExtra1: "+1 Ramo Personalizado Extra — 5 en total ($35 pago único)",
-      optExtra2: "+2 Ramos Personalizados Extra — 6 en total ($70 pago único)",
-      optExtra3: "+3 Ramos Personalizados Extra — 7 en total ($85 pago único · Ahorras $20)",
-      optExtra4: "+4 Ramos Personalizados Extra — 8 en total ($115 pago único · Ahorras $25)",
-      choosePlanHeading: "Elige tu plan mensual",
-      planPopularBadge: "Más Popular",
+      optExtra0: "Sin diseños personalizados adicionales",
+      optExtra1: "1 diseño(s) adicional(es) — solicitar presupuesto",
+      optExtra2: "2 diseño(s) adicional(es) — solicitar presupuesto",
+      optExtra3: "3 diseño(s) adicional(es) — solicitar presupuesto",
+      optExtra4: "4 diseño(s) adicional(es) — solicitar presupuesto",
+      choosePlanHeading: "Tu alojamiento y dominio",
+      planPopularBadge: "Plan estándar",
       plan29Title: "Enlace en Nebula Studio",
-      plan35Title: "Tu Propio Dominio .com",
+      plan35Title: "Solicitar presupuesto de dominio",
       perMonth: "/ mes",
       plan29Bullet1: "Tu creador de ramos configurado (Clásico, Domo y Corazón)",
-      plan29Bullet2: "4 ramos personalizados de tu florería GRATIS + cambios de temporada",
-      plan29Bullet3: "Ideal para tu biografía de Instagram, TikTok, Facebook y WhatsApp",
+      plan29Bullet2: "Un lote mensual de hasta 10 cambios de precios, textos o contacto",
+      plan29Bullet3: "Una ronda de revisión inicial y hasta 20 minutos de soporte asíncrono al mes",
       plan29Bullet4: "Pagas $0 hoy — la mensualidad inicia solo cuando tu estudio esté en vivo",
-      plan35Bullet1: "Todo lo del plan de $29 + tu propio dominio exclusivo .com",
-      plan35Bullet2: "Registramos y renovamos tu dominio nuevo (o conectamos el que ya tengas)",
-      plan35Bullet3: "Seguridad SSL HTTPS completa y enlaces cortos con tu marca",
+      plan35Bullet1: "El estudio de $29 USD/mes, más el dominio cotizado aparte",
+      plan35Bullet2: "Registro, conexión y renovación confirmados por escrito",
+      plan35Bullet3: "Revisamos la compatibilidad de tu sitio antes de comprometernos",
       plan35Bullet4: "Pagas $0 hoy — la mensualidad inicia solo cuando tu estudio esté en vivo",
-      lblDesiredDomain: "Dominio .com que te gustaría (si eliges el plan de $35/mes)",
+      lblDesiredDomain: "Dominio deseado · opcional, sujeto a disponibilidad",
       submitCardTitle: "¿Listo para que creemos el estudio de tu florería?",
-      submitCardDesc: "Al enviar, recibiremos tu lista de precios, logo, solicitud de nuevos peluches/flores y fotos de tus 4 ramos. No pedimos tarjeta hoy: ¡solo pagas cuando veas y apruebes tu estudio funcionando!",
+      submitCardDesc: "Envía tus datos para revisión. Confirmamos alcance, presupuestos adicionales y fecha de lanzamiento. Este formulario no inicia pagos ni suscripciones.",
       btnSubmitSetup: "Enviar Configuración de Mi Florería",
-      submitFinePrint: "Se guarda de forma segura en Nebula Cloud (Firebase) y envía copia a nebulastudiosite@gmail.com",
+      submitFinePrint: "Guarda tus datos y fotos en Firebase y envía un resumen a Nebula por correo.",
       calcTitle: "Cálculo en Vivo con tus Precios:",
       sample1Label: "Clásico 12 Rosas:",
       sample2Label: "Domo 24 Rosas + Moño:",
@@ -602,23 +604,24 @@
       calcFinishBtn: "Finalizar y Enviar ↓"
     },
     tr: {
+      domainQuoteLabel: "Ayrı teklif",
       headerSub: "Çiçekçi Stüdyo Kurulumu",
       navStep1: "1. Mağaza ve Logo",
       navStep2: "2. Çiçek Fiyatları",
       navStep3: "3. Oyuncaklar ve Ekstralar",
-      navStep4: "4. 4 Buket ve Plan",
-      heroEyebrow: "Çiçekçi Kurulumu · 4 Dakika Sürer",
+      navStep4: "4. Koleksiyon ve kapsam",
+      heroEyebrow: "Çiçekçiniz için stüdyo kurulumu",
       heroTitle: "Sizin çiçekleriniz.<br>Sizin fiyatlarınız.<br><em>Kendi tasarım stüdyonuz.</em>",
-      heroLead: "Sıfırdan başlamamanız için standart çiçek fiyatlarını aşağıya önceden doldurduk. Sadece değiştirmek istediğiniz fiyatları güncelleyin, satmadığınız ürünleri kapatın, logonuzu yükleyin; mağazanıza özel buket tasarlayıcıyı kuralım.",
+      heroLead: "Aşağıdaki örnek fiyatları gerçek fiyatlarınız ve mevcut ürünlerinizle değiştirin. Stüdyonuzu hazırlamadan önce koleksiyon ve kapsamı birlikte onaylarız.",
       badgePreFilled: "Hazır doldurulmuş akıllı fiyatlar",
-      badgeFreeBouquets: "4 özel buketiniz ÜCRETSİZ dahil",
+      badgeFreeBouquets: "Markanız ve fiyatlarınız",
       badgePayAfter: "Bugün 0$ ödeyin — sadece stüdyonuz yayına girince başlayın",
       promiseTag: "Kurulumunuza dahil olanlar",
       promiseTitle: "Çiçekçiler için hızlı, şeffaf ve kolay",
       promise1: "<b>Kendi markanız ve fiyatlarınız:</b> Logonuz, mağaza adınız, WhatsApp numaranız, TL (₺) para biriminiz ve dal/ambalaj fiyatlarınız.",
-      promise2: "<b>4 imza buketiniz ÜCRETSİZ:</b> En çok satan 4 buketinizin fotoğrafını yükleyin — stüdyonuza ücretsiz ekleyelim (sezonluk güncellemeler dahil).",
+      promise2: "<b>Koleksiyonunuz:</b> Hazır tasarımları seçin veya inceleme için buket fotoğrafları gönderin. Özel tasarımlar ve sezon değişiklikleri için işe başlamadan önce teklif sunarız.",
       promise3: "<b>Özel peluş veya çiçek mi istiyorsunuz?</b> 4. Adımda mağazanıza özel peluş oyuncak, kutu veya çiçekleri ekleyebilirsiniz.",
-      promise4: "<b>Linkinizi seçin:</b> <code>nebulastudio.site/magazaniz</code> üzerinde <b>$20/ay</b> veya kendi özel <code>.com</code> alan adınızla <b>$35/ay</b>.",
+      promise4: "<b>Aylık 29 USD:</b> Nebula üzerinde bir stüdyo. Özel alan adı bağlantısı ve yenileme ayrıca fiyatlandırılır.",
       step1Kicker: "Mağaza Kimliği ve Marka",
       step1Title: "Çiçekçi mağazanızın bilgileri",
       step1Sub: "Logonuz, mağaza adınız ve WhatsApp/telefon numaranız stüdyonuzda görünür ve müşteri siparişlerini alır.",
@@ -650,7 +653,7 @@
       optPayBoth: "Her iki seçenek (Müşteri seçer)",
       previewKicker: "Buket Stüdyosu Önizlemesi",
       previewTitle: "Müşterilerinizin kullanacağı ekranı görün",
-      previewSub: "Müşterilerinizin biyografinizden veya Shopify sitenizdeki butondan açacağı ekran tam olarak budur. Buket şeklini seçerler, çiçekleri ve peluşları eklerler, canlı TL fiyatınızı görürler ve siparişi WhatsApp'ınıza gönderirler.",
+      previewSub: "Müşteriler buketi kişiselleştirir, tahmini fiyatı görür ve mağazanıza talep hazırlar. Stok ve son fiyatı siz onaylarsınız.",
       modeCard1Title: "1. Klasik Buket",
       modeCard1Sub: "Katmanlı kağıt, kurdele ve saplar",
       modeCard2Title: "2. Yuvarlak Kubbe (Dome)",
@@ -700,37 +703,37 @@
       btnAddCustomItem: "Yeni Oyuncak, Çiçek veya Özel Ürün Ekle",
       customItemHint: "Her satırda ürününüzün fotoğrafını da ekleyebilirsiniz.",
       lblCustomNotes: "Stüdyonuzda görmek istediğiniz özel çiçek, peluş veya fikirleri yazın",
-      step5Kicker: "4 İmza Buketiniz ve Aylık Plan",
-      step5Title: "Ücretsiz 4 özel buketiniz ve plan seçimi",
-      step5Sub: "Mağazanızın en çok satan 4 buketini stüdyonuza ücretsiz olarak ekliyoruz — Sevgililer Günü, Anneler Günü ve sezon güncellemeleri de ücretsizdir.",
-      freeBouquetsBannerTitle: "✓ 4 Özel İmza Buketiniz ÜCRETSİZ Dahil (+ Ücretsiz Sezonluk Güncellemeler)",
-      freeBouquetsBannerSub: "En çok satan 4 buketinizin fotoğrafını aşağıya yükleyin veya Nebula'nın hazır modellerini kullanmak için boş bırakın.",
-      extraBouquetsTitle: "4'ten fazla özel buket mi istiyorsunuz?",
-      extraBouquetsSub: "İlk 4 özel buketiniz %100 ücretsizdir. Ekstra özel buket modelleri tek seferlik 35$ (veya 3 ekstra buket 85$) kurulum ücretlidir.",
+      step5Kicker: "Koleksiyonunuz ve kurulum kapsamı",
+      step5Title: "Başlangıç koleksiyonunuzu seçin",
+      step5Sub: "Hazır tasarımları kullanın veya özel çalışma teklifi için referans yükleyin. Fotoğraflar isteğe bağlıdır ve ücretli çalışma onayı sayılmaz.",
+      freeBouquetsBannerTitle: "Buket referanslarınız · isteğe bağlı",
+      freeBouquetsBannerSub: "En fazla 4 referans paylaşın. Uygun hazır tasarımları belirler, yeni görseller ve özel buket çalışmaları için ayrıca teklif veririz.",
+      extraBouquetsTitle: "Daha geniş bir koleksiyon mu istiyorsunuz?",
+      extraBouquetsSub: "Kaç ek özel tasarım istediğinizi belirtin. Başlamadan önce görselleri, kapsamı ve fiyat teklifini onaylarız.",
       lblExtraBouquets: "Ekstra Özel Buket Sayısı",
-      optExtra0: "4 Ücretsiz İmza Buketi (0$ — Dahil)",
-      optExtra1: "+1 Ekstra Özel Buket — Toplam 5 (35$ tek seferlik)",
-      optExtra2: "+2 Ekstra Özel Buket — Toplam 6 (70$ tek seferlik)",
-      optExtra3: "+3 Ekstra Özel Buket Paketi — Toplam 7 (85$ tek seferlik · 20$ İndirim)",
-      optExtra4: "+4 Ekstra Özel Buket — Toplam 8 (115$ tek seferlik · 25$ İndirim)",
-      choosePlanHeading: "Aylık stüdyo planınızı seçin",
-      planPopularBadge: "En Popüler",
+      optExtra0: "Ek özel tasarım yok",
+      optExtra1: "1 ek özel tasarım — teklif istiyorum",
+      optExtra2: "2 ek özel tasarım — teklif istiyorum",
+      optExtra3: "3 ek özel tasarım — teklif istiyorum",
+      optExtra4: "4 ek özel tasarım — teklif istiyorum",
+      choosePlanHeading: "Barındırma ve alan adı tercihiniz",
+      planPopularBadge: "Standart plan",
       plan29Title: "Nebula Stüdyo Linki",
-      plan35Title: "Kendi Özel Alan Adınız (.com)",
+      plan35Title: "Özel alan adı teklifi isteyin",
       perMonth: "/ ay",
       plan29Bullet1: "Mağazanıza özel 3D Buket Tasarlayıcı (Klasik, Kubbe ve Kalp)",
-      plan29Bullet2: "4 özel imza buketi ÜCRETSİZ + ücretsiz sezon güncellemeleri",
-      plan29Bullet3: "Shopify menünüz, Instagram biyografiniz ve WhatsApp için hazır",
+      plan29Bullet2: "Ayda tek seferde en fazla 10 fiyat, metin veya iletişim bilgisi değişikliği",
+      plan29Bullet3: "Bir kurulum incelemesi ve ayda en fazla 20 dakika mesaj üzerinden destek",
       plan29Bullet4: "Bugün 0$ ödeyin — abonelik sadece stüdyonuz yayına girince başlar",
-      plan35Bullet1: "Standart plandaki her şey + kendi özel alan adınız (studio.magazaniz.com)",
-      plan35Bullet2: "Shopify mağazanızın alt alan adına veya yeni .com adresine bağlarız",
-      plan35Bullet3: "Tam HTTPS SSL güvenliği ve markalı kısa sipariş linkleri",
+      plan35Bullet1: "Aylık 29 USD stüdyo ve ayrıca fiyatlandırılan alan adı çalışması",
+      plan35Bullet2: "Kayıt, bağlantı ve yenileme ücretleri yazılı olarak onaylanır",
+      plan35Bullet3: "Mevcut sitenizle uyumluluğu taahhüt vermeden önce inceleriz",
       plan35Bullet4: "Bugün 0$ ödeyin — abonelik sadece stüdyonuz yayına girince başlar",
-      lblDesiredDomain: "İstediğiniz Alan Adı / Subdomain (35$/ay planı için)",
+      lblDesiredDomain: "Tercih edilen alan adı · isteğe ve uygunluğa bağlı",
       submitCardTitle: "Çiçekçi stüdyonuzu kurmaya hazır mısınız?",
-      submitCardDesc: "Gönder butonuna bastığınızda fiyat listeniz, logonuz ve buket fotoğraflarınız doğrudan Nebula Studio ekibine ulaşır. Bugün kart bilgisi istenmez — yalnızca stüdyonuzu görüp onayladıktan sonra başlarsınız!",
+      submitCardDesc: "Kurulum bilgilerinizi inceleme için gönderin. Kapsamı, ek teklifleri ve yayın tarihini birlikte onaylarız. Bu form ödeme veya abonelik başlatmaz.",
       btnSubmitSetup: "Mağaza Kurulumumu Gönder",
-      submitFinePrint: "Nebula Cloud (Firebase) üzerine güvenle kaydedilir ve ekibimize iletilir",
+      submitFinePrint: "Bilgilerinizi ve fotoğraflarınızı Firebase’e kaydeder, Nebula’ya e-posta ile özet gönderir.",
       calcTitle: "Fiyatlarınızla Canlı Örnek Hesaplama:",
       sample1Label: "12 Güllü Klasik Buket:",
       sample2Label: "24 Güllü Kubbe + Kurdele:",
@@ -1278,7 +1281,7 @@
   }
 
   /* -----------------------------------------------------------------------
-     6. 4 FREE SIGNATURE BOUQUET SLOTS
+     6. OPTIONAL BOUQUET REFERENCE SLOTS
      ----------------------------------------------------------------------- */
   function renderBouquetSlots() {
     var container = document.getElementById("bouquetSlotsContainer");
@@ -1291,7 +1294,7 @@
       slotEl.innerHTML =
         '<div class="slot-header">' +
         "<span>" +
-        (currentLang === "es" ? "Ramo Gratis #" : "Free Bouquet #") +
+        (currentLang === "es" ? "Referencia #" : currentLang === "tr" ? "Referans #" : "Reference #") +
         b.slot +
         "</span>" +
         "<span>✓ " +
@@ -1382,11 +1385,11 @@
     refreshCurrencyPrefixes();
 
     var extraCount = parseInt(document.getElementById("extraBouquetsSelect").value, 10) || 0;
-    var extraFeeMap = { 0: 0, 1: 35, 2: 70, 3: 85, 4: 115 };
-    var extraFee = extraFeeMap[extraCount] || 0;
-    var monthlyPrice = selectedPlan === "custom_domain" ? 35 : 29;
+
+
+    var monthlyPrice = 29;
     document.getElementById("samplePlanPrice").textContent =
-      "$" + monthlyPrice + "/mo" + (extraFee > 0 ? " (+" + "$" + extraFee + " once)" : "");
+      "$" + monthlyPrice + " USD / " + (currentLang === "tr" ? "ay" : currentLang === "es" ? "mes" : "month") + (selectedPlan === "custom_domain" || extraCount > 0 ? (currentLang === "es" ? " + presupuesto aparte" : currentLang === "tr" ? " + ayrı teklif" : " + separate quote") : "");
   }
 
   function updateSlugPreview() {
@@ -1411,8 +1414,7 @@
     var channel = document.getElementById("orderChannel").value;
     var rawPhone = document.getElementById("shopPhone").value.trim();
     var digitsOnly = rawPhone.replace(/\D+/g, "");
-    if (digitsOnly.length === 10) digitsOnly = "1" + digitsOnly;
-    if (digitsOnly.length < 8) digitsOnly = "15713367129";
+    // Submission requires an explicit international number; never substitute Nebula’s number.
 
     var email = document.getElementById("shopEmail").value.trim();
     var instagram = document.getElementById("shopInstagram").value.trim();
@@ -1462,7 +1464,7 @@
 
     var customAssetsNotes = document.getElementById("customAssetsNotes").value.trim();
     var extraBouquetsCount = parseInt(document.getElementById("extraBouquetsSelect").value, 10) || 0;
-    var extraFeeMap = { 0: 0, 1: 35, 2: 70, 3: 85, 4: 115 };
+
 
     // Construct 100% check-shop.cjs compatible window.NEBULA_SHOP object
     var nebulaShopConfig = {
@@ -1527,12 +1529,18 @@
       customerPayment: customerPayment,
       plan: {
         type: selectedPlan,
-        monthlyUsd: selectedPlan === "custom_domain" ? 35 : 29,
+        monthlyUsd: 29,
+        offerVersion: "2026-10-24-bounded",
+        customDomainQuoteRequested: selectedPlan === "custom_domain",
+        monthlyEditLimit: 10,
+        monthlyAsyncSupportMinutes: 20,
+        setupReviewRounds: 1,
         siteUrl: siteUrl,
         desiredDomain: desiredDomain,
-        includedFreeBouquets: 4,
+        includedFreeBouquets: 0,
+        customWorkRequiresQuote: true,
         extraCustomBouquets: extraBouquetsCount,
-        oneTimeExtraBouquetsUsd: extraFeeMap[extraBouquetsCount] || 0
+        oneTimeExtraBouquetsUsd: null
       },
       customAssetRequests: {
         wantsNewAssets: selectedAssetCategories.length > 0 || customAssetsRows.length > 0 || Boolean(customAssetsNotes),
@@ -1590,255 +1598,35 @@
     return new TextDecoder().decode(bytes);
   }
 
-  /* Uploads one image as 20KB chunks. Each chunk is retried up to 3 times.
-     Returns the ordered chunk IDs, or null if ANY chunk could not be saved
-     (a half-saved photo would be corrupt, so we never keep partial photos). */
-  async function uploadDataUrlInChunks(dataUrl, now, expiresAt) {
-    if (!dataUrl || typeof dataUrl !== "string") return [];
-    var b64u = toBase64Url(dataUrl);
-    var chunkSize = 20000;
-    var chunkIds = [];
-    for (var offset = 0; offset < b64u.length; offset += chunkSize) {
-      var slice = b64u.slice(offset, offset + chunkSize);
-      var saved = "";
-      for (var attempt = 0; attempt < 3 && !saved; attempt++) {
-        var cid = randomId22();
-        try {
-          var res = await fetch(
-            FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + cid + ".json?print=silent",
-            {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                shopId: "la-flor-eterna",
-                code: slice,
-                purpose: "share",
-                createdAt: now,
-                expiresAt: expiresAt
-              }),
-              credentials: "omit",
-              referrerPolicy: "no-referrer"
-            }
-          );
-          if (res.ok) saved = cid;
-        } catch (_) {}
-      }
-      if (!saved) return null;
-      chunkIds.push(saved);
-    }
-    return chunkIds;
-  }
-
-  async function downloadDataUrlFromChunks(chunkIds) {
-    if (!Array.isArray(chunkIds) || !chunkIds.length) return "";
-    var parts = await Promise.all(
-      chunkIds.map(async function (cid) {
-        var r = await fetch(
-          FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + cid + ".json",
-          { credentials: "omit" }
-        );
-        if (!r.ok) return "";
-        var j = await r.json();
-        return (j && j.code) || "";
-      })
-    );
-    var joined = parts.join("");
-    return joined ? fromBase64Url(joined) : "";
-  }
-
+  // Personal setup data never belongs in public bouquet-preview records.
   async function saveToFirebaseRealtime(payload) {
-    var designId = randomId22();
-    var requestId = randomId22();
-    var now = Date.now();
-    var expiresAt = now + 7776000000; // 90 days (matches realtime.rules.json)
-
-    // Clone payload and store every uploaded photo in dedicated 20KB Firebase chunks so ZERO photos are ever lost!
-    var clone = JSON.parse(JSON.stringify(payload));
-    delete clone.shopConfigJsText;
-    clone.photoChunks = { logo: [], bouquets: {}, customItems: {} };
-    clone.photoUploadFailures = [];
-    var photosAttempted = 0;
-
-    try {
-      if (clone.logoDataUrl) {
-        photosAttempted++;
-        var logoIds = await uploadDataUrlInChunks(clone.logoDataUrl, now, expiresAt);
-        if (logoIds) clone.photoChunks.logo = logoIds;
-        else clone.photoUploadFailures.push("Shop logo");
-        clone.logoDataUrl = "";
-      }
-      if (Array.isArray(clone.signatureBouquets)) {
-        for (var bi = 0; bi < clone.signatureBouquets.length; bi++) {
-          var bPhoto = clone.signatureBouquets[bi].photoDataUrl;
-          if (bPhoto) {
-            photosAttempted++;
-            var bIds = await uploadDataUrlInChunks(bPhoto, now, expiresAt);
-            if (bIds) clone.photoChunks.bouquets[bi] = bIds;
-            else clone.photoUploadFailures.push("Bouquet #" + (bi + 1));
-            clone.signatureBouquets[bi].photoDataUrl = "";
-          }
-        }
-      }
-      if (clone.customAssetRequests && Array.isArray(clone.customAssetRequests.items)) {
-        for (var ci = 0; ci < clone.customAssetRequests.items.length; ci++) {
-          var cPhoto = clone.customAssetRequests.items[ci].photoDataUrl;
-          if (cPhoto) {
-            photosAttempted++;
-            var cIds = await uploadDataUrlInChunks(cPhoto, now, expiresAt);
-            if (cIds) clone.photoChunks.customItems[ci] = cIds;
-            else clone.photoUploadFailures.push("Custom item #" + (ci + 1));
-            clone.customAssetRequests.items[ci].photoDataUrl = "";
-          }
-        }
-      }
-    } catch (_) {}
-
-    var codeB64 = toBase64Url(JSON.stringify(clone));
-    if (codeB64.length > 23800) {
-      // Never truncate JSON (it would be unreadable). Drop the bulky config copy instead;
-      // the admin dossier can rebuild shop-config.js from the prices + the emailed copy.
-      delete clone.nebulaShopConfig;
-      clone.nebulaShopConfigOmitted = true;
-      codeB64 = toBase64Url(JSON.stringify(clone));
+    var id = randomId22(), now = Date.now();
+    var photoNames = [];
+    if (payload.logoDataUrl) photoNames.push("Shop logo");
+    payload.signatureBouquets.forEach(function (b, i) { if (b.photoDataUrl) photoNames.push("Bouquet #" + (i + 1)); });
+    payload.customAssetRequests.items.forEach(function (item, i) { if (item.photoDataUrl) photoNames.push("Custom item #" + (i + 1)); });
+    var code = toBase64Url(JSON.stringify(payload));
+    var ok = false;
+    if (code.length <= 1500000) {
+      var controller = new AbortController(), timer = setTimeout(function () { controller.abort(); }, 15000);
+      try {
+        var response = await fetch(FIREBASE_DB_URL + "/nebula/setups/" + id + ".json?print=silent", {
+          method: "PUT", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id, code: code, createdAt: now, expiresAt: now + 7776000000 }),
+          signal: controller.signal, credentials: "omit", referrerPolicy: "no-referrer"
+        });
+        ok = response.ok;
+      } catch (_) {} finally { clearTimeout(timer); }
     }
-    codeB64 = codeB64.slice(0, 23800);
-
-    // 1. Try dedicated nebula/onboarding/<designId> path (if updated rules are deployed)
-    var dedicatedOk = false;
-    try {
-      var res1 = await fetch(
-        FIREBASE_DB_URL + "/nebula/onboarding/" + designId + ".json?print=silent",
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: designId,
-            shopName: payload.shopName,
-            ownerName: payload.ownerName,
-            plan: payload.plan.type,
-            code: codeB64,
-            createdAt: now,
-            expiresAt: expiresAt
-          }),
-          credentials: "omit",
-          referrerPolicy: "no-referrer"
-        }
-      );
-      if (res1.ok) dedicatedOk = true;
-    } catch (_) {}
-
-    // 2. Also write to live validated nebula/la-flor-eterna/designs & requests so it works 100% right now!
-    var liveValidatedOk = false;
-    try {
-      var designRecord = {
-        shopId: "la-flor-eterna",
-        code: codeB64,
-        purpose: "request",
-        createdAt: now,
-        expiresAt: expiresAt
-      };
-      var dRes = await fetch(
-        FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + designId + ".json?print=silent",
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(designRecord),
-          credentials: "omit",
-          referrerPolicy: "no-referrer"
-        }
-      );
-
-      if (dRes.ok) {
-        var refSlug = ("SETUP-" + payload.slug.toUpperCase()).replace(/[^-A-Z0-9]/g, "").slice(0, 48);
-        var reqRecord = {
-          shopId: "la-flor-eterna",
-          designId: designId,
-          customerName: ("SHOP SETUP: " + payload.shopName + " (" + payload.ownerName + ")").slice(0, 120),
-          requestedDate: new Date().toISOString().slice(0, 10),
-          method: payload.plan.type === "custom_domain" ? "Delivery" : "Pickup",
-          reference: refSlug || "SETUP-SHOP",
-          code: codeB64,
-          shortUrl: "https://nebulastudio.site/b/#" + designId,
-          status: "prepared",
-          createdAt: now,
-          expiresAt: expiresAt
-        };
-        var rRes = await fetch(
-          FIREBASE_DB_URL + "/nebula/la-flor-eterna/requests/" + requestId + ".json?print=silent",
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(reqRecord),
-            credentials: "omit",
-            referrerPolicy: "no-referrer"
-          }
-        );
-        liveValidatedOk = rRes.ok || dRes.ok;
-
-        // Also index in NEB_SETUP_SLOT_00000XX so admin.html lists every submitted shop setup automatically!
-        for (var si = 1; si <= 250; si++) {
-          var slot = "NEB_SETUP_SLOT_" + String(si).padStart(7, "0");
-          var sNow = Date.now();
-          var sRes = await fetch(
-            FIREBASE_DB_URL + "/nebula/la-flor-eterna/designs/" + slot + ".json?print=silent",
-            {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                shopId: "la-flor-eterna",
-                code: toBase64Url(
-                  JSON.stringify({
-                    designId: designId,
-                    shopName: payload.shopName,
-                    ownerName: payload.ownerName,
-                    phone: payload.phone,
-                    email: payload.email,
-                    instagram: payload.instagram,
-                    city: payload.city,
-                    country: payload.country,
-                    currency: payload.currency,
-                    plan: payload.plan,
-                    customAssetRequests: {
-                      wantsNewAssets: payload.customAssetRequests.wantsNewAssets,
-                      categories: payload.customAssetRequests.categories,
-                      itemCount: payload.customAssetRequests.items.length,
-                      notes: payload.customAssetRequests.notes
-                    },
-                    submittedAt: payload.submittedAt,
-                    inspectUrl: "admin.html?setup=" + designId,
-                    photosAttempted: photosAttempted,
-                    photoUploadFailures: clone.photoUploadFailures
-                  })
-                ).slice(0, 23800),
-                purpose: "request",
-                createdAt: sNow,
-                expiresAt: sNow + 7776000000
-              }),
-              credentials: "omit",
-              referrerPolicy: "no-referrer"
-            }
-          );
-          if (sRes.ok) break;
-        }
-      }
-    } catch (_) {}
-
-    return {
-      ok: dedicatedOk || liveValidatedOk,
-      designId: designId,
-      requestId: requestId,
-      inspectUrl: "https://nebulastudio.site/admin.html?setup=" + designId,
-      photosAttempted: photosAttempted,
-      photoFailures: clone.photoUploadFailures
-    };
+    return { ok: ok, designId: ok ? id : "", inspectUrl: ok ? "https://nebulastudio.site/admin.html?setup=" + id : "", photosAttempted: photoNames.length, photoFailures: ok ? [] : photoNames };
   }
 
   async function sendToFormspreeEmail(payload, fbResult) {
     var fd = new FormData();
     var planLabel =
       payload.plan.type === "custom_domain"
-        ? "$35/month — Custom Domain (" + payload.plan.siteUrl + ")"
-        : "$29/month — Nebula Subdomain (" + payload.plan.siteUrl + ")";
+        ? "$29 USD/month + separate custom-domain quote (" + payload.plan.siteUrl + ")"
+        : "$29 USD/month — Nebula-hosted studio (" + payload.plan.siteUrl + ")";
 
     fd.append("_subject", "🌸 New Florist Studio Setup: " + payload.shopName + " (" + planLabel + ")");
     fd.append("shop_name", payload.shopName);
@@ -1851,12 +1639,11 @@
     fd.append("builder_languages", (payload.builderLanguages || []).join(", "));
     fd.append("currency", payload.currency);
     fd.append("selected_plan", planLabel);
+    fd.append("offer_scope", "One setup review round; one monthly batch of up to 10 price/text/contact edits; up to 20 minutes asynchronous support monthly. No rollover. New artwork, custom bouquets, seasonal work and domains quoted separately. No payment authorized by this form.");
     fd.append(
       "extra_custom_bouquets",
       payload.plan.extraCustomBouquets +
-        " extra (+$" +
-        payload.plan.oneTimeExtraBouquetsUsd +
-        " one-time) + 4 Free Included"
+        " additional designs requested; custom work and seasonal changes require a separate agreed quote"
     );
 
     if (fbResult && fbResult.designId) {
@@ -1894,7 +1681,7 @@
         (b.photoDataUrl ? " [Custom Photo Uploaded]" : " [Standard Template]")
       );
     });
-    fd.append("signature_bouquets_4_free", sigLines.join("\n"));
+    fd.append("bouquet_references_for_review", sigLines.join("\n"));
 
     // Disabled items summary
     fd.append(
@@ -1909,10 +1696,12 @@
     // Ready-to-use shop-config.js
     fd.append("shop_config_js", payload.shopConfigJsText);
 
+    var mailController = new AbortController(), mailTimer = setTimeout(function () { mailController.abort(); }, 15000);
     try {
       var res = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
         body: fd,
+        signal: mailController.signal,
         headers: { Accept: "application/json" }
       });
       var json = await res.json().catch(function () {
@@ -1920,13 +1709,13 @@
       });
       var ok =
         res.ok &&
-        String(json.success) !== "false" &&
-        json.ok !== false &&
+        (json.ok === true || json.success === true || json.success === "true") &&
+        !json.error &&
         !(Array.isArray(json.errors) && json.errors.length);
       return { ok: ok };
     } catch (_) {
       return { ok: false };
-    }
+    } finally { clearTimeout(mailTimer); }
   }
 
   /* -----------------------------------------------------------------------
@@ -2137,6 +1926,14 @@
         return;
       }
 
+      var normalizedPhone = shopPhone.replace(/[\s().-]/g, "");
+      if (!/^\+[1-9][0-9]{7,14}$/.test(normalizedPhone)) {
+        errBox.textContent = currentLang === "es" ? "Incluye + y el código de país en tu teléfono (ej. +56…)." : currentLang === "tr" ? "Telefon numaranıza + ve ülke kodunu ekleyin (ör. +90…)." : "Include + and your country code in the phone number (for example, +1…).";
+        errBox.style.display = "block";
+        document.getElementById("shopPhone").focus();
+        return;
+      }
+      if (!form.reportValidity()) return;
       var submitBtn = document.getElementById("submitSetupBtn");
       submitBtn.disabled = true;
       submitBtn.innerHTML =
@@ -2178,20 +1975,20 @@
         ? "¡Recibimos la configuración de tu florería!"
         : "Your shop setup has been received!";
       document.getElementById("successSub").textContent = isEs
-        ? "Guardamos tus precios, logo y fotos. Nuestro equipo ya los está revisando."
-        : "We saved your prices, logo and photos. Our team is reviewing them now.";
+        ? "Recibimos tus datos. Revisaremos la colección y confirmaremos el alcance contigo."
+        : "We received your setup details. We will review the collection and confirm the scope with you.";
 
       var steps = isEs
         ? [
-            "<b>Construimos tu estudio</b> con tus precios, logo y los 4 ramos incluidos (normalmente en 48 horas).",
+            "<b>Construimos tu estudio</b> tras confirmar tu colección, alcance y fecha de entrega.",
             "<b>Te enviamos un enlace de vista previa</b> por WhatsApp o correo para que lo pruebes como si fueras tu cliente.",
-            "<b>Pides los cambios que quieras</b> (los ajustes de precios son gratis). Solo pagas cuando lo apruebes y quedes feliz.",
+            "<b>Revisa tu configuración</b> en la ronda incluida. Las imágenes y trabajos adicionales se cotizan antes de empezar.",
             "<b>Publicamos tu estudio</b> y tus clientas empiezan a diseñar y pedir ramos."
           ]
         : [
-            "<b>We build your studio</b> with your prices, logo and the 4 included bouquets (usually within 48 hours).",
+            "<b>We build your studio</b> after confirming your collection, scope and delivery date.",
             "<b>We send you a preview link</b> on WhatsApp or email so you can try it like one of your customers.",
-            "<b>You ask for any changes</b> (price adjustments are free). You only pay once you approve and love it.",
+            "<b>Review your setup</b> in the included review round. Extra artwork or work is quoted before it starts.",
             "<b>We publish your studio</b> and your customers start designing and ordering bouquets."
           ];
       document.getElementById("nextSteps").innerHTML = steps

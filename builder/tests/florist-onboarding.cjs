@@ -16,15 +16,27 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
 
-    let firebaseSaved = false;
+    let firebaseSaved = false, adminGranted = false, privateReads = 0;
     let formspreePosted = false;
     const mockDb = new Map();
 
+    await context.route('**/firebase-app.js', route => route.fulfill({ contentType: 'text/javascript', body: 'export const initializeApp = c => c;' }));
+    await context.route('**/firebase-auth.js', route => route.fulfill({ contentType: 'text/javascript', body: `
+      const user={uid:'owner',getIdToken:async()=> 'fixture-token'};
+      const auth={currentUser:sessionStorage.getItem('fixture-admin')?user:null};let observer;
+      export const getAuth=()=>auth;export class GoogleAuthProvider{};
+      export const browserSessionPersistence={};export const setPersistence=async()=>{};
+      export const onAuthStateChanged=(a,fn)=>{observer=fn;queueMicrotask(()=>fn(a.currentUser));};
+      export const signInWithPopup=async()=>{auth.currentUser=user;sessionStorage.setItem('fixture-admin','1');await observer(user);};
+      export const signOut=async()=>{auth.currentUser=null;sessionStorage.removeItem('fixture-admin');await observer(null);};
+    ` }));
     // Intercept external network in automated test and store Firebase PUTs in mockDb to test ?inspect=<id> round-trip!
     await context.route('**/*firebaseio.com/**', async route => {
       const req = route.request();
       const u = new URL(req.url());
+      if(u.pathname.startsWith('/adminUids/'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(adminGranted && u.searchParams.get('auth')==='fixture-token')});
       if (req.method() === 'PUT') {
+        assert.ok(!u.pathname.includes('/la-flor-eterna/'), 'Personal form data must never use public bouquet storage');
         firebaseSaved = true;
         const key = u.pathname;
         if (mockDb.has(key)) {
@@ -35,6 +47,11 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
           await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
         }
       } else {
+        privateReads++;
+        if(u.searchParams.get('auth')!=='fixture-token'||!adminGranted)return route.fulfill({status:401,contentType:'application/json',body:'null'});
+        const prefix=u.pathname.replace(/\.json$/,'')+'/';
+        const children=Object.fromEntries([...mockDb].filter(([k])=>k.startsWith(prefix)).map(([k,v])=>[k.slice(prefix.length).replace(/\.json$/,''),v]));
+        if(Object.keys(children).length)return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(children)});
         if (mockDb.has(u.pathname)) {
           await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockDb.get(u.pathname)) });
         } else {
@@ -52,7 +69,7 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     // 1. Verify all 8 flower families & 15 extras rendered with valid images
     assert.equal(await page.locator('.family-card').count(), 8, 'Should render 8 flower family cards');
     assert.equal(await page.locator('.extra-card').count(), 15, 'Should render 15 accessory/toy cards');
-    assert.equal(await page.locator('.bouquet-slot').count(), 4, 'Should render 4 free signature bouquet slots');
+    assert.equal(await page.locator('.bouquet-slot').count(), 4, 'Should render 4 optional reference slots');
 
     // Scroll through to trigger lazy images and check naturalWidth
     await page.evaluate(async () => {
@@ -115,13 +132,16 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
 
     // Select $35/mo Custom Domain plan
     await page.locator('.plan-choice-card[data-plan-choice="custom_domain"]').click();
-    assert.equal(await page.locator('#samplePlanPrice').innerText(), '$35/mo');
+    assert.equal(await page.locator('#samplePlanPrice').innerText(), '$29 USD / month + separate quote');
 
+    // Reject invalid destination details without submitting any records.
+    const validPhone=await page.locator('#shopPhone').inputValue();await page.locator('#shopPhone').fill('123');await page.locator('#submitSetupBtn').click();assert.equal(firebaseSaved,false);assert.match(await page.locator('#submitErrorBox').innerText(),/country code/);await page.locator('#shopPhone').fill(validPhone);
     // Submit form
     await page.locator('#submitSetupBtn').click();
     await page.waitForSelector('#successPanel:not([hidden])');
 
     assert.ok(firebaseSaved, 'Should save onboarding payload to Firebase Realtime Database');
+    const savedSetup=[...mockDb.values()].find(v=>v.code);const payload=JSON.parse(Buffer.from(savedSetup.code,'base64url'));assert.equal(payload.plan.monthlyUsd,29);assert.equal(payload.plan.includedFreeBouquets,0);assert.equal(payload.plan.customWorkRequiresQuote,true);assert.equal(payload.plan.oneTimeExtraBouquetsUsd,null);
     assert.ok(formspreePosted, 'Should post onboarding summary to Formspree email endpoint');
 
     // Client-facing confirmation: clear next steps, reference code, NO developer config exposed to the client
@@ -135,6 +155,9 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     await page.goto(url + '?inspect=' + idMatch[1], { waitUntil: 'networkidle' });
     assert.match(page.url(), /admin\.html\?setup=/, 'Legacy inspect link redirects to admin');
 
+    assert.equal(privateReads,0,'No private data fetched before sign-in');
+    await page.locator('#adminSignIn').click();await page.waitForFunction(()=>document.getElementById('adminAuthStatus').textContent.includes('not approved'));assert.equal(privateReads,0,'Unapproved account gets no data');
+    adminGranted=true;await page.locator('#adminSignIn').click();
     // Admin dossier reconstructs all 3 uploaded photos + config from chunked Firebase records
     await page.waitForFunction(() => document.querySelectorAll('#dsBody .photo-card img').length === 3);
     assert.equal(await page.locator('#dsBody .photo-card img').count(), 3, 'Admin dossier shows all 3 uploaded photos (logo, bouquet, toy)');
@@ -159,6 +182,15 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     await page.waitForFunction(() => document.getElementById('countLeads')?.textContent === '1');
     assert.equal(await page.locator('#countLeads').textContent(), '1', 'Admin dashboard shows consultation lead');
     assert.equal(await page.locator('#countSetups').textContent(), '1', 'Admin dashboard shows shop setup submission');
+
+    assert.equal(await page.locator('#panel-setups').isVisible(), true, 'Website requests open by default');
+    await page.locator('#setupSearch').fill('no-such-shop-xyz');
+    assert.match(await page.locator('#panel-setups').textContent(), /No matching website requests/);
+    await page.locator('#setupSearch').fill('');
+    assert.equal(await page.locator('#panel-setups [data-dossier]').count(), 1, 'Clearing search restores saved setup');
+    assert.match(await page.locator('#panel-setups').textContent(), /Submitted:/);
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, 'Admin fits phone width');
 
     // 6. Test Invite-Only Gate & Domain Lock on /builder/
     await page.goto(baseOrigin + '/builder/?test_gate=1', { waitUntil: 'networkidle' });
