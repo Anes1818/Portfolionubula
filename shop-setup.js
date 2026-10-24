@@ -1936,13 +1936,7 @@
      ----------------------------------------------------------------------- */
   function checkOwnerInspectMode() {
     var params = new URLSearchParams(window.location.search);
-    var urlLang = (params.get("lang") || "").toLowerCase();
-    if (urlLang === "tr") {
-      applyCountry("Turkey", true);
-      setLanguage("tr");
-    } else if (urlLang === "es") {
-      setLanguage("es");
-    }
+
     var inspectId = params.get("inspect");
     if (inspectId && /^[A-Za-z0-9_-]{22}$/.test(inspectId)) {
       window.location.replace("admin.html?setup=" + encodeURIComponent(inspectId));
@@ -1973,7 +1967,7 @@
       b.classList.toggle("active", b.dataset.lang === currentLang);
     });
 
-    var dict = I18N[currentLang];
+    var dict = I18N[currentLang] || I18N.en || {};
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.dataset.i18n;
       if (dict[key]) el.textContent = dict[key];
@@ -2253,11 +2247,12 @@
 
   function checkClientPrefill() {
     var params = new URLSearchParams(window.location.search);
-    var urlLang = (params.get("lang") || "").toLowerCase();
-    if (urlLang === "tr") {
+
+    var langParam = (params.get("lang") || "").toLowerCase();
+    if (langParam === "tr") {
       applyCountry("Turkey", true);
       setLanguage("tr");
-    } else if (urlLang === "es") {
+    } else if (langParam === "es") {
       setLanguage("es");
     }
     var client = (params.get("client") || params.get("shop") || "").toLowerCase();
