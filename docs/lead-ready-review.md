@@ -65,3 +65,5 @@ Record the shop, date, need, objection, agreed scope and next step. A positive r
 Do not mark the full launch goal complete until deployment, live private-read denial, owner sign-in, existing short-link reconstruction, mobile checks, and owner-confirmed receipt of a deliberately authorized test enquiry have been verified. Keep unresolved checks explicit.
 
 Live verification on October 24: after the owner published the rules, anonymous reads of leads, setups, customer requests and the historical setup slot all returned HTTP 401. Owner Google sign-in still needs activation and verification. The admin opens on website setups and supports shop/contact search and submission dates.
+
+October 24 release follow-up: owner confirmed Google admin access works. Live deployment bd4eb37 verified at 320, 390, 768 and 1440px, with all 14 bouquet cards, language handoff, preview rendering/scrolling and anonymous admin lock. Existing screenshot bouquet record returns HTTP 200 and its short link reconstructs successfully in the live preview. No production data was changed by these checks. Real enquiry email receipt remains awaiting owner confirmation.
