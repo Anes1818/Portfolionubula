@@ -1,7 +1,27 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin.html
+Disallow: /shop-setup.html
+Disallow: /builder/
+Disallow: /shops/
+Disallow: /b/
 Disallow: /demo/pavon/admin.html
 Disallow: /demo/pavon/import.html
+
+User-agent: HTTrack
+Disallow: /
+
+User-agent: WebCopier
+Disallow: /
+
+User-agent: SiteSucker
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
 
 Sitemap: https://nebulastudio.site/sitemap.xml

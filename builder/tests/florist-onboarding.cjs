@@ -89,10 +89,9 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     assert.equal(await page.inputValue('#shopCurrency'), 'USD');
     assert.ok((await page.locator('#shopCurrency option').count()) >= 40, 'Many currencies offered');
 
-    // Live builder preview loads only on tap
-    assert.equal(await page.locator('#builderPreviewFrame').getAttribute('src'), null, 'Preview iframe is lazy');
-    await page.click('#builderPreviewStart');
-    assert.match(await page.locator('#builderPreviewFrame').getAttribute('src'), /studio\.html/, 'Tap loads the live builder');
+    // Static visual builder preview image (no live builder iframe or code link exposed on setup page)
+    assert.equal(await page.locator('#builderPreview iframe').count(), 0, 'No live builder iframe exposed on setup page');
+    assert.equal(await page.locator('#builderPreview .phone-poster-img').count(), 1, 'Static builder preview image is rendered');
 
     // Adjust Roses family price to $4.50 and verify live calculator updates
     const beforeSample1 = await page.locator('#samplePrice1').innerText();

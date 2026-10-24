@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#f7f5ef">
   <title>Florist Studio Setup &amp; Price Configuration | Nebula Sites Studio</title>
   <meta name="description" content="Configure your flower shop's Nebula Bouquet Builder in minutes. Set your stem prices, upload your logo and 4 free signature bouquets, request custom toys or flowers, and choose your $29 or $35 monthly plan.">
@@ -111,21 +112,10 @@
           <li data-i18n-html="previewPoint2"><b>Live price</b> with every stem and add-on, using your prices</li>
           <li data-i18n-html="previewPoint3"><b>The finished order arrives on your WhatsApp</b> with the picture, the recipe and the total</li>
         </ul>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <button type="button" class="action-btn" id="builderPreviewBtnLeft" data-i18n="previewTryInline">▶ Try Interactive Builder Here</button>
-          <a class="action-btn secondary" href="shops/la-flor-eterna/studio.html" target="_blank" rel="noopener" data-i18n="previewOpen">Open full screen ↗</a>
-        </div>
       </div>
-      <div class="phone-frame">
+      <div class="phone-frame" aria-label="Bouquet Builder visual preview">
         <div class="phone-notch" aria-hidden="true"></div>
-        <iframe id="builderPreviewFrame" title="Live bouquet builder preview" data-src="shops/la-flor-eterna/studio.html" loading="lazy"></iframe>
-        <button type="button" class="phone-start" id="builderPreviewStart" aria-label="Tap to interact with live bouquet builder">
-          <img class="phone-poster-img" src="assets/builder-ui-preview.png" alt="Nebula Bouquet Builder interface preview">
-          <span class="phone-start-pill">
-            <span class="phone-start-icon" aria-hidden="true">▶</span>
-            <span data-i18n="previewTap">Tap to test live on this screen</span>
-          </span>
-        </button>
+        <img class="phone-poster-img" src="assets/builder-ui-preview.png" alt="Nebula Bouquet Builder interface preview">
       </div>
     </section>
 
