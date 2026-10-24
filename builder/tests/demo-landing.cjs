@@ -12,7 +12,8 @@ const root=path.resolve(__dirname,'../..');
   await context.route('**/*',route=>{
    const req=route.request(),url=new URL(req.url());
    if(url.origin===base)return route.continue();
-   if(url.hostname==='formspree.io'){posts++;assert.equal(req.method(),'POST');assert.ok(req.postData().includes('Review Test Shop'));return route.fulfill({status:fail?500:200,contentType:'application/json',body:JSON.stringify(fail?{error:'Test failure'}:{ok:true})});}
+   if(url.hostname==='la-flora-6ed47-default-rtdb.firebaseio.com'){assert.equal(req.method(),'PUT');assert.match(url.pathname,/^\/nebula\/leads\//);const lead=JSON.parse(req.postData());assert.equal(lead.shop,'Review Test Shop');assert.equal(lead.email,'test@example.invalid');return route.fulfill({status:fail?403:200,contentType:'application/json',body:fail?'{}':'null'});}
+   if(url.hostname==='formspree.io'){posts++;assert.equal(req.method(),'POST');assert.ok(req.postData().includes('Review Test Shop'));return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'Test notification failure'})});}
    return route.fulfill({status:200,contentType:'text/plain',body:''});
   });
   await page.goto(base+'/demo/nebula-builder/');await page.locator('#heroTry').waitFor();

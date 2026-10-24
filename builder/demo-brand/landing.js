@@ -1,4 +1,4 @@
-/* A short enquiry uses the existing email service; no database writes or payment. */
+/* Save enquiries privately; email is a secondary notification, never a payment. */
 (()=>{'use strict';
  const language=document.getElementById('language'),form=document.getElementById('interestForm'),status=document.getElementById('interestStatus'),submit=document.getElementById('interestSubmit'),success=document.getElementById('interestSuccess');
  const languageKey=window.NebulaShop?.key('nebulaLanguageV4')||'shop:nebula-demo:nebulaLanguageV4';
@@ -21,8 +21,13 @@
   busy=true;submit.disabled=true;form.setAttribute('aria-busy','true');status.textContent='';translate();
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
   try{
-   const res=await fetch(form.action,{method:'POST',body:data,headers:{Accept:'application/json'},signal:controller.signal});
-   const result=await res.json();if(!res.ok||result.errors||result.error||!(result.ok===true||result.success===true||result.success==='true'))throw Error('Unconfirmed submission');
+   const id=crypto.randomUUID(),now=Date.now();
+   const lead={id,source:'Nebula bouquet demo',shop:String(data.get('business')),email:String(data.get('email')),contact:String(data.get('email')),currency:String(data.get('currency')),plan:'$29 USD/month; custom work quoted separately',message:String(data.get('message')),createdAt:now,submittedAt:new Date(now).toISOString()};
+   const results=await Promise.allSettled([
+    fetch('https://la-flora-6ed47-default-rtdb.firebaseio.com/nebula/leads/'+id+'.json?print=silent',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(lead),signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'}).then(r=>{if(!r.ok)throw Error('Save failed');return true;}),
+    fetch(form.action,{method:'POST',body:data,headers:{Accept:'application/json'},signal:controller.signal}).then(async r=>{const result=await r.json();if(!r.ok||result.errors||result.error||!(result.ok===true||result.success===true||result.success==='true'))throw Error('Notification unconfirmed');return true;})
+   ]);
+   if(!results.some(r=>r.status==='fulfilled'))throw Error('Unconfirmed submission');
    submitted=true;form.hidden=true;success.hidden=false;success.focus({preventScroll:true});
    // Local, one-time handoff only. Never put contact details in a URL.
    try{sessionStorage.setItem('nebula-demo-enquiry',JSON.stringify({shop:String(data.get('business')),email:String(data.get('email')),currency:String(data.get('currency')),at:Date.now()}));}catch{}
