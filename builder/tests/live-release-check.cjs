@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
  const page=await browser.newPage({viewport:{width:390,height:844}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',route=>['POST','PUT','PATCH','DELETE'].includes(route.request().method())?route.abort():route.continue());
- await page.goto('https://nebulastudio.site/demo/nebula-builder/?vip=nebula&v=bd4eb37',{waitUntil:'networkidle'});
+ await page.goto('https://nebulastudio.site/demo/nebula-builder/?vip=nebula&v=8c91ad0',{waitUntil:'networkidle'});
  assert.equal(await page.locator('.featured-card').count()+await page.locator('.collection-card').count(),14);
  for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'overflow '+width)}
  await page.setViewportSize({width:390,height:844});

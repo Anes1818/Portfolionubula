@@ -69,3 +69,22 @@ Live verification on October 24: after the owner published the rules, anonymous 
 October 24 release follow-up: owner confirmed Google admin access works. Live deployment bd4eb37 verified at 320, 390, 768 and 1440px, with all 14 bouquet cards, language handoff, preview rendering/scrolling and anonymous admin lock. Existing screenshot bouquet record returns HTTP 200 and its short link reconstructs successfully in the live preview. No production data was changed by these checks. Real enquiry email receipt remains awaiting owner confirmation.
 
 Enquiry follow-up: owner clarified the missing email was expected at the submitted customer address, not the Nebula notification inbox. No automatic customer confirmation is implemented, so this is not evidence of a delivery failure. Demo enquiries now also save to the protected leads collection and appear in admin; a browser test proves saved enquiries succeed even when the notification service fails, while total failure retains the form. Actual owner-inbox receipt remains unconfirmed.
+
+
+## October 25 handoff
+
+The owner deferred the real email test. Do not send a test message without explicit authorization or claim inbox receipt is verified. Automated tests cover database-only success, email-only success, total failure with retained input, and duplicate submission prevention. The public landing notification is not an automatic customer confirmation email.
+
+Admin search now covers the selected category: full website setups, short demo/consultation enquiries and bouquet requests. Search by shop, contact or reference; clear the field to see all records. Failed request-table loads now display an incomplete-sync warning rather than a successful sync message.
+
+### Daily owner workflow
+
+1. Open https://nebulastudio.site/admin.html and sign in with the approved Google account.
+2. Check **Consultation & Builder Leads** for short enquiries. Open **Florist Shop Setups** for prices, photos and complete shop details. **La Flor Eterna Orders** contains bouquet requests; these are not automatically confirmed or paid orders.
+3. Open the full setup and review photos, supported materials, prices and contact destination before quoting or building. Use the reply buttons to contact the lead yourself.
+4. Confirm scope and any separate custom-work quote before starting. Preserve La Flora's agreed free month.
+5. Send the shop preview for approval; agree the launch/billing date. Do not promise payment processing, instant delivery or a particular sales result.
+
+Sales links: public page https://nebulastudio.site/flowers/ ; invited demo https://nebulastudio.site/demo/nebula-builder/?vip=nebula ; full setup https://nebulastudio.site/shop-setup.html . Keep the admin link for the owner.
+
+Remaining manual verification: when convenient, submit a labelled test from the demo and check the configured Nebula notification inbox and the admin leads tab. No new customer confirmation-email feature was added.

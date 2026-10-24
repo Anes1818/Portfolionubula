@@ -192,6 +192,14 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, 'Admin fits phone width');
 
+    await page.locator('.tab-btn[data-tab="leads"]').click();
+    await page.locator('#setupSearch').fill('sophie@kfleurs.fr');
+    assert.equal(await page.locator('#panel-leads .rec-card').count(), 1, 'Find a lead by contact email');
+    await page.locator('#setupSearch').fill('missing-shop');
+    assert.match(await page.locator('#panel-leads').textContent(), /No matching requests/);
+    await page.locator('#setupSearch').fill('');
+    assert.equal(await page.locator('#panel-leads .rec-card').count(), 1, 'Clear search restores leads');
+
     // 6. Test Invite-Only Gate & Domain Lock on /builder/
     await page.goto(baseOrigin + '/builder/?test_gate=1', { waitUntil: 'networkidle' });
     assert.match(page.url(), /\/shop-setup\.html$/, 'Uninvited visitor to /builder/ redirects to /shop-setup.html');

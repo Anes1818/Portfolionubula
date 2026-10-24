@@ -7,13 +7,13 @@ const root=path.resolve(__dirname,'../..');
  const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
  try{
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
-  const page=await context.newPage(),errors=[],bad=[];let posts=0,fail=true;
+  const page=await context.newPage(),errors=[],bad=[];let posts=0,fail=true,emailOk=false;
   page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)bad.push(r.url());});
   await context.route('**/*',route=>{
    const req=route.request(),url=new URL(req.url());
    if(url.origin===base)return route.continue();
    if(url.hostname==='la-flora-6ed47-default-rtdb.firebaseio.com'){assert.equal(req.method(),'PUT');assert.match(url.pathname,/^\/nebula\/leads\//);const lead=JSON.parse(req.postData());assert.equal(lead.shop,'Review Test Shop');assert.equal(lead.email,'test@example.invalid');return route.fulfill({status:fail?403:200,contentType:'application/json',body:fail?'{}':'null'});}
-   if(url.hostname==='formspree.io'){posts++;assert.equal(req.method(),'POST');assert.ok(req.postData().includes('Review Test Shop'));return route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'Test notification failure'})});}
+   if(url.hostname==='formspree.io'){posts++;assert.equal(req.method(),'POST');assert.ok(req.postData().includes('Review Test Shop'));return route.fulfill({status:emailOk?200:500,contentType:'application/json',body:JSON.stringify(emailOk?{ok:true}:{error:'Test notification failure'})});}
    return route.fulfill({status:200,contentType:'text/plain',body:''});
   });
   await page.goto(base+'/demo/nebula-builder/');await page.locator('#heroTry').waitFor();
@@ -32,6 +32,13 @@ const root=path.resolve(__dirname,'../..');
   assert.equal(await page.locator('#interestShop').inputValue(),'Review Test Shop');assert.ok(!(await page.locator('#interestSuccess').isVisible()));
   fail=false;await page.locator('#interestSubmit').click();await page.locator('#interestSuccess').waitFor({state:'visible'});assert.equal(posts,2);
   await page.locator('#interestSuccess a').click();assert.equal(await page.locator('#shopName').inputValue(),'Review Test Shop');assert.equal(await page.locator('#shopEmail').inputValue(),'test@example.invalid');assert.equal(await page.locator('#shopCurrency').inputValue(),'CAD');
+  fail=true;emailOk=true;
+  await page.goto(base+'/demo/nebula-builder/');
+  await page.locator('#interestShop').fill('Review Test Shop');await page.locator('#interestEmail').fill('test@example.invalid');
+  await page.locator('#interestSubmit').click();await page.locator('#interestSuccess').waitFor({state:'visible'});
+  assert.equal(posts,3,'Email-only fallback confirms accepted enquiry when database is unavailable');
+  await page.evaluate(()=>document.getElementById('interestForm').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
+  assert.equal(posts,3,'Successful submission cannot be sent again in the same page');
   await page.goto(base+'/demo/nebula-builder/'+hero);await page.waitForFunction(()=>window.__ready);assert.equal(await page.evaluate(()=>NebulaApp.state.items.length),32);assert.equal(await page.evaluate(()=>NebulaApp.state.finishes.roseArtwork),'reference-v3');
   await page.goto(base+'/demo/nebula-builder/'+sheet);await page.locator('#orderSheet').waitFor({state:'visible'});assert.ok(!(await page.locator('#orderBroken').isVisible()));
   await page.goto(base+'/demo/nebula-builder/');

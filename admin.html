@@ -290,7 +290,7 @@
       </div>
     </section>
 
-    <label for="setupSearch">Find a website request</label><input id="setupSearch" class="text-in" type="search" placeholder="Shop, owner, email or phone" style="width:100%;margin:8px 0 16px">
+    <label for="setupSearch">Search requests</label><input id="setupSearch" class="text-in" type="search" placeholder="Shop, customer, email, phone or reference" style="width:100%;margin:8px 0 16px">
     <!-- Quick ID Lookup -->
     <section class="tools-bar">
       <div class="tool-input-group">
@@ -415,9 +415,10 @@
       try {
         var r = await adminFetch(DB_BASE + "/requests.json" + q, { credentials: "omit" });
         if (r.status === 401 || r.status === 403) {
+          collectionErrors.push("bouquet requests");
           return { locked: true, items: [] };
         }
-        if (!r.ok) return { locked: false, items: [] };
+        if (!r.ok) throw Error("Requests unavailable");
         var obj = await r.json();
         if (!obj || typeof obj !== "object") return { locked: false, items: [] };
         var arr = Object.keys(obj).map(function (k) {
@@ -428,6 +429,7 @@
         });
         return { locked: false, items: arr };
       } catch (_) {
+        collectionErrors.push("bouquet requests");
         return { locked: false, items: [] };
       }
     }
@@ -467,6 +469,11 @@
         .replace(/"/g, "&quot;");
     }
 
+    function matchingRecords(records, fields) {
+      var query = document.getElementById("setupSearch").value.trim().toLowerCase();
+      return records.filter(function (record) { return fields.map(function (key) { return record[key] || ""; }).join(" ").toLowerCase().includes(query); });
+    }
+
     function renderOrders() {
       var el = document.getElementById("panel-orders");
       document.getElementById("countOrders").textContent = String(ordersData.length);
@@ -478,7 +485,9 @@
           "</div>";
         return;
       }
-      el.innerHTML = ordersData
+      var visible = matchingRecords(ordersData, ["customerName", "reference", "designId", "method"]);
+      if (!visible.length) { el.innerHTML = '<div class="empty-state">No matching requests. Try another name or contact detail.</div>'; return; }
+      el.innerHTML = visible
         .map(function (o) {
           var summary = decodeBouquetCodeSummary(o.code);
           var sheetUrl = "shops/la-flor-eterna/order.html?d=" + encodeURIComponent(o.designId || "");
@@ -522,7 +531,9 @@
           "</div>";
         return;
       }
-      el.innerHTML = leadsData
+      var visible = matchingRecords(leadsData, ["shop", "name", "email", "contact", "source", "message"]);
+      if (!visible.length) { el.innerHTML = '<div class="empty-state">No matching requests. Try another name or contact detail.</div>'; return; }
+      el.innerHTML = visible
         .map(function (l) {
           var contact = l.contact || l.email || "";
           var isEmail = contact.indexOf("@") !== -1;
@@ -618,6 +629,7 @@
       collectionErrors = [];
       var syncEl = document.getElementById("syncStatus");
       syncEl.textContent = "Syncing with Firebase Realtime Database…";
+      document.getElementById("btnRefresh").disabled = true;
 
       var secret = "";
 
@@ -700,6 +712,7 @@
       renderLeads();
       renderSetups();
 
+      document.getElementById("btnRefresh").disabled = false;
       syncEl.textContent = collectionErrors.length ? "Could not load " + collectionErrors.join(", ") + ". Please retry; empty lists may be incomplete." : "✓ Live · Updated " + new Date().toLocaleTimeString();
     }
 
@@ -719,7 +732,7 @@
       });
     });
 
-    document.getElementById("setupSearch").addEventListener("input", function () { switchTab("setups"); renderSetups(); });
+    document.getElementById("setupSearch").addEventListener("input", function () { renderOrders(); renderLeads(); renderSetups(); });
     document.getElementById("btnRefresh").addEventListener("click", loadAllAdminData);
     document.getElementById("btnRefreshAfterRules").addEventListener("click", loadAllAdminData);
 
