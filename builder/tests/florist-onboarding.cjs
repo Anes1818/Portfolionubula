@@ -158,6 +158,15 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     assert.equal(await page.locator('#countLeads').textContent(), '1', 'Admin dashboard shows consultation lead');
     assert.equal(await page.locator('#countSetups').textContent(), '1', 'Admin dashboard shows shop setup submission');
 
+    // 6. Test Invite-Only Gate & Domain Lock on /builder/
+    await page.goto(baseOrigin + '/builder/?test_gate=1', { waitUntil: 'networkidle' });
+    assert.match(page.url(), /\/shop-setup\.html$/, 'Uninvited visitor to /builder/ redirects to /shop-setup.html');
+
+    await page.goto(baseOrigin + '/builder/?test_gate=1&vip=nebula', { waitUntil: 'networkidle' });
+    assert.match(page.url(), /\/demo\/nebula-builder\/index\.html/, 'VIP link unlocks /demo/nebula-builder/');
+    assert.equal(await page.evaluate(() => window.NebulaShop?.hostAllowed), true, 'Authorized host sets NebulaShop.hostAllowed = true');
+    assert.equal(await page.evaluate(() => sessionStorage.getItem('nebula_vip')), '1', 'VIP invite persists in sessionStorage');
+
     assert.deepEqual(errors, []);
     console.log('PASS florist-onboarding.cjs: UI, images, EN/ES, custom assets, consultation form, Admin Dashboard, and valid NEBULA_SHOP output');
   } finally {

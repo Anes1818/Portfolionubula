@@ -223,7 +223,7 @@ function classicStemMask(f,backPath){
  if(back)c.drawImage(back,f.origin.x,f.origin.y,wm.width*f.scale,wm.height*(f.yScale||f.scale));
  const half=wm.width*f.scale*.445;c.fillStyle='#000';c.fillRect(360-half,55,2*half,Math.max(0,f.rimY-55));c.clearRect(0,f.waist.y+8,720,820);return cv;
 }
-function drawArt(ctx,s,opts={}){
+function drawArt(ctx,s,opts={}){if(g.NebulaShop?.hostAllowed===false)return {nodes:[],finishes:[],frame:{}};
  if(g.NebulaPhoto?.active(s))return NebulaPhoto.draw(ctx,s,opts.scene||scene(s),nodeDraw,opts);
  const sc=opts.scene||scene(s),f=sc.frame;ctx.save();
  if(sc.collar&&!opts.alphaOnly){const n=sc.collar,art=n.untinted?image(n.url):tint(n.url,s.finishes.paper,s.finishes.tint);if(art){ctx.save();ctx.shadowColor='rgba(27,26,22,.16)';ctx.shadowBlur=8;ctx.shadowOffsetY=3;ctx.drawImage(art,n.x-n.w/2,n.y-n.h/2,n.w,n.h);ctx.restore();}}
@@ -285,7 +285,7 @@ function view(s,camera={}){
  const z=camera.zoom||1;return {scale:v.scale*z,x:360+(v.x-360)*z+(camera.x||0),y:410+(v.y-410)*z+(camera.y||0)};
 }
 function worldPoint(s,p,camera){const v=view(s,camera);return {x:(p.x-v.x)/v.scale,y:(p.y-v.y)/v.scale};}
-function paint(cv,s,opts={}){const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);ctx.save();ctx.scale(cv.width/720,cv.height/820);const v=view(s,opts.camera);ctx.translate(v.x,v.y);ctx.scale(v.scale,v.scale);const sc=drawArt(ctx,s,opts);ctx.restore();return sc;}
+function paint(cv,s,opts={}){if(g.NebulaShop?.hostAllowed===false)return {nodes:[],finishes:[],frame:{}};const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);ctx.save();ctx.scale(cv.width/720,cv.height/820);const v=view(s,opts.camera);ctx.translate(v.x,v.y);ctx.scale(v.scale,v.scale);const sc=drawArt(ctx,s,opts);ctx.restore();return sc;}
 function alphaFor(path){if(!alphaCache.has(path)){const im=image(path),crop=NEBULA_META.crops?.[path],w=crop?.[2]||im.width,h=crop?.[3]||im.height,cv=makeCanvas(w,h),ctx=cv.getContext('2d',{willReadFrequently:true});drawAsset(ctx,im,path,0,0,w,h);alphaCache.set(path,{w,h,data:ctx.getImageData(0,0,w,h).data});}return alphaCache.get(path);}
 function hit(sc,p){if(sc.frame.mode!=='classic'&&!['fall-mixed-size-v1','garden-v1','halloween-v1'].includes(sc.frame.engine)){let best=null,dist=Infinity;for(const n of sc.nodes){if(n.decorative)continue;const d=Math.hypot(p.x-n.x,p.y-n.y),slot=sc.slots?.find(a=>a.slot===n.slot);if(d<dist&&d<(slot?.near||n.d)*.70){dist=d;best=n;}}return best;}for(const n of sc.nodes.slice().reverse()){if(n.decorative)continue;const dx=p.x-n.x,dy=p.y-n.y,x=dx*Math.cos(n.rot)+dy*Math.sin(n.rot),y=-dx*Math.sin(n.rot)+dy*Math.cos(n.rot);if(Math.abs(x)>n.w/2||Math.abs(y)>n.h/2)continue;const a=alphaFor(n.url),ix=Math.floor(((n.flipX?-x:x)/n.w+.5)*a.w),iy=Math.floor((y/n.h+.5)*a.h);if(ix>=0&&ix<a.w&&iy>=0&&iy<a.h&&a.data[(iy*a.w+ix)*4+3]>60)return n;}return null;}
 function detailHit(sc,p){
@@ -296,6 +296,7 @@ function detailHit(sc,p){
   if(a.data[(iy*a.w+ix)*4+3]>60)return n;
  }return null;
 }
+
 function ghost(s,id,p){const m=NEBULA_META.flowers[id],top=s.mode!=='classic';if(!m||(s.mode==='classic'&&!m.classicAvailable))return null;const d=NebulaConfig.CAT[id][top?'topDiameter':'classicDiameter'],mw=top?m.headWidth:m.bloomWidth,mh=top?m.headHeight:m.bloomHeight,f=d/(top?Math.max(mw,mh):mw);return {id,url:top?(s.mode==='dome'&&m.domeHeads?m.domeHeads[0]:m.head):m.classicBloom,x:p.x,y:p.y,w:mw*f,h:mh*f,d,rot:0,bright:1};}
 function alphaCanvas(s){const cv=makeCanvas();drawArt(cv.getContext('2d'),s,{alphaOnly:true});return cv;}
 function alphaReport(s){const sc=scene(s),cv=alphaCanvas(s),data=cv.getContext('2d',{willReadFrequently:true}).getImageData(0,0,720,820).data,f=sc.frame;if(g.NebulaSpooky?.active(s))return {applicable:false,reason:'Reserved prop space and mixed flower pockets; a filled-disc test is not applicable.'};if(s.mode==='classic')return {applicable:false,reason:'Open front-facing bouquet: top-view gap coverage is not meaningful.'};let samples=0,open=0,translucent=0;const coreR=Math.max(12,f.radius-f.unit*.43);
