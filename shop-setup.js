@@ -2286,6 +2286,24 @@
       renderCustomAssetRows();
       updateSlugPreview();
       updateLiveSampleCalculator();
+    } else if (client === "floresboutique" || client === "floresboutique-cl" || client === "floresboutique.cl") {
+      document.getElementById("shopName").value = "Flores Boutique";
+      document.getElementById("shopInstagram").value = "@floresboutique.cl";
+      document.getElementById("shopCity").value = "Santiago";
+      applyCountry("Chile", true);
+      setLanguage("es");
+      var roseBtn2 = document.querySelector('.theme-swatch-btn[data-theme="rose"]');
+      if (roseBtn2) roseBtn2.click();
+      customAssetsRows = [
+        { id: "ca_fb_1", category: "New Flowers / Colors", name: "Rosas de Limpiapipas", priceDollars: "2.50", photoDataUrl: "", fileName: "" },
+        { id: "ca_fb_2", category: "New Flowers / Colors", name: "Tulipanes de Limpiapipas", priceDollars: "2.50", photoDataUrl: "", fileName: "" },
+        { id: "ca_fb_3", category: "New Flowers / Colors", name: "Girasol de Limpiapipas", priceDollars: "3.50", photoDataUrl: "", fileName: "" }
+      ];
+      document.getElementById("customAssetsNotes").value =
+        "Ramos eternos confeccionados en limpiapipas. Pago directo a Cuenta RUT / Transferencia Bancaria y despacho en Chile.";
+      renderCustomAssetRows();
+      updateSlugPreview();
+      updateLiveSampleCalculator();
     }
   }
 
@@ -2324,7 +2342,7 @@
     ["South Africa", "ZAR", "+27", ["en"]], ["Nigeria", "NGN", "+234", ["en"]], ["Kenya", "KES", "+254", ["en"]],
     ["Ghana", "GHS", "+233", ["en"]], ["India", "INR", "+91", ["en"]], ["Pakistan", "PKR", "+92", ["en"]],
     ["Malaysia", "MYR", "+60", ["en"]], ["Singapore", "SGD", "+65", ["en"]], ["Philippines", "PHP", "+63", ["en"]],
-    ["Australia", "AUD", "+61", ["en"]], ["New Zealand", "NZD", "+64", ["en"]], ["Colombia", "COP", "+57", ["es"]],
+    ["Australia", "AUD", "+61", ["en"]], ["New Zealand", "NZD", "+64", ["en"]], ["Chile", "USD", "+56", ["es"]], ["Colombia", "COP", "+57", ["es"]],
     ["Brazil", "BRL", "+55", ["pt"]], ["Argentina", "ARS", "+54", ["es"]], ["Peru", "PEN", "+51", ["es"]],
     ["Dominican Republic", "DOP", "+1", ["es"]], ["Puerto Rico", "USD", "+1", ["es", "en"]],
     ["Costa Rica", "CRC", "+506", ["es"]], ["Guatemala", "GTQ", "+502", ["es"]], ["Other", "USD", "+", ["en"]]
