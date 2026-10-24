@@ -2232,5 +2232,18 @@
   updateLiveSampleCalculator();
   initEvents();
   checkClientPrefill();
+  // Continue a requested demo setup without asking for the same identity again.
+  if (new URLSearchParams(location.search).get('from') === 'demo') {
+    try {
+      var enquiry = JSON.parse(sessionStorage.getItem('nebula-demo-enquiry') || 'null');
+      if (enquiry && Date.now() - enquiry.at < 86400000) {
+        if (!document.getElementById('shopName').value) document.getElementById('shopName').value = String(enquiry.shop || '');
+        if (!document.getElementById('shopEmail').value) document.getElementById('shopEmail').value = String(enquiry.email || '');
+        var currencySelect = document.getElementById('shopCurrency');
+        if (Array.from(currencySelect.options).some(function(o) { return o.value === enquiry.currency; })) currencySelect.value = enquiry.currency;
+        updateSlugPreview(); updateLiveSampleCalculator();
+      }
+    } catch (_) {}
+  }
   checkOwnerInspectMode();
 })();

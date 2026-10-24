@@ -10,6 +10,6 @@
  const intro=document.querySelector('.collection-intro');
  if(intro){const image=document.createElement('img');image.src='assets/brand/nebula-logo.jpg';image.alt='Nebula Sites Studio — floral watercolor logo';image.className='demo-hero-logo';image.width=640;image.height=640;intro.append(image);}
  const update=()=>{const es=document.getElementById('language')?.value==='es';document.querySelectorAll('.demo-shop-link').forEach(e=>e.textContent=es?'Quiero esto para mi tienda ↗':'Get this for your shop ↗');};
- const nav=document.querySelector('.site-header nav');if(nav){const link=document.createElement('a');link.href='https://nebulastudio.site/flowers/#contact';link.className='demo-shop-link';nav.prepend(link);}
+ const nav=document.querySelector('.site-header nav');if(nav){const link=document.createElement('a');link.href='index.html#get-started';link.className='demo-shop-link';nav.prepend(link);}
  update();document.getElementById('language')?.addEventListener('change',update);
 })();

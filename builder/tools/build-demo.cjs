@@ -16,7 +16,7 @@ for(const file of Object.keys(manifest.files).sort()){
   if(file==='index.html')s=s.replace(/<article class="bouquet-card" data-id="pink-promise"[\s\S]*?<\/article>/,'');
   if(file==='catalog-data.js'){const data={window:{}};vm.runInNewContext(s,data);s='window.NEBULA_COLLECTIONS='+JSON.stringify(data.window.NEBULA_COLLECTIONS.filter(r=>r.id!=='pink-promise'))+';\n';}
   if(file==='request.js')s=s.replaceAll('the Nebula team confirms availability, design and final price. Payment directly with the shop.','Demo request for Nebula. No flower order or payment is placed.').replaceAll('the Nebula team confirma disponibilidad, diseño y precio final. Pago directamente con la tienda.','Solicitud de prueba para Nebula. No se realiza ningún pedido ni pago.');
-  if(file.endsWith('.html'))s=s.replace('</head>','<link rel="stylesheet" href="demo-brand.css"></head>').replace('<script src="client-ui.js" defer></script>','<script src="client-ui.js" defer></script><script src="demo-brand.js" defer></script>');
+  if(file.endsWith('.html'))s=s.replace('</head>','<link rel="stylesheet" href="demo-brand.css?v=20261024"></head>').replace('<script src="client-ui.js" defer></script>','<script src="client-ui.js" defer></script><script src="demo-brand.js?v=20261024" defer></script>');
   s=s.replaceAll('assets/client/logo.png',profile.logo).replaceAll('type="image/png"','type="image/jpeg"');
   s=s.replace(/<script src="(?:\.\.\/\.\.\/b\/(?:config|database)\.js|short-links\.js)" defer><\/script>/g,'');
   s=s.replaceAll('Top Sellers','Featured designs').replaceAll('Los más vendidos','Diseños destacados').replaceAll('FROM NEBULA','EXPLORE THE DEMO').replaceAll('DE NEBULA','EXPLORA LA DEMO');
@@ -27,8 +27,15 @@ for(const file of Object.keys(manifest.files).sort()){
   bytes=Buffer.from(s);
  }
  write(file,bytes);
+ if(file==='index.html')write('collection.html',bytes);
 }
 for(const [target,sourceFile] of [['assets/brand/nebula-logo.jpg','logo.jpg'],['demo-brand.js','brand.js'],['demo-brand.css','brand.css']])write(target,fs.readFileSync(path.join(repo,'builder/demo-brand',sourceFile)));
+// The demo opens with a florist sales experience; client storefronts stay intact.
+const featured=JSON.parse(fs.readFileSync(path.join(repo,'clients/la-flor-eterna/top-sellers.json'),'utf8'));
+const catalog={window:{}};vm.runInNewContext(fs.readFileSync(path.join(source,'catalog-data.js'),'utf8'),catalog);
+write('index.html',require('../demo-brand/landing.cjs')(featured,catalog.window.NEBULA_COLLECTIONS.filter(r=>r.id!=='pink-promise')));
+for(const file of ['landing.css','landing.js'])write(file,fs.readFileSync(path.join(repo,'builder/demo-brand',file)));
+write('assets/brand/pink-preview.png',fs.readFileSync(path.join(repo,'builder/demo-brand/pink-preview.png')));
 write('shop-config.js','window.NEBULA_SHOP='+JSON.stringify(profile,null,2)+';\n');
 write('build-manifest.json',JSON.stringify({profile:'nebula-demo',source:'la-flor-eterna runtime',files:hashes},null,2)+'\n');
 console.log('Built demo/nebula-builder/ ('+Object.keys(hashes).length+' files)');

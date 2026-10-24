@@ -4,9 +4,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const ctx=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),page=await ctx.newPage(),errors=[],bad=[],remote=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)bad.push(r.url());});page.on('request',r=>{if(/firebaseio|firestore|cloudfunctions/.test(r.url()))remote.push(r.url());});
- await page.goto(testOrigin+'/builder/');await page.waitForURL('**/demo/nebula-builder/index.html');await page.waitForFunction(()=>window.NEBULA_SHOP?.id==='nebula-demo');
+ await page.goto(testOrigin+'/builder/');await page.waitForURL('**/demo/nebula-builder/index.html');await page.locator('#heroTry').waitFor();
  assert.ok(!(await page.locator('body').innerText()).includes('Maritza'));assert.equal(await page.locator('.featured-card').count(),5);
- const cards=page.locator('.featured-card');const boxes=await cards.evaluateAll(es=>es.map(e=>({top:e.getBoundingClientRect().top,left:e.getBoundingClientRect().left})));assert.equal(boxes[0].top,boxes[1].top);assert.ok(boxes[2].top>boxes[0].top);
+ const cards=page.locator('.featured-card:visible');const boxes=await cards.evaluateAll(es=>es.map(e=>({top:e.getBoundingClientRect().top,left:e.getBoundingClientRect().left})));assert.equal(boxes[0].top,boxes[1].top);assert.ok(boxes[2].top>boxes[0].top);
  const links=await page.locator('.featured-photo').evaluateAll(es=>es.map(e=>e.href));
  for(const link of links){await page.goto(link);await page.waitForFunction(()=>window.__ready);await page.evaluate(()=>NebulaRenderer.awaitAssets(NebulaApp.state));assert.equal(await page.evaluate(()=>NEBULA_SHOP.id),'nebula-demo');assert.ok(await page.evaluate(()=>NebulaApp.state.items.length>0));assert.ok(await page.evaluate(()=>!!window.NebulaMidnightArt));assert.ok(!(await page.locator('body').innerText()).includes('Maritza'));}
  await page.goto(testOrigin+'/builder/studio.html?template=midnight-blooms');await page.waitForURL(u=>u.pathname==='/demo/nebula-builder/studio.html');await page.waitForFunction(()=>window.__ready);
