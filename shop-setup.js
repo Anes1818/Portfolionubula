@@ -600,6 +600,143 @@
       sample3Label: "Mix Lirios y Rosas:",
       samplePlanLabel: "Plan:",
       calcFinishBtn: "Finalizar y Enviar ↓"
+    },
+    tr: {
+      headerSub: "Çiçekçi Stüdyo Kurulumu",
+      navStep1: "1. Mağaza ve Logo",
+      navStep2: "2. Çiçek Fiyatları",
+      navStep3: "3. Oyuncaklar ve Ekstralar",
+      navStep4: "4. 4 Buket ve Plan",
+      heroEyebrow: "Çiçekçi Kurulumu · 4 Dakika Sürer",
+      heroTitle: "Sizin çiçekleriniz.<br>Sizin fiyatlarınız.<br><em>Kendi tasarım stüdyonuz.</em>",
+      heroLead: "Sıfırdan başlamamanız için standart çiçek fiyatlarını aşağıya önceden doldurduk. Sadece değiştirmek istediğiniz fiyatları güncelleyin, satmadığınız ürünleri kapatın, logonuzu yükleyin; mağazanıza özel buket tasarlayıcıyı kuralım.",
+      badgePreFilled: "Hazır doldurulmuş akıllı fiyatlar",
+      badgeFreeBouquets: "4 özel buketiniz ÜCRETSİZ dahil",
+      badgePayAfter: "Bugün 0$ ödeyin — sadece stüdyonuz yayına girince başlayın",
+      promiseTag: "Kurulumunuza dahil olanlar",
+      promiseTitle: "Çiçekçiler için hızlı, şeffaf ve kolay",
+      promise1: "<b>Kendi markanız ve fiyatlarınız:</b> Logonuz, mağaza adınız, WhatsApp numaranız, TL (₺) para biriminiz ve dal/ambalaj fiyatlarınız.",
+      promise2: "<b>4 imza buketiniz ÜCRETSİZ:</b> En çok satan 4 buketinizin fotoğrafını yükleyin — stüdyonuza ücretsiz ekleyelim (sezonluk güncellemeler dahil).",
+      promise3: "<b>Özel peluş veya çiçek mi istiyorsunuz?</b> 4. Adımda mağazanıza özel peluş oyuncak, kutu veya çiçekleri ekleyebilirsiniz.",
+      promise4: "<b>Linkinizi seçin:</b> <code>nebulastudio.site/magazaniz</code> üzerinde <b>$20/ay</b> veya kendi özel <code>.com</code> alan adınızla <b>$35/ay</b>.",
+      step1Kicker: "Mağaza Kimliği ve Marka",
+      step1Title: "Çiçekçi mağazanızın bilgileri",
+      step1Sub: "Logonuz, mağaza adınız ve WhatsApp/telefon numaranız stüdyonuzda görünür ve müşteri siparişlerini alır.",
+      lblShopName: "Çiçekçi / Mağaza Adı *",
+      lblYourLink: "Stüdyo linki önizlemeniz:",
+      lblOwnerName: "Adınız / Çiçekçi İmzası *",
+      lblOwnerHint: "örn. Ahmet Yılmaz",
+      hintOwner: "Mağaza adınızın altında imza olarak görünür ve iletişim için kullanılır.",
+      lblChannel: "Buket siparişlerini nasıl almak istersiniz? *",
+      optWhatsapp: "WhatsApp Mesajı (Önerilen)",
+      optSms: "SMS Kısa Mesaj",
+      lblPhone: "WhatsApp / Sipariş Telefon Numarası *",
+      lblPhoneHint: "Ülke kodu ile (+90...)",
+      lblEmail: "E-posta Adresiniz *",
+      lblInsta: "Instagram Kullanıcı Adı",
+      lblOptional: "(isteğe bağlı)",
+      lblCity: "Şehir *",
+      lblCurrency: "Mağaza Para Birimi *",
+      lblCountry: "Ülke *",
+      hintCountry: "Para biriminizi ve telefon formatınızı otomatik ayarlarız.",
+      lblLanguages: "Müşterileriniz için stüdyo dili *",
+      lblFulfillment: "Teslimat ve Gel-Al Seçenekleri *",
+      optFulfillBoth: "Hem Mağazadan Teslim (Gel-Al) Hem Adrese Teslimat",
+      optFulfillDelivery: "Sadece Adrese Kurye Teslimatı",
+      optFulfillPickup: "Sadece Mağazadan Teslim (Gel-Al)",
+      lblCustomerPayment: "Müşterileriniz ödemeyi nasıl yapıyor? *",
+      optPayConfirm: "Önce WhatsApp üzerinden onay (IBAN / Havale / Ödeme Linki)",
+      optPayOnline: "Online Ödeme Linki (Shopify, Iyzico, PayTR, Stripe)",
+      optPayBoth: "Her iki seçenek (Müşteri seçer)",
+      previewKicker: "Buket Stüdyosu Önizlemesi",
+      previewTitle: "Müşterilerinizin kullanacağı ekranı görün",
+      previewSub: "Müşterilerinizin biyografinizden veya Shopify sitenizdeki butondan açacağı ekran tam olarak budur. Buket şeklini seçerler, çiçekleri ve peluşları eklerler, canlı TL fiyatınızı görürler ve siparişi WhatsApp'ınıza gönderirler.",
+      modeCard1Title: "1. Klasik Buket",
+      modeCard1Sub: "Katmanlı kağıt, kurdele ve saplar",
+      modeCard2Title: "2. Yuvarlak Kubbe (Dome)",
+      modeCard2Sub: "360° dolgun yuvarlak buket",
+      modeCard3Title: "3. Kalp & Ekstralar",
+      modeCard3Sub: "Taçlar, peluşlar, harfler ve çikolatalar",
+      previewPoint1: "<b>Müşteriler telefondan kendileri tasarlar</b>, uygulama indirmeye gerek yoktur",
+      previewPoint2: "<b>Canlı fiyat hesaplama</b>: Her çiçek ve ekstra sizin belirlediğiniz fiyatla toplanır",
+      previewPoint3: "<b>Hazır sipariş WhatsApp'ınıza gelir</b>: Buket görseli, çiçek listesi ve toplam tutar",
+      lblLogoUpload: "Mağaza Logosu (PNG, JPG veya WebP)",
+      lblLogoClick: "Mağaza logonuzu yüklemek için tıklayın",
+      lblLogoSub: "Stüdyo üst kısmında ve sipariş fişinde görünür. Şu an yoksa daha sonra WhatsApp'tan gönderebilirsiniz.",
+      lblTheme: "Stüdyo Renk Teması",
+      lblThemeSub: "Mağazanıza en çok yakışan renk atmosferini seçin:",
+      step2Kicker: "Baz Ambalaj ve Buket İşçilik Ücreti",
+      step2Title: "Ambalaj ve buket stili ücretleri",
+      step2Sub: "Her buket, belirlediğiniz Baz Ambalaj ücreti artı müşterinin seçtiği buket şeklinin işçilik ücreti ile başlar.",
+      baseTitle: "Baz Hazırlık ve Ambalaj",
+      baseDesc: "Her bukete bir kez eklenir (buket kağıdı, besin/su tüpü, not kartı ve hazırlık dahildir).",
+      perBouquet: "/ buket",
+      laborClassicTitle: "Klasik El Buketi",
+      laborClassicDesc: "Katmanlı ön görünümlü buket sarımı (Krem, Kraft, Kakao veya Siyah kağıt).",
+      laborDomeTitle: "Yuvarlak Kubbe (Dome)",
+      laborDomeDesc: "Üstten görünümlü dolgun yuvarlak buket tasarımı.",
+      laborHeartTitle: "Kalp Buket",
+      laborHeartDesc: "Kalp formunda özel tasarım gül ve çiçek aranjmanı.",
+      offered: "Aktif",
+      notOffered: "Kapalı",
+      laborFee: "işçilik",
+      step3Kicker: "Görsel Çiçek ve Dal Fiyatları",
+      step3Title: "Dal başına çiçek fiyatlarınız (hızlı kurulum için gruplandırıldı)",
+      step3Sub: "Her çiçek ailesi için tek bir fiyat belirleyin veya belirli bir renk (Siyah Gül, Çikolatalı Çilek vb.) farklı fiyattaysa “Renkleri ayrı fiyatlandır” seçeneğini açın. Satmadığınız çiçekleri kapatın.",
+      btnResetDefaults: "↺ Standart Fiyatlara Sıfırla",
+      btnAdjustMinus: "−%10 Tüm Çiçekler",
+      btnAdjustPlus: "+%10 Tüm Çiçekler",
+      step4Kicker: "Peluş Oyuncaklar, Kurdeleler, Taçlar ve Yeni Ürünler",
+      step4Title: "Aksesuarlar, süslemeler ve peluş oyuncaklar",
+      step4Sub: "Stokta olmayan aksesuarları kapatın. Kurdele veya kuşak ücretsiz dahilse fiyatını 0.00 yapın.",
+      customAssetBadge: "Mağazanıza Özel Eklemeler",
+      customAssetTitle: "Kendi özel ürünlerinizi eklemek ister misiniz? (Yeni peluşlar, çiçekler, özel kağıtlar vb.)",
+      customAssetDesc: "Mağazanızda özel peluş oyuncaklar (Ayıcık, Stitch vb.), farklı çiçekler (Orkide, Şakayık, Mavi Gül) veya kendi özel ambalaj kağıtlarınız ve kutularınız var mı? Eklemek istediklerinizi aşağıya yazın!",
+      catChipToys: "+ Yeni Peluş Oyuncaklar",
+      catChipFlowers: "+ Yeni Çiçekler / Renkler",
+      catChipWraps: "+ Özel Ambalaj Kağıdı",
+      catChipToppers: "+ Kurdele / Taç / Süs",
+      catChipGifts: "+ Çikolata / Hediye Kutusu",
+      btnAddCustomItem: "Yeni Oyuncak, Çiçek veya Özel Ürün Ekle",
+      customItemHint: "Her satırda ürününüzün fotoğrafını da ekleyebilirsiniz.",
+      lblCustomNotes: "Stüdyonuzda görmek istediğiniz özel çiçek, peluş veya fikirleri yazın",
+      step5Kicker: "4 İmza Buketiniz ve Aylık Plan",
+      step5Title: "Ücretsiz 4 özel buketiniz ve plan seçimi",
+      step5Sub: "Mağazanızın en çok satan 4 buketini stüdyonuza ücretsiz olarak ekliyoruz — Sevgililer Günü, Anneler Günü ve sezon güncellemeleri de ücretsizdir.",
+      freeBouquetsBannerTitle: "✓ 4 Özel İmza Buketiniz ÜCRETSİZ Dahil (+ Ücretsiz Sezonluk Güncellemeler)",
+      freeBouquetsBannerSub: "En çok satan 4 buketinizin fotoğrafını aşağıya yükleyin veya Nebula'nın hazır modellerini kullanmak için boş bırakın.",
+      extraBouquetsTitle: "4'ten fazla özel buket mi istiyorsunuz?",
+      extraBouquetsSub: "İlk 4 özel buketiniz %100 ücretsizdir. Ekstra özel buket modelleri tek seferlik 35$ (veya 3 ekstra buket 85$) kurulum ücretlidir.",
+      lblExtraBouquets: "Ekstra Özel Buket Sayısı",
+      optExtra0: "4 Ücretsiz İmza Buketi (0$ — Dahil)",
+      optExtra1: "+1 Ekstra Özel Buket — Toplam 5 (35$ tek seferlik)",
+      optExtra2: "+2 Ekstra Özel Buket — Toplam 6 (70$ tek seferlik)",
+      optExtra3: "+3 Ekstra Özel Buket Paketi — Toplam 7 (85$ tek seferlik · 20$ İndirim)",
+      optExtra4: "+4 Ekstra Özel Buket — Toplam 8 (115$ tek seferlik · 25$ İndirim)",
+      choosePlanHeading: "Aylık stüdyo planınızı seçin",
+      planPopularBadge: "En Popüler",
+      plan29Title: "Nebula Stüdyo Linki",
+      plan35Title: "Kendi Özel Alan Adınız (.com)",
+      perMonth: "/ ay",
+      plan29Bullet1: "Mağazanıza özel 3D Buket Tasarlayıcı (Klasik, Kubbe ve Kalp)",
+      plan29Bullet2: "4 özel imza buketi ÜCRETSİZ + ücretsiz sezon güncellemeleri",
+      plan29Bullet3: "Shopify menünüz, Instagram biyografiniz ve WhatsApp için hazır",
+      plan29Bullet4: "Bugün 0$ ödeyin — abonelik sadece stüdyonuz yayına girince başlar",
+      plan35Bullet1: "Standart plandaki her şey + kendi özel alan adınız (studio.magazaniz.com)",
+      plan35Bullet2: "Shopify mağazanızın alt alan adına veya yeni .com adresine bağlarız",
+      plan35Bullet3: "Tam HTTPS SSL güvenliği ve markalı kısa sipariş linkleri",
+      plan35Bullet4: "Bugün 0$ ödeyin — abonelik sadece stüdyonuz yayına girince başlar",
+      lblDesiredDomain: "İstediğiniz Alan Adı / Subdomain (35$/ay planı için)",
+      submitCardTitle: "Çiçekçi stüdyonuzu kurmaya hazır mısınız?",
+      submitCardDesc: "Gönder butonuna bastığınızda fiyat listeniz, logonuz ve buket fotoğraflarınız doğrudan Nebula Studio ekibine ulaşır. Bugün kart bilgisi istenmez — yalnızca stüdyonuzu görüp onayladıktan sonra başlarsınız!",
+      btnSubmitSetup: "Mağaza Kurulumumu Gönder",
+      submitFinePrint: "Nebula Cloud (Firebase) üzerine güvenle kaydedilir ve ekibimize iletilir",
+      calcTitle: "Fiyatlarınızla Canlı Örnek Hesaplama:",
+      sample1Label: "12 Güllü Klasik Buket:",
+      sample2Label: "24 Güllü Kubbe + Kurdele:",
+      sample3Label: "Zambak ve Gül Karışımı:",
+      samplePlanLabel: "Plan:",
+      calcFinishBtn: "Tamamla ve Gönder ↓"
     }
   };
 
@@ -731,6 +868,33 @@
   /* -----------------------------------------------------------------------
      4. RENDER FLOWER FAMILIES, EXTRAS, CUSTOM ASSETS & 4 BOUQUET SLOTS
      ----------------------------------------------------------------------- */
+  var TR_FAMILIES = {
+    roses: { title: "Klasik ve Bahçe Gülleri", desc: "Kırmızı, Pembe, Beyaz, Krem, Fildişi, Karamel, Sarı, Turuncu, Mor ve Siyah güller.", unit: "/ dal" },
+    spray_roses: { title: "Çardak Güller (Mini Gül)", desc: "Bukete hacim ve romantizm katan çok tomurcuklu çardak gül dalları.", unit: "/ dal" },
+    lilies: { title: "Oryantal Zambak (Lilyum)", desc: "Gösterişli ve kokulu pembe/beyaz lilyum dalları.", unit: "/ dal" },
+    sunflowers_daisies: { title: "Ayçiçeği ve Gerbera Papatyalar", desc: "Canlı çiçekler: Ayçiçeği, Gerbera ve Pembe Papatyalar.", unit: "/ dal" },
+    hydrangea_ranunculus: { title: "Ortanca ve Şakayık / Ranunculus", desc: "Dolgun ortanca başları ve katmanlı ranunculus çiçekleri.", unit: "/ dal" },
+    tulips_carnations: { title: "Laleler ve Karanfiller", desc: "6 farklı renkte bahar laleleri ve karanfiller.", unit: "/ dal" },
+    greenery_fillers: { title: "Cipso (Bebek Nefesi), Okaliptüs ve Yeşillik", desc: "Temel buket tamamlayıcıları: Cipso, Okaliptüs, Alstroemeria, Statice, Şebboy ve Biberiye.", unit: "/ dal" },
+    mums_sweets: { title: "Krizantem, Çikolatalı Çilek ve Çikolata", desc: "Krizantemler, Çikolatalı Çilek ve Ferrero/Çikolata dalları. Satmıyorsanız kapatabilirsiniz!", unit: "/ adet" }
+  };
+  var TR_EXTRAS = {
+    butterfly: { title: "Altın 3D Kelebekler", desc: "Çiçeklerin üzerine yerleştirilen parlak altın kelebek seti." },
+    crown: { title: "Altın Kraliçe Tacı", desc: "Buketin merkezine yerleştirilen taşlı altın taç." },
+    bow: { title: "Büyük Saten Kurdele Fiyonk", desc: "Buket yakasında büyük çift halkalı saten fiyonk." },
+    ribbon: { title: "Klasik Saten Bağlama Kurdelesi", desc: "Genellikle 0.00 (ambalaja dahil) veya ekstra ücret belirleyin." },
+    sash: { title: "Yazılı Kuşak Kurdele", desc: "İyi ki Doğdun, Seni Seviyorum veya özel mesajlı kuşak." },
+    floralInitial: { title: "Çiçeklerden Baş Harf (A–Z)", desc: "Kubbe buketin ortasında beyaz çiçeklerle yazılan özel harf." },
+    filler: { title: "Ekstra Cipso (Bebek Nefesi) Bulutu", desc: "Yuvarlak veya kalp buketlerin etrafına eklenen ekstra cipso." },
+    snoopy: { title: "Snoopy Peluş Oyuncak", desc: "Buketin içine yerleştirilen sevimli Snoopy peluş." },
+    kitty: { title: "Hello Kitty Peluş Oyuncak", desc: "Çiçeklerin arasına yerleştirilen Hello Kitty peluş." },
+    snoopy_topper: { title: "Mini Snoopy Süsü", desc: "Küçük dekoratif Snoopy figürü." },
+    pumpkin: { title: "Kadife Sonbahar Balkabağı", desc: "Sonbahar buketleri için dekoratif kadife balkabağı." },
+    spookyMask: { title: "Scream / Cadılar Bayramı Maskesi", desc: "Konsept buketler için orta maske aksesuarı." },
+    spookyBow: { title: "Siyah Gotik Fiyonk", desc: "Siyah konsept buketler için uzun kuyruklu saten fiyonk." },
+    ghostCount: { title: "Mini Hayalet Süsü", desc: "Cadılar Bayramı buketleri için mini hayalet figürü." },
+    thistleCount: { title: "Mavi Boğa Dikeni (Eryngium)", desc: "Dokulu mavi eryngium dalı." }
+  };
   function renderFlowerFamilies() {
     var container = document.getElementById("flowerFamiliesContainer");
     container.innerHTML = "";
@@ -756,7 +920,7 @@
             '<span class="subflower-name"><img src="' +
             item.img +
             '" alt="" loading="lazy"><span>' +
-            item.name[currentLang] +
+            (item.name[currentLang] || item.name.en) +
             "</span></span>" +
             '<input type="checkbox" class="subflower-toggle" data-key="' +
             item.key +
@@ -772,7 +936,7 @@
             centsToDollarsStr(st.cents) +
             '" min="0" step="0.25">' +
             '<span class="unit-suffix">' +
-            fam.unit[currentLang] +
+            ((currentLang === "tr" && TR_FAMILIES[fam.id] && TR_FAMILIES[fam.id].unit) || fam.unit[currentLang] || fam.unit.en) +
             "</span>" +
             "</div>" +
             "</div>"
@@ -785,12 +949,12 @@
         '<div class="family-thumb"><img src="' +
         fam.thumb +
         '" alt="' +
-        fam.title[currentLang] +
+        ((currentLang === "tr" && TR_FAMILIES[fam.id] && TR_FAMILIES[fam.id].title) || fam.title[currentLang] || fam.title.en) +
         '" loading="lazy"></div>' +
         "<div>" +
         '<div class="family-info-top">' +
         "<h3>" +
-        fam.title[currentLang] +
+        ((currentLang === "tr" && TR_FAMILIES[fam.id] && TR_FAMILIES[fam.id].title) || fam.title[currentLang] || fam.title.en) +
         "</h3>" +
         '<label class="toggle-pill">' +
         '<input type="checkbox" class="family-toggle" data-family="' +
@@ -805,7 +969,7 @@
         "</label>" +
         "</div>" +
         '<p class="family-desc">' +
-        fam.desc[currentLang] +
+        ((currentLang === "tr" && TR_FAMILIES[fam.id] && TR_FAMILIES[fam.id].desc) || fam.desc[currentLang] || fam.desc.en) +
         "</p>" +
         '<div class="family-price-row">' +
         '<div class="price-control">' +
@@ -819,7 +983,7 @@
         centsToDollarsStr(firstCents) +
         '" min="0" step="0.25">' +
         '<span class="unit-suffix">' +
-        fam.unit[currentLang] +
+        ((currentLang === "tr" && TR_FAMILIES[fam.id] && TR_FAMILIES[fam.id].unit) || fam.unit[currentLang] || fam.unit.en) +
         "</span>" +
         '<button type="button" class="step-btn fam-step-btn" data-family="' +
         fam.id +
@@ -831,7 +995,7 @@
         (fam.items.length > 1
           ? '<details class="color-overrides"><summary><span>' +
             fam.items.length +
-            (currentLang === "es" ? " variedades incluidas" : " varieties included") +
+            (currentLang === "es" ? " variedades incluidas" : currentLang === "tr" ? " çeşit dahil" : " varieties included") +
             '</span></summary><div class="subflower-grid">' +
             subItemsHtml +
             "</div></details>"
@@ -938,14 +1102,14 @@
         '<div class="extra-thumb"><img src="' +
         ex.img +
         '" alt="' +
-        ex.title[currentLang] +
+        ((currentLang === "tr" && TR_EXTRAS[ex.key] && TR_EXTRAS[ex.key].title) || ex.title[currentLang] || ex.title.en) +
         '" loading="lazy"></div>' +
         '<div class="extra-meta">' +
         "<h4>" +
-        ex.title[currentLang] +
+        ((currentLang === "tr" && TR_EXTRAS[ex.key] && TR_EXTRAS[ex.key].title) || ex.title[currentLang] || ex.title.en) +
         "</h4>" +
         "<p>" +
-        ex.desc[currentLang] +
+        ((currentLang === "tr" && TR_EXTRAS[ex.key] && TR_EXTRAS[ex.key].desc) || ex.desc[currentLang] || ex.desc.en) +
         "</p>" +
         "</div>" +
         "</div>" +
@@ -1772,6 +1936,13 @@
      ----------------------------------------------------------------------- */
   function checkOwnerInspectMode() {
     var params = new URLSearchParams(window.location.search);
+    var urlLang = (params.get("lang") || "").toLowerCase();
+    if (urlLang === "tr") {
+      applyCountry("Turkey", true);
+      setLanguage("tr");
+    } else if (urlLang === "es") {
+      setLanguage("es");
+    }
     var inspectId = params.get("inspect");
     if (inspectId && /^[A-Za-z0-9_-]{22}$/.test(inspectId)) {
       window.location.replace("admin.html?setup=" + encodeURIComponent(inspectId));
@@ -1795,7 +1966,7 @@
      11. LANGUAGE SWITCHING & UI WIRING
      ----------------------------------------------------------------------- */
   function setLanguage(lang) {
-    currentLang = lang === "es" ? "es" : "en";
+    currentLang = lang === "es" ? "es" : lang === "tr" ? "tr" : "en";
     document.documentElement.lang = currentLang;
 
     document.querySelectorAll(".lang-btn").forEach(function (b) {
@@ -2082,6 +2253,13 @@
 
   function checkClientPrefill() {
     var params = new URLSearchParams(window.location.search);
+    var urlLang = (params.get("lang") || "").toLowerCase();
+    if (urlLang === "tr") {
+      applyCountry("Turkey", true);
+      setLanguage("tr");
+    } else if (urlLang === "es") {
+      setLanguage("es");
+    }
     var client = (params.get("client") || params.get("shop") || "").toLowerCase();
     if (client === "la-flor-eterna" || client === "lafloreterna") {
       document.getElementById("shopName").value = "La Flor Eterna";

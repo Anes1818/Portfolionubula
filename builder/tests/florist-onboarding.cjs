@@ -67,9 +67,11 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     );
     assert.deepEqual(brokenImages, [], 'All studio flower & toy images must load cleanly');
 
-    // 2. Test bilingual toggle (ES -> EN)
+    // 2. Test language toggle (ES -> TR -> EN)
     await page.locator('.lang-btn[data-lang="es"]').click();
     assert.match(await page.locator('#customAssetSection, #customAssetsSection h3').innerText(), /nuevos elementos/i);
+    await page.locator('.lang-btn[data-lang="tr"]').click();
+    assert.match(await page.locator('#customAssetsSection h3').innerText(), /Kendi özel ürünlerinizi/i);
     await page.locator('.lang-btn[data-lang="en"]').click();
     assert.match(await page.locator('#customAssetsSection h3').innerText(), /Do you want to add some new assets/i);
 
