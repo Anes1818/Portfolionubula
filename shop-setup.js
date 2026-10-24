@@ -354,8 +354,19 @@
       lblEmail: "Your Email Address *",
       lblInsta: "Instagram Handle",
       lblOptional: "(optional)",
-      lblCity: "City & State / Country *",
+      lblCity: "City *",
       lblCurrency: "Shop Currency *",
+      lblCountry: "Country *",
+      hintCountry: "We set your currency and phone format automatically.",
+      lblLanguages: "Builder language(s) for your customers *",
+      previewKicker: "Live preview",
+      previewTitle: "This is what your customers will use",
+      previewSub: "Try it right here: pick flowers, change the wrap, add a plush toy, and watch the price update live. Your version gets your logo, colors, flowers and prices.",
+      previewPoint1: "<b>Customers design it themselves</b> on their phone, no app needed",
+      previewPoint2: "<b>Live price</b> with every stem and add-on, using your prices",
+      previewPoint3: "<b>The finished order arrives on your WhatsApp</b> with the picture, the recipe and the total",
+      previewOpen: "Open full screen ↗",
+      previewTap: "Tap to try the builder",
       lblLogoUpload: "Shop Logo (PNG, JPG or WebP)",
       lblLogoClick: "Click to upload your shop logo",
       lblLogoSub: "Appears in your studio header & order sheet. Don’t have it handy? You can send it later on WhatsApp.",
@@ -469,8 +480,19 @@
       lblEmail: "Tu Correo Electrónico *",
       lblInsta: "Usuario de Instagram",
       lblOptional: "(opcional)",
-      lblCity: "Ciudad y Estado / País *",
+      lblCity: "Ciudad *",
       lblCurrency: "Moneda de tu Florería *",
+      lblCountry: "País *",
+      hintCountry: "Ajustamos tu moneda y formato de teléfono automáticamente.",
+      lblLanguages: "Idioma(s) del constructor para tus clientes *",
+      previewKicker: "Vista previa en vivo",
+      previewTitle: "Esto es lo que usarán tus clientes",
+      previewSub: "Pruébalo aquí mismo: elige flores, cambia la envoltura, agrega un peluche y mira cómo el precio se actualiza en vivo. Tu versión tendrá tu logo, colores, flores y precios.",
+      previewPoint1: "<b>Tus clientes lo diseñan solos</b> desde su teléfono, sin descargar nada",
+      previewPoint2: "<b>Precio en vivo</b> con cada tallo y extra, usando tus precios",
+      previewPoint3: "<b>El pedido final te llega por WhatsApp</b> con la imagen, la receta y el total",
+      previewOpen: "Abrir en pantalla completa ↗",
+      previewTap: "Toca para probar el constructor",
       lblLogoUpload: "Logo de tu Florería (PNG, JPG o WebP)",
       lblLogoClick: "Haz clic para subir el logo de tu florería",
       lblLogoSub: "Aparece en el encabezado y hoja de pedido. ¿No lo tienes a la mano? Puedes enviarlo luego por WhatsApp.",
@@ -620,6 +642,37 @@
         resolve("");
       };
       reader.readAsDataURL(file);
+    });
+  }
+
+  function shopCurrencyCode() {
+    var el = document.getElementById("shopCurrency");
+    return (el && el.value) || "USD";
+  }
+
+  function formatShopMoney(cents) {
+    try {
+      return new Intl.NumberFormat(currentLang === "es" ? "es" : "en", {
+        style: "currency",
+        currency: shopCurrencyCode()
+      }).format((Number(cents) || 0) / 100);
+    } catch (_) {
+      return "$" + centsToDollarsStr(cents);
+    }
+  }
+
+  function currencySymbol() {
+    try {
+      var parts = new Intl.NumberFormat("en", { style: "currency", currency: shopCurrencyCode(), currencyDisplay: "narrowSymbol" }).formatToParts(0);
+      for (var i = 0; i < parts.length; i++) if (parts[i].type === "currency") return parts[i].value;
+    } catch (_) {}
+    return "$";
+  }
+
+  function refreshCurrencyPrefixes() {
+    var sym = currencySymbol();
+    document.querySelectorAll(".currency-prefix").forEach(function (el) {
+      el.textContent = sym;
     });
   }
 
@@ -1129,9 +1182,10 @@
     // Sample 3: 3 Lilies + 12 Pink Roses + 3 Eucalyptus
     var s3 = baseCents + domeCents + 3 * lily + 12 * rosePink + 3 * euc;
 
-    document.getElementById("samplePrice1").textContent = "$" + centsToDollarsStr(s1);
-    document.getElementById("samplePrice2").textContent = "$" + centsToDollarsStr(s2);
-    document.getElementById("samplePrice3").textContent = "$" + centsToDollarsStr(s3);
+    document.getElementById("samplePrice1").textContent = formatShopMoney(s1);
+    document.getElementById("samplePrice2").textContent = formatShopMoney(s2);
+    document.getElementById("samplePrice3").textContent = formatShopMoney(s3);
+    refreshCurrencyPrefixes();
 
     var extraCount = parseInt(document.getElementById("extraBouquetsSelect").value, 10) || 0;
     var extraFeeMap = { 0: 0, 1: 35, 2: 70, 3: 85, 4: 115 };
@@ -1169,7 +1223,9 @@
     var email = document.getElementById("shopEmail").value.trim();
     var instagram = document.getElementById("shopInstagram").value.trim();
     var city = document.getElementById("shopCity").value.trim();
+    var country = document.getElementById("shopCountry").value || "";
     var currency = document.getElementById("shopCurrency").value || "USD";
+    var builderLanguages = selectedBuilderLanguages();
     var slug = slugify(shopName);
     var desiredDomain = document.getElementById("desiredDomain").value.trim();
     var siteUrl =
@@ -1222,7 +1278,7 @@
         site: siteUrl,
         phone: rawPhone || "+" + digitsOnly,
         instagram: instagram ? (instagram.startsWith("@") ? instagram : "@" + instagram) : "",
-        place: city,
+        place: [city, country && country !== "Other" ? country : ""].filter(Boolean).join(", "),
         year: "2026"
       },
       currency: currency,
@@ -1268,7 +1324,9 @@
       email: email,
       instagram: instagram,
       city: city,
+      country: country,
       currency: currency,
+      builderLanguages: builderLanguages,
       plan: {
         type: selectedPlan,
         monthlyUsd: selectedPlan === "custom_domain" ? 35 : 29,
@@ -1539,6 +1597,7 @@
                     email: payload.email,
                     instagram: payload.instagram,
                     city: payload.city,
+                    country: payload.country,
                     currency: payload.currency,
                     plan: payload.plan,
                     customAssetRequests: {
@@ -1590,6 +1649,8 @@
     fd.append("email", payload.email);
     fd.append("instagram", payload.instagram || "Not provided");
     fd.append("city", payload.city);
+    fd.append("country", payload.country || "");
+    fd.append("builder_languages", (payload.builderLanguages || []).join(", "));
     fd.append("currency", payload.currency);
     fd.append("selected_plan", planLabel);
     fd.append(
@@ -1966,6 +2027,7 @@
         "Hi Nebula Studio! 🌸 I just submitted my flower shop setup:\n" +
         "• Shop: " + payload.shopName + " (" + payload.ownerName + ")\n" +
         "• Plan: $" + payload.plan.monthlyUsd + "/mo (" + payload.plan.siteUrl + ")\n" +
+        "• Location: " + payload.city + ", " + payload.country + " (" + payload.currency + ")\n" +
         "• Order Phone: " + payload.phone + "\n" +
         (ref ? "• Reference: " + ref : "");
 
@@ -1994,6 +2056,7 @@
       document.getElementById("shopPhone").value = "+1 310 872 9856";
       document.getElementById("shopInstagram").value = "@laflor_eterna";
       document.getElementById("shopCity").value = "Los Angeles, CA";
+      applyCountry("United States", true);
       var roseThemeBtn = document.querySelector('.theme-swatch-btn[data-theme="rose"]');
       if (roseThemeBtn) roseThemeBtn.click();
       updateSlugPreview();
@@ -2001,8 +2064,8 @@
     } else if (client === "raysbouquetz" || client === "rays") {
       document.getElementById("shopName").value = "Ray's Bouquetz";
       document.getElementById("shopInstagram").value = "@raysbouquetz";
-      document.getElementById("shopCity").value = "Canada";
-      document.getElementById("shopCurrency").value = "CAD";
+      applyCountry("Canada", true);
+      document.getElementById("shopCity").value = "";
       var roseBtn = document.querySelector('.theme-swatch-btn[data-theme="rose"]');
       if (roseBtn) roseBtn.click();
       customAssetsRows = [
@@ -2020,6 +2083,105 @@
   }
 
   /* -----------------------------------------------------------------------
+     11b. COUNTRY, CURRENCY, LANGUAGES & LIVE BUILDER PREVIEW
+     Only currencies with exactly 2 decimals are offered, because the builder
+     prices everything in cents (check-shop.cjs rejects 0- or 3-decimal ones).
+     ----------------------------------------------------------------------- */
+  var CURRENCIES = [
+    ["USD", "US Dollar ($)"], ["CAD", "Canadian Dollar ($)"], ["EUR", "Euro (€)"], ["GBP", "British Pound (£)"],
+    ["AUD", "Australian Dollar ($)"], ["NZD", "New Zealand Dollar ($)"], ["CHF", "Swiss Franc"],
+    ["SEK", "Swedish Krona"], ["NOK", "Norwegian Krone"], ["DKK", "Danish Krone"], ["PLN", "Polish Złoty"],
+    ["CZK", "Czech Koruna"], ["HUF", "Hungarian Forint"], ["RON", "Romanian Leu"], ["TRY", "Turkish Lira (₺)"],
+    ["MAD", "Moroccan Dirham (DH)"], ["DZD", "Algerian Dinar (DA)"], ["EGP", "Egyptian Pound (E£)"],
+    ["AED", "UAE Dirham"], ["SAR", "Saudi Riyal"], ["QAR", "Qatari Riyal"], ["ILS", "Israeli Shekel (₪)"],
+    ["ZAR", "South African Rand (R)"], ["NGN", "Nigerian Naira (₦)"], ["KES", "Kenyan Shilling"], ["GHS", "Ghanaian Cedi"],
+    ["INR", "Indian Rupee (₹)"], ["PKR", "Pakistani Rupee"], ["BDT", "Bangladeshi Taka"], ["LKR", "Sri Lankan Rupee"],
+    ["MYR", "Malaysian Ringgit"], ["SGD", "Singapore Dollar ($)"], ["PHP", "Philippine Peso (₱)"], ["THB", "Thai Baht (฿)"],
+    ["IDR", "Indonesian Rupiah"], ["HKD", "Hong Kong Dollar ($)"], ["CNY", "Chinese Yuan (¥)"], ["TWD", "Taiwan Dollar"],
+    ["MXN", "Mexican Peso ($)"], ["COP", "Colombian Peso ($)"], ["BRL", "Brazilian Real (R$)"], ["ARS", "Argentine Peso ($)"],
+    ["PEN", "Peruvian Sol (S/)"], ["DOP", "Dominican Peso ($)"], ["CRC", "Costa Rican Colón (₡)"], ["GTQ", "Guatemalan Quetzal (Q)"],
+    ["UYU", "Uruguayan Peso ($)"]
+  ];
+
+  // [country name, default currency, phone dial code, default languages]
+  var COUNTRIES = [
+    ["United States", "USD", "+1", ["en", "es"]], ["Canada", "CAD", "+1", ["en", "fr"]], ["Mexico", "MXN", "+52", ["es"]],
+    ["United Kingdom", "GBP", "+44", ["en"]], ["Ireland", "EUR", "+353", ["en"]], ["France", "EUR", "+33", ["fr"]],
+    ["Belgium", "EUR", "+32", ["fr", "en"]], ["Spain", "EUR", "+34", ["es"]], ["Portugal", "EUR", "+351", ["pt"]],
+    ["Italy", "EUR", "+39", ["en"]], ["Germany", "EUR", "+49", ["en"]], ["Netherlands", "EUR", "+31", ["en"]],
+    ["Switzerland", "CHF", "+41", ["fr", "en"]], ["Sweden", "SEK", "+46", ["en"]], ["Norway", "NOK", "+47", ["en"]],
+    ["Denmark", "DKK", "+45", ["en"]], ["Poland", "PLN", "+48", ["en"]], ["Romania", "RON", "+40", ["en"]],
+    ["Turkey", "TRY", "+90", ["tr", "en"]], ["Morocco", "MAD", "+212", ["fr", "ar"]], ["Algeria", "DZD", "+213", ["fr", "ar"]],
+    ["Egypt", "EGP", "+20", ["ar", "en"]], ["United Arab Emirates", "AED", "+971", ["en", "ar"]],
+    ["Saudi Arabia", "SAR", "+966", ["ar", "en"]], ["Qatar", "QAR", "+974", ["ar", "en"]],
+    ["South Africa", "ZAR", "+27", ["en"]], ["Nigeria", "NGN", "+234", ["en"]], ["Kenya", "KES", "+254", ["en"]],
+    ["Ghana", "GHS", "+233", ["en"]], ["India", "INR", "+91", ["en"]], ["Pakistan", "PKR", "+92", ["en"]],
+    ["Malaysia", "MYR", "+60", ["en"]], ["Singapore", "SGD", "+65", ["en"]], ["Philippines", "PHP", "+63", ["en"]],
+    ["Australia", "AUD", "+61", ["en"]], ["New Zealand", "NZD", "+64", ["en"]], ["Colombia", "COP", "+57", ["es"]],
+    ["Brazil", "BRL", "+55", ["pt"]], ["Argentina", "ARS", "+54", ["es"]], ["Peru", "PEN", "+51", ["es"]],
+    ["Dominican Republic", "DOP", "+1", ["es"]], ["Puerto Rico", "USD", "+1", ["es", "en"]],
+    ["Costa Rica", "CRC", "+506", ["es"]], ["Guatemala", "GTQ", "+502", ["es"]], ["Other", "USD", "+", ["en"]]
+  ];
+
+  function findCountry(name) {
+    for (var i = 0; i < COUNTRIES.length; i++) if (COUNTRIES[i][0] === name) return COUNTRIES[i];
+    return null;
+  }
+
+  function initCountryAndCurrency() {
+    var cSel = document.getElementById("shopCountry");
+    var curSel = document.getElementById("shopCurrency");
+    if (!cSel || !curSel) return;
+
+    cSel.innerHTML = COUNTRIES.map(function (c) {
+      return '<option value="' + c[0] + '">' + c[0] + "</option>";
+    }).join("");
+    curSel.innerHTML = CURRENCIES.map(function (c) {
+      return '<option value="' + c[0] + '">' + c[0] + " — " + c[1] + "</option>";
+    }).join("");
+
+    cSel.addEventListener("change", function () {
+      applyCountry(cSel.value, true);
+    });
+    curSel.addEventListener("change", updateLiveSampleCalculator);
+    applyCountry("United States", false);
+  }
+
+  function applyCountry(name, setLanguages) {
+    var c = findCountry(name);
+    if (!c) return;
+    document.getElementById("shopCountry").value = c[0];
+    document.getElementById("shopCurrency").value = c[1];
+    var phone = document.getElementById("shopPhone");
+    if (phone) phone.placeholder = c[2] === "+" ? "e.g. +00 000 000 000" : "e.g. " + c[2] + " …";
+    if (setLanguages) {
+      document.querySelectorAll("#builderLangs input").forEach(function (inp) {
+        inp.checked = c[3].indexOf(inp.value) !== -1;
+      });
+    }
+    updateLiveSampleCalculator();
+  }
+
+  function selectedBuilderLanguages() {
+    var out = [];
+    document.querySelectorAll("#builderLangs input:checked").forEach(function (inp) {
+      out.push(inp.value);
+    });
+    return out.length ? out : ["en"];
+  }
+
+  function initBuilderPreview() {
+    var btn = document.getElementById("builderPreviewStart");
+    var frame = document.getElementById("builderPreviewFrame");
+    if (!btn || !frame) return;
+    btn.addEventListener("click", function () {
+      if (!frame.src) frame.src = frame.dataset.src;
+      frame.closest(".phone-frame").classList.add("is-live");
+      frame.focus();
+    });
+  }
+
+  /* -----------------------------------------------------------------------
      12. INITIALIZE
      ----------------------------------------------------------------------- */
   initCatalogState();
@@ -2028,6 +2190,8 @@
   renderCustomAssetRows();
   renderBouquetSlots();
   updateSlugPreview();
+  initCountryAndCurrency();
+  initBuilderPreview();
   updateLiveSampleCalculator();
   initEvents();
   checkClientPrefill();

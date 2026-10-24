@@ -74,6 +74,29 @@
       </div>
     </section>
 
+    <!-- ======================= LIVE BUILDER PREVIEW ======================= -->
+    <section class="builder-preview" id="builderPreview" aria-labelledby="previewTitle">
+      <div class="preview-copy">
+        <div class="step-kicker"><span class="step-num">✦</span> <span data-i18n="previewKicker">Live preview</span></div>
+        <h2 id="previewTitle" data-i18n="previewTitle">This is what your customers will use</h2>
+        <p data-i18n="previewSub">Try it right here: pick flowers, change the wrap, add a plush toy, and watch the price update live. Your version gets your logo, colors, flowers and prices.</p>
+        <ul class="preview-points">
+          <li data-i18n-html="previewPoint1"><b>Customers design it themselves</b> on their phone, no app needed</li>
+          <li data-i18n-html="previewPoint2"><b>Live price</b> with every stem and add-on, using your prices</li>
+          <li data-i18n-html="previewPoint3"><b>The finished order arrives on your WhatsApp</b> with the picture, the recipe and the total</li>
+        </ul>
+        <a class="action-btn secondary" href="shops/la-flor-eterna/studio.html" target="_blank" rel="noopener" data-i18n="previewOpen">Open full screen ↗</a>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch" aria-hidden="true"></div>
+        <iframe id="builderPreviewFrame" title="Live bouquet builder preview" data-src="shops/la-flor-eterna/studio.html" loading="lazy"></iframe>
+        <button type="button" class="phone-start" id="builderPreviewStart">
+          <span class="phone-start-icon" aria-hidden="true">▶</span>
+          <span data-i18n="previewTap">Tap to try the builder</span>
+        </button>
+      </div>
+    </section>
+
     <form id="onboardingForm" novalidate>
 
       <!-- ======================= STEP 1: SHOP IDENTITY & BRANDING ======================= -->
@@ -136,26 +159,31 @@
             </div>
 
             <div class="field-group">
-              <label class="field-label" for="shopCity"><span data-i18n="lblCity">City &amp; State / Country *</span></label>
+              <label class="field-label" for="shopCountry"><span data-i18n="lblCountry">Country *</span></label>
+              <select class="select-input" id="shopCountry" name="shopCountry" required></select>
+              <span class="field-hint" data-i18n="hintCountry">We set your currency and phone format automatically.</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="shopCity"><span data-i18n="lblCity">City *</span></label>
               <input class="text-input" id="shopCity" name="shopCity" type="text" placeholder="e.g. Los Angeles, CA" required>
             </div>
 
             <div class="field-group">
               <label class="field-label" for="shopCurrency"><span data-i18n="lblCurrency">Shop Currency *</span></label>
-              <select class="select-input" id="shopCurrency" name="shopCurrency">
-                <option value="USD">USD ($) — US Dollar</option>
-                <option value="CAD">CAD ($) — Canadian Dollar</option>
-                <option value="EUR">EUR (€) — Euro</option>
-                <option value="GBP">GBP (£) — British Pound</option>
-                <option value="MAD">MAD (DH) — Moroccan Dirham (درهم مغربي)</option>
-                <option value="EGP">EGP (E£) — Egyptian Pound (جنيه مصري)</option>
-                <option value="AED">AED (د.إ) — UAE Dirham</option>
-                <option value="SAR">SAR (ر.س) — Saudi Riyal</option>
-                <option value="TRY">TRY (₺) — Turkish Lira</option>
-                <option value="MXN">MXN ($) — Peso Mexicano</option>
-                <option value="COP">COP ($) — Peso Colombiano</option>
-                <option value="AUD">AUD ($) — Australian Dollar</option>
-              </select>
+              <select class="select-input" id="shopCurrency" name="shopCurrency"></select>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label"><span data-i18n="lblLanguages">Builder language(s) for your customers *</span></span>
+              <div class="lang-chips" id="builderLangs" role="group" aria-label="Builder languages">
+                <label class="lang-chip"><input type="checkbox" value="en" checked> English</label>
+                <label class="lang-chip"><input type="checkbox" value="es"> Español</label>
+                <label class="lang-chip"><input type="checkbox" value="fr"> Français</label>
+                <label class="lang-chip"><input type="checkbox" value="ar"> العربية</label>
+                <label class="lang-chip"><input type="checkbox" value="tr"> Türkçe</label>
+                <label class="lang-chip"><input type="checkbox" value="pt"> Português</label>
+              </div>
             </div>
           </div>
 

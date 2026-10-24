@@ -80,6 +80,20 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     await page.fill('#shopEmail', 'camila@rosasbella.com');
     await page.fill('#shopCity', 'Miami, FL');
 
+    // Country drives currency + languages; switching back keeps the generated config valid
+    await page.selectOption('#shopCountry', 'Morocco');
+    assert.equal(await page.inputValue('#shopCurrency'), 'MAD', 'Morocco sets MAD currency');
+    assert.equal(await page.locator('#builderLangs input[value="ar"]').isChecked(), true, 'Morocco pre-selects Arabic');
+    assert.match(await page.locator('#samplePrice1').innerText(), /MAD/, 'Sample prices use the shop currency');
+    await page.selectOption('#shopCountry', 'United States');
+    assert.equal(await page.inputValue('#shopCurrency'), 'USD');
+    assert.ok((await page.locator('#shopCurrency option').count()) >= 40, 'Many currencies offered');
+
+    // Live builder preview loads only on tap
+    assert.equal(await page.locator('#builderPreviewFrame').getAttribute('src'), null, 'Preview iframe is lazy');
+    await page.click('#builderPreviewStart');
+    assert.match(await page.locator('#builderPreviewFrame').getAttribute('src'), /studio\.html/, 'Tap loads the live builder');
+
     // Adjust Roses family price to $4.50 and verify live calculator updates
     const beforeSample1 = await page.locator('#samplePrice1').innerText();
     await page.locator('.family-price-input[data-family="roses"]').fill('4.50');

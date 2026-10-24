@@ -649,7 +649,7 @@
             "<div><b>Phone/WhatsApp:</b> " + esc(s.phone || "—") + "</div>" +
             "<div><b>Email:</b> " + esc(s.email || "—") + "</div>" +
             "<div><b>Instagram:</b> " + esc(s.instagram || "—") + "</div>" +
-            "<div><b>City:</b> " + esc(s.city || "—") + "</div>" +
+            "<div><b>City:</b> " + esc([s.city, s.country].filter(Boolean).join(", ") || "—") + "</div>" +
             "</div>" +
             (ca.wantsNewAssets
               ? '<div class="rec-box"><b>✨ Requested Custom Assets:</b> ' +
@@ -957,6 +957,8 @@
         kv("Email", d.email ? '<a href="mailto:' + esc(d.email) + '" style="text-decoration:underline">' + esc(d.email) + "</a>" : "—", true) +
         kv("Instagram", d.instagram) +
         kv("City", d.city) +
+        kv("Country", d.country) +
+        kv("Builder languages", (d.builderLanguages || []).join(", ").toUpperCase()) +
         kv("Currency", d.currency) +
         "</div>" +
         '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">' +
