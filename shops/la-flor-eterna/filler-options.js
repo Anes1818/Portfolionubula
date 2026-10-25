@@ -19,22 +19,28 @@ function compose(s,sc,all){
  });
  if(o.buds&&sc.nodes.length){
   const {points,flowers}=NebulaInfill.pockets(sc),chosen=[],unit=sc.frame.unit;
-  // A bud's crown belongs in a petal valley. Its short basal stem points back
-  // into the bouquet; upright bouquets never become a radial ring of spikes.
+  // Anchor the stem in a gap, then let the closed head rise above it.
+  // Unlike airy filler, a bud must retain one continuous, readable silhouette.
+  const masked=flowers.map(f=>({...f,mask:NebulaRenderer.footprint(f)}));
+  const lilies=flowers.filter(n=>n.id==='lily');
   const candidates=points.map(p=>{
-   const lily=flowers.filter(n=>n.id==='lily').sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
-   const fan=Math.max(-.95,Math.min(.95,(p.x-sc.frame.center.x)/unit*.28));
-   const angle=(lily?Math.max(-1.15,Math.min(1.15,(lily.rot||0)*.45+fan*.55)):fan)+Math.sin(p.x*.07+p.y*.03)*.12;
-   const h=Math.min(unit*.90,p.local*.78),w=h*2/3;
-   const nearLily=flowers.filter(n=>n.id==='lily').reduce((d,n)=>Math.min(d,Math.hypot(n.x-p.x,n.y-p.y)),unit*4);
-   const crowd=out.filter(n=>n.infillKind==='spray'||n.infillKind==='greenery').reduce((v,n)=>v+Math.max(0,1-Math.hypot(n.x-p.x,n.y-p.y)/(unit*.55)),0);
-   const core=flowers.reduce((v,n)=>v+Math.max(0,-NebulaInfill.clearance(p,n)/unit),0);
-   return {...p,h,w,angle,score:p.quality-core*3-crowd*.12+Math.max(0,1-nearLily/(unit*2))*.20};
+   const lily=[...lilies].sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+   const fan=Math.max(-.65,Math.min(.65,(p.x-sc.frame.center.x)/unit*.18));
+   const angle=fan+Math.sin(p.x*.07+p.y*.03)*.08;
+   const h=Math.min(unit*1.20,p.local*1.02),w=h*2/3;
+   const x=p.x+Math.sin(angle)*h*.38,y=p.y-Math.cos(angle)*h*.38;
+   const crown={x:x+Math.sin(angle)*h*.12,y:y-Math.cos(angle)*h*.12};
+   const occluders=masked.filter(f=>NebulaInfill.alphaAt(f,p)>.4);
+   const sample=[];for(const v of [-.32,-.18,0,.15])for(const u of [-.12,0,.12])sample.push({x:x+u*w*Math.cos(angle)-v*h*Math.sin(angle),y:y+u*w*Math.sin(angle)+v*h*Math.cos(angle)});
+   const hidden=sample.filter(q=>occluders.some(f=>NebulaInfill.alphaAt(f,q)>.5)).length/sample.length;
+   const core=sample.reduce((sum,q)=>sum+flowers.reduce((v,f)=>v+Math.max(0,-NebulaInfill.clearance(q,f)/unit),0),0)/sample.length;
+   const crowd=out.filter(n=>n.infillKind==='spray'||n.infillKind==='greenery').reduce((v,n)=>v+Math.max(0,1-Math.hypot(n.x-x,n.y-y)/(unit*.5)),0);
+   const nearLily=lily?Math.hypot(lily.x-x,lily.y-y):unit*4;
+   return {x,y,h,w,angle,crown,base:{x:p.x,y:p.y},occlude:occluders.map(f=>f.uid),hidden,score:p.quality-core*4-hidden*12-crowd*.25+Math.max(0,1-nearLily/(unit*2))*.6};
   }).sort((a,b)=>b.score-a.score||a.y-b.y||a.x-b.x);
-  for(const p of candidates){if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>unit*.58))chosen.push(p);if(chosen.length>=o.buds)break;}
+  for(const spacing of [.65,.42,0]){for(const p of candidates){if(chosen.includes(p))continue;if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>unit*spacing))chosen.push(p);if(chosen.length>=o.buds)break;}if(chosen.length>=o.buds)break;}
   chosen.forEach((p,i)=>{
-   // The crown is above the image centre; solve the centre from the gap anchor.
-   out.push({uid:'bud-option-'+i,url:'assets/client/celebration/lily-bud.png',x:p.x-Math.sin(p.angle)*p.h*.14,y:p.y+Math.cos(p.angle)*p.h*.14,w:p.w,h:p.h,d:p.w,rot:p.angle,bright:1,z:Math.max(...sc.nodes.map(n=>n.z??n.y))+5,softDetail:true,infill:true,infillKind:'bud',base:{x:p.x-Math.sin(p.angle)*p.h*.6,y:p.y+Math.cos(p.angle)*p.h*.6},occlude:flowers.filter(f=>NebulaInfill.alphaAt({...NebulaInfill.shape(f),mask:NebulaRenderer.footprint(f)},{x:p.x-Math.sin(p.angle)*p.h*.6,y:p.y+Math.cos(p.angle)*p.h*.6})>.5&&f.y>p.y).map(f=>f.uid)});
+   out.push({uid:'bud-option-'+i,url:'assets/client/celebration/lily-bud.png',x:p.x,y:p.y,w:p.w,h:p.h,d:p.w,rot:p.angle,bright:1,z:Math.max(...sc.nodes.map(n=>n.z??n.y))+5,softDetail:true,infill:true,infillKind:'bud',base:p.base,crown:p.crown,occlude:p.occlude});
   });
  }
  return out;
