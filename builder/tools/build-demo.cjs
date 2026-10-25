@@ -15,8 +15,11 @@ for(const file of Object.keys(manifest.files).sort()){
   // The featured card is the current Pink Promise; retire its older catalog duplicate.
   if(file==='index.html')s=s.replace(/<article class="bouquet-card" data-id="pink-promise"[\s\S]*?<\/article>/,'');
   if(file==='catalog-data.js'){const data={window:{}};vm.runInNewContext(s,data);s='window.NEBULA_COLLECTIONS='+JSON.stringify(data.window.NEBULA_COLLECTIONS.filter(r=>r.id!=='pink-promise'))+';\n';}
+  if(file==='catalog-data.js')s+='\nNEBULA_COLLECTIONS.push({id:"money-bloom",en:"Money Bloom",es:"Ramo de dinero",collection:"love",description:"Folded dollar notes, your wrapping and a personal message.",descriptionEs:"Billetes plegados, tu envoltura y un mensaje personal."});';
+  if(file==='index.html')s=s.replace('<div id="bouquetGrid" class="bouquet-grid">','<div id="bouquetGrid" class="bouquet-grid"><article class="bouquet-card" data-id="money-bloom" data-collection="love"><a class="bouquet-picture" href="studio.html?template=money-bloom"><img src="assets/catalog/thumbs/money-bloom.webp" alt="Money Bloom" width="720" height="820" loading="lazy"><span class="collection-tag">For love</span></a><div class="card-copy"><h2><a href="studio.html?template=money-bloom">Money Bloom</a></h2><p>Folded notes. A personal gift.</p><a class="customize-link" href="studio.html?template=money-bloom"><span>Make it yours</span></a></div></article>');
   if(file==='request.js')s=s.replaceAll('the Nebula team confirms availability, design and final price. Payment directly with the shop.','Demo request for Nebula. No flower order or payment is placed.').replaceAll('the Nebula team confirma disponibilidad, diseño y precio final. Pago directamente con la tienda.','Solicitud de prueba para Nebula. No se realiza ningún pedido ni pago.');
   if(file.endsWith('.html'))s=s.replace('</head>','<link rel="stylesheet" href="demo-brand.css?v=20261025"></head>').replace('<script src="client-ui.js" defer></script>','<script src="client-ui.js" defer></script><script src="demo-brand.js?v=20261025" defer></script>');
+  if(['studio.html','order.html'].includes(file))s=s.replace(/(<script src="(?:app|order)\.js)/,'<link rel="stylesheet" href="money.css?v=1"><script src="money.js?v=1" defer></script>$1');
   s=s.replaceAll('assets/client/logo.png',profile.logo).replaceAll('type="image/png"','type="image/jpeg"');
   s=s.replace(/<script src="(?:\.\.\/\.\.\/b\/(?:config|database)\.js|short-links\.js)" defer><\/script>/g,'');
   s=s.replaceAll('Top Sellers','Featured designs').replaceAll('Los más vendidos','Diseños destacados').replaceAll('FROM NEBULA','EXPLORE THE DEMO').replaceAll('DE NEBULA','EXPLORA LA DEMO');
@@ -33,6 +36,10 @@ for(const [target,sourceFile] of [['assets/brand/nebula-logo.jpg','logo.jpg'],['
 // The demo opens with a florist sales experience; client storefronts stay intact.
 const featured=JSON.parse(fs.readFileSync(path.join(repo,'clients/la-flor-eterna/top-sellers.json'),'utf8'));
 const catalog={window:{}};vm.runInNewContext(fs.readFileSync(path.join(source,'catalog-data.js'),'utf8'),catalog);
+catalog.window.NEBULA_COLLECTIONS.push({id:'money-bloom',en:'Money Bloom',es:'Ramo de dinero'});
+for(const file of ['money.js','money.css'])write(file,fs.readFileSync(path.join(repo,'builder/demo-brand',file)));
+write('assets/money/folded-dollar-v1.png',fs.readFileSync(path.join(repo,'builder/demo-brand/money/folded-dollar-v1.png')));
+const moneyThumb=path.join(repo,'builder/demo-brand/money/money-bloom.webp');if(fs.existsSync(moneyThumb))write('assets/catalog/thumbs/money-bloom.webp',fs.readFileSync(moneyThumb));
 write('index.html',require('../demo-brand/landing.cjs')(featured,catalog.window.NEBULA_COLLECTIONS.filter(r=>r.id!=='pink-promise')));
 for(const file of ['landing.css','landing.js'])write(file,fs.readFileSync(path.join(repo,'builder/demo-brand',file)));
 write('assets/brand/pink-preview.png',fs.readFileSync(path.join(repo,'builder/demo-brand/pink-preview.png')));
