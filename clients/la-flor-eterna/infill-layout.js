@@ -85,14 +85,14 @@ function fit(p,kind,index,flowers,art,placed=[],level=1){
  const m=kind==='thistles'?art.thistle:kind==='sprays'?art.spray:kind==='greenery'?art.greens[index%art.greens.length]:index%2?art.wide:art.airy;
  const crown=m.crown||(kind==='greenery'?[.64,.36]:kind==='sprays'?[.48,.40]:[.51,.38]),base=m.base||(kind==='greenery'?[.03,.96]:[.48,.98]);
  const pixels=samples(m);let best=null;
- for(const turn of [0,-.55,.55,-1.1,1.1]){
+ for(const turn of [0,-.28,.28,-.56,.56]){
   const pose=anchored(p,m,p.w,crown,base,turn),cs=Math.cos(pose.rot),sn=Math.sin(pose.rot);
   let visible=0,core=0,petals=0,crowded=0;
   const near=flowers.filter(n=>distance(n,pose)<Math.max(n.w,n.h)+pose.w);
   for(const [u,v] of pixels){const q={x:pose.x+u*pose.w*cs-v*pose.h*sn,y:pose.y+u*pose.w*sn+v*pose.h*cs};
-   visible++;
+   if(!near.some(n=>alphaAt(n,pose.base)>.5&&alphaAt(n,q)>.5))visible++;
    if(near.some(n=>cupDistance(n,q)<.42&&alphaAt(n,q)>.5))core++;
-   if(kind==='breath'){
+   {
     if(near.some(n=>alphaAt(n,q)>.5))petals++;
     if(placed.some(n=>alphaAt(n,q)>.35))crowded++;
    }
@@ -101,7 +101,7 @@ function fit(p,kind,index,flowers,art,placed=[],level=1){
   // Score the entire visible cutout, exactly as rendered. Never assume its
   // lower leaves can be erased to make an otherwise oversized branch fit.
   const overlap=crowded/Math.max(1,pixels.length),petalOverlap=petals/Math.max(1,pixels.length);
-  const quality=-intrusion*14+(baseHidden?.4:-.7)-overlap*10-petalOverlap*(kind==='breath'?(level===1?2.5:1):0);
+  const quality=-intrusion*20+(baseHidden?1.5:-1.5)-overlap*7-petalOverlap*(kind==='breath'?(level===1?2.5:1):.7)-Math.max(0,(kind==='greenery'?.62:.48)-ratio)*18;
   if(!best||quality>best.quality)best={pose,url:m.url,quality,visible:ratio,core:intrusion,overlap,petalOverlap};
  }
  return best;
@@ -121,26 +121,33 @@ function plan(sc,counts,art){
    const parent=kind==='breath'&&i>=counts.breath?out.breath[i%counts.breath]:null;
    const reach=parent?distance(p,parent)/unit:0;
    const spread=['thistles','breath'].includes(kind)&&out[kind].length?Math.min(3,Math.min(...out[kind].map(q=>distance(p,q)/unit)))*(kind==='breath'?.65:.9):0;
-   const score=p.quality+Math.min(spacing,2)*.7-(spacing<.80?(1-spacing)*4:0)+(kind==='greenery'&&p.edge?.12:0)-(parent?Math.abs(reach-.85)*1.1:0)+spread;
+   const score=p.quality+Math.min(spacing,2)*.7-(spacing<.80?(1-spacing)*4:0)+(kind==='greenery'&&p.edge?1.5:0)-(parent?Math.abs(reach-.85)*1.1:0)+spread;
    ranked.push({p,spacing,score});
   }
   ranked.sort((a,b)=>b.score-a.score);
-  for(const {p,spacing,score} of ranked.slice(0,art?14:1)){
+  for(const candidate of ranked.slice(0,art?14:1)){
+   const {spacing,score}=candidate,original=candidate.p;
+   const dx=(original.x-sc.frame.center.x)/unit,dy=(original.y-sc.frame.center.y)/unit;
+   // Stems fan upward in hand-tied bouquets. Interior fillers share that flow;
+   // only outer greenery follows the silhouette, with restrained asymmetry.
+   const outward=Math.atan2(dy,dx),up=-Math.PI/2+clamp(dx*.28,-.9,.9);
+   const angle=counts.mode==='classic'?up:kind==='greenery'&&original.edge?outward:up;
+   const p={...original,angle:angle+Math.sin(i*2.399)*.13};
    const local=clamp(p.local,unit*.90,unit*1.3),fitSize=clamp((p.clear/unit+.28)*1.25,.90,1.10);
-   const density=kind==='breath'?[1,.60,1.05,1.22][counts.level||1]*(i>=counts.breath?.78:1):1;
-   let w=Math.min(local*(kind==='thistles'?.62:kind==='sprays'?.94:kind==='greenery'?1.02:1.24)*fitSize,unit*(kind==='thistles'?.72:kind==='greenery'?1.15:kind==='sprays'?1.05:1.44))*density;
+   const density=kind==='breath'?[1,.62,.82,.96][counts.level||1]*(i>=counts.breath?.78:1):1;
+   let w=Math.min(local*(kind==='thistles'?.62:kind==='sprays'?.70:kind==='greenery'?.88:1.12)*fitSize,unit*(kind==='thistles'?.72:kind==='greenery'?1.15:kind==='sprays'?1.05:1.44))*density;
    let fitted=art?fit({...p,w},kind,i,flowers,art,placed,counts.level):null;
    // A narrow seam needs a finer whole sprig, not a large cutout over petals.
-   if(kind==='breath'&&fitted&&(fitted.core>.06||fitted.overlap>.12)){
+   if(fitted&&(fitted.core>.06||fitted.overlap>.18)){
     const smaller=fit({...p,w:w*.72},kind,i,flowers,art,placed,counts.level);
     if(smaller.quality>fitted.quality+.15){w*=.72;fitted=smaller;}
    }
    const total=score+(fitted?.quality||0);
-   if(total>best){chosen={...p,spacing,w,fitted,source:p};best=total;}
+   if(total>best){chosen={...p,spacing,w,fitted,source:original};best=total;}
   }
   if(!chosen)break;
   out[kind].push({...chosen,index:i});
-  if(kind==='breath'&&chosen.fitted){const n=chosen.fitted;placed.push({...shape(n.pose),mask:g.NebulaRenderer?.footprint({url:n.url})});}
+  if(chosen.fitted){const n=chosen.fitted;placed.push({...shape(n.pose),mask:g.NebulaRenderer?.footprint({url:n.url})});}
   used.push({p:chosen.source,radius:unit*(kind==='breath'?.15:.23)});
  }
  return out;
@@ -151,11 +158,15 @@ function anchored(p,m,w,crown,base,extra=0){
  const x=p.x-ox*Math.cos(rot)+oy*Math.sin(rot),y=p.y-ox*Math.sin(rot)-oy*Math.cos(rot),bx=(base[0]-.5)*w,by=(base[1]-.5)*h;
  return {x,y,w,h,d:w,rot,crown:{x:p.x,y:p.y},base:{x:x+bx*Math.cos(rot)-by*Math.sin(rot),y:y+bx*Math.sin(rot)+by*Math.cos(rot)}};
 }
+function sourceOccluders(p,flowers){
+ const base=p.fitted?.pose.base;if(!base)return [];
+ return flowers.map(shape).filter(n=>alphaAt({...n,mask:g.NebulaRenderer?.footprint(n)},base)>.4).map(n=>n.uid);
+}
 function nodes(sc,counts,art){
  const key=JSON.stringify([sc.frame.unit,counts,sc.nodes.map(n=>[n.uid,n.url,n.x,n.y,n.w,n.h,n.rot,n.flipX,n.z,n.flowerCup,!!g.NebulaRenderer?.decoded(n.url)]),Object.values(art).flat().map(m=>[m.url,m.width,m.height,m.crown,m.base,!!g.NebulaRenderer?.decoded(m.url)])]);
  if(layoutCache.has(key))return layoutCache.get(key);
  const layout=plan(sc,counts,art),all=[],greenery=[],canopy=Math.max(0,...sc.nodes.map(n=>n.z??n.y))+20;
- const common=(p,kind)=>({z:canopy+(kind==='greenery'?0:kind==='spray'?1:2),bright:1,softDetail:true,infill:true,infillKind:kind,pocket:{x:p.x,y:p.y,clear:p.clear},occlude:p.neighbours,front:p.front,visibleRatio:p.fitted?.visible,coreOverlap:p.fitted?.core,branchOverlap:p.fitted?.overlap});
+ const common=(p,kind)=>({base:p.fitted?.pose.base,crown:p.fitted?.pose.crown,z:canopy+(kind==='greenery'?0:kind==='spray'?1:2),bright:1,softDetail:true,infill:true,infillKind:kind,pocket:{x:p.x,y:p.y,clear:p.clear},occlude:sourceOccluders(p,sc.nodes),front:p.front,visibleRatio:p.fitted?.visible,coreOverlap:p.fitted?.core,branchOverlap:p.fitted?.overlap});
  layout.sprays.forEach((p,i)=>{const a=p.fitted.pose;all.push({...common(p,'spray'),...a,uid:'spray-accent-'+i,url:art.spray.url});});
  layout.thistles.forEach((p,i)=>all.push({...common(p,'thistle'),...p.fitted.pose,uid:'thistle-accent-'+i,url:art.thistle.url}));
  layout.greenery.forEach((p,i)=>{
@@ -170,5 +181,5 @@ function nodes(sc,counts,art){
  });
  const result={all,greenery,layout};layoutCache.set(key,result);if(layoutCache.size>30)layoutCache.delete(layoutCache.keys().next().value);return result;
 }
-g.NebulaInfill={pockets,plan,nodes,clearance};
+g.NebulaInfill={pockets,plan,nodes,clearance,alphaAt,shape};
 })(window);

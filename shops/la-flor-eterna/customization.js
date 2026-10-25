@@ -53,9 +53,9 @@ NebulaDetails.nodes=(s,f)=>(s.finishes.decorations||[]).map(d=>{
  const m=detailArt(s,d.id),h=detailHeight(s,f,d),a=detailFrame(s,f,d);
  return {uid:'detail-'+d.id,detailId:d.id,url:m.url,x:a.center.x+d.x*a.radius,y:a.center.y+d.y*a.radius,w:h*m.width/m.height,h,d:h,rot:d.rotation*Math.PI/180,bright:1,tucked:s.mode!=='classic'&&d.layer==='tucked',grounded:s.mode==='classic'&&!bowIds.includes(d.id),z:500};
 });
-function valid(o,mode){return o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).every(k=>['v','breath','sprays','edge','wrap','thistles','buds','positions'].includes(k))&&o.v===1&&(o.buds===undefined||Number.isInteger(o.buds)&&o.buds>=0&&o.buds<=10)&&(o.positions===undefined||g.NebulaFillerOptions.validPositions(o.positions))&&(o.thistles===undefined||typeof o.thistles==='boolean')&&(o.breath===undefined||Number.isInteger(o.breath)&&o.breath>=0&&o.breath<=3)&&(o.sprays===undefined||Number.isInteger(o.sprays)&&o.sprays>=0&&o.sprays<=8)&&(o.edge===undefined||typeof o.edge==='boolean')&&(o.wrap===undefined||wraps[mode].includes(o.wrap));}
+function valid(o,mode){return o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).every(k=>['v','breath','sprays','edge','wrap','thistles','buds','positions','placements','breathStems'].includes(k))&&o.v===1&&(o.placements===undefined||g.NebulaFillerOptions.validPlacements(o.placements))&&(o.breathStems===undefined||Number.isInteger(o.breathStems)&&o.breathStems>=0&&o.breathStems<=24)&&(o.buds===undefined||Number.isInteger(o.buds)&&o.buds>=0&&o.buds<=10)&&(o.positions===undefined||g.NebulaFillerOptions.validPositions(o.positions))&&(o.thistles===undefined||typeof o.thistles==='boolean')&&(o.breath===undefined||Number.isInteger(o.breath)&&o.breath>=0&&o.breath<=3)&&(o.sprays===undefined||Number.isInteger(o.sprays)&&o.sprays>=0&&o.sprays<=8)&&(o.edge===undefined||typeof o.edge==='boolean')&&(o.wrap===undefined||wraps[mode].includes(o.wrap));}
 function level(s){const o=s.finishes.studio;if(o?.breath!==undefined)return o.breath;return s.finishes.fillerCount?Math.min(3,Math.ceil(s.finishes.fillerCount/4)):0;}
-function breathCount(s){const n=s.items.filter(i=>cat[i.id]?.kind!=='greenery').length;return Math.min(8,Math.ceil(Math.sqrt(n)*.75))*(s.finishes.studio?.breath||0);}
+function breathCount(s){if(s.finishes.studio?.breathStems!==undefined)return s.finishes.studio.breathStems;const n=s.items.filter(i=>cat[i.id]?.kind!=='greenery').length;return Math.min(8,Math.ceil(Math.sqrt(n)*.75))*(s.finishes.studio?.breath||0);}
 function extras(s){const o=s.finishes.studio||{},out=[],count=breathCount(s);if(count)out.push({id:'filler',quantity:count,totalCents:count*C.extrasCents.filler});if(o.buds)out.push({id:'lily_bud',quantity:o.buds,totalCents:o.buds*cat.lily_bud.priceCents});if(s.mode!=='dome'&&s.finishes.greeneryCount)out.push({id:'interiorGreenery',quantity:s.finishes.greeneryCount,totalCents:s.finishes.greeneryCount*cat.eucalyptus.priceCents});if(o.sprays)out.push({id:'whiteSprays',quantity:o.sprays,totalCents:o.sprays*cat.white_flower_spray.priceCents});if(o.edge)out.push({id:'breathBorder',quantity:8,totalCents:8*C.extrasCents.filler});return out;}
 function style(s){return s.finishes.studio?.wrap||(s.mode==='classic'?(g.NebulaSunflower?.active(s)?'yellow-upright':'fan'):s.mode==='heart'?'heart':s.finishes.roseArtwork==='lily-mixed-v1'?'peach':g.NebulaRoseArt?.reference(s)?'gingham':s.finishes.paper==='cocoa'?'cocoa':s.finishes.paper==='ivory'?'ruffle':'round');}
 function paper(s,f){
@@ -91,15 +91,12 @@ function complete(s,sc){
  const f=sc.frame,o=s.finishes.studio||{};
  sc.classicPaper=s.mode==='classic';
  if(s.mode==='classic')sc.nodes=classicFlowers(s,sc.nodes);
- // More filler needs real room. Keep every authored center/anchor and quantity,
- // but gently open the rendered petal canopy as density rises (max 8.5%).
- const bloomScale=[1,.99,.955,.915][level(s)];
- sc.nodes=sc.nodes.map(n=>n.decorative?n:{...n,w:n.w*bloomScale,h:n.h*bloomScale,d:n.d*bloomScale});
+ // Fillers fit around the authored flowers without changing their size.
  let paperFront=null;
  if(o.wrap||s.mode==='classic'){const p=paper(s,f);sc.collar=p?.back||null;sc.finishes=sc.finishes.filter(n=>!['sunflower-front-paper','paper-front'].includes(n.uid));if(p?.front)paperFront={...p.front,z:10000};}
  if(s.mode==='classic'){const ribbon=sc.finishes.find(n=>n.uid==='ribbon');if(ribbon)ribbon.y=neckY(s)+ribbon.h*(s.finishes.ribbon==='blush'?.3:.08);}
  const fillerCount=o.breath!==undefined?breathCount(s):(s.finishes.fillerCount||0),greenCount=s.finishes.greeneryCount||0;
- const packed=NebulaInfill.nodes(sc,{breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:NebulaMidnightArt.thistleCount(s)},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});
+ const packed=NebulaInfill.nodes(sc,{mode:s.mode,breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:NebulaMidnightArt.thistleCount(s)},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});
  const added=g.NebulaFillerOptions?NebulaFillerOptions.compose(s,sc,packed.all):[...packed.all];
  sc.filler=(sc.filler||[]).filter(n=>!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url);
  if(s.mode==='dome')sc.greenery=packed.greenery;

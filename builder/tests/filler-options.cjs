@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('fs');
 (async()=>{const b=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const p=await b.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
- await p.goto('http://127.0.0.1:4176/demo/nebula-builder/studio.html?template=pink-celebration');await p.waitForFunction(()=>window.__ready);
+ await p.goto((process.env.TEST_ORIGIN||'http://127.0.0.1:4177')+'/demo/nebula-builder/studio.html?template=pink-celebration');await p.waitForFunction(()=>window.__ready);
  const initial=await p.evaluate(()=>({items:NebulaApp.state.items,code:NebulaLink.encode(NebulaApp.state)}));assert.equal(initial.items.length,25);assert.ok(initial.items.every(n=>!['lily_bud','eucalyptus','white_flower_spray'].includes(n.id)));
  await p.locator('#bouquet').scrollIntoViewIfNeeded();
  for(const kind of ['greenery','spray']){

@@ -202,10 +202,16 @@ function footprint(n){
  const data=c.getImageData(0,0,80,80).data,result={data,w:80,h:80};footprintCache.set(key,result);return result;
 }
 function tuckedSprig(ctx,n,flowers){
- // Infill is a complete botanical cutout above the petal canopy. A geometric
- // half-plane cannot distinguish a stem from a leaf: masking it sliced leaves
- // and blossoms in half. Placement, size and source art provide the clearance.
- if(n.infill){nodeDraw(ctx,n,{shadow:false});return;}
+ // Botanical tips sit above the canopy, with their bases behind real petals.
+ if(n.infill){
+  if(!n.occlude?.length){nodeDraw(ctx,n,{shadow:false});return;}
+  const c=sprigCanvas.getContext('2d');c.clearRect(0,0,720,820);nodeDraw(c,n,{shadow:false});
+  c.save();c.globalCompositeOperation='destination-out';
+  // Actual petal silhouettes hide the insertion point. Never cut leaves using
+  // a circle or a half-plane; the visible overlap is caused by a real flower.
+  for(const flower of flowers)if(n.occlude.includes(flower.uid))nodeDraw(c,flower,{shadow:false,alpha:true});
+  c.restore();ctx.drawImage(sprigCanvas,0,0);return;
+ }
  const c=sprigCanvas.getContext('2d');c.clearRect(0,0,720,820);
  nodeDraw(c,n,{shadow:false});
  // A soft occlusion under the rose cups avoids both white florets across

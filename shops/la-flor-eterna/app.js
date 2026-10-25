@@ -604,7 +604,7 @@ function endPointer(e,canceled=false){
  if(!gesture||e.pointerId!==gesture.pointerId)return;const g=gesture;gesture=null;delete camera.lockedView;hover=null;try{$('bouquet').releasePointerCapture(e.pointerId);}catch(err){}
  if(canceled){st=JSON.parse(g.before);camera=g.cameraBefore;selected=null;render(false);return;}
  if(g.pan){render(false);return;}
- if(g.fillerId){storeHistory(g.before);render();return;}
+ if(g.fillerId){if(g.moved)NebulaFillerOptions.settle(st,g.fillerId);NebulaFillerOptions.select(g.fillerId);storeHistory(g.before);render();return;}
  if(g.detailId){storeHistory(g.before);render();return;}
  if(moveMode&&!g.moved&&g.moveSelection&&!g.pan){selected=g.moveSelection;tapMove(point(e));return;}
  /* A held paint that never became a drag was a tap after all: paint it now. */

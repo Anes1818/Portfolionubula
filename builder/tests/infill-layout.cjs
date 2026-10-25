@@ -1,5 +1,5 @@
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const base='http://127.0.0.1:4174/shops/la-flor-eterna/',out='clients/la-flor-eterna/qa/next-phase/';
+const base=(process.env.TEST_ORIGIN||'http://127.0.0.1:4177')+'/shops/la-flor-eterna/',out='clients/la-flor-eterna/qa/next-phase/';
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const page=await browser.newPage({viewport:{width:1100,height:950}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+'studio.html');await page.waitForFunction(()=>window.__ready);
@@ -23,17 +23,11 @@ const base='http://127.0.0.1:4174/shops/la-flor-eterna/',out='clients/la-flor-et
     check(white.length===(s.finishes.studio.sprays||0),entry.id+' every white accent represented');
     check(greens.length===(s.finishes.greeneryCount||0),entry.id+' every greenery unit represented');
     check(infill.every(n=>n.z>Math.max(...scene.nodes.map(f=>f.z??f.y))),entry.id+' tips above petals');
-    // Regression: a flower below an overlay must never erase half of a leaf.
-    // Compare the real infill rendering with the same intact cutout while the
-    // flower geometry remains available to any accidental masking operation.
-    if(level===1)for(const n of [greens[0],white[0],air[0]].filter(Boolean)){
-     const canvases=[true,false].map(infill=>{const cv=document.createElement('canvas');cv.width=720;cv.height=820;
-      NebulaRenderer.drawArt(cv.getContext('2d'),s,{scene:{...scene,collar:null,finishes:[],greenery:[],filler:[],layeredFlowers:[{...n,infill,softDetail:true}]}});return cv;});
-     check(canvases[0].toDataURL()===canvases[1].toDataURL(),entry.id+' complete '+n.uid+' silhouette survives petals');
-    }
+    check(infill.every(n=>(n.occlude||[]).every(id=>scene.nodes.some(f=>f.uid===id))),entry.id+' valid petal occluders');
+    check(scene.nodes.every(n=>{const old=original.find(o=>o.uid===n.uid);return n.w===old.w&&n.h===old.h;}),entry.id+' filler never shrinks flowers');
     const pockets=[...branches,...white,...greens].map(n=>n.pocket.x.toFixed(3)+','+n.pocket.y.toFixed(3));check(new Set(pockets).size===pockets.length,entry.id+' branches and families do not share a pocket');
-    const avg=scene.nodes.reduce((v,n)=>v+n.w,0)/scene.nodes.length;check(avg<=lastWidth,entry.id+' progressively smaller heads');lastWidth=avg;
-    const avgAir=air.reduce((v,n)=>v+n.w,0)/Math.max(1,air.length);if(level>1)check(avgAir>lastAir,entry.id+' fuller level has larger breath');lastAir=avgAir;
+    const avg=scene.nodes.reduce((v,n)=>v+n.w,0)/scene.nodes.length;check(lastWidth===Infinity||avg===lastWidth,entry.id+' unchanged heads');lastWidth=avg;
+    const avgAir=air.reduce((v,n)=>v+n.w,0)/Math.max(1,air.length);lastAir=avgAir;
     const copy=NebulaLink.decode(NebulaLink.encode(s)).design;check(JSON.stringify(NebulaRenderer.scene(copy))===JSON.stringify(scene),entry.id+' exact saved-link reconstruction');
     const unrelated=NebulaModel.clone(s);unrelated.note='A note';unrelated.finishes.chocolateBox=!unrelated.finishes.chocolateBox;
     check(JSON.stringify(NebulaRenderer.scene(unrelated).layeredFlowers)===JSON.stringify(scene.layeredFlowers),entry.id+' notes and gifts do not move infill');

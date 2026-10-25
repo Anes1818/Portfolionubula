@@ -9,7 +9,7 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
  const flowers=$('panel-flowers'),finish=$('panel-finishing');
  const fillers=section('flowerFillers','Finishing flowers',flowers);flowers.insertBefore(fillers,$('flowerGrid'));
  const title=el('strong','breathHeading');title.textContent='Baby’s breath';fillers.append(title,el('div','breathLevels','custom-segments'));
- for(let i=0;i<4;i++){const b=el('button');b.type='button';b.dataset.breath=i;b.onclick=()=>edit(s=>{studio(s).breath=i;s.finishes.fillerCount=0;});$('breathLevels').append(b);}
+ for(let i=0;i<4;i++){const b=el('button');b.type='button';b.dataset.breath=i;b.onclick=()=>edit(s=>{studio(s).breath=i;delete studio(s).breathStems;s.finishes.fillerCount=0;});$('breathLevels').append(b);}
  const row=el('div',null,'toggle-row'),label=el('span','whiteSprayHeading'),step=el('span',null,'stepper');row.append(label,step);
  for(const [id,delta] of [['whiteSprayLess',-1],['whiteSprayMore',1]]){const b=el('button',id);b.type='button';b.textContent=delta<0?'−':'+';b.setAttribute('aria-label',delta<0?'Fewer white flowering accents':'More white flowering accents');b.onclick=()=>edit(s=>{const o=studio(s);o.sprays=Math.max(0,Math.min(8,(o.sprays||0)+delta));});step.append(b);if(delta<0)step.append(el('output','whiteSprayCount'));}
  fillers.append(row,el('small','fillerCost','helper'));g.NebulaFillerOptions?.buildControls(fillers);
