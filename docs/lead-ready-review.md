@@ -88,3 +88,17 @@ Admin search now covers the selected category: full website setups, short demo/c
 Sales links: public page https://nebulastudio.site/flowers/ ; invited demo https://nebulastudio.site/demo/nebula-builder/?vip=nebula ; full setup https://nebulastudio.site/shop-setup.html . Keep the admin link for the owner.
 
 Remaining manual verification: when convenient, submit a labelled test from the demo and check the configured Nebula notification inbox and the admin leads tab. No new customer confirmation-email feature was added.
+
+
+## October 25 — live closing-path audit after Money Bloom
+
+The preceding implementation turns made concrete progress: Money Bloom was added, its controls were simplified to bill value, and Heart support plus Classic restrictions were published as `4328f9d`.
+
+Current evidence:
+- Live Money Bloom script returns HTTP 200 and contains the Heart implementation.
+- Anonymous read of `/nebula/leads.json?shallow=true` returns HTTP 401.
+- `builder/tests/live-lead-path.cjs` opened all 15 live demo bouquets at 390px, confirmed nonempty designs, no horizontal overflow and no uncaught page errors. It also checked the setup entry and anonymous admin lock. Non-read requests were blocked throughout; no real enquiry was sent.
+- Removed stale catalog descriptions advertising the withdrawn blue-thistle option in English and Spanish.
+- Money artwork is illustrative and unchanged for $1/$5/$10. Denomination pricing and request details are tested separately. Money notes are offered in Dome and Heart only.
+
+The existing owner confirmation proves Google/admin access was set up. It does not prove email inbox delivery. The owner deferred the real notification test, so the broad goal remains active; do not claim every delivery channel is verified. Use the admin enquiries view as the checked retrieval path and confirm actual inbox receipt when the owner chooses to run the test.

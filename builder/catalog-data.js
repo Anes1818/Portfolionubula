@@ -38,8 +38,8 @@ window.NEBULA_COLLECTIONS = [
     "collection": "classic",
     "en": "Midnight Blooms",
     "es": "Flores de medianoche",
-    "description": "Five pink lilies, black roses and dusky daisies in black wrapping. Blue thistles are optional.",
-    "descriptionEs": "Cinco lirios rosas, rosas negras y gerberas oscuras en papel negro. Cardos azules opcionales.",
+    "description": "Five pink lilies, black roses and dusky daisies in black wrapping.",
+    "descriptionEs": "Cinco lirios rosas, rosas negras y gerberas oscuras en papel negro.",
     "preview": true,
     "image": "assets/catalog/thumbs/midnight-blooms.webp",
     "count": 20
