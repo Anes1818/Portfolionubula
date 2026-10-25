@@ -48,7 +48,7 @@ const root=path.resolve(__dirname,'../..');
   assert.equal(posts,3,'Email-only fallback confirms accepted enquiry when database is unavailable');
   await page.evaluate(()=>document.getElementById('interestForm').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
   assert.equal(posts,3,'Successful submission cannot be sent again in the same page');
-  await page.goto(base+'/demo/nebula-builder/'+hero);await page.waitForFunction(()=>window.__ready);assert.equal(await page.evaluate(()=>NebulaApp.state.items.length),32);assert.equal(await page.evaluate(()=>NebulaApp.state.finishes.roseArtwork),'reference-v3');
+  await page.goto(base+'/demo/nebula-builder/'+hero);await page.waitForFunction(()=>window.__ready);assert.equal(await page.evaluate(()=>NebulaApp.state.items.length),32);assert.equal(await page.evaluate(()=>NebulaApp.state.finishes.roseArtwork),'reference-v3');assert.equal(await page.locator('#browseTemplates').getAttribute('href'),'../../shop-setup.html?from=demo');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Studio header fits phone');
   await page.goto(base+'/demo/nebula-builder/'+sheet);await page.locator('#orderSheet').waitFor({state:'visible'});assert.ok(!(await page.locator('#orderBroken').isVisible()));assert.equal(await page.locator('.demo-next-link').getAttribute('href'),'../../shop-setup.html?from=demo');
   await page.goto(base+'/demo/nebula-builder/');
   for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'overflow '+width);}
