@@ -1,11 +1,39 @@
 # Nebula Bouquet Builder — current context
 
-Document version: 1.2 · 30 September 2026 · local launch draft
+Document version: 1.3 · 25 October 2026 · current sales experience
 
 This supersedes the historical $650 setup / $49 monthly offer, Catalog offer,
 30-day trial, unlimited revision/support promises and ROI claims. Those are not
 current sales terms. The old context and carousel mentioned in the resume were
 not present in this checkout; these local drafts establish the current version.
+
+## Current status — 25 October (supersedes September status below)
+
+The branded demo is deployed with 15 editable bouquet examples, a real editing video,
+EN/ES sales copy, a visual request example and a shop setup path. Public entry is
+`/flowers/`; invited demo is `/demo/nebula-builder/?vip=nebula`.
+Firebase stores short previews and private enquiries/setup records; an authenticated
+owner admin is available. This is not a self-service florist catalog dashboard.
+No automatic checkout, payment collection or stock reservation is implemented.
+
+The confirmed offer remains $29 USD/month with bounded edits/support. Supported
+library configuration is included; bespoke recreations, new artwork and seasonal
+work are separately scoped and quoted. Billing follows approval and launch.
+La Flora has an existing promised free-month arrangement; do not imply it is a
+paying customer or generalize that trial to new prospects. No verified revenue
+or measured time-saving evidence is available in this conversation.
+
+Prospect evidence: La Flora liked the preview and intended to send prices; Delgado
+liked the concept but raised early-stage demand and flower availability; another
+prospect asked about ribbon/foam flowers, CAD and Square. These are expressions of
+interest and questions, not validated purchases or supported integration claims.
+
+Current sales focus: begin with bouquets the florist sells, let customers customize
+supported choices, and give the florist a visual request to discuss and quote.
+Show the real interaction and request, explain scope and price, then ask which
+bouquet to start with. Track price/scope acceptance and launch, not compliments.
+The owner explicitly deferred the email-delivery check to focus on this sales path;
+actual notification receipt remains unverified. Do not keep requesting that test.
 
 ## Product and audience
 
@@ -82,6 +110,9 @@ and whether delivery costs/support time fit the basic scope. Record objections,
 trial usage and actual price acceptance; views and likes do not answer these.
 
 ## Changelog
+
+- 1.3 — 25 October: current deployed demo and private admin status; prospect
+  evidence, bounded offer and sales focus supersede stale September status.
 
 - 1.2 — 30 September: add official-source competitor audit and sharpen the
   customer-to-WhatsApp position without claiming uniqueness or ROI.

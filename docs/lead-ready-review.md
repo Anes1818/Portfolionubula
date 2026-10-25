@@ -62,7 +62,7 @@ Record the shop, date, need, objection, agreed scope and next step. A positive r
 
 ## Completion gate
 
-Do not mark the full launch goal complete until deployment, live private-read denial, owner sign-in, existing short-link reconstruction, mobile checks, and owner-confirmed receipt of a deliberately authorized test enquiry have been verified. Keep unresolved checks explicit.
+Verify deployment, live private-read denial, owner sign-in, existing short-link reconstruction and mobile checks. The owner explicitly deferred email delivery testing on October 25 and redirected work to the sales experience. Record email receipt as unverified; it is not a blocker for that scoped work.
 
 Live verification on October 24: after the owner published the rules, anonymous reads of leads, setups, customer requests and the historical setup slot all returned HTTP 401. Owner Google sign-in still needs activation and verification. The admin opens on website setups and supports shop/contact search and submission dates.
 
@@ -101,7 +101,14 @@ Current evidence:
 - Removed stale catalog descriptions advertising the withdrawn blue-thistle option in English and Spanish.
 - Money artwork is illustrative and unchanged for $1/$5/$10. Denomination pricing and request details are tested separately. Money notes are offered in Dome and Heart only.
 
-The existing owner confirmation proves Google/admin access was set up. It does not prove email inbox delivery. The owner deferred the real notification test, so the broad goal remains active; do not claim every delivery channel is verified. Use the admin enquiries view as the checked retrieval path and confirm actual inbox receipt when the owner chooses to run the test.
+The existing owner confirmation proves Google/admin access was set up. It does not prove email inbox delivery. The owner deferred the real notification test; do not claim every delivery channel is verified. Use the admin enquiries view as the checked retrieval path and confirm actual inbox receipt when the owner chooses to run the test.
 
 
 Admin chronology correction: removed synthetic current timestamps from imported/direct records. The admin now uses a valid creation/submission date and sorts unknown dates last with “Date unavailable”. The mocked onboarding/admin suite verifies current, older submitted-only and undated records together; it passed. This does not change production records.
+
+
+## October 25 — sales experience focus
+
+Owner instruction: set email testing aside and focus on convincing florist prospects. The demo now leads with the business use of customization: a specific visual request to discuss and quote. The request example links directly to setup; copy explains that the florist retains stock and price approval. The offer distinguishes supported-library configuration from separately quoted recreations. Setup explains the sequence from bouquet references to agreed scope, approval and launch. Prospects without prepared assets can leave a short enquiry. EN/ES copy is kept in sync; no paid-customer, revenue or time-saving claims added.
+
+Closing experiment: send the existing demo to relevant prospects and ask which of their bouquets they would start with. Track demo shared → specific bouquet supplied → scope/price accepted → approved launch. Do not count compliments as payment acceptance. Keep the $29 bounded offer; no new free trial promise. La Flora’s existing agreement stays unchanged.
