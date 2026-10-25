@@ -399,7 +399,7 @@
               var parsed = JSON.parse(fromBase64Url(res.raw.code));
               if (parsed && typeof parsed === "object") {
                 parsed._slotId = res.slotId;
-                parsed._createdAt = res.raw.createdAt || Date.now();
+                parsed._createdAt = recordTime(res.raw, parsed);
                 items.push(parsed);
               }
             } catch (_) {}
@@ -424,7 +424,7 @@
         var arr = Object.keys(obj).map(function (k) {
           var rec = obj[k];
           rec._id = k;
-          rec._createdAt = rec.createdAt || Date.now();
+          rec._createdAt = recordTime(rec);
           return rec;
         });
         return { locked: false, items: arr };
@@ -445,7 +445,7 @@
           var item = obj[k];
           if (nodeName === "setups" && item.code) { try { item = Object.assign(JSON.parse(fromBase64Url(item.code)), { designId: k, createdAt: item.createdAt }); } catch { return null; } }
           item._id = k;
-          item._createdAt = item.createdAt || Date.now();
+          item._createdAt = recordTime(item);
           return item;
         }).filter(Boolean);
       } catch (_) {
@@ -454,11 +454,23 @@
       }
     }
 
+    function recordTime() {
+      for (var i = 0; i < arguments.length; i++) {
+        var record = arguments[i] || {};
+        for (var key of ["createdAt", "submittedAt", "_createdAt"]) {
+          var value = record[key];
+          if (typeof value !== "number" && typeof value !== "string") continue;
+          if (value === "") continue;
+          var time = typeof value === "number" ? value : Date.parse(value);
+          if (Number.isFinite(time) && time > 0 && Number.isFinite(new Date(time).getTime())) return time;
+        }
+      }
+      return 0;
+    }
+
     function formatDate(tsOrIso) {
-      if (!tsOrIso) return "—";
-      var d = new Date(tsOrIso);
-      if (isNaN(d.getTime())) return String(tsOrIso);
-      return d.toLocaleString();
+      var time = recordTime({ createdAt: tsOrIso });
+      return time ? new Date(time).toLocaleString() : "Date unavailable";
     }
 
     function esc(s) {
@@ -665,7 +677,7 @@
             try {
               var decodedSetup = JSON.parse(fromBase64Url(req.code));
               decodedSetup.designId = req.designId;
-              decodedSetup._createdAt = req.createdAt;
+              decodedSetup._createdAt = recordTime(req, decodedSetup);
               slotSetups.push(decodedSetup);
             } catch (_) {
               slotSetups.push({
@@ -685,7 +697,7 @@
         } else if (cname.indexOf("LEAD:") === 0 || ref.indexOf("LEAD-") === 0) {
           try {
             var decodedLead = JSON.parse(fromBase64Url(req.code));
-            decodedLead._createdAt = req.createdAt;
+            decodedLead._createdAt = recordTime(req, decodedLead);
             slotLeads.push(decodedLead);
           } catch (_) {}
         } else if (!seenOrderDesigns.has(req.designId)) {

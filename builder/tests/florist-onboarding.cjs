@@ -200,6 +200,13 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
     await page.locator('#setupSearch').fill('');
     assert.equal(await page.locator('#panel-leads .rec-card').count(), 1, 'Clear search restores leads');
 
+    // Undated legacy leads must not jump ahead of dated enquiries on refresh.
+    mockDb.set('/nebula/leads/legacy-undated.json',{shop:'Undated legacy shop',email:'undated@example.invalid'});
+    mockDb.set('/nebula/leads/older-submitted.json',{shop:'Older submitted shop',email:'older@example.invalid',submittedAt:'2020-01-02T12:00:00Z'});
+    await page.locator('#btnRefresh').click();await page.waitForFunction(()=>document.getElementById('countLeads').textContent==='3');
+    const cards=await page.locator('#panel-leads .rec-card').allTextContents();
+    assert.match(cards[1],/Older submitted shop/);assert.match(cards[2],/Undated legacy shop/);assert.match(cards[2],/Date unavailable/);
+
     // 6. Test Invite-Only Gate & Domain Lock on /builder/
     await page.goto(baseOrigin + '/builder/?test_gate=1', { waitUntil: 'networkidle' });
     assert.match(page.url(), /\/shop-setup\.html$/, 'Uninvited visitor to /builder/ redirects to /shop-setup.html');

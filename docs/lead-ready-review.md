@@ -102,3 +102,6 @@ Current evidence:
 - Money artwork is illustrative and unchanged for $1/$5/$10. Denomination pricing and request details are tested separately. Money notes are offered in Dome and Heart only.
 
 The existing owner confirmation proves Google/admin access was set up. It does not prove email inbox delivery. The owner deferred the real notification test, so the broad goal remains active; do not claim every delivery channel is verified. Use the admin enquiries view as the checked retrieval path and confirm actual inbox receipt when the owner chooses to run the test.
+
+
+Admin chronology correction: removed synthetic current timestamps from imported/direct records. The admin now uses a valid creation/submission date and sorts unknown dates last with “Date unavailable”. The mocked onboarding/admin suite verifies current, older submitted-only and undated records together; it passed. This does not change production records.
