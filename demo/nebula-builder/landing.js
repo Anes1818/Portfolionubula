@@ -11,6 +11,17 @@
  if('IntersectionObserver'in window)new IntersectionObserver(entries=>mobile.classList.toggle('is-hidden',entries[0].isIntersecting),{threshold:0}).observe(start);
  document.querySelectorAll('a[href="#get-started"]').forEach(a=>a.addEventListener('click',()=>{start.focus({preventScroll:true});}));
  window.addEventListener('pageshow',()=>{try{lang=localStorage.getItem(languageKey)==='es'?'es':'en';}catch{}translate();});
+ const video=document.getElementById('heroDemo'),videoToggle=document.getElementById('demoVideoToggle');
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ let videoLoaded=false,playWanted=!reduced.matches&&!navigator.connection?.saveData;
+ function videoLabel(){videoToggle.textContent=video.paused?(lang==='es'?'Reproducir la demo ▶':'Play the demo ▶'):(lang==='es'?'Pausar la demo Ⅱ':'Pause demo Ⅱ');}
+ async function playDemo(){if(!videoLoaded){video.querySelector('source').src=video.querySelector('source').dataset.src;video.load();videoLoaded=true;}try{await video.play();}catch{}videoLabel();}
+ videoToggle.addEventListener('click',()=>{playWanted=video.paused;if(playWanted)playDemo();else video.pause();});
+ video.addEventListener('play',videoLabel);video.addEventListener('pause',videoLabel);language.addEventListener('change',videoLabel);
+ reduced.addEventListener('change',()=>{if(reduced.matches){playWanted=false;video.pause();}});
+ if('IntersectionObserver'in window)new IntersectionObserver(entries=>{if(entries[0].isIntersecting&&playWanted)playDemo();else video.pause();},{threshold:.15}).observe(video);
+ else if(playWanted)playDemo();
+ videoLabel();
  form.addEventListener('submit',async e=>{
   e.preventDefault();if(busy||submitted||!form.reportValidity())return;
   const data=new FormData(form);if(data.get('_gotcha'))return;

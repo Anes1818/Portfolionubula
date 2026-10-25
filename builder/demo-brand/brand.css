@@ -23,3 +23,8 @@
  .collection-intro .explore{font-size:14px}
  .order-sheet .brand>span,.site-header #brandName{font-size:22px}
 }
+
+.demo-next-step{max-width:1000px;margin:24px auto;padding:24px;border:1px solid #e5dce8;border-radius:14px;background:#f3edf5;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.demo-next-title{font-size:21px;font-family:Georgia,serif;color:#342b38;margin:0 0 8px}.demo-next-copy{font-size:14px;line-height:1.6;color:#635a69;margin:0}.demo-next-link{display:inline-flex;justify-content:center;align-items:center;min-height:48px;padding:14px 22px;background:#65517d;color:white;border-radius:8px;font-weight:600;white-space:nowrap}
+@media(max-width:700px){.demo-next-step{margin:20px 12px;flex-direction:column;align-items:stretch;padding:20px}.demo-next-link{white-space:normal;text-align:center}}
+@media print{.demo-next-step,.demo-shop-link{display:none!important}}

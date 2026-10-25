@@ -9,7 +9,10 @@
  document.querySelectorAll('.site-header .brand').forEach(el=>{el.querySelector('.brand-chip')?.remove();const img=document.createElement('img');img.src='assets/brand/nebula-logo.jpg';img.alt='Nebula Sites Studio';img.className='demo-header-logo';img.width=64;img.height=64;el.prepend(img);});
  const intro=document.querySelector('.collection-intro');
  if(intro){const image=document.createElement('img');image.src='assets/brand/nebula-logo.jpg';image.alt='Nebula Sites Studio — floral watercolor logo';image.className='demo-hero-logo';image.width=640;image.height=640;intro.append(image);}
- const update=()=>{const es=document.getElementById('language')?.value==='es';document.querySelectorAll('.demo-shop-link').forEach(e=>e.textContent=es?'Quiero esto para mi tienda ↗':'Get this for your shop ↗');};
- const nav=document.querySelector('.site-header nav');if(nav){const link=document.createElement('a');link.href='index.html#get-started';link.className='demo-shop-link';nav.prepend(link);}
- update();document.getElementById('language')?.addEventListener('change',update);
+ const update=()=>{const es=document.getElementById('language')?.value==='es';document.querySelectorAll('.demo-shop-link').forEach(e=>e.textContent=es?'Configurar mi tienda ↗':'Set up my shop ↗');};
+ const nav=document.querySelector('.site-header nav');if(nav){const link=document.createElement('a');link.href='../../shop-setup.html?from=demo';link.className='demo-shop-link';nav.prepend(link);}
+ const sheet=document.getElementById('orderSheet');
+ if(sheet){const next=document.createElement('section');next.className='demo-next-step';next.innerHTML='<div><p class="demo-next-title"></p><p class="demo-next-copy"></p></div><a class="demo-next-link" href="../../shop-setup.html?from=demo"></a>';sheet.after(next);}
+ const updateNext=()=>{const es=document.getElementById('language')?.value==='es';const next=document.querySelector('.demo-next-step');if(!next)return;next.querySelector('.demo-next-title').textContent=es?'Así puede empezar tu próxima consulta.':'This is how your next enquiry could start.';next.querySelector('.demo-next-copy').textContent=es?'Un diseño para revisar. Tus precios, tu colección y tu decisión final.':'A design to review. Your prices, your collection, and your final say.';next.querySelector('.demo-next-link').textContent=es?'Configurar mi tienda ↗':'Set up my shop ↗';};
+ update();updateNext();document.getElementById('language')?.addEventListener('change',()=>{update();updateNext();});
 })();

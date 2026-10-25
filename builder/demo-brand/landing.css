@@ -13,3 +13,16 @@
 /* Keep navigation and card actions usable on a phone. */
 .browse-link{font-weight:600}.customize-link{min-height:44px;display:inline-flex;align-items:center;gap:8px}.collection-card>a{display:block}.collection-card a>span{min-height:44px;display:flex;align-items:center}.hero-actions .quiet-link{font-size:14px}.featured-copy p{font-size:13px}.collection-card strong{line-height:1.4}.request-section{scroll-margin-top:16px}#get-started:focus{outline:none}
 @media(max-width:700px){.site-header{padding-inline:16px}.site-header nav{gap:12px}.browse-link,.nav-cta{font-size:12px;min-height:44px;display:inline-flex;align-items:center}.site-header .brand{font-size:23px;gap:5px}.site-header .brand img{width:32px;height:32px}.request-section{padding-block:40px}.request-grid{gap:24px}.request-grid .steps{gap:12px}.hero-actions{gap:12px}}
+
+/* A short path from the customer experience to the florist's setup. */
+.demo-journey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-block:24px 40px}
+.demo-journey a{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fffdfb;min-width:0}
+.demo-journey a>b{color:var(--plum);font-size:12px}.demo-journey a>span:nth-child(2){flex:1;min-width:0}.demo-journey strong{display:block;font-size:14px}.demo-journey small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-top:5px}
+.demo-journey a:hover{border-color:var(--plum);background:#f7f0f4}
+.setup-steps{padding-left:22px;display:grid;gap:12px;margin:24px 0;color:var(--muted);font-size:14px;line-height:1.6}.setup-steps li::marker{color:var(--plum);font-weight:700}
+#setupPrimary{width:100%;margin-top:4px}.enquiry-option{border-top:1px solid var(--line);margin-top:24px}.enquiry-option summary{font-size:14px;min-height:48px}.enquiry-option>p{font-size:13px}.enquiry-option form{margin-top:16px}
+@media(max-width:700px){.demo-journey{grid-template-columns:1fr;gap:8px;padding-block:8px 32px}.demo-journey a{padding:13px 16px;min-height:68px}.demo-journey small{margin-top:2px}.hero h1{font-size:34px}.hero-actions .quiet-link{min-height:36px;display:flex;align-items:center}.start-card{box-shadow:0 12px 35px #55384408}.setup-steps{font-size:13px}#setupPrimary{font-size:13px}}
+
+.hero-demo-video{width:100%;height:auto;aspect-ratio:1000/720;display:block;object-fit:contain;background:#fcf8f3;margin-top:12px}.video-toggle{display:block;margin:8px 16px 12px auto;background:white;color:var(--plum);border:1px solid var(--line);border-radius:20px;min-height:44px;padding:8px 14px;font-size:12px;font-weight:600}.hero-art:has(.hero-demo-video){border-radius:24px}.hero h1{font-size:clamp(36px,4.2vw,58px)}@media(max-width:700px){.hero h1{font-size:32px}.hero-demo-video{margin-top:10px}.video-toggle{font-size:11px}.hero-art .art-heading{padding-inline:12px}}
+
+@media(max-width:700px){.hero-actions{order:2;margin-block:2px 4px}.hero-art{order:3}.hero .lede{order:4}}

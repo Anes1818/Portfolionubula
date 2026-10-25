@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');const fs=require('fs');const {execFileSync}=require('child_process');const path=require('path');
+(async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});const context=await browser.newContext({viewport:{width:1000,height:720},recordVideo:{dir:'builder/tests/demo-landing-qa/video',size:{width:1000,height:720}}});const page=await context.newPage();const begun=Date.now();
+const pink=JSON.parse(fs.readFileSync('clients/la-flor-eterna/top-sellers.json')).find(e=>e.id==='pink-promise');await page.goto('http://127.0.0.1:4177/demo/nebula-builder/'+pink.href);await page.waitForFunction(()=>window.__ready);
+await page.addStyleTag({content:`body{overflow:hidden!important;padding:0!important}body>.site-header,.stage-heading,#modeChoices,#aboutBlock,#sharedBanner,#separateHint,.canvas-toolbar,.stage-help,.selection-tools,.summary-bar,.bottom-bar,footer{display:none!important}main#main{display:grid!important;grid-template-columns:550px 420px!important;gap:16px!important;padding:16px!important;margin:0!important;max-width:none!important;height:720px!important}.stage-column{position:static!important}.art-surface{height:665px!important;min-height:0!important}.canvas-wrap{height:620px!important}.panel{height:665px!important;max-height:none!important;position:static!important}.panel-body{max-height:580px!important;overflow:auto!important}.wrap-preview{display:none!important}`});
+await page.locator('#tab-wrapping').click();await page.waitForTimeout(700);console.log(await page.locator('[data-wrap-style]').evaluateAll(a=>a.map(e=>e.dataset.wrapStyle)));await page.screenshot({path:'builder/tests/demo-landing-qa/recording-layout.png'});
+const start=(Date.now()-begun)/1000;await page.waitForTimeout(1200);
+await page.locator('[data-wrap-style="round"]').click();await page.waitForTimeout(1700);
+await page.locator('[data-paper="blush"]').click();await page.waitForTimeout(1700);
+await page.locator('#tab-flowers').click();await page.locator('[data-breath="1"]').click();await page.waitForTimeout(1700);
+await page.locator('[data-breath="3"]').click();await page.waitForTimeout(1700);
+await page.locator('#tab-wrapping').click();await page.locator('[data-wrap-style="gingham"]').click();await page.waitForTimeout(1700);
+const duration=(Date.now()-begun)/1000-start;const video=page.video();await context.close();const raw=await video.path();await browser.close();
+execFileSync('C:/Users/laptops zone/AppData/Local/ms-playwright/ffmpeg-1011/ffmpeg-win64.exe',['-y','-ss',String(start),'-i',raw,'-t',String(duration),'-an','-c:v','libvpx','-b:v','650k','builder/demo-brand/pink-demo.webm'],{stdio:'pipe'});console.log('Recorded',duration,'seconds',fs.statSync('builder/demo-brand/pink-demo.webm').size,'bytes');
+})().catch(e=>{console.error(e);process.exit(1)});
