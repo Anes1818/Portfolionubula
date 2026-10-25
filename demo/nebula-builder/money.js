@@ -9,7 +9,10 @@ for(const [key,value]of Object.entries(values)){
  NebulaI18n.en['cash_'+key]=`$${value} cash gift (included in estimate; cash supply to confirm)`;
  NebulaI18n.es['cash_'+key]=`$${value} de regalo (incluido; suministro por confirmar)`;
 }
-const active=s=>s.mode==='dome'&&(s.template?.palette.some(isNote)||s.items.some(n=>isNote(n.id)));
+const active=s=>['dome','heart'].includes(s.mode)&&(s.template?.palette.some(isNote)||Object.values(s.template?.zones||{}).some(isNote)||s.items.some(n=>isNote(n.id)));
+// Reject unsupported Classic notes before validation reaches classic-only artwork.
+const oldValidate=M.validate;M.validate=raw=>raw?.mode==='classic'&&raw.items?.some(n=>isNote(n.id))?null:oldValidate(raw);
+for(const method of ['add','replace']){const original=M[method];M[method]=function(s,...args){const key=method==='replace'?args[1]:args[0];if(s.mode==='classic'&&isNote(key))return {ok:false,reason:'invalid'};return original(s,...args);};}
 const oldExtras=NebulaCustomization.extras;
 NebulaCustomization.extras=s=>{const lines=oldExtras(s);if(active(s))for(const key of Object.keys(values)){const quantity=s.items.filter(n=>n.id===key).length;if(quantity)lines.push({id:'cash_'+key,quantity,totalCents:0,summaryOnly:true});}return lines;};
 function layout(count){
@@ -28,7 +31,13 @@ NebulaRomance.recipes.push({id:'money-bloom',en:'Money Bloom',es:'Ramo de dinero
 const oldNearest=NebulaTemplates.nearest;
 NebulaTemplates.nearest=(mode,count,p)=>{if(g.NebulaApp&&active(NebulaApp.state)&&mode==='dome'){let result=null,distance=Infinity;layout(count).points.forEach((q,i)=>{const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<distance){distance=d;result=i;}});return distance<75?result:null;}return oldNearest(mode,count,p);};
 const oldNodes=NebulaGeometry.nodes;
-NebulaGeometry.nodes=s=>{const sc=oldNodes(s);if(!active(s))return sc;sc.frame={...sc.frame,radius:260,unit:65};
+NebulaGeometry.nodes=s=>{const sc=oldNodes(s);if(!active(s))return sc;
+ if(s.mode==='heart'){
+  sc.nodes=sc.nodes.map(n=>{if(!isNote(n.id))return n;const dx=n.x-sc.frame.center.x,dy=n.y-sc.frame.center.y,h=sc.frame.unit*1.65;
+   return {...n,w:h*2/3,h,d:h*.8,rot:Math.hypot(dx,dy)<sc.frame.unit*.35?0:Math.atan2(dy,dx)+Math.PI/2,bright:1};
+  });return sc;
+ }
+ sc.frame={...sc.frame,radius:260,unit:65};
  const {points,rings}=layout(s.template.capacity),baseHeight=Math.min(220,960/(rings+1));
  sc.nodes=sc.nodes.map(n=>{const item=s.items.find(i=>i.uid===n.uid),p=points[item.slot];if(!p)return n;const h=baseHeight*(.62+.38*p.ring/(rings-1));
   return {...n,x:p.x,y:p.y,w:isNote(n.id)?h*2/3:h*.82,h:isNote(n.id)?h:h*.82,d:h*.72,rot:isNote(n.id)?p.angle+Math.PI/2:n.rot,z:1000-p.ring*10+(isNote(n.id)?0:2),bright:1};
@@ -39,7 +48,7 @@ NebulaGeometry.nodes=s=>{const sc=oldNodes(s);if(!active(s))return sc;sc.frame={
 const oldUI=NebulaCustomizationUI.render;
 NebulaCustomizationUI.render=(s,lang,ready)=>{oldUI(s,lang,ready);const es=lang==='es';let panel=document.getElementById('moneyOptions');
  if(!panel){panel=document.createElement('section');panel.id='moneyOptions';panel.className='money-options';panel.innerHTML='<label class="field"><span id="moneyValueLabel"></span><select id="moneyValue"><option value="money_note">$1</option><option value="money_note_5">$5</option><option value="money_note_10">$10</option></select></label><p id="moneyBreakdown" class="helper"></p><p id="moneyHint" class="helper"></p>';document.getElementById('panel-flowers').prepend(panel);
-  document.getElementById('moneyValue').onchange=e=>{const next=NebulaApp.state,key=e.target.value;if(!isNote(key))return;next.template.palette=next.template.palette.map(v=>isNote(v)?key:v);if(isNote(next.template.accent.id))next.template.accent.id=key;for(const [slot,v]of Object.entries(next.template.overrides))if(isNote(v))next.template.overrides[slot]=key;M.syncTemplate(next);NebulaApp.setState(next);};
+  document.getElementById('moneyValue').onchange=e=>{const next=NebulaApp.state,key=e.target.value;if(!isNote(key))return;next.template.palette=next.template.palette.map(v=>isNote(v)?key:v);for(const k of ['wall','fill','center'])if(isNote(next.template.zones[k]))next.template.zones[k]=key;if(isNote(next.template.accent.id))next.template.accent.id=key;for(const [slot,v]of Object.entries(next.template.overrides))if(isNote(v))next.template.overrides[slot]=key;M.syncTemplate(next);NebulaApp.setState(next);};
  }
  panel.hidden=!active(s);document.body.classList.toggle('money-design',active(s));if(!active(s))return;
  const notes=s.items.filter(n=>isNote(n.id)),price=M.price(s),cash=notes.reduce((sum,n)=>sum+values[n.id]*100,0),types=[...new Set(notes.map(n=>n.id))];

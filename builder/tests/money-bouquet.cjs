@@ -15,5 +15,13 @@ const {chromium}=require('playwright'),fs=require('fs'),assert=require('node:ass
  await p.goto('http://127.0.0.1:4177/demo/nebula-builder/order.html#b='+code);await p.waitForFunction(()=>document.getElementById('osTitle')?.textContent==='Money Bloom');
  assert.match(await p.locator('#osStems').innerText(),/50[\s\S]*\$10/);assert.match(await p.locator('#osFinishes').innerText(),/cash gift/);
  await p.goto('http://127.0.0.1:4177/demo/nebula-builder/collection.html');assert.equal(await p.locator('[data-id="money-bloom"]').count(),1);
+ await p.goto('http://127.0.0.1:4177/demo/nebula-builder/studio.html?template=money-bloom');await p.waitForFunction(()=>window.__ready);
+ await p.evaluate(()=>{const s=NebulaModel.defaultMode('heart');s.template.palette=['money_note'];Object.assign(s.template.zones,{wall:'money_note',fill:'money_note',center:'money_note'});s.finishes.studio={v:1,wrap:'heart'};NebulaModel.syncTemplate(s);NebulaApp.setState(s);});
+ await p.locator('#moneyValue').selectOption('money_note_5');
+ assert.ok(await p.evaluate(()=>NebulaApp.state.items.every(n=>n.id==='money_note_5')));
+ const heart=await p.evaluate(()=>{const s=NebulaApp.state,c=document.createElement('canvas');c.width=720;c.height=820;NebulaRenderer.paint(c,s);return c.toDataURL();});fs.writeFileSync('builder/tests/money-heart.png',Buffer.from(heart.split(',')[1],'base64'));
+ assert.ok(await p.evaluate(()=>{const s=NebulaApp.state,copy=NebulaLink.decode(NebulaLink.encode(s)).design;return JSON.stringify(NebulaRenderer.scene(s))===JSON.stringify(NebulaRenderer.scene(copy));}));
+ assert.ok(await p.evaluate(()=>{const s=NebulaModel.defaultMode('classic');const count=s.items.length;for(const id of ['money_note','money_note_5','money_note_10']){if(NebulaModel.add(s,id).ok||NebulaModel.replace(s,s.items[0].uid,id).ok)return false;}const raw=NebulaModel.clone(s);raw.items[0].id='money_note';return s.items.length===count&&NebulaModel.validate(raw)===null;}));
+ await p.evaluate(()=>NebulaApp.switchMode('classic'));assert.equal(await p.locator('#moneyOptions:visible').count(),0);assert.equal(await p.locator('#flowerGrid [data-id^="money_note"]').count(),0);
  assert.deepEqual(errors,[]);console.log('PASS money bouquet, denominations, unchanged artwork, face value and saved design');
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});
