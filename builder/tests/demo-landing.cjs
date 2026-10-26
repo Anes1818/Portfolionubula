@@ -33,7 +33,7 @@ const root=path.resolve(__dirname,'../..');
   const hero=await page.locator('#heroTry').getAttribute('href'),sheet=await page.locator('#samplePreview').getAttribute('href');
   await page.locator('#language').selectOption('es');assert.match(await page.locator('h1').innerText(),/Empieza con tus ramos/);assert.equal(await page.locator('html').getAttribute('lang'),'es');
   await page.locator('#heroTry').click();await page.waitForFunction(()=>window.__ready);assert.equal(await page.locator('#language').inputValue(),'es');await page.goBack();await page.locator('#heroTry').waitFor();
-  await page.locator('#language').selectOption('en');assert.equal(await page.locator('.collection-card:visible').count(),10);assert.equal(await page.locator('#collection details').count(),0);
+  await page.locator('#language').selectOption('en');assert.equal(await page.locator('.collection-card:visible').count(),11);assert.equal(await page.locator('#collection details').count(),0);
   await page.locator('.enquiry-option summary').click();
   await page.locator('#interestShop').fill('Review Test Shop');await page.locator('#interestEmail').fill('test@example.invalid');await page.locator('#interestCurrency').selectOption('CAD');
   await page.locator('#interestSubmit').click();await page.waitForFunction(()=>document.getElementById('interestStatus').textContent.includes('confirm delivery'));

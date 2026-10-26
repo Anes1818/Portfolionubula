@@ -16,7 +16,7 @@ meta.finishes.bow_cocoa={url:root+'brown-bow.webp',width:1289,height:616};
 meta.finishes.plush_pumpkin={url:root+'pumpkin.webp',width:634,height:576};
 const cache=new Map();
 const active=s=>s.mode==='dome'&&['organic','garden','halloween'].includes(s.template?.layout);
-function ratio(id){return ({sunflower:1.85,gerbera_daisy:1.5,lily:1.8,hydrangea:1.65,mum_burgundy:1.1,mum_rust:1.1,chrysanthemum_yellow:1.05})[id]||1;}
+function ratio(id){const custom=meta.flowers[id]?.layoutRatio;if(Number.isFinite(custom)&&custom>0&&custom<=2.5)return custom;return ({sunflower:1.85,gerbera_daisy:1.5,lily:1.8,hydrangea:1.65,mum_burgundy:1.1,mum_rust:1.1,chrysanthemum_yellow:1.05})[id]||1;}
 function layout(s){
  if(g.NebulaSpooky?.active(s))return NebulaSpooky.layout(s);
  const n=s.template.capacity,ids=NebulaTemplates.recipe('dome',s.template,s.seed).map((id,i)=>Object.hasOwn(s.template.overrides,i)?s.template.overrides[i]:id);
