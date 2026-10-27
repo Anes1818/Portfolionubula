@@ -62,14 +62,19 @@ NebulaDetails.nodes=(s,f)=>(s.finishes.decorations||[]).map(d=>{
  return {uid:'detail-'+d.id,detailId:d.id,url:a.url,x:f.center.x+d.x*f.radius,y:f.center.y+d.y*f.radius,w:h*a.width/a.height,h,d:h,rot:d.rotation*Math.PI/180,bright:1,tucked:d.layer==='tucked',z:500};
 });
 const isNote=id=>notes.has(id),active=s=>s.items.some(i=>isNote(i.id));
-// Keep the original fixed slot skeleton and flower sizes when money is painted.
-// Notes adapt to the same bouquet; adding one never changes the wrap or camera.
+// Fit the opaque satin heads and narrow folded bills to the original slot spacing.
+// These sizes depend only on the item's slot/mode, never the cash share: painting
+// a bill cannot shrink neighbouring flowers or move the wrapping/camera. The
+// Heart's ring spacing needs more bill overlap than the Dome's even packing.
 const baseNodes=NebulaGeometry.nodes;
-NebulaGeometry.nodes=s=>{const sc=baseNodes(s);if(!active(s))return sc;
+NebulaGeometry.nodes=s=>{const sc=baseNodes(s);if(!modes.includes(s.mode))return sc;
  sc.nodes=sc.nodes.map(n=>{
-  if(!isNote(n.id))return n;
+  if(!isNote(n.id)){
+   if(!allowed.has(n.id)||n.id==='__choc')return n;
+   return {...n,w:n.w*1.18,h:n.h*1.18,d:n.d*1.18};
+  }
   const dx=n.x-sc.frame.center.x,dy=n.y-sc.frame.center.y;
-  const h=sc.frame.unit*1.45;
+  const h=sc.frame.unit*1.45*(s.mode==='heart'?1.45:1.30);
   return {...n,w:h*2/3,h,d:h*.8,rot:Math.hypot(dx,dy)<sc.frame.unit*.35?0:Math.atan2(dy,dx)+Math.PI/2,bright:1};
  });
  // Cash sits behind the satin heads, so notes cannot hide their faces.
