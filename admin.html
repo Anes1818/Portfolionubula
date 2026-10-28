@@ -323,6 +323,8 @@
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button type="button" class="btn sec" id="dsDownloadAll">⬇ All photos</button>
           <button type="button" class="btn sec" id="dsDownloadConfig">⬇ shop-config.js</button>
+          <button type="button" class="btn" id="dsBuildKit">⬇ AI build kit</button>
+          <button type="button" class="btn sec" id="dsCopyBrief">Copy AI handoff</button>
           <button type="button" class="btn sec" id="dsDownloadJson">⬇ Full JSON</button>
           <button type="button" class="btn pink" id="dsClose">✕ Close</button>
         </div>
@@ -333,6 +335,7 @@
   <div id="lightbox" class="lightbox" hidden><img alt=""></div>
 
   <script src="b/config.js"></script>
+  <script src="shop-build-kit.js?v=20261026"></script>
   <script type="module" src="admin-auth.js?v=20261024"></script>
   <script>
   (function () {
@@ -1081,6 +1084,18 @@
     document.getElementById("dsDownloadJson").addEventListener("click", function () {
       if (!currentDossier) return;
       downloadText((currentDossier.data.slug || "shop") + "-onboarding-full.json", JSON.stringify(currentDossier.data, null, 2), "application/json");
+    });
+
+    document.getElementById("dsBuildKit").addEventListener("click", function () {
+      if (!currentDossier) return;
+      var kit = NebulaBuildKit.make(currentDossier.data);
+      downloadText((kit.shopId || "shop") + "-build-kit.json", JSON.stringify(kit, null, 2), "application/json");
+    });
+    document.getElementById("dsCopyBrief").addEventListener("click", async function () {
+      if (!currentDossier) return;
+      var kit = NebulaBuildKit.make(currentDossier.data);
+      try { await navigator.clipboard.writeText(kit.brief); this.textContent = "Copied ✓"; }
+      catch (_) { downloadText((kit.shopId || "shop") + "-AI-HANDOFF.md", kit.brief, "text/markdown"); }
     });
 
     // "Open full setup" buttons on the setup cards

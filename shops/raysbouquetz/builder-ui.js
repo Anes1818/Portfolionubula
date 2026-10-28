@@ -55,7 +55,7 @@ function refreshReview(){
  if(!$('saveDialog').open)return;
  const rows=[];function row(label,value){const a=document.createElement('span'),b=document.createElement('span');a.textContent=label;b.textContent=value;rows.push(a,b);}
  for(const l of p.lines)row(l.quantity+' × '+NebulaConfig.CAT[l.id].en,l.includedInBouquet?'Included in bouquet price':l.quoteRequired?'Ray’s quote':l.suppliedByCustomer?'Supplied by you':money(l.totalCents));
- for(const l of p.extraLines)row((l.quantity>1?l.quantity+' × ':'')+(NebulaI18n.en[l.id]||l.id),l.quoteRequired?'Ray’s quote':money(l.totalCents));
+ for(const l of p.extraLines)row((l.quantity>1?l.quantity+' × ':'')+(l.label||NebulaI18n.en[l.id]||l.id),l.quoteRequired?'Ray’s quote':money(l.totalCents));
  row(p.quoteRequired?'Known / starting amount':'Estimate',money(p.totalCents));
  if(p.range)row('Menu range, before variable quote extras',money(p.totalCents)+' – '+money(p.maxCents));
  row((p.payment.choice==='full'?'Full payment':'50% deposit')+(p.quoteRequired?' on starting amount':'')+' · preview',money(p.payment.dueCents));row('Balance at delivery · preview',money(p.payment.balanceCents));
@@ -92,7 +92,7 @@ function build(){
  $('sash').replaceChildren(...[['none','No message ribbon'],['blank_blackband','Personalised black ribbon']].map(([value,text])=>{const o=document.createElement('option');o.value=value;o.textContent=text;return o;}));
  const pay=document.createElement('section');pay.className='ray-payment-preview';pay.innerHTML='<h3>Choose how to pay</h3><label class="field"><span>Payment amount</span><select id="rayPaymentPlan"><option value="deposit">50% deposit · balance at delivery</option><option value="full">Pay in full</option></select></label><p id="rayPaymentAmount" aria-live="polite"></p><p class="helper">Square will create a payment link for your confirmed order amount. Payments are being connected.</p>';document.querySelector('.order-recap').after(pay);
  $('rayPaymentPlan').onchange=()=>edit(s=>{s.finishes.studio={...s.finishes.studio,v:1,paymentPlan:$('rayPaymentPlan').value};});
- const form=$('orderForm');form?.addEventListener('submit',event=>{event.preventDefault();event.stopImmediatePropagation();},true);
+ const form=$('orderForm');form?.addEventListener('submit',event=>{if(g.RayPayments?.available){g.RayPayments.submit(event);return;}event.preventDefault();event.stopImmediatePropagation();},true);
  for(const e of form?.elements||[])e.disabled=true;
  $('ordPay')?.replaceChildren(...['Review + Square deposit link','Direct Square checkout'].map(text=>{const o=document.createElement('option');o.textContent=text;return o;}));
 }
@@ -137,6 +137,7 @@ function render(s,lang,ready){
  $('language').closest('label').hidden=true;
  for(const [index,b]of [...document.querySelectorAll('[data-mode]')].entries()){b.querySelector('.mode-number').textContent='0'+(index+1);}
  if(launchOrder&&!openedOrder&&ready){openedOrder=true;setTimeout(()=>{$('orderButton').click();const q=new URLSearchParams(location.search);q.delete('action');history.replaceState(null,'',location.pathname+(q.size?'?'+q:'')+location.hash);},0);}
+ g.RayPayments?.decorate();
 }
 g.NebulaCustomizationUI={render};
 })(window);

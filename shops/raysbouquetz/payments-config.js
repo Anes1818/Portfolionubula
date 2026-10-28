@@ -1,0 +1,1 @@
+window.NEBULA_PAYMENTS={"endpoint":"","shopId":"raysbouquetz","environment":"sandbox","firebase":{"apiKey":"AIzaSyDIwvYLyHE6sVy1XMmNU_GVnlWxQpLa4wI","authDomain":"la-flora-6ed47.firebaseapp.com","projectId":"la-flora-6ed47","appId":"1:723839530405:web:cc546bb8e6100677c7244c"}};

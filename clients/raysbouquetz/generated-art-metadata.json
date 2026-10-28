@@ -1,0 +1,350 @@
+[
+  {
+    "file": "bow-lilac-v1.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 1737027
+  },
+  {
+    "file": "card-blank-v1.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      254
+    ],
+    "centreAlpha": 253,
+    "bytes": 1586303
+  },
+  {
+    "file": "card-blank-v2.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      254
+    ],
+    "centreAlpha": 253,
+    "bytes": 1715163
+  },
+  {
+    "file": "folded-cad-note-v1.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      254
+    ],
+    "centreAlpha": 253,
+    "bytes": 2203477
+  },
+  {
+    "file": "folded-cad-note-v2.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      254
+    ],
+    "centreAlpha": 253,
+    "bytes": 2173871
+  },
+  {
+    "file": "graduation-cap-v1.png",
+    "width": 1287,
+    "height": 1222,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2023445
+  },
+  {
+    "file": "satin-dahlia-blue-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2137095
+  },
+  {
+    "file": "satin-dahlia-ivory-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2116156
+  },
+  {
+    "file": "satin-dahlia-pink-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2438852
+  },
+  {
+    "file": "satin-plumeria-ivory-v1.png",
+    "width": 1268,
+    "height": 1240,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2044561
+  },
+  {
+    "file": "satin-plumeria-lilac-v1.png",
+    "width": 1268,
+    "height": 1240,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2210063
+  },
+  {
+    "file": "satin-plumeria-purple-v1.png",
+    "width": 1268,
+    "height": 1240,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 252,
+    "bytes": 2220264
+  },
+  {
+    "file": "satin-rose-black-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2399982
+  },
+  {
+    "file": "satin-rose-blue-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2596331
+  },
+  {
+    "file": "satin-rose-ivory-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2363634
+  },
+  {
+    "file": "satin-rose-lilac-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2654244
+  },
+  {
+    "file": "satin-rose-peach-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2501397
+  },
+  {
+    "file": "satin-rose-pink-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2609136
+  },
+  {
+    "file": "satin-rose-purple-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2732936
+  },
+  {
+    "file": "satin-rose-red-glitter-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2682477
+  },
+  {
+    "file": "satin-rose-red-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 252,
+    "bytes": 2612495
+  },
+  {
+    "file": "satin-sunflower-yellow-v1.png",
+    "width": 1299,
+    "height": 1211,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2643063
+  },
+  {
+    "file": "wrap-triangle-black-dome-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 0,
+    "bytes": 1285544
+  },
+  {
+    "file": "wrap-triangle-black-heart-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 0,
+    "bytes": 1225743
+  },
+  {
+    "file": "wrap-triangle-ivory-dome-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 0,
+    "bytes": 1272602
+  },
+  {
+    "file": "wrap-triangle-lilac-dome-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 0,
+    "bytes": 1299913
+  },
+  {
+    "file": "wrap-triangle-lilac-heart-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 0,
+    "bytes": 1176568
+  },
+  {
+    "file": "wrap-triangle-pink-dome-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 0,
+    "bytes": 1215455
+  },
+  {
+    "file": "foam-rose-black-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 253,
+    "bytes": 2193068
+  }
+]

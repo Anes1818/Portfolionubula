@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Ray’s Bouquetz · Shop account</title>
+    <link rel="icon" href="assets/shop/logo.webp" />
+    <link rel="stylesheet" href="payments.css" />
+    <script src="payments-config.js" defer></script>
+    <script src="pricing.js" defer></script>
+    <script src="commerce-core.js" defer></script>
+    <script type="module" src="account.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="index.html"
+        ><img src="assets/shop/logo.webp" alt="Ray’s Bouquetz" />Ray’s
+        Bouquetz</a
+      ><a href="studio.html">Bouquet studio ↗</a>
+    </header>
+    <main>
+      <p class="eyebrow">YOUR SHOP ACCOUNT</p>
+      <h1>Orders, simply.</h1>
+      <p class="intro">
+        Your Square connection and bouquet orders, in one place.
+      </p>
+      <p id="accountMessage" class="notice" role="status">
+        Loading your account…
+      </p>
+      <p id="environment" class="test-banner" hidden></p>
+      <section id="loginPanel" class="card" hidden>
+        <h2>Sign in</h2>
+        <form id="loginForm">
+          <label
+            >Email<input
+              id="email"
+              type="email"
+              autocomplete="username"
+              maxlength="254"
+              required /></label
+          ><label
+            >Password<input
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              minlength="10"
+              required
+          /></label>
+          <div class="actions">
+            <button type="submit">Sign in</button
+            ><button id="createAccount" type="button" class="secondary">
+              Create invited account</button
+            ><button id="resetPassword" type="button" class="text-button">
+              Reset password
+            </button>
+          </div>
+        </form>
+        <p class="helper">
+          New accounts need an invitation and a verified email before they can
+          access a shop.
+        </p>
+        <button id="googleLogin" class="secondary" type="button">
+          Platform owner · Google sign-in
+        </button>
+      </section>
+      <div id="signedIn" hidden>
+        <div class="actions">
+          <span id="identity"></span
+          ><button id="signOut" type="button" class="text-button">
+            Sign out</button
+          ><button id="verifyEmail" type="button" class="secondary" hidden>
+            Send email verification
+          </button>
+        </div>
+        <section id="claimPanel" class="card" hidden>
+          <h2>Accept your invitation</h2>
+          <p>
+            This account can access a shop after accepting its owner invitation.
+          </p>
+          <label
+            >Invitation code<input id="inviteCode" autocomplete="off" /></label
+          ><button id="claimInvite" type="button">Accept invitation</button>
+          <p id="uid" class="helper"></p>
+        </section>
+        <div id="shopPanel" hidden>
+          <nav class="tabs" aria-label="Account sections">
+            <button type="button" data-tab="ordersPanel">Orders</button
+            ><button type="button" data-tab="squarePanel">
+              Square connection</button
+            ><button type="button" data-tab="settingsPanel">
+              Prices & checkout
+            </button>
+          </nav>
+          <section id="ordersPanel" class="card">
+            <div class="section-top">
+              <h2>Your orders</h2>
+              <button id="refreshOrders" type="button" class="secondary">
+                Refresh
+              </button>
+            </div>
+            <p class="helper">
+              Only verified Square payments are marked paid. Refunds are managed
+              in Square.
+            </p>
+            <div id="ordersList"></div>
+            <button id="moreOrders" class="secondary" type="button" hidden>
+              Load more orders
+            </button>
+            <div id="orderDetail" hidden></div>
+          </section>
+          <section id="squarePanel" class="card" hidden>
+            <h2>Your Square account</h2>
+            <p id="squareStatus"></p>
+            <div class="actions">
+              <button id="connectSquare" type="button">Connect Square</button
+              ><button id="disconnectSquare" type="button" class="secondary">
+                Disconnect Square
+              </button>
+            </div>
+            <label>Business location<select id="squareLocation"></select></label
+            ><button id="saveLocation" type="button" class="secondary">
+              Use this location
+            </button>
+            <p class="helper">
+              Sign in on Square’s own website to connect. Never send your
+              password or banking details to Nebula.
+            </p>
+          </section>
+          <section id="settingsPanel" class="card" hidden>
+            <h2>Prices & checkout</h2>
+            <p class="helper">
+              These are exact prices for automatic checkout. Each mixed design
+              uses its item prices; foam-only package counts use the package
+              price. Unpriced or disabled choices cannot be purchased. Money
+              styling includes wrapping.
+            </p>
+            <form id="settingsForm">
+              <div id="priceFields"></div>
+              <h3>Wrapping & assembly · CAD</h3>
+              <div class="grid">
+                <label
+                  >Dome<input
+                    id="wrapDome"
+                    type="number"
+                    min="0"
+                    step="0.01" /></label
+                ><label
+                  >Heart<input id="wrapHeart" type="number" min="0" step="0.01"
+                /></label>
+              </div>
+              <label class="check"
+                ><input id="moneyEnabled" type="checkbox" /> Offer money
+                bouquets</label
+              >
+              <p class="helper">
+                Styling: CAD $80 once. Customer-supplied notes are excluded from
+                the payable cash value.
+              </p>
+              <h3>USD conversion</h3>
+              <div class="grid">
+                <label
+                  >CAD per USD · TD cash buying rate<input
+                    id="fxRate"
+                    type="number"
+                    min="0.0001"
+                    max="100"
+                    step="0.0001" /></label
+                ><label
+                  >Observed at<input id="fxAsOf" type="datetime-local" /></label
+                ><label
+                  >Valid until<input id="fxExpiry" type="datetime-local"
+                /></label>
+              </div>
+              <h3>Tax</h3>
+              <div class="grid">
+                <label
+                  >Tax handling<select id="taxMode">
+                    <option value="none">No tax charged</option>
+                    <option value="included">Included in listed prices</option>
+                    <option value="added">Added to listed prices</option>
+                  </select></label
+                ><label
+                  >Tax rate %<input
+                    id="taxRate"
+                    type="number"
+                    min="0"
+                    max="30"
+                    step="0.01"
+                /></label>
+              </div>
+              <label class="check"
+                ><input id="cashTaxable" type="checkbox" /> Apply the configured
+                tax to shop-supplied cash face value (confirm your tax
+                treatment).</label
+              >
+              <h3>Pickup & delivery</h3>
+              <label class="check"
+                ><input id="pickupEnabled" type="checkbox" /> Offer
+                pickup</label
+              ><label
+                >Pickup instructions<textarea
+                  id="pickupInstructions"
+                  maxlength="800"
+                ></textarea></label
+              ><label
+                >Minimum lead time · days<input
+                  id="leadDays"
+                  type="number"
+                  min="0"
+                  max="365"
+              /></label>
+              <div id="zones"></div>
+              <button id="addZone" type="button" class="secondary">
+                Add delivery area
+              </button>
+              <h3>Cancellation & refunds</h3>
+              <label
+                >Policy shown before payment<textarea
+                  id="cancellationPolicy"
+                  maxlength="1200"
+                  required
+                ></textarea></label
+              ><label class="check"
+                ><input id="pricesApproved" type="checkbox" /> I approve these
+                automatic pricing rules, tax and fulfillment settings.</label
+              ><label class="check"
+                ><input id="checkoutEnabled" type="checkbox" /> Enable checkout
+                when the connection and platform checks are ready.</label
+              >
+              <div id="platformEligibility" hidden>
+                <label class="check"
+                  ><input id="cashApproved" type="checkbox" /> Platform record:
+                  Square eligibility for charging shop-supplied cash has been
+                  confirmed.</label
+                >
+              </div>
+              <button type="submit">Save settings</button>
+              <p class="helper">
+                A saved price change retires unpaid checkout links. Paid orders
+                keep their agreed price and balance.
+              </p>
+            </form>
+          </section>
+          <section id="inviteOwnerPanel" class="card" hidden>
+            <h2>Invite the shop owner</h2>
+            <label>Owner’s email<input id="ownerEmail" type="email" /></label
+            ><button id="inviteOwner" type="button" class="secondary">
+              Create private invitation
+            </button>
+            <p id="invitationOutput" class="helper"></p>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer>
+      Website & bouquet studio by
+      <a href="https://nebulastudio.site/flowers/">Nebula Sites Studio</a>
+    </footer>
+  </body>
+</html>

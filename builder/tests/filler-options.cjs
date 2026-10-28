@@ -1,3 +1,4 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('fs');
 (async()=>{const b=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const p=await b.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
@@ -13,7 +14,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
  const off=M.clone(s);off.finishes.greeneryCount=0;off.finishes.studio.sprays=0;off.finishes.studio.buds=0;const gone=R.scene(off).layeredFlowers;
  return{positions:s.finishes.studio.positions,round:round.finishes.studio.positions,items:s.items,buds:sc.layeredFlowers.filter(n=>n.uid.startsWith('bud-option')).length,budDraggable:sc.layeredFlowers.filter(n=>n.uid.startsWith('bud-option')).some(n=>NebulaFillerOptions.hit(sc,n)?.uid===n.uid),off:gone.filter(n=>n.infillKind==='greenery'||n.infillKind==='spray'||n.uid.startsWith('bud-option')).length,greenLines:price.extraLines?.filter(n=>n.id==='interiorGreenery'),image:cv.toDataURL()};});
  assert.deepEqual(result.items,initial.items);assert.deepEqual(result.positions,result.round);assert.equal(result.buds,7);assert.equal(result.greenLines.length,1);assert.ok(result.greenLines[0].totalCents>0);assert.equal(result.budDraggable,false);assert.equal(result.off,0);
- fs.writeFileSync('clients/la-flor-eterna/qa/celebration/options.png',Buffer.from(result.image.split(',')[1],'base64'));fs.writeFileSync('clients/la-flor-eterna/qa/celebration/code.txt',initial.code);
+ fs.writeFileSync('.private/qa/la-flor-eterna/celebration/options.png',Buffer.from(result.image.split(',')[1],'base64'));fs.writeFileSync('.private/qa/la-flor-eterna/celebration/code.txt',initial.code);
  await p.evaluate(()=>NebulaApp.undo());assert.equal(await p.evaluate(()=>Object.keys(NebulaApp.state.finishes.studio.positions||{}).length),1);
  await p.locator('#resetFillerPositions').click();assert.equal(await p.evaluate(()=>Object.keys(NebulaApp.state.finishes.studio.positions||{}).length),0);
  await p.locator('#budLess').click();assert.equal(await p.evaluate(()=>NebulaApp.state.finishes.studio.buds),6);

@@ -1,5 +1,6 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
-const base='http://127.0.0.1:4174/shops/la-flor-eterna/',qa='clients/la-flor-eterna/qa/next-phase/';
+const base='http://127.0.0.1:4174/shops/la-flor-eterna/',qa='.private/qa/la-flor-eterna/next-phase/';
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
  try{

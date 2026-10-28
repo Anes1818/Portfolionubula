@@ -1,5 +1,6 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
-const base=(process.env.TEST_ORIGIN||'http://127.0.0.1:4177')+'/shops/la-flor-eterna/',out='clients/la-flor-eterna/qa/next-phase/';
+const base=(process.env.TEST_ORIGIN||'http://127.0.0.1:4177')+'/shops/la-flor-eterna/',out='.private/qa/la-flor-eterna/next-phase/';
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const page=await browser.newPage({viewport:{width:1100,height:950}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+'studio.html');await page.waitForFunction(()=>window.__ready);

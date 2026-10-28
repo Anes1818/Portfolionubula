@@ -1,3 +1,4 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
 const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/';
 (async()=>{const b=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
@@ -12,6 +13,6 @@ const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/
   }NebulaApp.setState(designs.find(d=>d.name==='blush-lilies').s);return {rows,images};
  },featured);
  for(const r of report.rows){assert.equal(r.count,r.expected);assert.ok(r.maxWidth<=.865,JSON.stringify(r));assert.ok(r.core<.10,JSON.stringify(r));assert.ok(r.overlap<.12,JSON.stringify(r));assert.ok(r.items&&r.link);}
- for(const img of report.images)fs.writeFileSync('clients/la-flor-eterna/qa/next-phase/breath-'+img.name+'-after.png',Buffer.from(img.png.split(',')[1],'base64'));
- const before=await p.evaluate(()=>JSON.stringify(NebulaApp.scene().layeredFlowers));await p.locator('#focusPreview').click();assert.equal(await p.evaluate(()=>JSON.stringify(NebulaApp.scene().layeredFlowers)),before);await p.screenshot({path:'clients/la-flor-eterna/qa/next-phase/breath-focus-after.png'});await p.locator('#focusPreview').click();assert.equal(await p.evaluate(()=>JSON.stringify(NebulaApp.scene().layeredFlowers)),before);assert.deepEqual(errors,[]);console.log('PASS Light breath widths, bloom-center clearance, branch overlap, inventory and shared links; focus preserves arrangement.',JSON.stringify(report.rows));
+ for(const img of report.images)fs.writeFileSync('.private/qa/la-flor-eterna/next-phase/breath-'+img.name+'-after.png',Buffer.from(img.png.split(',')[1],'base64'));
+ const before=await p.evaluate(()=>JSON.stringify(NebulaApp.scene().layeredFlowers));await p.locator('#focusPreview').click();assert.equal(await p.evaluate(()=>JSON.stringify(NebulaApp.scene().layeredFlowers)),before);await p.screenshot({path:'.private/qa/la-flor-eterna/next-phase/breath-focus-after.png'});await p.locator('#focusPreview').click();assert.equal(await p.evaluate(()=>JSON.stringify(NebulaApp.scene().layeredFlowers)),before);assert.deepEqual(errors,[]);console.log('PASS Light breath widths, bloom-center clearance, branch overlap, inventory and shared links; focus preserves arrangement.',JSON.stringify(report.rows));
  }finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

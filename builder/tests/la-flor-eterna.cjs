@@ -1,6 +1,7 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 /* Local owner-preview QA. Never launches a messaging handler or sends a message. */
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const repo=path.resolve(__dirname,'../..'),out=path.join(repo,'clients/la-flor-eterna/qa');fs.mkdirSync(out,{recursive:true});
+const repo=path.resolve(__dirname,'../..'),out=path.join(repo,'.private/qa/la-flor-eterna');fs.mkdirSync(out,{recursive:true});
 const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/',origin=new URL(base).origin;
 const checks=[],lengths=[],errors=[],missing=[];function check(name,value){assert.ok(value,name);checks.push(name);console.log('PASS',name);}
 const sandbox={window:{navigator:{}},Date,encodeURIComponent};vm.runInNewContext(fs.readFileSync(path.join(repo,'builder/request.js'),'utf8'),sandbox);const Q=sandbox.window.NebulaRequest;

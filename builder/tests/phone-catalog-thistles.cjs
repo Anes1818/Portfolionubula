@@ -1,3 +1,4 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),assert=require('node:assert/strict');
 const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/';
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
@@ -16,8 +17,8 @@ try{
    for(const grid of data.grids){assert.equal(grid.cols,2);assert.ok(Math.abs(grid.rects[0].y-grid.rects[1].y)<1);assert.ok(grid.rects[0].right<grid.rects[1].x);for(let i=0;i<grid.rects.length;i++){assert.ok(grid.links[i].height>=44);assert.ok(grid.links[i].bottom<=grid.rects[i].bottom+1);if(i>=2)assert.ok(grid.rects[i].y>=grid.rects[i-2].bottom);}}
   }
  }
- await p.setViewportSize({width:390,height:844});await p.locator('#language').selectOption('en');await p.locator('#top-sellers').scrollIntoViewIfNeeded();await p.screenshot({path:'clients/la-flor-eterna/qa/next-phase/two-column-phone-oct20.png'});
- await p.locator('#collection').scrollIntoViewIfNeeded();await p.screenshot({path:'clients/la-flor-eterna/qa/next-phase/two-column-catalog-oct20.png'});
+ await p.setViewportSize({width:390,height:844});await p.locator('#language').selectOption('en');await p.locator('#top-sellers').scrollIntoViewIfNeeded();await p.screenshot({path:'.private/qa/la-flor-eterna/next-phase/two-column-phone-oct20.png'});
+ await p.locator('#collection').scrollIntoViewIfNeeded();await p.screenshot({path:'.private/qa/la-flor-eterna/next-phase/two-column-catalog-oct20.png'});
  await p.goto(base+'studio.html?template=midnight-blooms');await p.waitForFunction(()=>window.__ready);
  const mobileSizes=[];
  for(const [width,height] of [[320,568],[390,664],[390,844],[430,740]]){
@@ -35,7 +36,7 @@ try{
  }
  await p.evaluate(()=>NebulaApp.setState(NebulaClassic.create('midnight-blooms')));
  await p.setViewportSize({width:390,height:664});
- await p.screenshot({path:'clients/la-flor-eterna/qa/next-phase/phone-editor-space-oct20.png'});
+ await p.screenshot({path:'.private/qa/la-flor-eterna/next-phase/phone-editor-space-oct20.png'});
  await p.locator('#focusPreview').click();assert.equal(await p.locator('#controls').isVisible(),false);
  await p.locator('#focusPreview').click();assert.equal(await p.locator('#controls').isVisible(),true);
  console.log('Phone control space:',mobileSizes);
@@ -48,6 +49,6 @@ try{
  const resized=await p.evaluate(async()=>{
   const results=[];for(const n of [1,12,28,60,100]){const s=NebulaModel.defaultMode('dome');NebulaModel.resize(s,n);s.finishes.studio={v:1,thistles:true};await NebulaRenderer.awaitAssets(s);const nodes=NebulaRenderer.scene(s).layeredFlowers.filter(n=>n.infillKind==='thistle');results.push({n,count:NebulaMidnightArt.thistleCount(s),rendered:nodes.length,unique:new Set(nodes.map(n=>n.pocket.x+','+n.pocket.y)).size});}return results;
  });for(const x of resized){assert.equal(x.count,x.rendered);assert.equal(x.count,x.unique);}assert.ok(resized.at(-1).count>resized[1].count);
- await p.evaluate(()=>NebulaApp.setTab('finishing'));await p.locator('#thistleEnabled').scrollIntoViewIfNeeded();await p.screenshot({path:'clients/la-flor-eterna/qa/next-phase/thistle-toggle-phone-oct20.png'});
+ await p.evaluate(()=>NebulaApp.setTab('finishing'));await p.locator('#thistleEnabled').scrollIntoViewIfNeeded();await p.screenshot({path:'.private/qa/la-flor-eterna/next-phase/thistle-toggle-phone-oct20.png'});
  assert.deepEqual(errors,[]);console.log('PASS two columns at 320–1440px in EN/ES, card bounds and 44px tap targets; additions toggle, reload/share/sheet, adaptive distinct thistles at 1–100 flowers.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

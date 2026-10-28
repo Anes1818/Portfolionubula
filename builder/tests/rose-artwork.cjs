@@ -1,3 +1,4 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 /* Compare artwork inside the ordinary shop editor; never launch a text handler. */
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
 const base='http://127.0.0.1:4174/shops/la-flor-eterna/';
@@ -42,6 +43,6 @@ const base='http://127.0.0.1:4174/shops/la-flor-eterna/';
   console.log('PASS artwork comparison preserves count, price, anchors, undo/redo, reload and legacy design');
   console.log('PASS new finish round-trips through SMS sheet, fresh browser and export; mixed flowers remain editable');
   console.log('PASS EN/ES, phone width and unaffected original Nebula/Midnight');
-  fs.writeFileSync('clients/la-flor-eterna/qa/next-phase/rose-comparison-link.txt',base+'studio.html#b='+result.code+'\n');
+  fs.writeFileSync('.private/qa/la-flor-eterna/next-phase/rose-comparison-link.txt',base+'studio.html#b='+result.code+'\n');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

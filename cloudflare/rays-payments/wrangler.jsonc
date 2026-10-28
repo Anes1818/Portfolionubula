@@ -1,0 +1,73 @@
+{
+  "name": "nebula-payments-sandbox",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "observability": {
+    "enabled": false
+  },
+  "vars": {
+    "ENVIRONMENT": "sandbox",
+    "FIREBASE_PROJECT_ID": "la-flora-6ed47",
+    "SITE_ORIGIN": "https://nebulastudio.site",
+    "ALLOWED_SHOPS": "raysbouquetz",
+    "PAYMENTS_ENABLED": "false"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "COMMERCE",
+        "class_name": "CommerceObject"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "CommerceObject"
+      ]
+    }
+  ],
+  "env": {
+    "production": {
+      "name": "nebula-payments-production",
+      "vars": {
+        "ENVIRONMENT": "production",
+        "FIREBASE_PROJECT_ID": "la-flora-6ed47",
+        "SITE_ORIGIN": "https://nebulastudio.site",
+        "ALLOWED_SHOPS": "raysbouquetz",
+        "PAYMENTS_ENABLED": "false"
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "COMMERCE",
+            "class_name": "CommerceObject"
+          }
+        ]
+      }
+    },
+    "sandbox": {
+      "name": "nebula-payments-sandbox",
+      "vars": {
+        "ENVIRONMENT": "sandbox",
+        "FIREBASE_PROJECT_ID": "la-flora-6ed47",
+        "SITE_ORIGIN": "https://nebulastudio.site",
+        "ALLOWED_SHOPS": "raysbouquetz",
+        "PAYMENTS_ENABLED": "false"
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "COMMERCE",
+            "class_name": "CommerceObject"
+          }
+        ]
+      }
+    }
+  }
+}

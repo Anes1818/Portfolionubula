@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Ray’s Bouquetz · Payment status</title>
+    <link rel="icon" href="assets/shop/logo.webp" />
+    <link rel="stylesheet" href="payments.css" />
+    <script src="payments-config.js" defer></script>
+    <script src="payment-status.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a href="index.html"
+        ><img src="assets/shop/logo.webp" alt="" />Ray’s Bouquetz</a
+      ><a href="studio.html">Bouquet studio ↗</a>
+    </header>
+    <main>
+      <p class="eyebrow">YOUR BOUQUET ORDER</p>
+      <h1 id="heading">Checking your payment.</h1>
+      <p class="notice" id="statusMessage" role="status">
+        A payment is confirmed only after verification with Square.
+      </p>
+      <p id="environment" class="test-banner" hidden></p>
+      <section class="card" id="orderSummary" hidden>
+        <h2 id="orderReference"></h2>
+        <div class="summary-lines" id="summary"></div>
+        <p id="fulfillment"></p>
+        <p id="terms" class="helper"></p>
+        <div class="actions">
+          <button id="payFull" type="button">Pay remaining balance</button
+          ><button id="payDeposit" type="button" class="secondary">
+            Pay 50% deposit</button
+          ><button id="copyLink" type="button" class="secondary">
+            Copy private order link
+          </button>
+        </div>
+        <p class="helper">
+          Keep your private order link. It grants access to this order’s payment
+          status.
+        </p>
+      </section>
+      <div class="actions">
+        <button id="refresh" type="button" class="secondary" hidden>
+          Check status
+        </button>
+      </div>
+    </main>
+    <footer>Website & bouquet studio by Nebula Sites Studio</footer>
+  </body>
+</html>

@@ -1,3 +1,4 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const testOrigin=process.env.TEST_ORIGIN||'http://127.0.0.1:4175';
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
@@ -7,7 +8,7 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
  await page.goto(testOrigin+'/demo/nebula-builder/studio.html?template=crimson-velvet');
  await page.waitForFunction(()=>window.__ready);
  await page.evaluate(()=>NebulaRenderer.awaitAssets(NebulaApp.state));
- const out=path.resolve('clients/la-flor-eterna/qa/crimson');fs.mkdirSync(out,{recursive:true});
+ const out=path.resolve('.private/qa/la-flor-eterna/crimson');fs.mkdirSync(out,{recursive:true});
  const report=await page.evaluate(()=>{
  const s=NebulaApp.state,R=NebulaRenderer,sc=R.scene(s),b=R.artBounds(s,sc),cv=document.createElement('canvas');cv.width=900;cv.height=1100;
  const c=cv.getContext('2d');c.fillStyle='#fcfaf8';c.fillRect(0,0,900,1100);const k=Math.min(800/b.w,1000/b.h);c.translate((900-b.w*k)/2-b.x*k,(1100-b.h*k)/2-b.y*k);c.scale(k,k);R.drawArt(c,s,{scene:sc});

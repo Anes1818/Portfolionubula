@@ -1,0 +1,86 @@
+{
+  "id": "raysbouquetz",
+  "name": "Ray's Bouquetz",
+  "byline": "Handmade in Winnipeg",
+  "currency": "CAD",
+  "demo": true,
+  "requestChannel": "whatsapp",
+  "recipient": "+12044815706",
+  "whatsapp": "12044815706",
+  "email": "",
+  "website": "https://nebulastudio.site/shops/raysbouquetz/",
+  "publicBaseUrl": "https://nebulastudio.site/shops/raysbouquetz/",
+  "logo": "assets/shop/logo.webp",
+  "studio": {
+    "name": "Ray's Bouquetz",
+    "site": "nebulastudio.site/shops/raysbouquetz/",
+    "phone": "+12044815706",
+    "instagram": "@raysbouquetz",
+    "place": "Winnipeg, Canada",
+    "year": "2026"
+  },
+  "baseCents": null,
+  "laborCents": {
+    "dome": null,
+    "heart": null
+  },
+  "flowerPrices": {
+    "ribbon_rose": 800,
+    "foam_rose": 600
+  },
+  "extrasCents": {
+    "butterfly": 300,
+    "crown": 1500,
+    "bow": 300,
+    "ribbon": 0,
+    "sash": 0,
+    "floralInitial": 1500,
+    "filler": 500,
+    "snoopy": 2200,
+    "kitty": 2200,
+    "snoopy_topper": 600,
+    "pumpkin": 1800,
+    "spookyMask": 2000,
+    "spookyBow": 400,
+    "ghostCount": 100,
+    "thistleCount": 250
+  },
+  "disabledFlowers": [],
+  "disabledExtras": [
+    "kitty",
+    "snoopy_topper",
+    "pumpkin",
+    "spookyMask",
+    "spookyBow",
+    "ghostCount",
+    "thistleCount"
+  ],
+  "enabledModes": [
+    "dome",
+    "heart"
+  ],
+  "languages": [
+    "en"
+  ],
+  "fulfillment": "both",
+  "theme": {
+    "background": "#f7f5ef",
+    "surface": "#ffffff",
+    "soft": "#F8E8ED",
+    "ink": "#342631",
+    "primary": "#76394E",
+    "border": "#dfdbd2"
+  },
+  "selectedRecipeIds": [],
+  "review": {
+    "scopeApproved": false,
+    "pricesApproved": false,
+    "catalogApproved": false,
+    "artworkApproved": false,
+    "fulfillmentApproved": false,
+    "recipientTested": false,
+    "launchApproved": false,
+    "approvedBy": "",
+    "approvedAt": ""
+  }
+}

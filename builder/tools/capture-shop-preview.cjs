@@ -1,6 +1,7 @@
+require('./qa-output.cjs').prepareLaFlor();
 /* Reviewable owner screenshots, captured from real browser renders. */
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
-const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/',out=path.resolve(__dirname,'../../clients/la-flor-eterna/qa');
+const base=process.env.BUILDER_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/',out=path.resolve(__dirname,'../../.private/qa/la-flor-eterna');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
  try{const ctx=await browser.newContext({viewport:{width:390,height:844}}),page=await ctx.newPage();await page.route('**/*',r=>new URL(r.request().url()).origin===new URL(base).origin?r.continue():r.abort());const ready=()=>page.waitForFunction(()=>window.__ready);
   await page.goto(base);await page.locator('.bouquet-picture img').evaluateAll(images=>images.forEach(img=>img.loading='eager'));await page.locator('.bouquet-picture img').evaluateAll(images=>Promise.all(images.map(img=>img.decode())));

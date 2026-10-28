@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "name": "Ray's Bouquetz",
+  "tagline": "Flowers to keep. Moments to remember.",
+  "location": "Winnipeg, Canada",
+  "instagram": "raysbouquetz",
+  "preview": true,
+  "languages": [
+    "en"
+  ],
+  "modes": [
+    "dome",
+    "heart"
+  ],
+  "payment": {
+    "reviewEnabled": false,
+    "squareCheckoutEnabled": false,
+    "moneyCheckoutApproved": false,
+    "depositBps": 5000,
+    "balanceDue": "At delivery",
+    "dynamicLinks": true
+  },
+  "pricing": {
+    "currency": "CAD",
+    "approved": false,
+    "unitCents": {
+      "ribbon_rose": 800,
+      "foam_rose": 600
+    },
+    "glitterPerFlowerCents": 100,
+    "moneyStylingCents": 8000,
+    "baseCents": null,
+    "laborCents": {
+      "dome": null,
+      "heart": null
+    },
+    "extrasCents": {
+      "butterfly": 300,
+      "crown": 1500,
+      "bow": 300,
+      "sash": 0,
+      "message_card": null,
+      "cricut_topper": null,
+      "graduation_cap": null,
+      "money_fan": null
+    },
+    "usdToCad": {
+      "numerator": 14484,
+      "denominator": 10000,
+      "source": "https://ix0.apps.td.com/en/fxcal",
+      "basis": "TD cash: client buys USD (pays CAD)",
+      "asOf": "2026-10-26T21:45:00Z",
+      "snapshot": true
+    },
+    "denominations": {
+      "CAD": [
+        5,
+        10,
+        20,
+        50,
+        100
+      ],
+      "USD": [
+        1,
+        5,
+        10,
+        20,
+        50,
+        100
+      ]
+    },
+    "moneyFeePolicy": "replaces-base-and-labor",
+    "usdExchangeMarginBps": 0
+  },
+  "colours": [
+    {
+      "id": "red",
+      "name": "Ruby",
+      "hex": "#b01e40"
+    },
+    {
+      "id": "black",
+      "name": "Midnight",
+      "hex": "#29222a"
+    },
+    {
+      "id": "purple",
+      "name": "Plum",
+      "hex": "#6b2f83"
+    },
+    {
+      "id": "lilac",
+      "name": "Lilac",
+      "hex": "#b69aca"
+    },
+    {
+      "id": "pink",
+      "name": "Blush",
+      "hex": "#e8b8c8"
+    },
+    {
+      "id": "ivory",
+      "name": "Ivory",
+      "hex": "#f0e8d5"
+    },
+    {
+      "id": "blue",
+      "name": "Sky",
+      "hex": "#a7cbd9"
+    },
+    {
+      "id": "peach",
+      "name": "Peach",
+      "hex": "#eab496"
+    }
+  ],
+  "designs": [
+    {
+      "id": "anus-daydream",
+      "name": "Anu’s Daydream",
+      "kind": "Mixed satin flowers",
+      "description": "A little daydream in pastel. A joyful mix of handmade flowers, wrapped in soft lilac.",
+      "image": "photos/anus-daydream.webp",
+      "targetCents": 26000,
+      "mode": "dome",
+      "defaultColour": "pink",
+      "defaultWrap": "lilac",
+      "money": false,
+      "recipe": null,
+      "recipeCountsConfirmed": true
+    },
+    {
+      "id": "pretty-and-paid",
+      "name": "Pretty & Paid",
+      "kind": "Money & satin",
+      "description": "Lavender ribbons, folded notes and a message that makes the whole gift yours.",
+      "image": "photos/pretty-and-paid.webp",
+      "targetCents": 30500,
+      "mode": "dome",
+      "defaultColour": "purple",
+      "defaultWrap": "lilac",
+      "money": true,
+      "submittedNoteCount": 80,
+      "noteCurrency": "USD",
+      "recipe": null,
+      "recipeCountsConfirmed": true,
+      "noteDenomination": 1
+    },
+    {
+      "id": "ruby-royale",
+      "name": "Ruby Royale",
+      "kind": "Glitter ribbon roses",
+      "description": "Rich red satin, a touch of sparkle and a crown-worthy finish. Made for their moment.",
+      "image": "photos/ruby-royale.webp",
+      "targetCents": 14500,
+      "mode": "dome",
+      "defaultColour": "red",
+      "defaultWrap": "black",
+      "money": false,
+      "recipe": null,
+      "recipeCountsConfirmed": true
+    },
+    {
+      "id": "money-moves",
+      "name": "Money Moves",
+      "kind": "Money & foam roses",
+      "description": "Seven midnight foam roses, fifty folded notes and a personal message.",
+      "image": "photos/money-moves.webp",
+      "targetCents": 18200,
+      "mode": "dome",
+      "defaultColour": "black",
+      "defaultWrap": "black",
+      "money": true,
+      "submittedNoteCount": 50,
+      "noteCurrency": "USD",
+      "recipe": null,
+      "recipeCountsConfirmed": true,
+      "noteDenomination": 1
+    }
+  ]
+}

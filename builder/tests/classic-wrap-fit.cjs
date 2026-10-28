@@ -1,3 +1,4 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
 const base=process.env.BUILDER_URL||'http://127.0.0.1:4175/demo/nebula-builder/';
 (async()=>{const b=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
@@ -31,6 +32,6 @@ const base=process.env.BUILDER_URL||'http://127.0.0.1:4175/demo/nebula-builder/'
   const sample=NebulaCrimson.create(),before=W.layout(sample,sample.frames.classic);sample.finishes.studio.breath=3;const after=W.layout(sample,sample.frames.classic);if(JSON.stringify(before)!==JSON.stringify(after))issues.push('Filler level moves wrapper');
   return {out,issues};
  });
- fs.mkdirSync('clients/la-flor-eterna/qa/wrap-fit',{recursive:true});for(const a of result.out)fs.writeFileSync('clients/la-flor-eterna/qa/wrap-fit/'+a.name+'.png',Buffer.from(a.data.split(',')[1],'base64'));
+ fs.mkdirSync('.private/qa/la-flor-eterna/wrap-fit',{recursive:true});for(const a of result.out)fs.writeFileSync('.private/qa/la-flor-eterna/wrap-fit/'+a.name+'.png',Buffer.from(a.data.split(',')[1],'base64'));
  assert.deepEqual(result.issues,[]);assert.deepEqual(errors,[]);console.log('PASS 36 wrap/recipe combinations: unchanged flowers, aligned layers, assets, shares and mobile framing.');
  }finally{await b.close()}})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,3 +1,4 @@
 # Preserve generated runtime bytes so build-manifest hashes match GitHub Pages.
 shops/la-flor-eterna/** -text
+shops/raysbouquetz/** -text whitespace=cr-at-eol
 demo/nebula-builder/** -text

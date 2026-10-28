@@ -118,39 +118,7 @@ for(const lib of [NebulaClassic,NebulaFall,NebulaSpooky])lib.recipes=[];
 NebulaRomance.recipes=RAY_STORE.designs.map(d=>({id:d.id,en:d.name,es:d.name,mode:'dome'}));NebulaRomance.create=recipe;
 M.portfolio=(s,bank)=>({format:'nebula-bouquet-studio',version:6,activeMode:s.mode,bouquets:Object.fromEntries(modes.filter(mode=>mode===s.mode||bank[mode]).map(mode=>[mode,M.clone(mode===s.mode?s:bank[mode])]))});
 M.validatePortfolio=raw=>{if(!raw||raw.format!=='nebula-bouquet-studio'||raw.version!==6||!modes.includes(raw.activeMode)||!raw.bouquets||Object.keys(raw.bouquets).some(k=>!modes.includes(k)))return null;const bouquets={};for(const [mode,design]of Object.entries(raw.bouquets)){const s=M.validate(design);if(!s||s.mode!==mode)return null;bouquets[mode]=s;}return bouquets[raw.activeMode]?{format:raw.format,version:6,activeMode:raw.activeMode,bouquets}:null;};
-M.price=s=>{
- const supplied=s.finishes.studio?.cashSupply==='customer',cash=active(s),missing=[],counts=M.counts(s),flowerItems=s.items.filter(i=>!isNote(i.id)&&CAT[i.id].kind==='flower'),families=[...new Set(flowerItems.map(i=>CAT[i.id].family))];
- const foamOnly=families.length===1&&families[0]==='foam',singlePremium=families.length===1&&Object.hasOwn(P.menu.premiumAdjustments,families[0]);
- const menuApplies=!cash&&flowerItems.length>0&&(foamOnly||families.length>=3||singlePremium);
- const lines=Object.entries(counts).map(([id,quantity])=>{
-  const n=notes.get(id),includedInBouquet=menuApplies&&CAT[id].kind==='flower'&&!n;
-  const converted=n&&!supplied?RayPricing.convertCash({...n,count:quantity},P):null;
-  const unknown=!includedInBouquet&&((n&&!supplied&&converted.cadCents===null)||(!n&&(CAT[id].priceCents===null||(CAT[id].kind==='flower'&&!['rose','foam'].includes(CAT[id].family)))));
-  if(unknown)missing.push(n?converted.reason:CAT[id].en+' needs Ray’s quote');
-  const unitCents=includedInBouquet||unknown?null:n&&supplied?0:CAT[id].priceCents;
-  const totalCents=includedInBouquet||unknown?0:n?(supplied?0:converted.cadCents):quantity*unitCents;
-  return {id,quantity,unitCents,totalCents,quoteRequired:unknown,includedInBouquet:!!includedInBouquet,suppliedByCustomer:!!n&&supplied};
- });
- const extraLines=[],add=(id,quantity)=>{if(!quantity)return;const unitCents=P.extrasCents[id],unknown=!Number.isSafeInteger(unitCents)||unitCents<0;if(unknown)missing.push(id.replaceAll('_',' ')+' price varies');extraLines.push({id,quantity,unitCents:unknown?null:unitCents,totalCents:unknown?0:quantity*unitCents,quoteRequired:unknown});};
- let range=null;
- if(menuApplies){
-  range=families.length>1?RayPricing.mixedRange(flowerItems.length,P):RayPricing.foamTier(flowerItems.length,P);
-  const premium=singlePremium?P.menu.premiumAdjustments[families[0]]:0;
-  extraLines.push({id:families.length>1?'mixed_menu':'bouquet_menu',quantity:1,unitCents:range.minCents+premium,totalCents:range.minCents+premium});
-  const glitter=counts.rose_red_glitter||0;if(glitter)extraLines.push({id:'glitter',quantity:glitter,unitCents:P.glitterCents,totalCents:glitter*P.glitterCents});
-  if(families.length>1||!range.exact||premium)missing.push('Ray’s confirms the final bouquet quote from the menu starting prices/ranges');
- }
- if(!cash&&families.length===2)missing.push('Two-flower-type arrangements need Ray’s quote; the mixed menu covers three or more types');
- if(cash&&flowerItems.length)missing.push('Ray’s confirms the final mixed money and flower quote');
- add('butterfly',s.finishes.butterfly|0);add('crown',s.finishes.crown?1:0);
- const bow=s.finishes.decorations.find(d=>d.id.startsWith('bow_')),message=s.finishes.sash!=='none';
- if(message&&bow)add('message_bow_bundle',1);else if(message)add('sash',1);
- for(const d of s.finishes.decorations||[])if(!(message&&d===bow)&&!(foamOnly&&!cash&&d===bow))add(d.id,1);
- if(cash)extraLines.push({id:'money_styling',quantity:1,unitCents:P.moneyStylingCents,totalCents:P.moneyStylingCents});
- const flowersCents=lines.reduce((n,x)=>n+x.totalCents,0),extrasCents=extraLines.reduce((n,x)=>n+x.totalCents,0),totalCents=flowersCents+extrasCents;
- const maxCents=totalCents+(range?range.maxCents-range.minCents:0),quoteRequired=missing.length>0;
- return {currency:'CAD',demo:true,estimateOnly:true,draft:true,quoteRequired,missing:[...new Set(missing)],lines,extraLines,flowersCents,baseCents:0,laborCents:0,extrasCents,totalCents,maxCents,range:!!range&&range.maxCents!==range.minCents,cashSupply:supplied?'customer':'shop',cashCents:lines.filter(l=>isNote(l.id)).reduce((sum,l)=>sum+l.totalCents,0),rate:P.usdToCad,payment:RayPricing.paymentSchedule(totalCents,s.finishes.studio?.paymentPlan||'deposit',RAY_BUILDER.payment),flowers:flowerItems.length,texture:0,chocolates:s.items.filter(i=>i.id==='__choc').length,pieces:s.items.length};
-};
+M.price=s=>g.RayPayments?.price(s)||RayCommerce.preview(s,P);
 M.order=(s,lang='en')=>({format:'nebula-bouquet',version:6,estimateOnly:true,draft:true,currency:'CAD',design:M.clone(s),pickList:M.price(s).lines.map(l=>({...l,name:CAT[l.id][lang]})),pricing:M.price(s),notice:'Owner preview with confirmed starting recipes. Variable prices require Ray’s final quote. No order or payment has been placed.'});
 // The original export compositor is synchronous. Change only its amount label
 // for quotes, restoring the shared formatter even if drawing fails.

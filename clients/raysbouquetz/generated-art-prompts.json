@@ -1,0 +1,119 @@
+{
+  "generatedOn": "2026-10-26",
+  "method": "built-in image_gen",
+  "status": "unapproved candidates; website not modified",
+  "entries": [
+    {
+      "file": "satin-rose-red-v1.png",
+      "prompt": "Single overhead ruby-red satin ribbon rose, clean non-glitter master, transparent background, matched to supplied Ruby Royale reference."
+    },
+    {
+      "file": "wrap-triangle-black-dome-v1.png",
+      "prompt": "Use case: precise-object-edit. Recreate ONLY the empty bouquet wrapping from the supplied Ruby Royale photo as an isolated overhead paper collar asset. A complete round Buchon surround made of MANY SMALL overlapping pointed triangular folds, matte black borders around smoky taupe translucent inner panels, staggered outer points, physically folded paper with subtle upper-left light. EMPTY central circular opening: genuine alpha transparency through the centre, about 62% of overall collar diameter. Outside the paper also genuine transparent alpha. All paper edges intact, centred square canvas with margin. No flowers, greenery, crown, ribbon band, bow, text, stems, hands, room, shadows on a background, or solid disc filling the centre. Photographic real material, not drawn triangles. Match reference construction, output only one empty paper collar."
+    },
+    {
+      "file": "satin-rose-black-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to deep jet black satin with readable charcoal highlights and preserved fabric folds. Preserve its exact folded ribbon petal geometry, spiral centre, silhouette, camera angle, texture, upper-left lighting, position, canvas size and transparent alpha background. ONE isolated rose only. No glitter, leaves, stems, paper, band, text or additional objects. Retain satin highlights and shadow detail; do not redesign the flower."
+    },
+    {
+      "file": "satin-rose-purple-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to rich royal purple satin. Preserve its exact folded ribbon petal geometry, spiral centre, silhouette, camera angle, texture, upper-left lighting, position, canvas size and transparent alpha background. ONE isolated rose only. No glitter, leaves, stems, paper, band, text or additional objects. Retain satin highlights and shadow detail; do not redesign the flower."
+    },
+    {
+      "file": "satin-rose-lilac-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to soft pastel lilac satin. Preserve its exact folded ribbon petal geometry, spiral centre, silhouette, camera angle, texture, upper-left lighting, position, canvas size and transparent alpha background. ONE isolated rose only. No glitter, leaves, stems, paper, band, text or additional objects. Retain satin highlights and shadow detail; do not redesign the flower."
+    },
+    {
+      "file": "satin-rose-pink-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to soft pastel blush pink satin. Preserve its folded ribbon petal construction, spiral centre, silhouette, overhead camera, fabric weave, soft upper-left lighting, position, canvas size and transparent alpha background. One isolated flower, realistic satin shadows, no glitter, stem, leaves, paper, lettering or other objects. Do not redesign the flower."
+    },
+    {
+      "file": "satin-rose-ivory-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to warm ivory satin, pale cream rather than yellow. Preserve its folded ribbon petal construction, spiral centre, silhouette, overhead camera, fabric weave, soft upper-left lighting, position, canvas size and transparent alpha background. One isolated flower, realistic satin shadows, no glitter, stem, leaves, paper, lettering or other objects. Do not redesign the flower."
+    },
+    {
+      "file": "satin-rose-blue-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to pastel sky blue satin. Preserve its folded ribbon petal construction, spiral centre, silhouette, overhead camera, fabric weave, soft upper-left lighting, position, canvas size and transparent alpha background. One isolated flower, realistic satin shadows, no glitter, stem, leaves, paper, lettering or other objects. Do not redesign the flower."
+    },
+    {
+      "file": "satin-rose-peach-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY the ribbon colour of this approved overhead satin rose to soft pastel peach satin. Preserve its folded ribbon petal construction, spiral centre, silhouette, overhead camera, fabric weave, soft upper-left lighting, position, canvas size and transparent alpha background. One isolated flower, realistic satin shadows, no glitter, stem, leaves, paper, lettering or other objects. Do not redesign the flower."
+    },
+    {
+      "file": "wrap-triangle-lilac-dome-v1.png",
+      "prompt": "Use case: precise-object-edit. Edit this single empty photographic bouquet paper collar. Change ONLY the paper colours to matte lilac borders and pale lavender translucent inner panels. Preserve exactly its many small layered triangular folds, complete round silhouette, camera, canvas, lighting and large open central hole. Both the centre opening and exterior must remain genuine alpha transparency. NO flowers, bow, ribbon band, crown, stems, hands, text, logos or backdrop. One isolated empty wrapping collar, physically folded paper, no invented extra objects."
+    },
+    {
+      "file": "wrap-triangle-pink-dome-v1.png",
+      "prompt": "Use case: precise-object-edit. Edit this single empty photographic bouquet paper collar. Change ONLY the paper colours to soft blush-pink borders and very pale pink translucent inner panels. Preserve exactly its many small layered triangular folds, complete round silhouette, camera, canvas, lighting and large open central hole. Both the centre opening and exterior must remain genuine alpha transparency. NO flowers, bow, ribbon band, crown, stems, hands, text, logos or backdrop. One isolated empty wrapping collar, physically folded paper, no invented extra objects."
+    },
+    {
+      "file": "wrap-triangle-ivory-dome-v1.png",
+      "prompt": "Use case: precise-object-edit. Edit this single empty photographic bouquet paper collar. Change ONLY the paper colours to warm ivory borders and pale cream translucent inner panels. Preserve exactly its many small layered triangular folds, complete round silhouette, camera, canvas, lighting and large open central hole. Both the centre opening and exterior must remain genuine alpha transparency. NO flowers, bow, ribbon band, crown, stems, hands, text, logos or backdrop. One isolated empty wrapping collar, physically folded paper, no invented extra objects."
+    },
+    {
+      "file": "wrap-triangle-black-heart-v1.png",
+      "prompt": "Use case: precise-object-edit. Create the HEART-SHAPED version of this empty black/taupe photographic bouquet-paper collar. Match the exact material and MANY SMALL overlapping triangular paper folds, matte black borders and smoky taupe inner panels. BOTH outer silhouette and large transparent central opening must form a recognisable heart with two upper lobes, clear top notch and tapered lower tip. Straight overhead, complete collar centred with generous clear margin, not cropped. True transparent alpha outside and through the heart opening. Clean cutout with no stray white pixels or colour fringe. NO flowers, bow, sash, stems, hands, lettering or background."
+    },
+    {
+      "file": "satin-rose-red-glitter-v1.png",
+      "prompt": "Use case: precise-object-edit. Add a fine red glitter coating ONLY to the satin surfaces of the attached single red ribbon rose. Preserve its exact flower silhouette, folded ribbon petals, spiral centre, overhead angle, position, size and transparent alpha background. Keep fabric folds readable and apply tiny realistic red glitter grains with a few restrained specular points. No floating glitter, sparkles outside the object, starbursts, leaves, stems, other objects or backdrop. One isolated complete glitter satin rose."
+    },
+    {
+      "file": "satin-dahlia-pink-v1.png",
+      "prompt": "Use case: precise-object-edit. Recreate ONE single pastel pink handmade SATIN RIBBON DAHLIA head from the crafted mixed bouquet reference. Directly overhead, dense balanced layers of individually folded pointed/looped ribbon petals forming a round full dahlia, tiny tight centre, visibly woven satin with handmade seams, upper-left soft light. NOT a rose spiral, not a fresh botanical flower, not plastic. Single complete flower centred with clear margin on a square transparent alpha canvas, no stems, leaves, paper, bow, other flowers or text. Match real ribbon craftsmanship rather than a flat illustration."
+    },
+    {
+      "file": "satin-plumeria-purple-v1.png",
+      "prompt": "Use case: precise-object-edit. Isolate/recreate ONE of the deep purple FIVE-PETAL HANDMADE SATIN RIBBON flowers in the supplied money bouquet photograph. Exactly five broad pointed folded satin petals with distinct central folds, small round gold/rhinestone centre, matching the actual reference flowers. Straight overhead, readable woven fabric and satin highlights, soft upper-left light. Single complete flower centred with a clear margin, transparent alpha outside petals. No cash, bow, printed band, paper, stems, leaves, lettering or other objects. Photographic handcrafted plumeria, not a rose and not a fresh lily."
+    },
+    {
+      "file": "bow-lilac-v1.png",
+      "prompt": "Use case: precise-object-edit. Recreate ONLY the lilac satin bow from the supplied bouquet as one separate transparent asset. Two soft full bow loops, compact central knot, TWO long complete ribbon tails with angled ends. Photograph nearly overhead, loop depth and natural satin creases, consistent upper-left lighting. All edges and tail ends intact with generous clear margin on portrait canvas. No message band, cash, flowers, paper, lettering or other objects. True transparent alpha exterior, clean edges, no cast shadow on a background."
+    },
+    {
+      "file": "satin-dahlia-blue-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY this single handmade satin flower's fabric colour to pastel sky blue. Preserve its exact folded-petal construction, shape, number of petals, centre ornament if present, overhead view, fabric weave, upper-left lighting, size and position. Genuine transparent alpha background with clean edges, no white fringe, no stray opaque pixels. Do not add leaves, stems, other flowers, paper, shadows on a backdrop, text or any new objects."
+    },
+    {
+      "file": "satin-dahlia-ivory-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY this single handmade satin flower's fabric colour to warm ivory cream. Preserve its exact folded-petal construction, shape, number of petals, centre ornament if present, overhead view, fabric weave, upper-left lighting, size and position. Genuine transparent alpha background with clean edges, no white fringe, no stray opaque pixels. Do not add leaves, stems, other flowers, paper, shadows on a backdrop, text or any new objects."
+    },
+    {
+      "file": "satin-plumeria-lilac-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY this single handmade satin flower's fabric colour to soft lilac lavender. Preserve its exact folded-petal construction, shape, number of petals, centre ornament if present, overhead view, fabric weave, upper-left lighting, size and position. Genuine transparent alpha background with clean edges, no white fringe, no stray opaque pixels. Do not add leaves, stems, other flowers, paper, shadows on a backdrop, text or any new objects."
+    },
+    {
+      "file": "satin-plumeria-ivory-v1.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY this single handmade satin flower's fabric colour to warm ivory. Preserve its exact folded-petal construction, shape, number of petals, centre ornament if present, overhead view, fabric weave, upper-left lighting, size and position. Genuine transparent alpha background with clean edges, no white fringe, no stray opaque pixels. Do not add leaves, stems, other flowers, paper, shadows on a backdrop, text or any new objects."
+    },
+    {
+      "file": "satin-sunflower-yellow-v1.png",
+      "prompt": "Use case: product-mockup. Asset type: one transparent PNG sprite for a handmade satin bouquet customizer. Generate ONE single handmade ribbon sunflower head, strict overhead view, centred, fully visible with generous transparent margin. Two staggered rows of golden-yellow folded satin pointed petals, visible ribbon weave and sewn/folded edges, one dark brown textured fabric centre. Authentic handmade satin craft, not a fresh flower and not a plastic toy. Soft upper-left studio illumination, fine photographic detail, no cast shadow outside the object. No stem, leaf, pot, bouquet, paper, text, logo or watermark. True transparent alpha background with clean isolated edges, no checkerboard or background."
+    },
+    {
+      "file": "card-blank-v1.png",
+      "prompt": "Use case: product-mockup. Asset type: transparent bouquet gift card sprite. ONE single small blank ivory cardstock rectangle with softly rounded corners and a very thin blush-pink border, viewed exactly overhead, centered, landscape orientation. Subtle realistic paper grain, flat uncreased clean writing area, soft upper-left studio light. Photographic product cutout. Entire card fully in frame with generous transparent margin. No text at all, no icons, no envelope, no ribbon, no hand, no bouquet, no cast shadow outside card. True transparent alpha outside the card; no checkerboard or white backdrop."
+    },
+    {
+      "file": "graduation-cap-v1.png",
+      "prompt": "Use case: product-mockup. Asset type: transparent decoration sprite for a top-view handmade bouquet builder. ONE miniature black satin graduation mortarboard topper, photographed from above at a very slight angle so the square board and a hint of cap beneath are visible. Clean black fabric, one small central black button and a slender gold cord tassel draped toward lower right. Real miniature craft decoration, soft upper-left light. Fully isolated and entirely within frame with generous transparent margin. No head, person, hand, pole, diploma, flower, text, watermark or cast shadow on a background. True transparent alpha, crisp clean cutout edges."
+    },
+    {
+      "file": "wrap-triangle-lilac-heart-v1.png",
+      "prompt": "Use case: precise-object-edit. Input image is the edit target: empty black heart-shaped bouquet wrapping. Change ONLY the paper colour to soft lilac with subtly lighter inner paper. Preserve exact heart silhouette, two rounded lobes, clear top centre notch, tapered bottom point, numerous small overlapping triangular paper folds, overhead orientation, outer and inner opening dimensions. The centre opening MUST remain entirely transparent, not filled with paper or a flat colour. Preserve transparent exterior too. Fine photographic matte florist wrapping paper, soft upper-left illumination, no cast shadow, glow, white outline, specks, flowers, words or objects. One empty wrapping surround only, clean alpha edges."
+    },
+    {
+      "file": "folded-cad-note-v1.png",
+      "prompt": "Use case: product-mockup. Asset type: single transparent money-bouquet folded-note sprite, decorative preview only. Generate ONE upright CAD-inspired violet polymer banknote folded into a tapered open teardrop/cone petal, as used in a handcrafted money bouquet. Top opening reveals rolled inner paper, tapered folded base at bottom, front-facing with gentle overhead angle. Recognisable violet Canadian-style colours and abstract maple-leaf/portrait motifs, stylized illustrative note detail, no exact security marks or serial number, not a flat printable banknote. One note only, not a fan or bouquet. Soft upper-left studio light, realistic folded paper and clear clean silhouette. Fully within frame with generous transparent margin. No fingers, clip, wire, stem, decorations, background, shadow or glow. True transparent alpha background, no checkerboard."
+    },
+    {
+      "file": "card-blank-v2.png",
+      "prompt": "Use case: background-extraction. Edit target is the supplied blank ivory card with thin blush border. Remove ONLY the entire pink glow, halo and all background around the physical card. Keep exact card shape, colour, paper grain, border and blank surface. Outside the precise rounded-rectangle card edge must be 100 percent transparent alpha immediately, with no shadow, glow, colour spill, haze, outline or extra margin pixels. Do not redesign or add anything. Preserve full card within the image."
+    },
+    {
+      "file": "folded-cad-note-v2.png",
+      "prompt": "Use case: background-extraction. Edit target is the supplied single folded purple decorative Canadian-style note. Remove ONLY the entire purple glow, haze and background around its physical paper silhouette. Keep its exact tapered cone shape, fold, note design, lighting and colours unchanged. Every pixel outside the precise paper outline must be fully transparent alpha, with no halo, shadow, glow, colour spill or checkerboard. One isolated folded note with clean crisp edges, fully in frame."
+    }
+  ]
+}

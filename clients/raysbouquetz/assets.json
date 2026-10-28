@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "approved": false,
+  "flowers": [],
+  "wraps": [],
+  "decorations": [],
+  "notes": [],
+  "instructions": "Only add inspected transparent assets. See ASSET-CHECKLIST.md. A photo reference is never an editable sprite. Paths resolve under public/art/. New shapes need their own confirmed price."
+}

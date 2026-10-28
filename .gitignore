@@ -10,4 +10,29 @@ firebase/functions/.secret.local
 cloudflare/**/.dev.vars*
 cloudflare/**/.env*
 cloudflare/**/.wrangler/
+/.wrangler/
 cloudflare/**/dist/
+
+# Private shop intake: never commit customer submissions or unapproved photos.
+/.private/
+/shops/qa-factory-*/
+/clients/qa-factory-*/
+
+# Reproducible browser captures and local review output, not source fixtures.
+/clients/*/qa/
+/builder/tests/**/*.png
+/builder/tests/**/*.jpg
+/builder/tests/**/*.webp
+/builder/tests/**/*.webm
+/builder/tests/**/*.json
+/builder/tests/**/*.txt
+!/builder/tests/fixtures/
+!/builder/tests/fixtures/**
+/builder/demo-brand/desktop-preview.png
+/builder/demo-brand/mobile-preview.png
+/marketing/screenshots-*/
+/demo/*/preview/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

@@ -165,8 +165,16 @@ const url = process.env.SETUP_URL || 'http://127.0.0.1:4174/shop-setup.html';
 
     // Validate generated window.NEBULA_SHOP config against check-shop.cjs!
     const generatedJs = await page.locator('#dsConfigPre').textContent();
-    const report = audit(loadShop(generatedJs), { live: true });
-    assert.equal(report.ok, true, 'Generated window.NEBULA_SHOP config must pass check-shop.cjs --live: ' + report.errors.join('; '));
+    const report = audit(loadShop(generatedJs), { live: false });
+    assert.equal(report.ok, true, 'Submitted draft prices must be structurally valid: ' + report.errors.join('; '));
+    assert.equal(audit(loadShop(generatedJs), { live: true }).ok, false, 'Form submission is not launch approval');
+    const downloadEvent=page.waitForEvent('download');await page.locator('#dsBuildKit').click();
+    const download=await downloadEvent,kit=JSON.parse(require('node:fs').readFileSync(await download.path(),'utf8'));
+    assert.equal(kit.kind,'nebula-shop-build-kit');assert.equal(kit.intake.nebulaShopConfig.demo,true);
+    assert.equal(kit.intake.nebulaShopConfig.pricesApproved,false);
+    assert.ok(kit.intake.logoDataUrl.startsWith('data:image/'));assert.ok(kit.intake.signatureBouquets[0].photoDataUrl.startsWith('data:image/'));
+    assert.match(kit.brief,/docs\/SHOP-FACTORY.md/);
+
     // 4. Test flowers/index.html Consultation Form -> Firebase -> Admin Dashboard
     const baseOrigin = new URL(url).origin;
     await page.goto(baseOrigin + '/flowers/index.html', { waitUntil: 'networkidle' });

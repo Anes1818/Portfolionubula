@@ -1,10 +1,11 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
-const qa='clients/la-flor-eterna/qa/next-phase/';
+const qa='.private/qa/la-flor-eterna/next-phase/';
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
  try{
   const p=await browser.newPage({viewport:{width:390,height:844}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
-  await p.goto(fs.readFileSync(qa+'reference-comparison-link.txt','utf8').trim());await p.waitForFunction(()=>window.__ready);
+  await p.goto(fs.readFileSync(require('node:path').join(__dirname,'fixtures/reference-comparison-link.txt'),'utf8').trim());await p.waitForFunction(()=>window.__ready);
   const original=await p.evaluate(()=>NebulaLink.encode(NebulaApp.state));
   const addRemove=await p.evaluate(()=>{
    const full=NebulaApp.add('lily');const uid=NebulaApp.state.items[0].uid;

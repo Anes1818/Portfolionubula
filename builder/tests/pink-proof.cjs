@@ -1,6 +1,7 @@
+require('../tools/qa-output.cjs').prepareLaFlor();
 /* Browser regression for the isolated photographic study and shared renderer. */
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
-const base=process.env.SHOP_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/',qa='clients/la-flor-eterna/qa/next-phase/';
+const base=process.env.SHOP_URL||'http://127.0.0.1:4174/shops/la-flor-eterna/',qa='.private/qa/la-flor-eterna/next-phase/';
 (async()=>{const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(String(e)));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
  await page.goto(base+'pink-proof.html?archive=1');await page.waitForFunction(()=>PinkProof.ready);

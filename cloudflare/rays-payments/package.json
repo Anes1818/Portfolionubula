@@ -1,0 +1,20 @@
+{
+  "name": "nebula-shop-payments",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "wrangler deploy --env sandbox --dry-run --outdir ../../.private/qa/raysbouquetz/worker-bundle",
+    "dev": "wrangler dev --env sandbox --local --ip 127.0.0.1 --port 4191 --persist-to ../../.private/qa/raysbouquetz/worker-state",
+    "deploy:sandbox": "wrangler deploy --env sandbox",
+    "deploy:production": "wrangler deploy --env production"
+  },
+  "devDependencies": {
+    "wrangler": "4.151.3",
+    "miniflare": "5.20261019.1-beta"
+  }
+}
