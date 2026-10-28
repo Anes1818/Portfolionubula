@@ -19,6 +19,7 @@ const { chromium } = require("playwright");
   const types = {
     ".html": "text/html",
     ".js": "text/javascript",
+    ".mjs": "text/javascript",
     ".css": "text/css",
     ".json": "application/json",
     ".png": "image/png",
@@ -46,7 +47,10 @@ const { chromium } = require("playwright");
       });
     },
   };
-  const f = fixture({ env: { ASSETS: assets, ENVIRONMENT: "local" } });
+  const f = fixture({
+    env: { ASSETS: assets, ENVIRONMENT: "local" },
+    verifyAdmin: async (actor) => actor.uid === "uid-owner",
+  });
   const server = http.createServer(async (req, res) => {
     try {
       const chunks = [];
@@ -134,10 +138,56 @@ const { chromium } = require("playwright");
   }
   const owner = await context();
   const page = await owner.newPage();
-  page.on("console", (msg) => {
-    if (msg.type() === "error") console.error("Browser:", msg.text());
-  });
   page.setDefaultTimeout(15000);
+  const readShop = async (token = "owner") =>
+    (await (await f.call("/api/session", { token })).json()).shop;
+  async function saved(p) {
+    await p.waitForFunction(
+      () =>
+        document.querySelector("#saveState")?.textContent ===
+        "All changes saved",
+      undefined,
+      { timeout: 20000 },
+    );
+  }
+  async function clickSave(p) {
+    const button = p.locator('[data-action="save"]');
+    if (await button.isEnabled()) await button.click();
+    await saved(p);
+  }
+  async function studioReady(p) {
+    try {
+      await p.waitForFunction(() => window.NebulaApp?.ready, undefined, {
+        timeout: 50000,
+      });
+    } catch (e) {
+      console.error(
+        await p.evaluate(() => ({
+          boot: document.querySelector("#platformBoot")?.textContent,
+          errors: window.__errors,
+        })),
+      );
+      throw e;
+    }
+  }
+  async function fillSample(p) {
+    await p.goto(origin + "/dashboard/prices");
+    await p.locator('[data-action="sample-prices"]').click();
+    await p
+      .locator("#pageMessage")
+      .filter({ hasText: "Sample prices saved" })
+      .waitFor();
+    await saved(p);
+  }
+  async function addCards(p, n) {
+    await p.goto(origin + "/dashboard/collection");
+    for (let i = 0; i < n; i++)
+      await p
+        .locator('[data-action="add-card"]')
+        .nth(i % 3)
+        .click();
+    await clickSave(p);
+  }
   try {
     await page.goto(origin + "/login");
     await page.getByRole("button", { name: "Continue with Google" }).waitFor();
@@ -151,141 +201,141 @@ const { chromium } = require("playwright");
     await page.locator('#createShopForm button[type="submit"]').click();
     await page.locator('#createShopForm button[type="submit"]').click();
     await page.locator(".sidebar").waitFor();
-    let shop = (await (await f.call("/api/session")).json()).shop;
-    assert.equal(shop.draft.collection.length, 4);
-    assert.equal(shop.draft.currency, "CAD");
-    assert.deepEqual(shop.draft.flowerPrices, {});
-    await page
-      .locator('a[data-nav][href="/dashboard/collection"]')
-      .first()
-      .click();
-    await page
-      .getByRole("button", { name: "Use sample prices for preview" })
-      .click();
-    await page
-      .getByText("Sample prices saved for design previews.", { exact: false })
-      .waitFor();
-    shop = (await (await f.call("/api/session")).json()).shop;
+    let shop = await readShop();
     assert.equal(
-      Object.keys(shop.draft.flowerPrices).length,
-      catalog.flowers.length,
+      shop.draft.collection.length,
+      0,
+      "No unsolicited starting recipes",
     );
+    assert.deepEqual(shop.draft.flowerPrices, {});
+    await fillSample(page);
+    await addCards(page, 6);
+    assert.equal(await page.locator(".collection-editor").count(), 6);
+    assert.equal(
+      await page.locator('[data-action="add-card"]:enabled').count(),
+      0,
+    );
+    shop = await readShop();
+    assert.equal(shop.draft.collection.length, 6);
+    await page.goto(origin + "/dashboard/products");
+    for (let i = 0; i < 10; i++)
+      await page.locator('[data-action="add-product"]').first().click();
+    assert.equal(
+      await page.locator('[data-action="add-product"]:enabled').count(),
+      0,
+    );
+    await page
+      .locator('[data-item-kind="products"][data-item-key="title"]')
+      .first()
+      .fill("Ready-made roses");
+    await page
+      .locator('[data-item-kind="products"][data-item-key="description"]')
+      .first()
+      .fill("Exactly as photographed.");
+    await page
+      .locator('[data-item-kind="products"][data-item-key="priceCents"]')
+      .evaluateAll((nodes) =>
+        nodes.forEach((input, index) => {
+          input.value = String(39.95 + index);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }),
+      );
+    await clickSave(page);
+    shop = await readShop();
+    assert.equal(shop.draft.products.length, 10);
+    assert.equal(shop.draft.products[0].priceCents, 3995);
     await page.goto(origin + "/dashboard/shop");
-    await page
-      .locator('input[data-path="tagline"]')
-      .fill("Made with care, saved in your own studio.");
     await page.locator('input[data-path="city"]').fill("Toronto");
-    await page.locator('[data-action="save"]').click();
+    await page.locator('input[data-path="phone"]').fill("+14165550123");
+    await clickSave(page);
     await page
-      .locator("#pageMessage")
-      .filter({ hasText: "Your private draft is saved." })
-      .waitFor();
-    await page
-      .locator("#logoFile")
+      .locator('input[data-kind="logo"]')
       .setInputFiles(path.join(root, "assets/studio-pink.webp"));
     await page.waitForFunction(
       () =>
         document.querySelector(".logo-preview img")?.complete &&
         document.querySelector(".logo-preview img")?.naturalWidth > 0,
     );
-    await page.waitForFunction(
-      () =>
-        document.querySelector("#saveState")?.textContent ===
-        "All changes saved",
-    );
-    await page.goto(origin + "/dashboard/prices");
-    await page.locator('[data-flower-price="rose_pink"]').fill("9.75");
-    await page.locator('[data-action="save"]').click();
-    await page
-      .locator("#pageMessage")
-      .filter({ hasText: "Your private draft is saved." })
-      .waitFor();
-    shop = (await (await f.call("/api/session")).json()).shop;
-    assert.equal(shop.draft.flowerPrices.rose_pink, 975);
+    await saved(page);
+    shop = await readShop();
+    assert.match(shop.draft.logoMediaId, /^img_[a-f0-9]{64}$/);
+    await page.goto(origin + "/dashboard/editor");
+    await page.locator('[data-edit="headline"]').click();
+    const headline = page.locator('[data-path="home.headline"]');
+    await headline.fill("Flowers made for your moments");
+    await page.locator('[data-action="close-inspector"]').first().click();
+    await clickSave(page);
+    await page.screenshot({
+      path: path.join(output, "editor-desktop.png"),
+      fullPage: true,
+    });
+    shop = await readShop();
+    assert.equal(shop.draft.home.headline, "Flowers made for your moments");
     await page.goto(origin + "/s/" + shop.slug);
-    await page.locator(".store-card").first().waitFor();
-    assert.equal(await page.locator(".store-card").count(), 4);
+    await page.locator("#custom .flower-card").first().waitFor();
+    assert.equal(await page.locator("#custom .flower-card").count(), 6);
+    assert.equal(await page.locator("#products .flower-card").count(), 10);
     const links = await page
-      .locator(".store-card")
+      .locator("#custom .flower-card")
       .first()
-      .locator("a")
-      .evaluateAll((els) => els.map((el) => el.href));
+      .locator("a[data-studio]")
+      .evaluateAll((nodes) => nodes.map((n) => n.href));
     assert.equal(
       new URL(links[0]).searchParams.get("card"),
       new URL(links[1]).searchParams.get("card"),
     );
-    assert.equal(new URL(links[0]).searchParams.get("shop"), shop.id);
     await page.screenshot({
       path: path.join(output, "storefront-desktop.png"),
       fullPage: true,
     });
     await page
-      .locator(".store-card")
+      .locator("#custom .flower-card")
       .first()
       .getByRole("link", { name: "Customise" })
       .click();
-    try {
-      await page.waitForFunction(() => window.NebulaApp?.ready, undefined, {
-        timeout: 60000,
-      });
-    } catch (error) {
-      console.error(
-        "Studio diagnostic",
-        await page.evaluate(() => ({
-          boot: document.querySelector("#platformBoot")?.textContent,
-          errors: window.__errors,
-          ready: window.NebulaApp?.ready,
-          stage: document.body.innerText.slice(0, 1300),
-        })),
-      );
-      throw error;
-    }
-    assert.equal(await page.locator("#orderButton").isVisible(), false);
-    assert.ok(
-      (await page.locator("#brandLogo").getAttribute("src")).startsWith(
-        "blob:",
-      ),
-    );
+    await studioReady(page);
     await page.evaluate(() => NebulaApp.setTab("finishing"));
-    await page.locator("#designName").fill("Saved for my collection");
+    await page.locator("#designName").fill("Saved exact fresh design");
     await page.locator("#designName").blur();
     await page.locator("#platformSaveCollection").click();
     await page
-      .getByText("Saved to your collection.", { exact: false })
+      .locator("#platformSaveStatus")
+      .filter({ hasText: "Saved" })
       .waitFor();
-    const saved = await page.evaluate(() => NebulaApp.state);
-    shop = (await (await f.call("/api/session")).json()).shop;
-    assert.deepEqual(shop.draft.collection[0].design, saved);
-    assert.equal(
-      shop.draft.collection[0].design.title,
-      "Saved for my collection",
+    const firstDesign = await page.evaluate(() =>
+      NebulaPlatformStudio.design(),
     );
+    shop = await readShop();
+    assert.deepEqual(shop.draft.collection[0].design, firstDesign);
+    await page.reload();
+    await studioReady(page);
+    assert.deepEqual(
+      await page.evaluate(() => NebulaPlatformStudio.design()),
+      firstDesign,
+    );
+    for (const mode of ["classic", "heart", "dome"]) {
+      await page.locator('[data-mode="' + mode + '"]').click();
+      await page.waitForFunction(
+        (value) => NebulaApp.state.mode === value,
+        mode,
+      );
+      // Modes keep independent bouquets. Switching can legitimately open an
+      // empty design; exercise saving an offered flower in each one.
+      await page.evaluate(() => {
+        if (!NebulaApp.state.items.length) NebulaApp.add("rose_pink");
+      });
+      await page.locator("#platformSaveCollection").click();
+      await page
+        .locator("#platformSaveStatus")
+        .filter({ hasText: "Saved" })
+        .waitFor();
+      shop = await readShop();
+      assert.equal(shop.draft.collection[0].design.mode, mode);
+    }
     await page.screenshot({
       path: path.join(output, "studio-desktop.png"),
       fullPage: true,
     });
-    await page.reload();
-    await page.waitForFunction(() => window.NebulaApp?.ready, undefined, {
-      timeout: 60000,
-    });
-    assert.deepEqual(await page.evaluate(() => NebulaApp.state), saved);
-    // Verify each original arrangement mode can still be edited and persisted.
-    for (const mode of ["classic", "heart", "dome"]) {
-      await page.locator('[data-mode="' + mode + '"]').click();
-      await page.waitForFunction((m) => NebulaApp.state.mode === m, mode);
-      await page.evaluate(() => NebulaRenderer.awaitAssets(NebulaApp.state));
-      await page.locator("#platformSaveCollection").click();
-      await page
-        .getByText("Saved to your collection.", { exact: false })
-        .waitFor();
-      shop = (await (await f.call("/api/session")).json()).shop;
-      assert.equal(shop.draft.collection[0].design.mode, mode);
-      assert.deepEqual(
-        shop.draft.collection.slice(1).map((row) => row.design),
-        [null, null, null],
-      );
-    }
-    // Realistic multi-tab conflict: another owner tab saves after editor opens.
     await f.call("/api/shops/" + shop.id + "/draft", {
       method: "PUT",
       body: {
@@ -295,80 +345,193 @@ const { chromium } = require("playwright");
     });
     await page.locator("#platformSaveCollection").click();
     await page
-      .getByText("Your shop changed in another tab.", { exact: false })
+      .locator("#platformSaveStatus")
+      .filter({ hasText: "changed in another tab" })
       .waitFor();
+    shop = await readShop();
+    assert.equal(shop.draft.city, "Latest city");
+    // New satin shop and existing data use the same policy/API, with compatible modes.
+    const response = await f.call("/api/shops", {
+      method: "POST",
+      token: "other",
+      body: {
+        name: "Satin Room",
+        slug: "satin-room",
+        currency: "USD",
+        preset: "satin",
+      },
+    });
+    assert.equal(response.status, 201);
+    const satin = await context({ width: 390, height: 844 }, "other");
+    const phone = await satin.newPage();
+    phone.setDefaultTimeout(15000);
+    await fillSample(phone);
+    await addCards(phone, 5);
+    let satinShop = await readShop("other");
     assert.equal(
-      (await (await f.call("/api/session")).json()).shop.draft.city,
-      "Latest city",
+      Object.keys(satinShop.draft.flowerPrices).length,
+      catalog.flowers.filter(
+        (r) => r.preset === "satin" && Number.isSafeInteger(r.priceCents),
+      ).length,
+      "Only explicit sample prices may be copied; unknown prices stay unset",
     );
-    const mobile = await context({ width: 390, height: 844 }, "owner");
-    const phone = await mobile.newPage();
-    await phone.goto(origin + "/dashboard");
-    await phone.locator(".sidebar").waitFor();
+    await phone.goto(
+      origin +
+        "/studio/studio.html?shop=" +
+        satinShop.id +
+        "&card=" +
+        satinShop.draft.collection[0].id,
+    );
+    await studioReady(phone);
+    assert.equal(
+      await phone.locator('[data-mode="classic"]').isVisible(),
+      false,
+    );
     assert.ok(
       await phone.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth + 1,
       ),
     );
-    await phone.screenshot({
-      path: path.join(output, "dashboard-mobile.png"),
-      fullPage: true,
-    });
-    await phone.goto(origin + "/s/" + shop.slug);
-    await phone.locator(".store-card").first().waitFor();
-    assert.ok(
-      await phone.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth + 1,
-      ),
-    );
-    await phone.screenshot({
-      path: path.join(output, "storefront-mobile.png"),
-      fullPage: true,
-    });
+    await phone.locator("#platformSaveCollection").click();
     await phone
-      .locator(".store-card")
-      .first()
-      .getByRole("link", { name: "Customise" })
-      .click();
-    await phone.waitForFunction(() => window.NebulaApp?.ready, undefined, {
-      timeout: 60000,
-    });
-    assert.ok(
-      await phone.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth + 1,
-      ),
-    );
-    assert.equal(
-      await phone.locator("#platformSaveCollection").isVisible(),
-      true,
-    );
+      .locator("#platformSaveStatus")
+      .filter({ hasText: "Saved" })
+      .waitFor();
+    satinShop = await readShop("other");
+    assert.ok(satinShop.draft.collection[0].design);
     await phone.screenshot({
-      path: path.join(output, "studio-mobile.png"),
+      path: path.join(output, "satin-studio-mobile.png"),
       fullPage: true,
     });
-    await mobile.close();
+    await phone.goto(
+      origin + "/studio/studio.html?shop=" + satinShop.id + "&blank=1",
+    );
+    await studioReady(phone);
+    await phone.locator("#platformCardTitle").fill("My new satin recipe");
+    // An empty bouquet must never become a sellable design; add an offered item.
+    await phone.evaluate(() => {
+      const id = Object.keys(NebulaConfig.CAT).find(
+        (id) =>
+          NebulaConfig.CAT[id].kind === "flower" &&
+          NebulaConfig.CAT[id].top !== false,
+      );
+      NebulaApp.add(id);
+    });
+    await phone.locator("#platformSaveCollection").click();
+    await phone
+      .locator("#platformSaveStatus")
+      .filter({ hasText: "Saved" })
+      .waitFor();
+    satinShop = await readShop("other");
+    assert.equal(satinShop.draft.collection.length, 6);
+    assert.equal(satinShop.draft.collection[5].title, "My new satin recipe");
+    await satin.close();
     const anon = await context({ width: 390, height: 844 });
     const visitor = await anon.newPage();
+    visitor.setDefaultTimeout(15000);
     await visitor.goto(origin + "/s/" + shop.slug);
     await visitor
-      .getByText("This shop is a private draft.", { exact: false })
+      .getByText("This shop isn’t open to the public yet.", { exact: false })
       .waitFor();
-    assert.equal(await visitor.locator(".store-card").count(), 0);
     assert.equal(
       (await visitor.request.get(origin + "/api/shops/" + shop.id)).status(),
       404,
     );
+    // Only local QA receives a synthetic entitlement, never the deployed service.
+    shop = await readShop();
+    const object = f.env.SHOPS.objects.get(shop.id);
+    object.state.storage.sql.exec(
+      "UPDATE shop SET data=? WHERE singleton=1",
+      JSON.stringify({
+        ...shop,
+        subscription: {
+          status: "active",
+          paidUntil: Date.now() + 86400000,
+          testEnvironment: false,
+        },
+      }),
+    );
+    f.env.PUBLISHING_ENABLED = "true";
+    const published = await f.call("/api/shops/" + shop.id + "/publish", {
+      method: "POST",
+      body: { version: shop.version },
+    });
+    assert.equal(published.status, 200, await published.clone().text());
+    await visitor.reload();
+    await visitor.locator("#products .flower-card").first().waitFor();
+    assert.equal(await visitor.locator("#custom .flower-card").count(), 6);
+    await visitor.locator('[data-action="product-request"]').first().click();
+    await visitor
+      .locator('.nb-order-form input[name="name"]')
+      .fill("Local Test Customer");
+    await visitor
+      .locator('.nb-order-form input[name="phone"]')
+      .fill("5551234567");
+    await visitor.locator('.nb-order-form button[type="submit"]').click();
+    await visitor.getByText("YOUR REQUEST IS SAVED", { exact: true }).waitFor();
+    const requests = await (
+      await f.call("/api/shops/" + shop.id + "/requests")
+    ).json();
+    assert.equal(requests.requests.length, 1);
+    assert.equal(requests.requests[0].totalCents, 3995);
+    await visitor.locator("[data-close]").click();
     await visitor.screenshot({
-      path: path.join(output, "locked-mobile.png"),
+      path: path.join(output, "storefront-mobile.png"),
       fullPage: true,
     });
-    await anon.close();
-    assert.deepEqual(errors, [], "No unhandled browser errors");
-    assert.deepEqual(badRequests, [], "No unintended outbound requests");
-    console.log(
-      "PASS local browser sign-in, shop creation, sample pricing, private logo, direct routes, four matching recipe links, unchanged-engine design/save/reload, conflicts, mobile layout and anonymous lock. Firebase was a local fixture; no real email or payment was sent.",
+    await visitor
+      .locator("#custom .flower-card")
+      .first()
+      .getByRole("link", { name: "Customise" })
+      .click();
+    await studioReady(visitor);
+    assert.equal(await visitor.locator("#platformSaveCollection").count(), 0);
+    assert.equal(
+      await visitor.locator("#platformRequestOrder").isEnabled(),
+      true,
     );
-    console.log("Screenshots: " + output);
+    await visitor.locator("#platformRequestOrder").click();
+    await visitor
+      .locator('.nb-order-form input[name="name"]')
+      .fill("Local Design Customer");
+    await visitor
+      .locator('.nb-order-form input[name="phone"]')
+      .fill("5551234568");
+    await visitor.locator('.nb-order-form button[type="submit"]').click();
+    await visitor.getByText("YOUR REQUEST IS SAVED", { exact: true }).waitFor();
+    assert.equal(
+      (await (await f.call("/api/shops/" + shop.id + "/requests")).json())
+        .requests.length,
+      2,
+    );
+    await anon.close();
+    await page.goto(origin + "/admin");
+    await page.locator(".admin-table tbody tr").first().waitFor();
+    assert.ok((await page.locator(".admin-table tbody tr").count()) >= 2);
+    await page.screenshot({
+      path: path.join(output, "admin-desktop.png"),
+      fullPage: true,
+    });
+    assert.deepEqual(errors, [], "No unhandled browser errors");
+    assert.deepEqual(badRequests, [], "No unexpected outbound service");
+    console.log(
+      "PASS V2 actual local API: fresh/satin catalogues,6recipes,10fixedproducts,inlineeditor,immutablelogo,allfreshmodes,satinblank/save,mobile,versions,admin,unpaidrequestreceiptsandpublic/ownerisolation. LocalfakeFirebaseandentitlementonly; norealchargesoremail.",
+    );
+  } catch (error) {
+    await page
+      .screenshot({ path: path.join(output, "failure.png"), fullPage: true })
+      .catch(() => {});
+    console.error(
+      "Page:",
+      page.url(),
+      (
+        await page
+          .locator("body")
+          .innerText()
+          .catch(() => "")
+      ).slice(0, 3500),
+    );
+    throw error;
   } finally {
     await browser.close();
     await new Promise((resolve) => server.close(resolve));

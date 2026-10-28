@@ -8,6 +8,7 @@ const API_URL = "https://api.lemonsqueezy.com/v1/checkouts";
 const JSON_API = "application/vnd.api+json";
 const MAX_BYTES = 64 * 1024;
 const origins = new Set([
+  "https://app.nebulastudio.site",
   "https://nebula.aneslaidaoui06.workers.dev",
   "https://nebulastudio.site",
 ]);
@@ -254,7 +255,7 @@ export function createLemonAdapter(
     requireValue(
       plain(request) &&
         Object.keys(request).every((key) =>
-          ["verifiedUser", "shop"].includes(key),
+          ["verifiedUser", "shop", "checkoutNonce"].includes(key),
         ),
       "A verified owner and server-loaded shop are required.",
       403,
@@ -270,7 +271,12 @@ export function createLemonAdapter(
       "The verified owner does not match this shop.",
       403,
     );
-    const nonce = crypto.randomUUID(),
+    requireValue(
+      request.checkoutNonce === undefined ||
+        /^[a-f0-9-]{36}$/.test(request.checkoutNonce),
+      "Invalid server checkout nonce.",
+    );
+    const nonce = request.checkoutNonce || crypto.randomUUID(),
       binding = await sign(bindingBytes(shopId, ownerUid, nonce));
     const expiresAt = new Date(now() + 30 * 60000).toISOString();
     const payload = {
@@ -284,7 +290,7 @@ export function createLemonAdapter(
             redirect_url:
               config.siteOrigin + "/dashboard/billing?checkout=returned",
           },
-          checkout_options: { embed: false },
+          checkout_options: { embed: false, discount: false },
           checkout_data: {
             email: user.email,
             custom: {

@@ -1627,3 +1627,1419 @@ textarea:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+/* The florist's storefront and visual editor */
+.stat-limit {
+  font:
+    14px "DM Sans",
+    sans-serif;
+  color: var(--muted);
+}
+.status-word {
+  font-size: 31px !important;
+}
+.asset-name {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.asset-name img {
+  width: 42px;
+  height: 48px;
+  object-fit: contain;
+}
+.catalogue-group {
+  text-transform: capitalize;
+  font-size: 23px;
+  margin: 25px 0 8px;
+}
+.collection-intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  align-items: center;
+  margin: 0 0 25px;
+}
+.collection-intro .subtle {
+  max-width: 630px;
+  margin: 12px 0 0;
+}
+.item-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.item-heading .tiny-label {
+  margin: 0;
+}
+.danger {
+  color: #9a3d4e;
+}
+.collection-body > .field {
+  margin-bottom: 15px;
+}
+.toggle-line {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  font-weight: 500;
+}
+.toggle-line input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--wine);
+  flex-shrink: 0;
+}
+.collection-body > .toggle-line {
+  margin: 18px 0;
+}
+.mode-options {
+  margin-top: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+.mode-options .tiny-label {
+  width: 100%;
+  margin: 0;
+}
+.recipe-library {
+  margin-top: 30px;
+}
+.recipe-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.recipe-picker article {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  align-items: flex-start;
+}
+.recipe-picker img {
+  height: 155px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--ivory);
+}
+.recipe-picker strong {
+  font-size: 12px;
+}
+.recipe-picker small {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+.recipe-picker .button {
+  margin-top: auto;
+}
+.product-empty {
+  padding: 60px 24px;
+  text-align: center;
+}
+.product-empty > span {
+  font-size: 65px;
+  color: var(--wine);
+  display: block;
+  margin-bottom: 15px;
+}
+.domain-plan {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+}
+.domain-plan h3 {
+  margin-top: 18px;
+}
+.domain-plan .subtle {
+  max-width: 620px;
+}
+.domain-plan .button {
+  flex-shrink: 0;
+}
+.readiness-list {
+  margin: 20px 0;
+}
+.floral-store {
+  padding: 0 !important;
+  max-width: none !important;
+  background: var(--shop-background, #f7f5ef);
+  color: #30282b;
+  --wine: var(--shop-primary, #672a3f);
+}
+.floral-store .button {
+  background: var(--shop-primary);
+  border-color: var(--shop-primary);
+  border-radius: 5px;
+}
+.floral-store .button.secondary {
+  background: transparent;
+  color: var(--shop-primary);
+  border-color: color-mix(in srgb, var(--shop-primary), transparent 65%);
+}
+.floral-store .plain-button,
+.floral-store .eyebrow,
+.floral-store h1 em,
+.floral-store h2 em {
+  color: var(--shop-primary);
+}
+.store-announcement {
+  min-height: 35px;
+  text-align: center;
+  padding: 9px 20px;
+  background: var(--shop-primary);
+  color: #fffefa;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.store-announcement span {
+  margin: 0 15px;
+}
+.floral-store .store-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 29px 6%;
+  margin: 0;
+  border-bottom: 1px solid #30282b12;
+}
+.floral-store .store-brand {
+  font:
+    500 25px/1.1 "Cormorant Garamond",
+    Georgia,
+    serif;
+  gap: 9px;
+  max-width: 45%;
+  flex-shrink: 0;
+}
+.floral-store .store-brand > span {
+  font-size: 34px;
+  color: var(--shop-primary);
+}
+.floral-store .store-brand img {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+.floral-store .store-header nav {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  font-size: 10px;
+}
+.floral-store .store-header nav a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+.store-builder-nav {
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 11px 15px;
+  border: 1px solid #30282b25;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.floral-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7%;
+  align-items: center;
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 48px 6% 60px;
+  min-height: 605px;
+}
+.hero-copy {
+  padding: 25px 0;
+}
+.floral-hero .eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  margin-bottom: 23px;
+}
+.floral-hero h1 {
+  font-size: clamp(46px, 5.3vw, 82px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  max-width: 590px;
+  margin: 0 0 25px;
+  text-wrap: balance;
+}
+.hero-description {
+  max-width: 390px;
+  font-size: 12px;
+  color: #807475;
+  line-height: 1.85;
+  white-space: pre-line;
+  margin-bottom: 30px;
+}
+.hero-footnote {
+  font-size: 9px;
+  color: #817575;
+  margin-top: 35px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-footnote span {
+  font-size: 22px;
+  color: var(--shop-primary);
+}
+.hero-photo {
+  position: relative;
+  aspect-ratio: 1/1.06;
+  max-height: 570px;
+}
+.hero-photo > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 45% 45% 2px 2px;
+  background: #ecdfda;
+}
+.hero-stamp {
+  position: absolute;
+  bottom: 20px;
+  left: -30px;
+  background: #fffefa;
+  width: 117px;
+  height: 117px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 30px #30282b0a;
+  font-size: 10px;
+  line-height: 1.4;
+  transform: rotate(-12deg);
+  color: var(--shop-primary);
+}
+.hero-stamp em {
+  font:
+    20px "Cormorant Garamond",
+    serif;
+}
+.hero-stamp span {
+  font-size: 24px;
+  line-height: 1.3;
+}
+.floral-ribbon {
+  display: flex;
+  justify-content: space-around;
+  gap: 25px;
+  align-items: center;
+  border-top: 1px solid #30282b15;
+  border-bottom: 1px solid #30282b15;
+  padding: 18px 4%;
+  font-size: 8px;
+  letter-spacing: 0.13em;
+  font-weight: 500;
+  overflow: hidden;
+}
+.floral-ribbon i {
+  font-size: 21px;
+  color: var(--shop-primary);
+  font-style: normal;
+}
+.flower-section {
+  padding: 74px 6% 25px;
+  max-width: 1450px;
+  margin: 0 auto;
+}
+.floral-store .store-section-heading {
+  margin: 0 0 35px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+}
+.store-section-heading .eyebrow {
+  font-size: 8px;
+  margin-bottom: 15px;
+}
+.floral-store .store-section-heading h2 {
+  font-size: 45px;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+.floral-store .store-section-heading > p {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #817575;
+  margin: 0 0 4px;
+}
+.flower-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px 25px;
+}
+.flower-card {
+  min-width: 0;
+  border: 1px solid #30282b12;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #fffefa80;
+  position: relative;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.flower-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px #30282b08;
+}
+.photo-wrap {
+  position: relative;
+}
+.flower-photo {
+  aspect-ratio: 1/1.05;
+  overflow: hidden;
+  background: #ece5df;
+  display: grid;
+  place-items: center;
+}
+.flower-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.flower-photo .cover-placeholder {
+  font-size: 75px;
+  opacity: 0.4;
+  color: var(--shop-primary);
+}
+.photo-caption {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  border-radius: 30px;
+  background: #fffefae6;
+  padding: 5px 9px;
+  font-size: 8px;
+  letter-spacing: 0.03em;
+  color: #776d6d;
+}
+.flower-card-body {
+  padding: 22px;
+}
+.flower-card-body .tiny-label {
+  font-size: 8px;
+  font-weight: 500;
+  color: #9b777c;
+  letter-spacing: 0.12em;
+  display: block;
+  margin-bottom: 10px;
+}
+.flower-card-body h3 {
+  font-size: 29px;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+.flower-card-body p {
+  font-size: 10px;
+  line-height: 1.8;
+  color: #817575;
+  min-height: 36px;
+  margin-bottom: 20px;
+}
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.card-actions .button {
+  font-size: 10px;
+}
+.card-actions .plain-button {
+  font-size: 10px;
+}
+.fixed-price {
+  font-size: 17px;
+  margin-bottom: 18px;
+  color: var(--shop-primary);
+  font-weight: 500;
+}
+.fixed-section {
+  padding-bottom: 65px;
+}
+.empty-collection {
+  border: 1px dashed #30282b30;
+  padding: 45px 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+.empty-collection > span {
+  font-size: 45px;
+  color: var(--shop-primary);
+}
+.empty-collection > p {
+  font-size: 12px;
+  color: #817575;
+}
+.independent-builder {
+  max-width: 1265px;
+  margin: 45px auto 0;
+  background: #eee3df;
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  align-items: center;
+  padding: 65px 7%;
+  border-radius: 5px;
+  gap: 40px;
+  overflow: hidden;
+}
+.independent-builder h2 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+.independent-builder .eyebrow {
+  font-size: 8px;
+}
+.independent-builder p:not(.eyebrow):not(.helper) {
+  font-size: 11px;
+  max-width: 370px;
+  color: #817575;
+  margin-bottom: 24px;
+}
+.builder-decoration {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 260px;
+  border: 1px solid #672a3f24;
+  border-radius: 50% 50% 0 0;
+  background: #f8f2ec80;
+  transform: rotate(6deg);
+}
+.builder-decoration > span {
+  font-size: 150px;
+  line-height: 1;
+  color: var(--shop-primary);
+  font-weight: 400;
+}
+.builder-decoration i {
+  font:
+    27px "Cormorant Garamond",
+    serif;
+  color: var(--shop-primary);
+}
+.store-about {
+  max-width: 690px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 90px 25px;
+}
+.store-about > .eyebrow {
+  font-size: 8px;
+}
+.store-about h2 {
+  font-size: 49px;
+  line-height: 1.05;
+}
+.store-about > p:not(.eyebrow) {
+  font-size: 12px;
+  line-height: 2;
+  color: #817575;
+  white-space: pre-line;
+}
+.about-signature {
+  font:
+    italic 26px "Cormorant Garamond",
+    serif;
+  color: var(--shop-primary);
+}
+.store-contact {
+  display: flex;
+  gap: 45px;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 6%;
+  border-top: 1px solid #30282b15;
+  border-bottom: 1px solid #30282b15;
+}
+.store-contact > span {
+  font-size: 80px;
+  line-height: 1;
+  color: var(--shop-primary);
+}
+.store-contact .eyebrow {
+  font-size: 8px;
+  margin-bottom: 12px;
+}
+.store-contact h2 {
+  font-size: 36px;
+  margin-bottom: 17px;
+}
+.contact-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 25px;
+  font-size: 11px;
+  color: #817575;
+}
+.contact-details a {
+  text-decoration: none;
+}
+.floral-store .store-bottom {
+  margin: 0;
+  padding: 28px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  font-size: 9px;
+  color: #817575;
+}
+.store-bottom strong {
+  font:
+    21px "Cormorant Garamond",
+    serif;
+  color: var(--shop-primary);
+}
+.preview-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  padding: 13px 6%;
+  background: #eee4dc;
+  border-bottom: 1px solid #e2d5c9;
+}
+.preview-banner a {
+  font-size: 10px;
+  white-space: nowrap;
+}
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.editor-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background: #91a088;
+  border-radius: 50%;
+}
+.editor-toolbar .actions {
+  gap: 8px;
+}
+.editor-toggle {
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 6px;
+  font-size: 10px;
+}
+.editor-toggle.selected {
+  background: #eee5df;
+  border-color: #e1d3c8;
+  color: var(--wine);
+}
+.editor-hint {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 12px 0 18px;
+}
+.store-preview-frame {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px #30282b06;
+  transition: max-width 0.2s;
+  container-type: inline-size;
+}
+.store-preview-frame .floral-hero {
+  padding: 35px 5% 45px;
+  min-height: 440px;
+  gap: 5%;
+}
+.store-preview-frame .floral-hero h1 {
+  font-size: clamp(35px, 4.5vw, 63px);
+}
+.store-preview-frame .hero-description {
+  font-size: 10px;
+}
+.store-preview-frame .hero-stamp {
+  width: 90px;
+  height: 90px;
+  left: -17px;
+  font-size: 8px;
+}
+.store-preview-frame .hero-stamp em {
+  font-size: 16px;
+}
+.store-preview-frame .hero-stamp span {
+  font-size: 20px;
+}
+.store-preview-frame .store-header {
+  padding: 22px 5%;
+  gap: 15px;
+}
+.store-preview-frame .store-header nav {
+  gap: 14px;
+  font-size: 8px;
+}
+.store-preview-frame .store-brand {
+  font-size: 21px;
+}
+.store-preview-frame .store-builder-nav {
+  font-size: 8px;
+  padding: 9px;
+}
+.store-preview-frame .flower-section {
+  padding: 50px 5% 20px;
+}
+.store-preview-frame .flower-grid {
+  gap: 20px 15px;
+}
+.store-preview-frame .flower-card-body {
+  padding: 17px;
+}
+.store-preview-frame .flower-card-body h3 {
+  font-size: 24px;
+}
+.store-preview-frame .card-actions {
+  gap: 7px;
+}
+.store-preview-frame .card-actions .button {
+  font-size: 8px;
+  padding: 8px 10px;
+  min-height: 32px;
+}
+.store-preview-frame .card-actions .plain-button {
+  font-size: 8px;
+}
+.store-preview-frame .independent-builder {
+  margin: 30px 5% 0;
+  padding: 45px 6%;
+  gap: 20px;
+}
+.store-preview-frame .independent-builder h2 {
+  font-size: 37px;
+}
+.store-preview-frame .builder-decoration {
+  height: 200px;
+}
+.store-preview-frame .builder-decoration > span {
+  font-size: 100px;
+}
+.store-preview-frame .store-about {
+  padding: 60px 25px;
+}
+.is-editing [data-edit] {
+  cursor: pointer;
+  position: relative;
+  outline: 1px dashed transparent;
+  outline-offset: 4px;
+  transition: outline-color 0.15s;
+}
+.is-editing [data-edit]:hover,
+.is-editing [data-edit]:focus-visible {
+  outline: 2px dashed #a97b82;
+  outline-offset: 3px;
+}
+.is-editing .flower-card:hover {
+  transform: none;
+}
+.edit-photo-label {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  border-radius: 20px;
+  background: #fffefaed;
+  padding: 8px 12px;
+  font-size: 9px;
+  color: var(--shop-primary);
+}
+.item-hidden {
+  opacity: 0.55;
+}
+.hidden-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 9px;
+  background: #30282bdd;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 9px;
+}
+.inspector-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #30282b35;
+  z-index: 49;
+  backdrop-filter: blur(1px);
+}
+.inspector-drawer {
+  position: fixed;
+  top: 16px;
+  bottom: 16px;
+  right: 16px;
+  width: 370px;
+  max-width: calc(100vw - 32px);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 16px;
+  box-shadow: 0 15px 80px #30282b25;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.inspector-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 26px 25px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.inspector-heading .eyebrow {
+  font-size: 8px;
+  margin-bottom: 13px;
+}
+.inspector-heading h2 {
+  font-size: 31px;
+  margin: 0;
+}
+.drawer-close {
+  border: 0;
+  background: transparent;
+  font-size: 25px;
+  color: var(--wine);
+  line-height: 1;
+  padding: 3px;
+}
+.inspector-content {
+  padding: 25px;
+  overflow: auto;
+  flex: 1;
+}
+.inspector-content > .field {
+  margin-bottom: 19px;
+}
+.inspector-content > .toggle-line {
+  margin: 18px 0;
+}
+.inspector-content > .button,
+.inspector-content > label.button {
+  margin: 9px 8px 9px 0;
+}
+.inspector-content > .plain-button {
+  display: block;
+  margin-top: 18px;
+}
+.inspector-content .form-grid {
+  grid-template-columns: 1fr;
+}
+.inspector-content input[type="color"] {
+  height: 50px;
+  padding: 6px;
+  max-width: 100%;
+}
+.inspector-content textarea {
+  min-height: 135px;
+  line-height: 1.7;
+}
+.inspector-footer {
+  border-top: 1px solid var(--line);
+  padding: 16px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  background: #f7f5ef;
+}
+.inspector-footer .helper {
+  margin: 0;
+}
+.inspector-photo {
+  aspect-ratio: 1.2;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+.inspector-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.section-sort {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0;
+}
+.section-sort > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.section-sort .toggle-line {
+  flex: 1;
+  font-size: 11px;
+}
+.section-sort button {
+  border: 0;
+  background: #f0e8e2;
+  border-radius: 4px;
+  padding: 5px 8px;
+  color: var(--wine);
+}
+.drawer-recipes {
+  display: grid;
+  gap: 10px;
+}
+.drawer-recipes button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: var(--ivory);
+  border-radius: 7px;
+  font-size: 11px;
+  color: var(--ink);
+}
+.drawer-recipes img {
+  width: 52px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.drawer-recipes button > span:first-of-type {
+  flex: 1;
+}
+.mobile-frame {
+  max-width: 390px;
+  margin: 0 auto;
+}
+.admin-page {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 45px 5% 65px;
+}
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.admin-summary .surface {
+  padding: 23px;
+}
+.admin-summary strong {
+  display: block;
+  font:
+    39px "Cormorant Garamond",
+    serif;
+  margin-top: 12px;
+}
+.admin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 22px;
+  align-items: start;
+}
+.admin-search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.admin-search input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  border-radius: 7px;
+  background: var(--ivory);
+  font-size: 12px;
+}
+.admin-table-scroll {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.admin-table th {
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 500;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.admin-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  vertical-align: top;
+}
+.admin-table td strong,
+.admin-table td span,
+.admin-table td small {
+  display: block;
+}
+.admin-table td strong {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.admin-table td span:not(.pill) {
+  color: var(--muted);
+  font-size: 10px;
+}
+.admin-table td small {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.admin-table .pill {
+  display: inline-flex;
+  font-size: 9px;
+}
+.admin-detail > h2 {
+  font-size: 32px;
+}
+.admin-detail dl {
+  font-size: 11px;
+  margin: 25px 0;
+}
+.admin-detail dt {
+  color: var(--muted);
+  margin-top: 15px;
+  font-size: 9px;
+}
+.admin-detail dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.admin-detail > .button {
+  margin: 5px 0;
+}
+.admin-flower {
+  font-size: 55px;
+  color: var(--wine);
+  display: block;
+  margin-bottom: 25px;
+}
+.merchant-requests {
+  margin-top: 22px;
+}
+.app-header {
+  min-height: 80px;
+}
+.beta-label {
+  font-size: 8px;
+}
+.store-preview-frame .floral-store .button {
+  background: var(--shop-primary);
+}
+@container (max-width:650px) {
+  .store-preview-frame .floral-store .store-header nav {
+    display: none;
+  }
+  .store-preview-frame .floral-store .store-brand {
+    max-width: 65%;
+  }
+  .store-preview-frame .floral-hero {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 30px 7%;
+  }
+  .store-preview-frame .floral-hero h1 {
+    font-size: 48px;
+  }
+  .store-preview-frame .hero-copy {
+    padding: 10px 0;
+  }
+  .store-preview-frame .hero-description {
+    font-size: 11px;
+  }
+  .store-preview-frame .hero-photo {
+    width: 85%;
+    margin: 10px auto;
+    max-height: 370px;
+    aspect-ratio: 1;
+  }
+  .store-preview-frame .hero-footnote {
+    margin-top: 20px;
+  }
+  .store-preview-frame .floral-ribbon {
+    gap: 20px;
+    white-space: nowrap;
+    justify-content: flex-start;
+    padding: 13px 7%;
+    font-size: 7px;
+  }
+  .store-preview-frame .floral-ribbon > span:last-child {
+    display: none;
+  }
+  .store-preview-frame .flower-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .store-preview-frame .flower-card-body {
+    padding: 12px;
+  }
+  .store-preview-frame .flower-card-body h3 {
+    font-size: 24px;
+  }
+  .store-preview-frame .flower-card-body p {
+    font-size: 9px;
+  }
+  .store-preview-frame .store-section-heading {
+    align-items: flex-start;
+    gap: 15px;
+    flex-direction: column;
+  }
+  .store-preview-frame .store-section-heading h2 {
+    font-size: 36px;
+  }
+  .store-preview-frame .store-section-heading > p {
+    font-size: 10px;
+  }
+  .store-preview-frame .independent-builder {
+    grid-template-columns: 1fr;
+    padding: 35px 8%;
+  }
+  .store-preview-frame .builder-decoration {
+    display: none;
+  }
+  .store-preview-frame .independent-builder h2 {
+    font-size: 35px;
+  }
+  .store-preview-frame .store-about h2 {
+    font-size: 39px;
+  }
+  .store-preview-frame .store-contact {
+    gap: 18px;
+    padding: 35px 7%;
+  }
+  .store-preview-frame .store-contact > span {
+    font-size: 45px;
+  }
+  .store-preview-frame .store-contact h2 {
+    font-size: 28px;
+  }
+  .store-preview-frame .contact-details {
+    font-size: 9px;
+    gap: 10px;
+  }
+  .store-preview-frame .store-bottom {
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 8px;
+  }
+  .store-preview-frame .store-bottom > span:nth-child(2) {
+    display: none;
+  }
+  .store-preview-frame .photo-caption {
+    font-size: 6px;
+    padding: 4px 6px;
+    left: 6px;
+    bottom: 6px;
+  }
+  .store-preview-frame .flower-card-body .tiny-label {
+    font-size: 7px;
+  }
+  .store-preview-frame .fixed-price {
+    font-size: 14px;
+  }
+  .store-preview-frame .flower-card-body > .button {
+    font-size: 8px;
+    padding: 8px;
+    min-height: 34px;
+  }
+}
+@media (max-width: 1100px) {
+  .recipe-picker {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .floral-store .store-header nav {
+    gap: 14px;
+  }
+  .store-preview-frame .store-header nav {
+    display: none;
+  }
+  .admin-layout {
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  .editor-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 760px) {
+  .app-header {
+    padding: 17px 20px;
+    gap: 12px;
+  }
+  .app-header .wordmark {
+    font-size: 25px;
+  }
+  .account-nav {
+    gap: 12px;
+  }
+  .account-email {
+    display: none;
+  }
+  .beta-label {
+    padding: 6px 8px;
+    font-size: 7px;
+  }
+  .collection-intro,
+  .domain-plan {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .recipe-picker {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .recipe-picker img {
+    height: 150px;
+  }
+  .admin-page {
+    padding: 30px 18px;
+  }
+  .admin-summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .admin-summary .surface {
+    margin-bottom: 0;
+    padding: 18px;
+  }
+  .admin-layout {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+  }
+  .admin-layout > .surface {
+    padding: 18px;
+  }
+  .admin-page .page-heading {
+    flex-direction: column;
+  }
+  .floral-store .store-header {
+    padding: 22px 6%;
+    gap: 10px;
+  }
+  .floral-store .store-brand {
+    font-size: 24px;
+    max-width: 68%;
+  }
+  .floral-store .store-header nav {
+    display: none;
+  }
+  .floral-store .store-builder-nav {
+    font-size: 8px;
+    padding: 10px;
+  }
+  .floral-hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 35px 7% 45px;
+    min-height: 0;
+  }
+  .hero-copy {
+    padding: 0;
+  }
+  .floral-hero h1 {
+    font-size: 61px;
+    max-width: 450px;
+    line-height: 1;
+  }
+  .hero-description {
+    font-size: 12px;
+  }
+  .hero-footnote {
+    margin-top: 22px;
+  }
+  .hero-photo {
+    width: 82%;
+    margin: 0 auto;
+    max-height: 500px;
+    aspect-ratio: 1/1.05;
+  }
+  .hero-stamp {
+    width: 100px;
+    height: 100px;
+    left: -25px;
+  }
+  .floral-ribbon {
+    justify-content: flex-start;
+    gap: 25px;
+    white-space: nowrap;
+    font-size: 7px;
+    padding: 15px 7%;
+  }
+  .floral-ribbon span:last-child {
+    display: none;
+  }
+  .flower-section {
+    padding: 50px 6% 15px;
+  }
+  .floral-store .store-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 25px;
+  }
+  .floral-store .store-section-heading h2 {
+    font-size: 43px;
+  }
+  .floral-store .store-section-heading > p {
+    font-size: 10px;
+  }
+  .flower-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 13px;
+  }
+  .flower-card-body {
+    padding: 15px;
+  }
+  .flower-card-body h3 {
+    font-size: 27px;
+  }
+  .flower-card-body p {
+    font-size: 10px;
+  }
+  .card-actions {
+    gap: 10px;
+  }
+  .card-actions .button {
+    font-size: 9px;
+    padding: 10px;
+    min-height: 35px;
+  }
+  .card-actions .plain-button {
+    font-size: 9px;
+  }
+  .photo-caption {
+    font-size: 6px;
+    left: 7px;
+    bottom: 7px;
+  }
+  .independent-builder {
+    margin: 35px 6% 0;
+    padding: 40px 8%;
+    grid-template-columns: 1fr;
+  }
+  .independent-builder h2 {
+    font-size: 42px;
+  }
+  .builder-decoration {
+    display: none;
+  }
+  .store-about {
+    padding: 65px 7%;
+  }
+  .store-about h2 {
+    font-size: 44px;
+  }
+  .store-contact {
+    padding: 35px 7%;
+    gap: 22px;
+  }
+  .store-contact > span {
+    font-size: 50px;
+  }
+  .store-contact h2 {
+    font-size: 31px;
+  }
+  .contact-details {
+    gap: 9px 15px;
+    font-size: 10px;
+  }
+  .floral-store .store-bottom {
+    gap: 15px;
+    flex-wrap: wrap;
+    font-size: 8px;
+  }
+  .store-bottom > span:nth-child(2) {
+    display: none;
+  }
+  .preview-banner {
+    padding: 12px 6%;
+    font-size: 8px;
+  }
+  .preview-banner a {
+    font-size: 8px;
+  }
+  .editor-toolbar .actions {
+    flex-wrap: wrap;
+  }
+  .editor-status {
+    font-size: 9px;
+  }
+  .editor-toggle {
+    font-size: 9px;
+    padding: 7px;
+  }
+  .store-preview-frame {
+    border-radius: 8px;
+  }
+  .inspector-drawer {
+    top: 10px;
+    bottom: 10px;
+    right: 10px;
+    max-width: calc(100vw - 20px);
+  }
+  .domain-plan .button {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flower-card,
+  .store-preview-frame {
+    transition: none;
+  }
+}
+
+body.public-shop > .app-header,
+body.public-shop > .app-footer {
+  display: none;
+}

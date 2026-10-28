@@ -1,18 +1,13 @@
 # Nebula self-service platform — implementation blueprint
 
-Status: implementation sequence for the agreed product flow, 28 October 2026.
-The account/private draft, owner preview and shared fresh-flower collection studio
-are implemented as a private beta. Satin, subscription activation and generalized
-merchant payments still require work. The disconnected Lemon test adapter alone
-cannot activate a subscription. See `PLATFORM-BETA-2026-10-28.md` for the tested
-release state. Existing shops and their agreed terms remain in place.
+Status: implementation blueprint. Fresh and satin catalogue/studios, 6 customisable recipes, 10 fixed products, inline editing, protected administration and gated unpaid requests are now implemented as a private beta. Billing activation, generic Square and merchant custom domains remain incomplete. See [PLATFORM-V2-2026-10-28.md](PLATFORM-V2-2026-10-28.md) for current release evidence and user tasks.
 
 ## Customer journey
 
 1. A florist signs in with Firebase Google or verified email/password.
 2. They create one shop and choose its name, logo, contact details, catalogue
    preset, offered products, prices and collection. Start with compatible library
-   recipes; the florist need not manually build four bouquets before previewing.
+   recipes; the florist need not manually build six bouquets before previewing.
 3. Their final shop URL opens a private owner preview. Anonymous visitors see an
    inactive-shop page. Draft changes persist across sign-in sessions.
 4. They choose the USD $29 monthly subscription and pay through Lemon Squeezy.
@@ -20,7 +15,7 @@ release state. Existing shops and their agreed terms remain in place.
    publication and new order requests.
 6. A connected supported Square merchant, approved complete prices and fulfillment
    settings additionally enable customer card checkout. Square can be connected
-   during setup so eligibility can be checked before subscribing.
+   after a paid plan is active. Publication and unpaid requests do not require Square.
 
 ## Budget and services
 
@@ -31,7 +26,7 @@ release state. Existing shops and their agreed terms remain in place.
 - Reuse SQLite-backed Durable Objects for shop data and the existing payment
   ledger. Do not add D1 or another primary database just to duplicate that data.
 - Keep images bounded and compressed in the browser. Proposed first-release
-  limits: one logo up to 80 KiB and four collection thumbnails up to 150 KiB each.
+  limits: one logo up to 80 KiB and six recipe covers and ten fixed-product covers up to 150 KiB each.
   A dedicated bounded upload route and SQLite BLOB storage handle these images;
   the current 60 KB payment JSON endpoint is not an upload API.
 - Use the existing flower artwork and predefined page themes. Arbitrary uploaded

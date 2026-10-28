@@ -1,6 +1,11 @@
 import { DatabaseSync } from "node:sqlite";
 import { ShopRegistry, ShopStore, makeHandler } from "../worker.mjs";
 import { HttpError } from "../../rays-payments/security.mjs";
+import { createRuntime } from "../../../platform/shared/runtime.mjs";
+
+const runtime = createRuntime("fresh");
+export const design = runtime.Model.empty();
+runtime.Model.add(design, "rose_red");
 
 export const origin = "https://nebula.aneslaidaoui06.workers.dev";
 export const catalog = {
@@ -11,6 +16,7 @@ export const catalog = {
       family: "fresh",
       priceCents: 500,
       classic: true,
+      preset: "fresh",
     },
   ],
   extras: [{ id: "card", label: "Card", priceCents: 200 }],
@@ -18,9 +24,10 @@ export const catalog = {
     {
       id: "fresh-classic",
       name: "Classic",
-      mode: "dome",
+      mode: "classic",
       preset: "fresh",
       cover: null,
+      design,
     },
   ],
 };
@@ -63,7 +70,7 @@ export function sqliteState() {
   };
 }
 
-export function namespace(Class) {
+export function namespace(Class, environment = {}) {
   const objects = new Map();
   return {
     objects,
@@ -71,7 +78,13 @@ export function namespace(Class) {
     get(id) {
       if (!objects.has(id)) {
         const state = sqliteState();
-        objects.set(id, { state, instance: new Class(state) });
+        objects.set(id, {
+          state,
+          instance: new Class(
+            state,
+            typeof environment === "function" ? environment() : environment,
+          ),
+        });
       }
       return { fetch: (request) => objects.get(id).instance.fetch(request) };
     },
@@ -81,7 +94,7 @@ export function namespace(Class) {
 export function fixture(options = {}) {
   const env = {
     REGISTRY: namespace(ShopRegistry),
-    SHOPS: namespace(ShopStore),
+    SHOPS: namespace(ShopStore, () => env),
     ENVIRONMENT: "private-beta",
     FIREBASE_PROJECT_ID: "la-flora-6ed47",
     PUBLIC_ORIGIN: origin,
@@ -115,7 +128,10 @@ export function fixture(options = {}) {
         return { uid: "uid-uninvited", email: "not-invited@example.test" };
       throw new HttpError(401, "Verify your email and sign in again.");
     });
-  const handler = makeHandler({ verifyIdentity });
+  const handler = makeHandler({
+    verifyIdentity,
+    verifyAdmin: options.verifyAdmin || (async () => false),
+  });
   const call = (
     path,
     { method = "GET", body, token = "owner", from = origin, headers = {} } = {},

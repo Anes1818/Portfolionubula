@@ -1,6 +1,12 @@
 import { HttpError, requireValue } from "../rays-payments/security.mjs";
+import {
+  normalizePolicy,
+  validateDesign,
+} from "../../platform/shared/policy.mjs";
 
-export const DRAFT_LIMIT = 80 * 1024;
+// Six independently bounded 24 KiB designs leave 48 KiB for shop content.
+export const DRAFT_LIMIT = 192 * 1024;
+export const REQUEST_LIMIT = DRAFT_LIMIT + 4096;
 const encoder = new TextEncoder();
 const idPattern = /^[a-zA-Z0-9_][a-zA-Z0-9_-]{0,79}$/;
 const draftFields = [
@@ -17,6 +23,11 @@ const draftFields = [
   "disabledFlowers",
   "extrasCents",
   "collection",
+  "schemaVersion",
+  "products",
+  "disabledExtras",
+  "enabledModes",
+  "home",
 ];
 const reservedSlugs = new Set([
   "api",
@@ -71,6 +82,20 @@ export function text(value, label, max, required = false) {
   return clean;
 }
 
+export function multilineText(value, label, max) {
+  requireValue(typeof value === "string", `${label} must be text.`);
+  const clean = value.replace(/\r\n?/g, "\n").trim();
+  requireValue(
+    clean.length <= max,
+    `${label} must be at most ${max} characters.`,
+  );
+  requireValue(
+    !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(clean),
+    `${label} contains unsupported characters.`,
+  );
+  return clean;
+}
+
 export function safeId(value, label = "Item ID") {
   requireValue(
     typeof value === "string" && idPattern.test(value),
@@ -108,6 +133,7 @@ export function createInput(input) {
 
 export function initialDraft(input) {
   return {
+    schemaVersion: 2,
     name: input.name,
     tagline: "",
     city: "",
@@ -121,7 +147,136 @@ export function initialDraft(input) {
     disabledFlowers: [],
     extrasCents: {},
     collection: [],
+    products: [],
+    disabledExtras: [],
+    enabledModes:
+      input.preset === "satin"
+        ? ["dome", "heart"]
+        : ["classic", "dome", "heart"],
+    home: {
+      headline: input.name,
+      description: "",
+      heroMediaId: null,
+      about: "",
+      sections: ["custom", "products", "builder", "about", "contact"],
+    },
   };
+}
+
+/** Reading a legacy record adds defaults without rewriting the saved SQLite data. */
+export function hydrateDraft(draft) {
+  const defaults = initialDraft(draft);
+  return {
+    ...defaults,
+    ...draft,
+    schemaVersion: 2,
+    collection: (draft.collection || []).map((item) => ({
+      ...item,
+      available: item.available ?? true,
+      category: item.category ?? "",
+    })),
+    products: (draft.products || []).map((item) => ({
+      ...item,
+      available: item.available ?? true,
+      category: item.category ?? "",
+    })),
+    home: { ...defaults.home, ...(draft.home || {}) },
+  };
+}
+
+export function hydrateShop(shop) {
+  return {
+    ...shop,
+    draft: hydrateDraft(shop.draft),
+    ...(shop.published
+      ? {
+          published: {
+            ...shop.published,
+            draft: hydrateDraft(shop.published.draft),
+          },
+        }
+      : {}),
+    ...(shop.previousPublished
+      ? {
+          previousPublished: {
+            ...shop.previousPublished,
+            draft: hydrateDraft(shop.previousPublished.draft),
+          },
+        }
+      : {}),
+  };
+}
+
+export const mediaReferences = (draft) => [
+  ...new Set(
+    [
+      draft?.logoMediaId,
+      draft?.home?.heroMediaId,
+      ...(draft?.collection || []).map((item) => item.cover),
+      ...(draft?.products || []).map((item) => item.cover),
+    ].filter(Boolean),
+  ),
+];
+
+export function entitled(shop, now = Date.now()) {
+  const subscription = shop?.subscription;
+  if (subscription?.status !== "active") return false;
+  const expiry =
+    subscription.paidUntil ??
+    subscription.paidThrough ??
+    subscription.expiresAt ??
+    subscription.currentPeriodEnd;
+  if (expiry === undefined || expiry === null) return false;
+  const time =
+    typeof expiry === "number"
+      ? expiry < 1e12
+        ? expiry * 1000
+        : expiry
+      : Date.parse(expiry);
+  const verified = subscription.verifiedUntil;
+  const verifiedTime =
+    verified === undefined
+      ? Infinity
+      : typeof verified === "number"
+        ? verified < 1e12
+          ? verified * 1000
+          : verified
+        : Date.parse(verified);
+  return Number.isFinite(time) && time > now && verifiedTime > now;
+}
+
+function mediaId(value, kind) {
+  if (value === null || value === undefined) return null;
+  requireValue(
+    typeof value === "string" &&
+      (/^img_[a-f0-9]{64}$/.test(value) ||
+        (kind === "logo" ? value === "slot-1" : /^slot-[2-5]$/.test(value))),
+    "Choose a previously uploaded image.",
+  );
+  return value;
+}
+
+function idList(value, label, allowed) {
+  requireValue(
+    Array.isArray(value) &&
+      value.length <= 200 &&
+      new Set(value).size === value.length,
+    `${label} must be a unique list of up to 200 IDs.`,
+  );
+  return value.map((id) => {
+    safeId(id);
+    if (allowed)
+      requireValue(allowed.has(id), `${label} contains an unknown item.`);
+    return id;
+  });
+}
+
+function available(value = true) {
+  requireValue(
+    typeof value === "boolean",
+    "Availability must be true or false.",
+  );
+  return value;
 }
 
 function prices(value, label, allowedIds) {
@@ -141,7 +296,7 @@ function prices(value, label, allowedIds) {
   return result;
 }
 
-function boundedDesign(value) {
+export function boundedDesign(value) {
   if (value === null) return null;
   object(value, "Bouquet design");
   let nodes = 0;
@@ -187,14 +342,21 @@ function boundedDesign(value) {
   return value;
 }
 
-export function validateDraft(value, catalog) {
+export function validateDraft(value, catalog, { semantic = true } = {}) {
   object(value, "Draft", draftFields);
   requireValue(
     encoder.encode(JSON.stringify(value)).length <= DRAFT_LIMIT,
     "Draft is too large.",
     413,
   );
-  const result = {};
+  requireValue(
+    value.schemaVersion === undefined ||
+      value.schemaVersion === 1 ||
+      value.schemaVersion === 2,
+    "Unsupported draft schema version.",
+  );
+  value = hydrateDraft(value);
+  const result = { schemaVersion: 2 };
   for (const [key, max, required] of [
     ["name", 80, true],
     ["tagline", 160, false],
@@ -223,42 +385,75 @@ export function validateDraft(value, catalog) {
   );
   result.currency = value.currency;
   result.preset = value.preset;
-  requireValue(
-    value.logoMediaId === undefined ||
-      value.logoMediaId === null ||
-      value.logoMediaId === "slot-1",
-    "Logo media must use slot 1.",
-  );
-  result.logoMediaId = value.logoMediaId ?? null;
+  result.logoMediaId = mediaId(value.logoMediaId, "logo");
   const flowers = catalog?.flowers
-    ? new Set(catalog.flowers.map((item) => item.id))
+    ? new Set(
+        catalog.flowers
+          .filter((item) => !item.preset || item.preset === value.preset)
+          .map((item) => item.id),
+      )
     : null;
   const extras = catalog?.extras
-    ? new Set(catalog.extras.map((item) => item.id))
+    ? new Set(
+        catalog.extras
+          .filter((item) => !item.preset || item.preset === value.preset)
+          .map((item) => item.id),
+      )
     : null;
   const recipes = catalog?.recipes
-    ? new Set(catalog.recipes.map((item) => item.id))
+    ? new Set(
+        catalog.recipes
+          .filter((item) => !item.preset || item.preset === value.preset)
+          .map((item) => item.id),
+      )
     : null;
   result.flowerPrices = prices(value.flowerPrices, "Flower prices", flowers);
   result.extrasCents = prices(value.extrasCents, "Extra prices", extras);
-  requireValue(
-    Array.isArray(value.disabledFlowers) &&
-      value.disabledFlowers.length <= 200 &&
-      new Set(value.disabledFlowers).size === value.disabledFlowers.length,
-    "Disabled flowers must be a unique list of up to 200 IDs.",
+  result.disabledFlowers = idList(
+    value.disabledFlowers,
+    "Disabled flowers",
+    flowers,
   );
-  result.disabledFlowers = value.disabledFlowers.map((id) => {
-    safeId(id);
-    if (flowers)
-      requireValue(
-        flowers.has(id),
-        "Disabled flowers contains an unknown flower.",
-      );
-    return id;
-  });
+  result.disabledExtras = idList(
+    value.disabledExtras,
+    "Disabled extras",
+    extras,
+  );
+  const modes =
+    value.preset === "satin" ? ["dome", "heart"] : ["classic", "dome", "heart"];
   requireValue(
-    Array.isArray(value.collection) && value.collection.length <= 4,
-    "A collection can contain up to four bouquets.",
+    Array.isArray(value.enabledModes) &&
+      value.enabledModes.length <= 3 &&
+      new Set(value.enabledModes).size === value.enabledModes.length &&
+      value.enabledModes.every((mode) => modes.includes(mode)),
+    "Choose compatible builder modes.",
+  );
+  result.enabledModes = [...value.enabledModes];
+  object(value.home, "Home", [
+    "headline",
+    "description",
+    "heroMediaId",
+    "about",
+    "sections",
+  ]);
+  const sections = ["custom", "products", "builder", "about", "contact"];
+  requireValue(
+    Array.isArray(value.home.sections) &&
+      value.home.sections.length <= sections.length &&
+      new Set(value.home.sections).size === value.home.sections.length &&
+      value.home.sections.every((section) => sections.includes(section)),
+    "Choose valid home sections.",
+  );
+  result.home = {
+    headline: text(value.home.headline, "Headline", 160),
+    description: multilineText(value.home.description, "Description", 600),
+    heroMediaId: mediaId(value.home.heroMediaId, "cover"),
+    about: multilineText(value.home.about, "About", 3000),
+    sections: [...value.home.sections],
+  };
+  requireValue(
+    Array.isArray(value.collection) && value.collection.length <= 6,
+    "A collection can contain up to six bouquets.",
   );
   const ids = new Set();
   result.collection = value.collection.map((item) => {
@@ -268,6 +463,8 @@ export function validateDraft(value, catalog) {
       "recipeId",
       "design",
       "cover",
+      "available",
+      "category",
     ]);
     const id = safeId(item.id, "Bouquet ID");
     requireValue(!ids.has(id), "Bouquet IDs must be unique.");
@@ -281,46 +478,170 @@ export function validateDraft(value, catalog) {
       recipeId !== null || design !== null,
       "Choose a recipe or save a bouquet design.",
     );
-    requireValue(
-      item.cover === null ||
-        (typeof item.cover === "string" && /^slot-[2-5]$/.test(item.cover)),
-      "Bouquet cover must use media slot 2–5.",
-    );
     return {
       id,
       title: text(item.title, "Bouquet title", 80, true),
       recipeId,
       design,
-      cover: item.cover,
+      cover: mediaId(item.cover, "cover"),
+      available: available(item.available),
+      category: text(item.category ?? "", "Category", 60),
     };
   });
+  requireValue(
+    Array.isArray(value.products) && value.products.length <= 10,
+    "A shop can contain up to ten fixed products.",
+  );
+  const productIds = new Set();
+  result.products = value.products.map((item) => {
+    object(item, "Product", [
+      "id",
+      "title",
+      "description",
+      "priceCents",
+      "cover",
+      "available",
+      "category",
+    ]);
+    const id = safeId(item.id, "Product ID");
+    requireValue(!productIds.has(id), "Product IDs must be unique.");
+    productIds.add(id);
+    requireValue(
+      item.priceCents === null ||
+        (Number.isSafeInteger(item.priceCents) &&
+          item.priceCents >= 0 &&
+          item.priceCents <= 1000000),
+      "Product price must be whole cents between 0 and 1,000,000, or null.",
+    );
+    return {
+      id,
+      title: text(item.title, "Product title", 80, true),
+      description: multilineText(
+        item.description ?? "",
+        "Product description",
+        1000,
+      ),
+      priceCents: item.priceCents,
+      cover: mediaId(item.cover, "cover"),
+      available: available(item.available),
+      category: text(item.category ?? "", "Category", 60),
+    };
+  });
+  requireValue(
+    mediaReferences(result).length <= 18,
+    "A shop can reference up to eighteen active photos.",
+  );
+  const policy = normalizePolicy(result, catalog);
+  requireValue(
+    policy.ok,
+    policy.issues[0]?.message || "Invalid shop catalogue policy.",
+  );
+  for (const item of semantic ? result.collection : []) {
+    const design =
+      item.design ||
+      catalog?.recipes?.find((recipe) => recipe.id === item.recipeId)?.design;
+    requireValue(
+      design,
+      "This recipe has no compatible saved design. Choose another recipe.",
+    );
+    // Availability is a publication rule. Retain a hidden or unoffered design in
+    // the private draft so a catalogue edit never silently erases the artwork.
+    const checked = validateDesign(
+      design,
+      {
+        ...result,
+        disabledFlowers: [],
+        disabledExtras: [],
+        enabledModes: modes,
+      },
+      catalog,
+      { allowUnpriced: true },
+    );
+    requireValue(
+      checked.ok,
+      checked.issues[0]?.message || "This bouquet design is invalid.",
+    );
+    if (item.design) item.design = boundedDesign(checked.design);
+  }
   return result;
 }
 
+export function validatePublication(value, catalog) {
+  const draft = validateDraft(value, catalog);
+  const preset = catalog.presets?.find((item) => item.id === draft.preset);
+  requireValue(
+    !preset || preset.available !== false,
+    "This catalogue preset is not ready for publication.",
+    409,
+  );
+  const normalized = normalizePolicy(draft, catalog).policy;
+  if (draft.home.sections.includes("builder")) {
+    const offered = Object.entries(normalized.flowerPrices).filter(
+      ([id]) => !normalized.disabledFlowers.includes(id),
+    );
+    requireValue(
+      offered.length > 0,
+      "Offer at least one flower before publishing the open builder.",
+    );
+    requireValue(
+      offered.every(([, cents]) => Number.isSafeInteger(cents)),
+      "Set prices for every offered flower before publishing the open builder.",
+    );
+    requireValue(
+      Object.entries(normalized.extrasCents)
+        .filter(([id]) => !normalized.disabledExtras.includes(id))
+        .every(([, cents]) => Number.isSafeInteger(cents)),
+      "Set prices for every offered finishing item before publishing the open builder.",
+    );
+  }
+  for (const item of draft.collection.filter((item) => item.available)) {
+    const design =
+      item.design ||
+      catalog.recipes.find((recipe) => recipe.id === item.recipeId)?.design;
+    const checked = validateDesign(design, draft, catalog);
+    requireValue(
+      checked.ok,
+      checked.issues[0]?.message ||
+        "Price every item in available bouquets before publishing.",
+    );
+  }
+  requireValue(
+    !draft.products.some((item) => item.available && item.priceCents === null),
+    "Set a fixed price for every available product before publishing.",
+  );
+  requireValue(
+    draft.home.sections.includes("builder") ||
+      draft.collection.some((item) => item.available) ||
+      draft.products.some((item) => item.available),
+    "Add an available product or bouquet, or enable the open builder before publishing.",
+  );
+  return draft;
+}
+
 export function readiness(shop) {
-  const result = [
-    {
+  const result = [];
+  if (!entitled(shop))
+    result.push({
       code: "billing_setup_pending",
       message:
         "Subscription billing setup is pending. Publishing is unavailable.",
-    },
-    {
+    });
+  if (shop.square?.status !== "connected")
+    result.push({
       code: "square_setup_pending",
       message: "Square provider setup is pending. Checkout is unavailable.",
-    },
-  ];
-  if (!shop.draft.collection.length)
+    });
+  if (
+    !shop.draft.collection.length &&
+    !shop.draft.products?.length &&
+    !shop.draft.home?.sections?.includes("builder")
+  )
     result.push({
       code: "collection_empty",
-      message: "Add at least one bouquet to your collection.",
+      message: "Add a bouquet or fixed product, or enable the open builder.",
     });
   if (!shop.draft.city)
     result.push({ code: "city_missing", message: "Add your city." });
-  if (shop.draft.preset === "satin")
-    result.push({
-      code: "satin_preparing",
-      message: "The satin preset is still being prepared.",
-    });
   return result;
 }
 
@@ -331,7 +652,7 @@ export async function readImage(request, kind) {
     "Upload a PNG, JPEG, or WebP image.",
     415,
   );
-  const limit = kind === "logo" ? 80 * 1024 : 150 * 1024;
+  const limit = (kind === "logo" ? 80 : kind === "hero" ? 250 : 150) * 1024;
   const length = Number(request.headers.get("content-length"));
   requireValue(
     !length || (Number.isSafeInteger(length) && length <= limit),

@@ -3,8 +3,13 @@ import assert from "node:assert/strict";
 import { generateKeyPairSync, sign } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { verifyFirebase } from "../../rays-payments/security.mjs";
-import { initialDraft, validateDraft } from "../validation.mjs";
-import { fixture, origin, catalog, png } from "./fixtures.mjs";
+import {
+  initialDraft,
+  validateDraft,
+  DRAFT_LIMIT,
+  hydrateDraft,
+} from "../validation.mjs";
+import { fixture, origin, catalog, png, design } from "./fixtures.mjs";
 
 test("verified Firebase signatures, project and verified email are required before tenant allocation", async () => {
   const { privateKey, publicKey } = generateKeyPairSync("rsa", {
@@ -72,6 +77,7 @@ test("verified Firebase signatures, project and verified email are required befo
   assert.deepEqual(await good.json(), {
     user: { uid: "verified-owner", email: "owner@example.test" },
     shop: null,
+    isAdmin: false,
   });
 });
 
@@ -296,7 +302,7 @@ test("draft pricing, catalog IDs, themes, image references and recursive designs
     },
     {
       ...shop.draft,
-      collection: Array.from({ length: 5 }, (_, i) => ({
+      collection: Array.from({ length: 7 }, (_, i) => ({
         id: "card-" + i,
         title: "X",
         recipeId: "fresh-classic",
@@ -321,7 +327,7 @@ test("draft pricing, catalog IDs, themes, image references and recursive designs
         method: "PUT",
         body: {
           version: 1,
-          draft: { ...shop.draft, tagline: "x".repeat(85 * 1024) },
+          draft: { ...shop.draft, tagline: "x".repeat(200 * 1024) },
         },
       })
     ).status,
@@ -342,10 +348,14 @@ test("the shipped flower catalog and its first four recipes form a valid complet
     preset: "fresh",
   });
   draft.flowerPrices = Object.fromEntries(
-    actual.flowers.map((item) => [item.id, item.priceCents]),
+    actual.flowers
+      .filter((item) => !item.preset || item.preset === "fresh")
+      .map((item) => [item.id, item.priceCents]),
   );
   draft.extrasCents = Object.fromEntries(
-    actual.extras.map((item) => [item.id, item.priceCents]),
+    actual.extras
+      .filter((item) => !item.preset || item.preset === "fresh")
+      .map((item) => [item.id, item.priceCents]),
   );
   draft.collection = actual.recipes
     .filter((item) => item.preset === "fresh")
@@ -358,14 +368,16 @@ test("the shipped flower catalog and its first four recipes form a valid complet
       cover: null,
     }));
   assert.equal(validateDraft(draft, actual).collection.length, 4);
-  for (const flower of actual.flowers)
+  for (const flower of actual.flowers.filter(
+    (item) => !item.preset || item.preset === "fresh",
+  ))
     assert.equal(
       validateDraft(draft, actual).flowerPrices[flower.id],
       flower.priceCents,
     );
 });
 
-test("five fixed media slots accept bounded raster bytes, isolate ownership and reject SVG or spoofed image MIME", async () => {
+test("eighteen upload slots create immutable hashed raster media, isolate ownership and reject SVG or spoofed MIME", async () => {
   const f = fixture(),
     { shop } = await f.create();
   const upload = (
@@ -385,7 +397,7 @@ test("five fixed media slots accept bounded raster bytes, isolate ownership and 
     const response = await upload(slot, slot === 1 ? "logo" : "cover");
     assert.equal(response.status, 201);
     const { media } = await response.json();
-    assert.equal(media.id, "slot-" + slot);
+    assert.match(media.id, /^img_[a-f0-9]{64}$/);
     const image = await f.call(media.url);
     assert.equal(image.status, 200);
     assert.equal(image.headers.get("content-type"), "image/png");
@@ -394,9 +406,9 @@ test("five fixed media slots accept bounded raster bytes, isolate ownership and 
       assert.equal((await f.call(media.url, { token })).status, 404);
   }
   for (const [slot, kind] of [
-    [6, "cover"],
-    [1, "cover"],
-    [2, "logo"],
+    [19, "cover"],
+    [0, "cover"],
+    [2, "unknown"],
     ["../x", "cover"],
   ])
     assert.equal((await upload(slot, kind)).status, 400);
@@ -429,14 +441,14 @@ test("five fixed media slots accept bounded raster bytes, isolate ownership and 
   assert.equal((await upload(2, "cover", hugePixels)).status, 400);
   const draft = {
     ...shop.draft,
-    logoMediaId: "slot-1",
+    logoMediaId: (await (await upload(1, "logo")).json()).media.id,
     collection: [
       {
         id: "card-1",
         title: "Classic",
         recipeId: "fresh-classic",
         design: null,
-        cover: "slot-2",
+        cover: (await (await upload(2, "cover")).json()).media.id,
       },
     ],
   };
@@ -452,7 +464,7 @@ test("five fixed media slots accept bounded raster bytes, isolate ownership and 
   const state = f.env.SHOPS.objects.get(shop.id).state;
   assert.equal(
     [...state.storage.sql.exec("SELECT COUNT(*) count FROM media")][0].count,
-    5,
+    1,
   );
 });
 
@@ -465,7 +477,7 @@ test("publishing, billing, Square and order routes fail closed even with activat
       },
     }),
     { shop } = await f.create();
-  for (const operation of ["publish", "billing/checkout", "square/connect"]) {
+  for (const operation of ["publish", "square/connect"]) {
     const response = await f.call(`/api/shops/${shop.id}/${operation}`, {
       method: "POST",
       body: {
@@ -474,8 +486,16 @@ test("publishing, billing, Square and order routes fail closed even with activat
       },
     });
     assert.equal(response.status, 409);
-    assert.match((await response.json()).error, /setup|pending|unavailable/);
+    assert.match(
+      (await response.json()).error,
+      /setup|pending|unavailable|subscription/,
+    );
   }
+  const billing = await f.call(`/api/shops/${shop.id}/billing/checkout`, {
+    method: "POST",
+    body: { planId: "shop" },
+  });
+  assert.ok([409, 503].includes(billing.status));
   for (const path of [
     "/api/orders",
     "/api/checkout",
@@ -496,8 +516,8 @@ test("publishing, billing, Square and order routes fail closed even with activat
   );
 });
 
-test("public snapshot gate requires every server entitlement and excludes owner UID and private edits", async () => {
-  const f = fixture(),
+test("public snapshot gate requires paid expiry and publishing flag, permits disconnected Square and excludes private edits", async () => {
+  const f = fixture({ env: { PUBLISHING_ENABLED: "true" } }),
     { shop } = await f.create();
   const sql = f.env.SHOPS.objects.get(shop.id).state.storage.sql;
   // Only a test inserts entitlement states directly; no API route can do so.
@@ -513,12 +533,20 @@ test("public snapshot gate requires every server entitlement and excludes owner 
     },
     {
       published,
-      subscription: { status: "active" },
+      subscription: {
+        status: "active",
+        paidUntil: Date.now() - 1,
+        testEnvironment: false,
+      },
       square: { status: "not_connected" },
     },
     {
       published: null,
-      subscription: { status: "active" },
+      subscription: {
+        status: "active",
+        paidUntil: Date.now() + 3600000,
+        testEnvironment: false,
+      },
       square: { status: "connected" },
     },
   ]) {
@@ -537,8 +565,12 @@ test("public snapshot gate requires every server entitlement and excludes owner 
       ...shop,
       draft: { ...shop.draft, city: "Private new edit" },
       published,
-      subscription: { status: "active" },
-      square: { status: "connected" },
+      subscription: {
+        status: "active",
+        paidUntil: Date.now() + 3600000,
+        testEnvironment: false,
+      },
+      square: { status: "not_connected" },
     }),
   );
   const response = await f.call(`/api/shops/${shop.id}`, { token: null });
@@ -630,9 +662,12 @@ test("draft/media mutations have owner-local rate caps and SPA routes serve the 
     "/dashboard/shop",
     "/dashboard/prices",
     "/dashboard/collection",
+    "/dashboard/products",
+    "/dashboard/editor",
     "/dashboard/billing",
     "/dashboard/payments",
     "/s/test-flowers",
+    "/admin",
   ]) {
     const response = await f.call(path, { token: null });
     assert.equal(response.status, 200);
@@ -646,4 +681,837 @@ test("draft/media mutations have owner-local rate caps and SPA routes serve the 
     (await f.call("/studio/missing.js", { token: null })).status,
     404,
   );
+});
+
+const fixedProduct = (id = "product-1", priceCents = 2900) => ({
+  id,
+  title: "Ready bouquet",
+  description: "Prepared bouquet",
+  priceCents,
+  cover: null,
+  available: true,
+  category: "Gifts",
+});
+function seedPaid(f, shop, overrides = {}) {
+  const paid = {
+    ...shop,
+    subscription: {
+      status: "active",
+      paidUntil: Date.now() + 86400000,
+      testEnvironment: false,
+    },
+    ...overrides,
+  };
+  f.env.SHOPS.objects
+    .get(shop.id)
+    .state.storage.sql.exec(
+      "UPDATE shop SET data=? WHERE singleton=1",
+      JSON.stringify(paid),
+    );
+  return paid;
+}
+
+test("v1 SQLite records hydrate without mutating saved data and preset switches stay coherent", async () => {
+  const f = fixture();
+  const { shop } = await f.create("Satin Shop", "satinshopnow");
+  const legacy = { ...shop, draft: { ...shop.draft, preset: "satin" } };
+  for (const key of [
+    "schemaVersion",
+    "products",
+    "disabledExtras",
+    "enabledModes",
+    "home",
+  ])
+    delete legacy.draft[key];
+  const sql = f.env.SHOPS.objects.get(shop.id).state.storage.sql;
+  const raw = JSON.stringify(legacy);
+  sql.exec("UPDATE shop SET data=? WHERE singleton=1", raw);
+  const current = (await (await f.call(`/api/shops/${shop.id}`)).json()).shop;
+  assert.equal(current.slug, "satinshopnow");
+  assert.equal(current.draft.schemaVersion, 2);
+  assert.deepEqual(current.draft.enabledModes, ["dome", "heart"]);
+  assert.deepEqual(current.draft.products, []);
+  assert.equal([...sql.exec("SELECT data FROM shop")][0].data, raw);
+  const switched = {
+    ...hydrateDraft(legacy.draft),
+    preset: "fresh",
+    enabledModes: ["dome"],
+  };
+  assert.equal(
+    (
+      await f.call(`/api/shops/${shop.id}/draft`, {
+        method: "PUT",
+        body: { version: 1, draft: switched },
+      })
+    ).status,
+    200,
+  );
+  const otherPreset = {
+    ...switched,
+    preset: "satin",
+    flowerPrices: { rose_red: 400 },
+  };
+  // The fixture's untagged legacy flower remains compatible; an explicitly tagged
+  // catalog item must be rejected when switching to the other preset.
+  assert.throws(
+    () =>
+      validateDraft(otherPreset, {
+        ...catalog,
+        flowers: [{ ...catalog.flowers[0], preset: "fresh" }],
+      }),
+    /unknown/,
+  );
+});
+
+test("v2 distinguishes six recipes from ten fixed products and enforces cents, availability and aggregate budget", async () => {
+  const draft = initialDraft({ name: "V2", currency: "USD", preset: "fresh" });
+  draft.collection = Array.from({ length: 6 }, (_, i) => ({
+    id: "recipe-" + i,
+    title: "Custom " + i,
+    recipeId: "fresh-classic",
+    design: null,
+    cover: null,
+  }));
+  draft.products = Array.from({ length: 10 }, (_, i) =>
+    fixedProduct("product-" + i),
+  );
+  const valid = validateDraft(draft, catalog);
+  assert.equal(valid.collection.length, 6);
+  assert.equal(valid.products.length, 10);
+  assert.equal(valid.collection[0].available, true);
+  assert.equal(valid.products[0].recipeId, undefined);
+  for (const bad of [
+    { ...draft, products: [...draft.products, fixedProduct("eleven")] },
+    { ...draft, products: [fixedProduct("x", 2.5)] },
+    { ...draft, products: [{ ...fixedProduct(), available: "yes" }] },
+    { ...draft, products: [{ ...fixedProduct(), priceCents: -1 }] },
+    { ...draft, products: [fixedProduct(), fixedProduct()] },
+    { ...draft, disabledExtras: ["invented"] },
+    { ...draft, home: { ...draft.home, sections: ["products", "products"] } },
+    { ...draft, enabledModes: ["invented"] },
+  ])
+    assert.throws(() => validateDraft(bad, catalog));
+  assert.equal(DRAFT_LIMIT, 192 * 1024);
+  assert.throws(
+    () =>
+      validateDraft(
+        { ...draft, home: { ...draft.home, about: "x".repeat(DRAFT_LIMIT) } },
+        catalog,
+      ),
+    (error) => error.status === 413,
+  );
+});
+
+test("admin accounts include verified users without shops and page indexed summaries without shop fanout", async () => {
+  const f = fixture({ verifyAdmin: async (user) => user.uid === "uid-owner" });
+  assert.equal((await (await f.call("/api/session")).json()).isAdmin, true);
+  await f.call("/api/session", { token: "other" });
+  assert.equal(
+    (await f.call("/api/admin/users", { token: "other" })).status,
+    403,
+  );
+  assert.equal((await f.call("/api/admin/users", { token: null })).status, 401);
+  let list = await (await f.call("/api/admin/users?limit=1")).json();
+  assert.equal(list.users.length, 1);
+  assert.equal(list.users[0].status, "no_shop");
+  assert.ok(list.nextCursor);
+  assert.equal(f.env.SHOPS.objects.size, 0);
+  const second = await (
+    await f.call("/api/admin/users?limit=1&cursor=" + list.nextCursor)
+  ).json();
+  assert.equal(second.users.length, 1);
+  assert.notEqual(second.users[0].uid, list.users[0].uid);
+  const { shop } = await f.create("Other Flowers", "other-flowers", "other");
+  list = await (
+    await f.call("/api/admin/users?q=other-flowers&status=draft")
+  ).json();
+  assert.equal(list.users[0].shopId, shop.id);
+  assert.equal(list.users[0].email, "other@example.test");
+  const detail = await f.call(`/api/admin/shops/${shop.id}`);
+  assert.equal(detail.status, 200);
+  assert.equal((await detail.json()).shop.ownerUid, "uid-other");
+  assert.equal(
+    (await f.call(`/api/admin/shops/${shop.id}`, { token: "other" })).status,
+    403,
+  );
+  assert.equal(
+    (await f.call(`/api/admin/shops/${shop.id}`, { method: "PUT", body: {} }))
+      .status,
+    404,
+  );
+  const registry = f.env.REGISTRY.objects.values().next().value.instance;
+  await registry.fetch(
+    new Request("https://internal/summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        summary: {
+          uid: shop.ownerUid,
+          shopId: shop.id,
+          slug: shop.slug,
+          name: "Newer",
+          preset: "fresh",
+          status: "draft",
+          subscriptionStatus: "inactive",
+          publishedVersion: 0,
+          version: 5,
+          revision: 5,
+        },
+      }),
+    }),
+  );
+  await registry.fetch(
+    new Request("https://internal/summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        summary: {
+          uid: shop.ownerUid,
+          shopId: shop.id,
+          slug: shop.slug,
+          name: "Stale",
+          preset: "fresh",
+          status: "draft",
+          subscriptionStatus: "inactive",
+          publishedVersion: 0,
+          version: 2,
+          revision: 2,
+        },
+      }),
+    }),
+  );
+  assert.equal(
+    (await (await f.call("/api/admin/users?q=Newer")).json()).users[0].version,
+    5,
+  );
+});
+
+test("publication freezes a paid snapshot while later immutable uploads and draft edits leave it unchanged", async () => {
+  const f = fixture({ env: { PUBLISHING_ENABLED: "true" } });
+  const { shop } = await f.create();
+  const upload = async (bytes = png) =>
+    (
+      await (
+        await f.call(`/api/shops/${shop.id}/media?slot=8&kind=cover`, {
+          method: "POST",
+          body: bytes,
+          headers: { "Content-Type": "image/png" },
+        })
+      ).json()
+    ).media;
+  const first = await upload();
+  const draft = {
+    ...shop.draft,
+    products: [{ ...fixedProduct(), cover: first.id }],
+    home: { ...shop.draft.home, sections: ["products", "contact"] },
+  };
+  const saved = (
+    await (
+      await f.call(`/api/shops/${shop.id}/draft`, {
+        method: "PUT",
+        body: { version: 1, draft },
+      })
+    ).json()
+  ).shop;
+  seedPaid(f, saved);
+  const publish = await f.call(`/api/shops/${shop.id}/publish`, {
+    method: "POST",
+    body: { version: 2 },
+  });
+  assert.equal(publish.status, 200, await publish.clone().text());
+  const published = (await publish.json()).shop;
+  assert.equal(published.published.version, 1);
+  const changed = png.slice();
+  changed[40] ^= 1;
+  const second = await upload(changed);
+  assert.notEqual(first.id, second.id);
+  assert.deepEqual(
+    new Uint8Array(
+      await (await f.call(first.url, { token: null })).arrayBuffer(),
+    ),
+    png,
+  );
+  const next = {
+    ...published.draft,
+    products: [{ ...fixedProduct(), title: "Private edit", cover: second.id }],
+  };
+  assert.equal(
+    (
+      await f.call(`/api/shops/${shop.id}/draft`, {
+        method: "PUT",
+        body: { version: 2, draft: next },
+      })
+    ).status,
+    200,
+  );
+  const live = (
+    await (
+      await f.call(`/api/public/shops/${shop.slug}`, { token: null })
+    ).json()
+  ).shop;
+  assert.equal(live.draft.products[0].title, "Ready bouquet");
+  assert.equal(live.draft.products[0].cover, first.id);
+  assert.equal((await f.call(second.url, { token: null })).status, 404);
+  assert.equal(
+    (
+      await f.call(`/api/shops/${shop.id}/draft`, {
+        method: "PUT",
+        body: {
+          version: 3,
+          draft: { ...next, preset: "satin", enabledModes: ["dome"] },
+        },
+      })
+    ).status,
+    409,
+  );
+});
+
+test("legacy image slots remain readable but cannot be overwritten, and referenced snapshots survive garbage collection", async () => {
+  const f = fixture();
+  const { shop } = await f.create();
+  const object = f.env.SHOPS.objects.get(shop.id);
+  object.state.storage.sql.exec(
+    "INSERT INTO media(id,kind,mime,body,byte_length,updated_at) VALUES(?,?,?,?,?,?)",
+    "slot-1",
+    "logo",
+    "image/png",
+    png,
+    png.length,
+    1,
+  );
+  assert.equal(
+    (await f.call(`/api/shops/${shop.id}/media/slot-1`)).status,
+    200,
+  );
+  assert.equal(
+    (
+      await object.instance.fetch(
+        new Request("https://internal/media/slot-1", {
+          method: "PUT",
+          headers: {
+            "X-Owner-Uid": shop.ownerUid,
+            "Content-Type": "image/png",
+          },
+          body: png,
+        }),
+      )
+    ).status,
+    409,
+  );
+  const saved = {
+    ...shop,
+    draft: { ...shop.draft, logoMediaId: "slot-1" },
+    published: { version: 1, draft: { ...shop.draft, logoMediaId: "slot-1" } },
+  };
+  object.state.storage.sql.exec(
+    "UPDATE shop SET data=? WHERE singleton=1",
+    JSON.stringify(saved),
+  );
+  assert.equal(
+    (
+      await f.call(`/api/shops/${shop.id}/media?slot=2&kind=cover`, {
+        method: "POST",
+        body: png,
+        headers: { "Content-Type": "image/png" },
+      })
+    ).status,
+    201,
+  );
+  assert.equal(
+    [...object.state.storage.sql.exec("SELECT id FROM media WHERE id='slot-1'")]
+      .length,
+    1,
+  );
+});
+
+test("public product requests bind published prices, persist once, cap traffic and never imply payment", async () => {
+  const f = fixture({ env: { PUBLISHING_ENABLED: "true" } });
+  const { shop } = await f.create();
+  const draft = {
+    ...shop.draft,
+    products: [fixedProduct(), { ...fixedProduct("hidden"), available: false }],
+  };
+  seedPaid(f, shop, { draft, published: { version: 1, draft } });
+  const payload = {
+    requestKey: crypto.randomUUID(),
+    kind: "product",
+    productId: "product-1",
+    customer: {
+      name: "Customer",
+      phone: "123456789",
+      note: "A gift",
+      date: null,
+    },
+    fulfillment: "pickup",
+  };
+  const send = (body = payload) =>
+    f.call(`/api/shops/${shop.id}/requests`, {
+      method: "POST",
+      token: null,
+      body,
+    });
+  const first = await send();
+  assert.equal(first.status, 201);
+  const receipt = (await first.json()).request;
+  assert.equal(receipt.status, "requested");
+  assert.equal(receipt.totalCents, 2900);
+  const retry = (await (await send()).json()).request;
+  assert.equal(retry.id, receipt.id);
+  assert.equal(
+    (
+      await send({
+        ...payload,
+        customer: { ...payload.customer, name: "Different" },
+      })
+    ).status,
+    409,
+  );
+  assert.equal(
+    (await send({ ...payload, requestKey: crypto.randomUUID(), totalCents: 1 }))
+      .status,
+    400,
+  );
+  assert.equal(
+    (
+      await send({
+        ...payload,
+        requestKey: crypto.randomUUID(),
+        productId: "hidden",
+      })
+    ).status,
+    409,
+  );
+  const list = await (await f.call(`/api/shops/${shop.id}/requests`)).json();
+  assert.equal(list.requests.length, 1);
+  assert.equal(list.requests[0].customer.name, "Customer");
+  assert.equal(
+    (await f.call(`/api/shops/${shop.id}/requests`, { token: "other" })).status,
+    404,
+  );
+  assert.equal(
+    (await f.call(`/api/shops/${shop.id}/requests`, { token: null })).status,
+    404,
+  );
+  for (let i = 0; i < 9; i++)
+    assert.equal(
+      (await send({ ...payload, requestKey: crypto.randomUUID() })).status,
+      201,
+    );
+  assert.equal(
+    (await send({ ...payload, requestKey: crypto.randomUUID() })).status,
+    429,
+  );
+  const sql = f.env.SHOPS.objects.get(shop.id).state.storage.sql;
+  assert.equal(
+    [...sql.exec("SELECT COUNT(*) count FROM customer_requests")][0].count,
+    10,
+  );
+  const bucket = [
+    ...sql.exec("SELECT bucket FROM rate_limits WHERE bucket LIKE 'request:%'"),
+  ][0].bucket;
+  assert.match(bucket, /^request:[a-f0-9]{3}$/);
+});
+
+test("admin search treats long wildcard text literally and rejects fractional page limits", async () => {
+  const f = fixture({ verifyAdmin: async (user) => user.uid === "uid-owner" });
+  await f.call("/api/session");
+  await f.call("/api/session", { token: "other" });
+  for (const query of ["%", "_", "%_".repeat(60), "é".repeat(120)]) {
+    const response = await f.call(
+      "/api/admin/users?q=" + encodeURIComponent(query),
+    );
+    assert.equal(response.status, 200);
+    assert.deepEqual((await response.json()).users, []);
+  }
+  assert.equal(
+    (await f.call("/api/admin/users?q=" + "x".repeat(121))).status,
+    400,
+  );
+  assert.equal(
+    (await f.call("/api/admin/users?cursor=" + "x".repeat(129))).status,
+    400,
+  );
+  assert.equal((await f.call("/api/admin/users?status=unknown")).status, 400);
+  assert.equal((await f.call("/api/admin/users?limit=1.5")).status, 400);
+  const bounded = await (await f.call("/api/admin/users?limit=5000")).json();
+  assert.equal(bounded.users.length, 2);
+  assert.equal(bounded.nextCursor, null);
+});
+
+test("media collection reads current references after a concurrent draft save", async () => {
+  const f = fixture();
+  const { shop } = await f.create();
+  const object = f.env.SHOPS.objects.get(shop.id),
+    sql = object.state.storage.sql;
+  sql.exec(
+    "INSERT INTO media(id,kind,mime,body,byte_length,updated_at) VALUES(?,?,?,?,?,?)",
+    "slot-1",
+    "logo",
+    "image/png",
+    png,
+    png.length,
+    1,
+  );
+  let release;
+  const stream = new ReadableStream({
+    start(controller) {
+      release = () => {
+        controller.enqueue(png);
+        controller.close();
+      };
+    },
+  });
+  const digest = [...new Uint8Array(await crypto.subtle.digest("SHA-256", png))]
+    .map((part) => part.toString(16).padStart(2, "0"))
+    .join("");
+  const pending = object.instance.fetch(
+    new Request("https://internal/media/img_" + digest, {
+      method: "PUT",
+      headers: {
+        "X-Owner-Uid": shop.ownerUid,
+        "Content-Type": "image/png",
+        "X-Media-Kind": "cover",
+      },
+      body: stream,
+      duplex: "half",
+    }),
+  );
+  // Let the upload capture its starting shop, then pause at the streamed body.
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  try {
+    const save = await f.call(`/api/shops/${shop.id}/draft`, {
+      method: "PUT",
+      body: { version: 1, draft: { ...shop.draft, logoMediaId: "slot-1" } },
+    });
+    assert.equal(save.status, 200);
+  } finally {
+    release();
+  }
+  assert.equal((await pending).status, 201);
+  assert.equal(object.instance.shop().draft.logoMediaId, "slot-1");
+  assert.equal(
+    [...sql.exec("SELECT id FROM media WHERE id='slot-1'")].length,
+    1,
+  );
+  assert.equal(
+    (await f.call(`/api/shops/${shop.id}/media/slot-1`)).status,
+    200,
+  );
+});
+
+test("billing resource registry binds existing shops once and rejects cross-owner resource claims", async () => {
+  const f = fixture();
+  const { shop } = await f.create();
+  const other = (await f.create("Other Flowers", "other-flowers", "other"))
+    .shop;
+  const registry = f.env.REGISTRY.objects.values().next().value.instance;
+  const call = (path, body) =>
+    registry.fetch(
+      new Request(
+        "https://internal" + path,
+        body === undefined
+          ? {}
+          : {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            },
+      ),
+    );
+  const resource = {
+    resourceKey: "test:subscription:123",
+    shopId: shop.id,
+    ownerUid: shop.ownerUid,
+  };
+  assert.equal((await call("/billing-resource", resource)).status, 200);
+  assert.equal((await call("/billing-resource", resource)).status, 200);
+  const found = await (
+    await call("/billing-resource?value=test:subscription:123")
+  ).json();
+  assert.equal(found.entry.id, shop.id);
+  assert.equal(found.entry.ownerUid, shop.ownerUid);
+  assert.equal(
+    (
+      await call("/billing-resource", {
+        ...resource,
+        shopId: other.id,
+        ownerUid: other.ownerUid,
+      })
+    ).status,
+    409,
+  );
+  assert.equal(
+    (
+      await call("/billing-resource", {
+        resourceKey: "test:order:456",
+        shopId: shop.id,
+        ownerUid: other.ownerUid,
+      })
+    ).status,
+    404,
+  );
+  assert.equal(
+    (
+      await call("/billing-resource", {
+        ...resource,
+        shopId: "sh_" + "0".repeat(32),
+        ownerUid: "unknown",
+      })
+    ).status,
+    404,
+  );
+  assert.equal(
+    (await call("/billing-resource?value=unknown:subscription:123")).status,
+    400,
+  );
+  assert.deepEqual(
+    await (await call("/billing-resource?value=test:order:999")).json(),
+    { entry: null },
+  );
+  assert.equal(f.env.SHOPS.objects.size, 2);
+  assert.equal(
+    (await f.call("/api/billing-resource", { method: "POST", body: resource }))
+      .status,
+    404,
+  );
+});
+
+test("custom requests price the published policy and reject unknown, disabled, unpriced or hidden selections", async () => {
+  const requestCatalog = {
+    ...catalog,
+    flowers: [
+      ...catalog.flowers,
+      {
+        id: "satin_rose_red",
+        runtimeId: "rose_red",
+        preset: "satin",
+        priceCents: 800,
+      },
+    ],
+  };
+  const f = fixture({
+    env: {
+      PUBLISHING_ENABLED: "true",
+      ASSETS: { fetch: async () => Response.json(requestCatalog) },
+    },
+  });
+  const { shop } = await f.create();
+  const publishedDraft = {
+    ...shop.draft,
+    flowerPrices: { rose_red: 725 },
+    collection: [
+      {
+        id: "hidden-card",
+        title: "Hidden",
+        recipeId: "fresh-classic",
+        design,
+        cover: null,
+        available: false,
+        category: "",
+      },
+    ],
+  };
+  const apply = (draft = publishedDraft) =>
+    seedPaid(f, shop, {
+      draft: { ...draft, flowerPrices: { rose_red: 9999 } },
+      published: { version: 1, draft },
+    });
+  apply();
+  const payload = {
+    requestKey: crypto.randomUUID(),
+    kind: "design",
+    design,
+    customer: {
+      name: "Customer",
+      phone: "12345678",
+      note: "Gift\nPlease wrap carefully",
+      date: null,
+    },
+    fulfillment: "pickup",
+  };
+  const send = (body = payload) =>
+    f.call(`/api/shops/${shop.id}/requests`, {
+      method: "POST",
+      token: null,
+      body,
+    });
+  const response = await send();
+  assert.equal(response.status, 201);
+  const receipt = (await response.json()).request;
+  assert.equal(receipt.totalCents, 725);
+  assert.equal(receipt.status, "requested");
+  assert.match(receipt.pricingNote, /Tax and delivery/);
+  assert.equal((await (await send()).json()).request.id, receipt.id);
+  assert.equal(
+    (
+      await send({
+        ...payload,
+        requestKey: crypto.randomUUID(),
+        pricing: { totalCents: 1 },
+      })
+    ).status,
+    400,
+  );
+  assert.equal(
+    (await send({ ...payload, requestKey: crypto.randomUUID(), totalCents: 1 }))
+      .status,
+    400,
+  );
+  assert.equal(
+    (
+      await send({
+        ...payload,
+        requestKey: crypto.randomUUID(),
+        cardId: "hidden-card",
+      })
+    ).status,
+    409,
+  );
+  const unknown = structuredClone(design);
+  unknown.items[0].id = "invented";
+  assert.equal(
+    (
+      await send({
+        ...payload,
+        requestKey: crypto.randomUUID(),
+        design: unknown,
+      })
+    ).status,
+    400,
+  );
+  const foreign = structuredClone(design);
+  foreign.items[0].id = "satin_rose_red";
+  const foreignResponse = await send({
+    ...payload,
+    requestKey: crypto.randomUUID(),
+    design: foreign,
+  });
+  assert.equal(foreignResponse.status, 400);
+  assert.match((await foreignResponse.json()).error, /another preset/);
+  for (const forbidden of [
+    { ...publishedDraft, disabledFlowers: ["rose_red"] },
+    { ...publishedDraft, flowerPrices: { rose_red: null } },
+    { ...publishedDraft, enabledModes: ["dome"] },
+  ]) {
+    apply(forbidden);
+    assert.equal(
+      (await send({ ...payload, requestKey: crypto.randomUUID() })).status,
+      400,
+    );
+  }
+  const stored = (await (await f.call(`/api/shops/${shop.id}/requests`)).json())
+    .requests;
+  assert.equal(stored.length, 1);
+  assert.equal(stored[0].pricing.totalCents, 725);
+  assert.equal(stored[0].customer.note, "Gift\nPlease wrap carefully");
+});
+
+test("historical request cover survives two later publications and age-based upload collection", async () => {
+  const f = fixture({ env: { PUBLISHING_ENABLED: "true" } });
+  const { shop } = await f.create();
+  const sql = f.env.SHOPS.objects.get(shop.id).state.storage.sql;
+  const upload = async (marker) => {
+    const bytes = png.slice();
+    bytes[40] ^= marker;
+    const response = await f.call(
+      `/api/shops/${shop.id}/media?slot=8&kind=cover`,
+      { method: "POST", body: bytes, headers: { "Content-Type": "image/png" } },
+    );
+    assert.equal(response.status, 201);
+    return (await response.json()).media;
+  };
+  const first = await upload(0);
+  const draft = {
+    ...shop.draft,
+    products: [{ ...fixedProduct(), cover: first.id }],
+    home: { ...shop.draft.home, sections: ["products", "contact"] },
+  };
+  let current = (
+    await (
+      await f.call(`/api/shops/${shop.id}/draft`, {
+        method: "PUT",
+        body: { version: shop.version, draft },
+      })
+    ).json()
+  ).shop;
+  seedPaid(f, current);
+  const publish = async () => {
+    const response = await f.call(`/api/shops/${shop.id}/publish`, {
+      method: "POST",
+      body: { version: current.version },
+    });
+    assert.equal(response.status, 200, await response.clone().text());
+    current = (await response.json()).shop;
+  };
+  await publish();
+  const request = await f.call(`/api/shops/${shop.id}/requests`, {
+    method: "POST",
+    token: null,
+    body: {
+      requestKey: crypto.randomUUID(),
+      kind: "product",
+      productId: "product-1",
+      customer: { name: "Customer", phone: "12345678", note: "", date: null },
+      fulfillment: "pickup",
+    },
+  });
+  assert.equal(request.status, 201);
+  const later = [];
+  for (const marker of [1, 2]) {
+    const media = await upload(marker);
+    later.push(media);
+    const response = await f.call(`/api/shops/${shop.id}/draft`, {
+      method: "PUT",
+      body: {
+        version: current.version,
+        draft: {
+          ...current.draft,
+          products: [{ ...fixedProduct(), cover: media.id }],
+        },
+      },
+    });
+    assert.equal(response.status, 200);
+    current = (await response.json()).shop;
+    await publish();
+  }
+  assert.equal(current.published.version, 3);
+  assert.equal(current.previousPublished.version, 2);
+  assert.ok(
+    !JSON.stringify([
+      current.draft,
+      current.published,
+      current.previousPublished,
+    ]).includes(first.id),
+  );
+  sql.exec(
+    "INSERT INTO media(id,kind,mime,body,byte_length,updated_at) VALUES(?,?,?,?,?,?)",
+    "slot-2",
+    "cover",
+    "image/png",
+    png,
+    png.length,
+    1,
+  );
+  sql.exec("UPDATE media SET updated_at=1");
+  await upload(3);
+  assert.equal(
+    [...sql.exec("SELECT id FROM media WHERE id=?", first.id)].length,
+    1,
+  );
+  assert.equal(
+    [...sql.exec("SELECT id FROM media WHERE id='slot-2'")].length,
+    0,
+  );
+  for (const media of later)
+    assert.equal(
+      [...sql.exec("SELECT id FROM media WHERE id=?", media.id)].length,
+      1,
+    );
+  assert.equal((await f.call(first.url)).status, 200);
+  assert.equal((await f.call(first.url, { token: null })).status, 404);
+  const history = (
+    await (await f.call(`/api/shops/${shop.id}/requests`)).json()
+  ).requests;
+  assert.equal(history.length, 1);
+  assert.equal(history[0].product.cover, first.id);
 });

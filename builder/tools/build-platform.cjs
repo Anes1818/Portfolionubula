@@ -57,6 +57,318 @@ const engineFiles = [
   "app.js",
 ];
 const sha = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
+const shared = path.join(root, "platform/shared");
+const satinSource = path.join(root, "clients/raysbouquetz");
+const policyScripts = scripts.filter(
+  (file) =>
+    ![
+      "shop-context.js",
+      "embedded-loader.js",
+      "customization-ui.js",
+      "renderer.js",
+      "i18n.js",
+      "i18n-v6.js",
+      "design-link.js",
+      "saved-bouquets.js",
+      "request.js",
+    ].includes(file),
+);
+
+// The policy uses the renderer's own validation, geometry and price functions.
+// Wrapping their unchanged source in a factory avoids eval and shared mutable
+// globals, so this module works in Workers and in the browser.
+function buildPolicyRuntime() {
+  const ctx = {
+    console,
+    URL,
+    URLSearchParams,
+    TextEncoder,
+    TextDecoder,
+    atob,
+    btoa,
+    structuredClone,
+    setTimeout,
+    clearTimeout,
+    location: {
+      protocol: "https:",
+      hostname: "localhost",
+      pathname: "/studio/studio.html",
+      search: "",
+      hash: "",
+    },
+    localStorage: {
+      setItem() {},
+      getItem() {
+        return null;
+      },
+    },
+    history: { replaceState() {} },
+    document: {
+      addEventListener() {},
+      getElementById() {
+        return null;
+      },
+    },
+    NebulaI18n: { en: {}, es: {} },
+    NebulaRenderer: { exportCanvas() {} },
+    NebulaShop: { key: (x) => x },
+    NEBULA_SHOP: {},
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  const pieces = [];
+  for (const file of policyScripts) {
+    const sourceText = fs.readFileSync(path.join(source, file), "utf8");
+    new vm.Script(sourceText, { filename: file }).runInContext(ctx);
+    const names = Object.keys(ctx).filter((key) =>
+      /^(?:Nebula|NEBULA_|DomeEngine)/.test(key),
+    );
+    const bound = sourceText.replace(
+      /\b(g|window|global)\.(Nebula\w+|NEBULA_\w+|DomeEngine)\s*=/g,
+      (match, owner, key) => key + "=" + match,
+    );
+    pieces.push(
+      "// " +
+        file +
+        ": global exports bound to this isolated factory.\n" +
+        names.map((key) => "var " + key + "=window." + key + ";").join("\n") +
+        "\n" +
+        bound +
+        "\n" +
+        names.map((key) => "var " + key + "=window." + key + ";").join("\n"),
+    );
+  }
+  const satinPricing = JSON.parse(
+    fs.readFileSync(path.join(satinSource, "builder-preview.json"), "utf8"),
+  ).pricing;
+  const art = Object.fromEntries(
+    JSON.parse(
+      fs.readFileSync(
+        path.join(satinSource, "generated-art-metadata.json"),
+        "utf8",
+      ),
+    ).map((row) => [row.file, row]),
+  );
+  const satinHeader =
+    "var RAY_BUILDER={pricing:" +
+    JSON.stringify(satinPricing) +
+    ",recipes:[]};var RAY_STORE={designs:[]};var RAY_ART=" +
+    JSON.stringify(art) +
+    ";var RayPricing={convertCash:()=>({cadCents:0})};window.RAY_BUILDER=RAY_BUILDER;window.RAY_STORE=RAY_STORE;window.RAY_ART=RAY_ART;";
+  const satinRuntime = fs.readFileSync(
+    path.join(satinSource, "builder-runtime.js"),
+    "utf8",
+  );
+  const header =
+    '/* Generated from unchanged shared engines by build-platform.cjs. */\nexport function createRuntime(preset="fresh") {\nconst location={protocol:"https:",hostname:"localhost",pathname:"/studio/studio.html",search:"",hash:""};const localStorage={setItem(){},getItem(){return null;}};const history={replaceState(){}};const document={addEventListener(){},getElementById(){return null;}};const window={NEBULA_SHOP:{},NebulaI18n:{en:{},es:{}},NebulaRenderer:{exportCanvas(){}},NebulaShop:{key:x=>x}};var NebulaI18n=window.NebulaI18n,NebulaRenderer=window.NebulaRenderer,NebulaShop=window.NebulaShop;\n';
+  fs.mkdirSync(shared, { recursive: true });
+  fs.writeFileSync(
+    path.join(shared, "runtime.mjs"),
+    header +
+      pieces.join("\n") +
+      '\nconst freshPrice=NebulaModel.price;\nif(preset==="satin"){\n' +
+      satinHeader +
+      "\n" +
+      satinRuntime +
+      "\nNebulaCustomization=window.NebulaCustomization;NebulaRoseArt=window.NebulaRoseArt;NebulaModel.price=freshPrice;\n}\nreturn {CAT:NebulaConfig.CAT,CONFIG:NebulaConfig.CONFIG,Model:NebulaModel,Geometry:NebulaGeometry,Templates:NebulaTemplates,Details:NebulaDetails,Satin:window.RayBuilder};\n}\n",
+  );
+  write("satin/builder-runtime.js", satinRuntime);
+  write("satin/runtime-data.js", satinHeader);
+  const assetNames = new Set([
+    ...Object.keys(art).filter((file) =>
+      /^(?:satin-|foam-|wrap-triangle-|bow-lilac-|graduation-cap-)/.test(file),
+    ),
+    "satin-rose-red-glitter-v1.png",
+  ]);
+  for (const file of assetNames) {
+    assert.match(file, /^[a-z0-9-]+\.png$/);
+    write(
+      "satin/art/" + file,
+      fs.readFileSync(path.join(satinSource, "public/art", file)),
+    );
+  }
+  write(
+    "satin/builder-theme.css",
+    fs.readFileSync(path.join(satinSource, "builder-theme.css")),
+  );
+  write(
+    "assets/money/folded-dollar-v1.png",
+    fs.readFileSync(path.join(source, "assets/money/folded-dollar-v1.png")),
+  );
+  return { art, satinPricing };
+}
+
+function addSatinCatalog(catalog) {
+  const code = fs
+    .readFileSync(path.join(shared, "runtime.mjs"), "utf8")
+    .replace("export function createRuntime", "function createRuntime");
+  const ctx = {
+    URL,
+    URLSearchParams,
+    TextEncoder,
+    TextDecoder,
+    atob,
+    btoa,
+    structuredClone,
+    setTimeout,
+    clearTimeout,
+    console,
+  };
+  vm.runInNewContext(
+    code + '\nglobalThis.runtime=createRuntime("satin");',
+    ctx,
+  );
+  const runtime = ctx.runtime,
+    { Model: M, Satin: B } = runtime;
+  const id = (raw) => "satin_" + raw;
+  const flowerIds = [
+    ...B.flowers.map((row) => row[0]),
+    ...B.notes.keys(),
+    "__choc",
+  ];
+  for (const rawId of flowerIds) {
+    const row = runtime.CAT[rawId];
+    catalog.flowers.push({
+      id: id(rawId),
+      runtimeId: rawId,
+      en: row.en,
+      family: row.family,
+      preset: "satin",
+      priceCents: ["rose", "foam"].includes(row.family) ? row.priceCents : null,
+      classic: false,
+      modes: ["dome", "heart"],
+      image:
+        "/studio/" +
+        (B.notes.has(rawId)
+          ? "assets/money/folded-dollar-v1.png"
+          : "satin/" +
+            (rawId === "__choc"
+              ? "../assets/finishes/extra_chocolate_gold.webp"
+              : runtime.Satin.flowers.find((row) => row[0] === rawId)
+                ? "art/" +
+                  runtime.Satin.flowers.find((row) => row[0] === rawId)[4]
+                : "")),
+    });
+  }
+  const pricing = JSON.parse(
+    fs.readFileSync(path.join(satinSource, "builder-preview.json"), "utf8"),
+  ).pricing;
+  for (const rawId of [
+    "butterfly",
+    "crown",
+    "sash",
+    ...Object.keys(runtime.Details.types),
+  ])
+    catalog.extras.push({
+      id: id(rawId),
+      runtimeId: rawId,
+      label:
+        {
+          bow_lilac: "Lilac satin bow",
+          bow_black: "Black satin bow",
+          graduation_cap: "Graduation cap",
+          snoopy: "Snoopy plush",
+          kitty: "Kitty plush",
+          snoopy_topper: "Snoopy topper",
+        }[rawId] || rawId[0].toUpperCase() + rawId.slice(1),
+      preset: "satin",
+      priceCents: pricing.extrasCents[rawId] ?? null,
+    });
+  function canonical(s) {
+    const convert = (value) => id(value);
+    for (const item of s.items) item.id = convert(item.id);
+    s.template.palette = s.template.palette.map(convert);
+    s.template.accent.id = convert(s.template.accent.id);
+    for (const key of ["wall", "fill", "center"])
+      s.template.zones[key] = convert(s.template.zones[key]);
+    for (const key of Object.keys(s.template.overrides))
+      if (s.template.overrides[key] !== null)
+        s.template.overrides[key] = convert(s.template.overrides[key]);
+    for (const detail of s.finishes.decorations) detail.id = id(detail.id);
+    return s;
+  }
+  for (const [slug, name, mode, count, palette, paper, cover] of [
+    [
+      "pastel-cloud",
+      "Pastel satin cloud",
+      "dome",
+      30,
+      ["rose_pink", "rose_blue", "rose_peach"],
+      "custom",
+      "satin-rose-pink-v1.png",
+    ],
+    [
+      "ruby-celebration",
+      "Ruby satin celebration",
+      "dome",
+      18,
+      ["rose_red_glitter"],
+      "black",
+      "satin-rose-red-glitter-v1.png",
+    ],
+    [
+      "ivory-keepsake",
+      "Ivory keepsake",
+      "dome",
+      30,
+      ["rose_ivory"],
+      "ivory",
+      "satin-rose-ivory-v1.png",
+    ],
+    [
+      "purple-promise",
+      "Purple promise",
+      "dome",
+      30,
+      ["rose_violet", "rose_lilac"],
+      "custom",
+      "satin-rose-purple-v1.png",
+    ],
+    [
+      "pink-heart",
+      "Pink satin heart",
+      "heart",
+      41,
+      ["rose_pink"],
+      "black",
+      "satin-rose-pink-v1.png",
+    ],
+    [
+      "ruby-heart",
+      "Ruby satin heart",
+      "heart",
+      41,
+      ["rose_red"],
+      "black",
+      "satin-rose-red-v1.png",
+    ],
+  ]) {
+    const s = M.defaultMode(mode);
+    M.resize(s, count);
+    s.template.palette = [...palette];
+    s.template.accent.id = palette[0];
+    for (const key of ["wall", "fill", "center"])
+      s.template.zones[key] = palette[key === "fill" ? palette.length - 1 : 0];
+    s.finishes.paper = paper;
+    s.title = name;
+    M.syncTemplate(s);
+    assert.ok(M.validate(s), "Invalid satin recipe " + slug);
+    canonical(s);
+    const counts = {};
+    for (const item of s.items) counts[item.id] = (counts[item.id] || 0) + 1;
+    catalog.recipes.push({
+      id: "satin-" + slug,
+      name,
+      en: name,
+      description: name + " with triangular paper wrapping.",
+      mode,
+      preset: "satin",
+      cover: "/studio/satin/art/" + cover,
+      counts,
+      design: s,
+    });
+  }
+}
 
 function write(file, bytes) {
   const target = path.resolve(output, file);
@@ -124,10 +436,10 @@ function runtimeCatalog() {
     );
   }
   const catalog = {
-    version: 1,
+    version: 2,
     presets: [
       { id: "fresh", name: "Fresh flowers", available: true },
-      { id: "satin", name: "Satin and eternal flowers", available: false },
+      { id: "satin", name: "Satin and eternal flowers", available: true },
     ],
     flowers: Object.entries(ctx.NebulaConfig.CAT).map(([id, row]) => ({
       id,
@@ -136,6 +448,13 @@ function runtimeCatalog() {
       priceCents: row.priceCents,
       classic: row.classic === true && row.classicOffered !== false,
       preset: "fresh",
+      runtimeId: id,
+      modes: [
+        ...(row.classic === true && row.classicOffered !== false
+          ? ["classic"]
+          : []),
+        ...(row.top !== false ? ["dome", "heart"] : []),
+      ],
       image: "/studio/" + ctx.NEBULA_META.flowers[id]?.head,
     })),
     extras: Object.entries(ctx.NebulaConfig.CONFIG.extrasCents).map(
@@ -143,6 +462,7 @@ function runtimeCatalog() {
         id,
         label: ctx.NebulaI18n.en[id] || id.replaceAll("_", " "),
         priceCents,
+        preset: "fresh",
       }),
     ),
     recipes: recipes.map((row) => ({
@@ -153,6 +473,8 @@ function runtimeCatalog() {
       mode: row.mode,
       preset: "fresh",
       cover: "/studio/assets/catalog/thumbs/" + row.id + ".webp",
+      design: ctx.NebulaLink.decode(row.code).design,
+      counts: row.counts,
     })),
   };
   return { catalog, recipes };
@@ -160,7 +482,9 @@ function runtimeCatalog() {
 
 function build() {
   fs.mkdirSync(output, { recursive: true });
+  buildPolicyRuntime();
   const { catalog, recipes } = runtimeCatalog();
+  addSatinCatalog(catalog);
   const hashes = {};
   for (const file of [...scripts, "app.js", "app.css"]) {
     const bytes = fs.readFileSync(path.join(source, file));
@@ -194,7 +518,58 @@ function build() {
     path.join(root, "platform/builder-adapter.js"),
   );
   write("builder-adapter.js", adapter);
+  for (const file of ["policy.mjs", "runtime.mjs"])
+    fs.writeFileSync(
+      path.join(root, "platform/public", file),
+      fs.readFileSync(path.join(shared, file)),
+    );
   write("library.json", JSON.stringify({ version: 1, recipes }) + "\n");
+  const satinScripts = scripts.filter((file) =>
+    [
+      "shop-context.js",
+      "config.js",
+      "asset-meta.js",
+      "embedded-loader.js",
+      "dome-engine-v2.js",
+      "template-engine.js",
+      "geometry.js",
+      "fall.js",
+      "fall-details.js",
+      "romance.js",
+      "halloween-layout.js",
+      "halloween.js",
+      "classic-recipes.js",
+      "model.js",
+      "i18n.js",
+      "i18n-v6.js",
+      "renderer.js",
+      "design-link.js",
+      "saved-bouquets.js",
+      "request.js",
+    ].includes(file),
+  );
+  write(
+    "satin/runtime-manifest.json",
+    JSON.stringify(
+      { scripts: satinScripts, app: "satin/app.js", satin: true },
+      null,
+      2,
+    ) + "\n",
+  );
+  const originalApp = fs.readFileSync(path.join(source, "app.js"), "utf8");
+  const bankLoop =
+    "for(const mode of ['classic','dome','heart'])if(!banks[mode])";
+  assert.ok(
+    originalApp.includes(bankLoop),
+    "Recheck the satin mode-bank integration.",
+  );
+  write(
+    "satin/app.js",
+    originalApp.replace(
+      bankLoop,
+      "for(const mode of ['dome','heart'])if(!banks[mode])",
+    ),
+  );
   write(
     "runtime-manifest.json",
     JSON.stringify({ scripts, app: "app.js", hashes }, null, 2) + "\n",

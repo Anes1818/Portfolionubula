@@ -10,10 +10,24 @@ import {
   object,
   readImage,
   validateDraft,
+  validatePublication,
+  boundedDesign,
+  REQUEST_LIMIT,
+  entitled,
+  mediaReferences,
+  text,
+  multilineText,
 } from "./validation.mjs";
+import {
+  priceDesign,
+  validateDesign,
+  normalizePolicy,
+} from "../../platform/shared/policy.mjs";
+import { billingPublicConfig, handleBillingWebhook } from "./billing.mjs";
 export { ShopRegistry, ShopStore };
 
-const PUBLIC_ORIGIN = "https://nebula.aneslaidaoui06.workers.dev";
+const PUBLIC_ORIGIN = "https://app.nebulastudio.site";
+const LEGACY_ORIGIN = "https://nebula.aneslaidaoui06.workers.dev";
 const publicFirebase = Object.freeze({
   apiKey: "AIzaSyDIwvYLyHE6sVy1XMmNU_GVnlWxQpLa4wI",
   authDomain: "la-flora-6ed47.firebaseapp.com",
@@ -28,6 +42,7 @@ const mutationMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 function allowedOrigin(origin, env) {
   return (
     origin === (env.PUBLIC_ORIGIN || PUBLIC_ORIGIN) ||
+    origin === LEGACY_ORIGIN ||
     origin === "https://nebulastudio.site" ||
     (env.ENVIRONMENT === "local" &&
       /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?$/.test(origin))
@@ -116,13 +131,14 @@ async function loadCatalog(env) {
   return catalog;
 }
 
-function publicShop(shop) {
-  // No route currently writes either entitlement or published data. Future provider
-  // work must implement verified server webhooks before this gate can open.
+function publicShop(shop, env) {
   requireValue(
     shop.published &&
-      shop.subscription.status === "active" &&
-      shop.square.status === "connected",
+      entitled(shop) &&
+      env.PUBLISHING_ENABLED === "true" &&
+      shop.subscription.testEnvironment === (env.LEMON_TEST_MODE === "true") &&
+      (env.LEMON_TEST_MODE !== "true" ||
+        ["local", "test"].includes(env.ENVIRONMENT)),
     "Shop not found.",
     404,
   );
@@ -131,9 +147,45 @@ function publicShop(shop) {
     slug: shop.slug,
     version: shop.published.version,
     draft: shop.published.draft,
-    published: { version: shop.published.version },
+    published: {
+      version: shop.published.version,
+      catalogVersion: shop.published.catalogVersion,
+    },
     readiness: [],
+    features: { requestsEnabled: true, checkoutEnabled: false },
   };
+}
+
+async function verifyFirebaseAdmin(user, token, env) {
+  const url = new URL(
+    `/adminUids/${encodeURIComponent(user.uid)}.json`,
+    publicFirebase.databaseURL,
+  );
+  url.searchParams.set("auth", token);
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    return response.ok && (await response.json()) === true;
+  } catch {
+    return false;
+  }
+}
+
+export async function updateRegistrySummary(env, shop) {
+  const summary = {
+    uid: shop.ownerUid,
+    shopId: shop.id,
+    slug: shop.slug,
+    name: shop.draft.name,
+    preset: shop.draft.preset,
+    status: shop.published && entitled(shop) ? "published" : "draft",
+    subscriptionStatus: shop.subscription?.status || "inactive",
+    publishedVersion: shop.published?.version || 0,
+    version: shop.version,
+    revision: shop.summaryRevision || shop.version,
+  };
+  await responseData(
+    await registryStub(env).fetch(internal("/summary", "POST", { summary })),
+  );
 }
 
 function decorateResponse(response, origin, env) {
@@ -163,12 +215,23 @@ function decorateResponse(response, origin, env) {
 export function makeHandler({
   verifyIdentity,
   verifyAuth = verifyIdentity || verifyFirebase,
+  verifyAdmin = verifyFirebaseAdmin,
 } = {}) {
   return async (request, env) => {
     let origin;
     try {
       const url = new URL(request.url),
         path = url.pathname;
+      // Old bookmarks keep working while all customer-facing pages use Nebula.
+      if (
+        url.origin === LEGACY_ORIGIN &&
+        env.CANONICAL_ORIGIN &&
+        ["GET", "HEAD"].includes(request.method) &&
+        !path.startsWith("/api/")
+      ) {
+        const target = new URL(url.pathname + url.search, env.CANONICAL_ORIGIN);
+        return Response.redirect(target.href, 302);
+      }
       if (!path.startsWith("/api/")) {
         requireValue(
           env.ASSETS?.fetch,
@@ -179,10 +242,11 @@ export function makeHandler({
         if (
           path === "/" ||
           /^\/login\/?$/.test(path) ||
-          /^\/dashboard(?:\/(shop|prices|collection|billing|payments))?\/?$/.test(
+          /^\/dashboard(?:\/(shop|prices|collection|products|editor|billing|payments))?\/?$/.test(
             path,
           ) ||
-          /^\/s\/[a-z0-9-]+\/?$/.test(path)
+          /^\/s\/[a-z0-9-]+\/?$/.test(path) ||
+          /^\/admin\/?$/.test(path)
         )
           assetUrl.pathname = "/index.html";
         return decorateResponse(
@@ -191,6 +255,12 @@ export function makeHandler({
           env,
         );
       }
+      if (request.method === "POST" && path === "/api/billing/webhook")
+        return decorateResponse(
+          await handleBillingWebhook(request, env),
+          null,
+          env,
+        );
       origin = originCheck(request, env);
       if (request.method === "OPTIONS") {
         requireValue(origin, "An allowed request origin is required.", 403);
@@ -209,10 +279,17 @@ export function makeHandler({
               env.PUBLIC_SIGNUPS === "true" ? "open-beta" : "private-beta",
             storageConfigured: Boolean(env.REGISTRY && env.SHOPS),
             draftPersistence: "durable-object-sqlite",
-            billingEnabled: false,
+            billingEnabled: billingPublicConfig(env).billingEnabled,
             checkoutEnabled: false,
-            publishingEnabled: false,
-            providers: { billing: "pending_setup", square: "pending_setup" },
+            publishingEnabled:
+              env.PUBLISHING_ENABLED === "true" &&
+              billingPublicConfig(env).billingEnabled,
+            providers: {
+              billing: billingPublicConfig(env).billingEnabled
+                ? "test"
+                : "pending_setup",
+              square: "pending_setup",
+            },
           }),
           origin,
           env,
@@ -224,9 +301,16 @@ export function makeHandler({
             stage: "private_beta",
             signupMode:
               env.PUBLIC_SIGNUPS === "true" ? "open-beta" : "private-beta",
-            billingEnabled: false,
+            ...billingPublicConfig(env),
+            branding: {
+              name: "Nebula",
+              hostedOrigin:
+                env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN || PUBLIC_ORIGIN,
+            },
             checkoutEnabled: false,
-            publishingEnabled: false,
+            publishingEnabled:
+              env.PUBLISHING_ENABLED === "true" &&
+              billingPublicConfig(env).billingEnabled,
           }),
           origin,
           env,
@@ -245,26 +329,45 @@ export function makeHandler({
           header.slice(7),
           env.FIREBASE_PROJECT_ID || "la-flora-6ed47",
         );
+        const admin =
+          path === "/api/session" ||
+          path.startsWith("/api/admin/") ||
+          !(env.BETA_ACCESS_EMAILS || "")
+            .toLowerCase()
+            .split(",")
+            .map((email) => email.trim())
+            .includes(user.email.toLowerCase())
+            ? await verifyAdmin(user, header.slice(7), env)
+            : false;
         const invited = (env.BETA_ACCESS_EMAILS || "")
           .split(",")
           .map((email) => email.trim().toLowerCase())
           .filter(Boolean);
         requireValue(
           env.PUBLIC_SIGNUPS === "true" ||
-            invited.includes(user.email.toLowerCase()),
+            invited.includes(user.email.toLowerCase()) ||
+            admin,
           "Private beta access is limited to invited accounts.",
           403,
         );
-        return user;
+        await responseData(
+          await registryStub(env).fetch(
+            internal("/session", "POST", { uid: user.uid, email: user.email }),
+          ),
+        );
+        return { ...user, isAdmin: admin, token: header.slice(7) };
       };
 
       if (path === "/api/session" && request.method === "GET") {
         const user = await authenticate(),
           entry = await registryLookup(env, "owner", user.uid);
+        const shop = entry ? await ensureShop(env, entry) : null;
+        if (shop) await updateRegistrySummary(env, shop);
         return decorateResponse(
           json({
             user: { uid: user.uid, email: user.email },
-            shop: entry ? await ensureShop(env, entry) : null,
+            shop,
+            isAdmin: user.isAdmin,
           }),
           origin,
           env,
@@ -278,14 +381,75 @@ export function makeHandler({
             internal("/create", "POST", { ownerUid: user.uid, input }),
           ),
         );
+        const shop = await ensureShop(env, entry);
+        await updateRegistrySummary(env, shop);
+        return decorateResponse(json({ shop }, 201), origin, env);
+      }
+      if (path === "/api/admin/users" && request.method === "GET") {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        const params = new URLSearchParams();
+        for (const key of ["q", "status", "cursor", "limit"])
+          if (url.searchParams.has(key))
+            params.set(key, url.searchParams.get(key));
         return decorateResponse(
-          json({ shop: await ensureShop(env, entry) }, 201),
+          json(
+            await responseData(
+              await registryStub(env).fetch(internal("/users?" + params)),
+            ),
+          ),
+          origin,
+          env,
+        );
+      }
+      const adminMatch = path.match(
+        /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})(?:\/media\/(img_[a-f0-9]{64}|slot-[1-5]))?$/,
+      );
+      if (adminMatch && request.method === "GET") {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        const entry = await registryLookup(env, "id", adminMatch[1]);
+        requireValue(entry, "Shop not found.", 404);
+        const shop = await ensureShop(env, entry);
+        if (adminMatch[2]) {
+          const image = await shopStub(env, entry.id).fetch(
+            internal(
+              "/media/" + adminMatch[2],
+              "GET",
+              undefined,
+              entry.ownerUid,
+            ),
+          );
+          return decorateResponse(image, origin, env);
+        }
+        const account = await responseData(
+          await registryStub(env).fetch(
+            internal("/user?uid=" + encodeURIComponent(entry.ownerUid)),
+          ),
+        );
+        return decorateResponse(
+          json({ shop, user: account.user }),
+          origin,
+          env,
+        );
+      }
+      const publicMatch = path.match(
+        /^\/api\/public\/shops\/([a-z0-9-]{3,48})$/,
+      );
+      if (publicMatch && request.method === "GET") {
+        const entry = await registryLookup(env, "slug", publicMatch[1]);
+        requireValue(entry, "Shop not found.", 404);
+        const { shop } = await responseData(
+          await shopStub(env, entry.id).fetch(internal("/snapshot")),
+        );
+        return decorateResponse(
+          json({ shop: publicShop(shop, env) }),
           origin,
           env,
         );
       }
       const match = path.match(
-        /^\/api\/shops\/(?:resolve\/([a-z0-9-]{3,48})|(sh_[a-f0-9]{32}|[a-z0-9-]{3,48}))(?:\/(draft|media(?:\/(slot-[1-5]))?|publish|billing\/checkout|square\/connect))?$/,
+        /^\/api\/shops\/(?:resolve\/([a-z0-9-]{3,48})|(sh_[a-f0-9]{32}|[a-z0-9-]{3,48}))(?:\/(draft|media(?:\/(img_[a-f0-9]{64}|slot-[1-5]))?|publish|billing\/(?:checkout|status|portal)|square\/connect|products(?:\/([a-zA-Z0-9_-]{1,80}))?|requests))?$/,
       );
       if (!match) throw new HttpError(404, "Not found.");
       const value = match[1] || match[2],
@@ -294,7 +458,8 @@ export function makeHandler({
       // Authenticate before allocating or querying tenant objects for every private
       // operation. A public read can only expose an entitled published snapshot.
       const privateOperation =
-        request.method !== "GET" || request.headers.has("Authorization");
+        !(operation === "requests" && request.method === "POST") &&
+        (request.method !== "GET" || request.headers.has("Authorization"));
       const user = privateOperation ? await authenticate() : null;
       const entry = await registryLookup(
         env,
@@ -303,7 +468,14 @@ export function makeHandler({
       );
       requireValue(entry, "Shop not found.", 404);
       const owner = user?.uid === entry.ownerUid;
-      if (privateOperation) requireValue(owner, "Shop not found.", 404);
+      const adminMedia =
+        (operation?.startsWith("media/") ||
+          (operation === "requests" && request.method === "GET")) &&
+        user &&
+        !owner &&
+        (await verifyAdmin(user, user.token, env));
+      if (privateOperation)
+        requireValue(owner || adminMedia, "Shop not found.", 404);
       let shop;
       if (owner) shop = await ensureShop(env, entry);
       else
@@ -315,30 +487,208 @@ export function makeHandler({
 
       if (request.method === "GET" && !operation)
         return decorateResponse(
-          json({ shop: owner ? shop : publicShop(shop) }),
+          json({ shop: owner ? shop : publicShop(shop, env) }),
           origin,
           env,
         );
+      if (operation === "requests") {
+        if (request.method === "GET") {
+          requireValue(owner || adminMedia, "Shop not found.", 404);
+          return decorateResponse(
+            json(
+              await responseData(
+                await shopStub(env, entry.id).fetch(
+                  internal(
+                    "/requests" + url.search,
+                    "GET",
+                    undefined,
+                    entry.ownerUid,
+                  ),
+                ),
+              ),
+            ),
+            origin,
+            env,
+          );
+        }
+        if (request.method === "POST") {
+          const profile = publicShop(shop, env);
+          const body = await readJson(request, 32 * 1024);
+          object(body, "Customer request", [
+            "requestKey",
+            "kind",
+            "productId",
+            "design",
+            "cardId",
+            "customer",
+            "fulfillment",
+          ]);
+          requireValue(
+            typeof body.requestKey === "string" &&
+              /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(
+                body.requestKey,
+              ),
+            "A valid request key is required.",
+          );
+          requireValue(
+            ["product", "design"].includes(body.kind),
+            "Choose a fixed product or bouquet design to request.",
+          );
+          let design, pricing, card;
+          if (body.kind === "product") {
+            const product = profile.draft.products.find(
+              (item) =>
+                item.id === body.productId &&
+                item.available &&
+                Number.isSafeInteger(item.priceCents),
+            );
+            requireValue(product, "This product is unavailable.", 409);
+            requireValue(
+              body.design === undefined && body.cardId === undefined,
+              "Fixed products cannot contain a custom design.",
+            );
+          } else {
+            requireValue(
+              body.productId === undefined,
+              "Custom bouquet requests cannot contain a fixed product.",
+            );
+            if (body.cardId !== undefined && body.cardId !== null) {
+              card = profile.draft.collection.find(
+                (item) => item.id === body.cardId && item.available,
+              );
+              requireValue(card, "This bouquet is unavailable.", 409);
+            } else
+              requireValue(
+                profile.draft.home.sections.includes("builder"),
+                "The open builder is unavailable.",
+                409,
+              );
+            const raw = boundedDesign(body.design);
+            requireValue(
+              raw && raw.items?.length > 0,
+              "Add at least one flower before requesting a bouquet.",
+            );
+            design = raw;
+            // Authoritative semantic validation and pricing execute inside the
+            // shop Durable Object rather than the edge request's free CPU budget.
+          }
+          object(body.customer, "Customer", ["name", "phone", "note", "date"]);
+          const customer = {
+            name: text(body.customer.name, "Name", 80, true),
+            phone: text(body.customer.phone, "Phone", 40, true),
+            note: multilineText(body.customer.note ?? "", "Note", 1000),
+            date: body.customer.date ?? null,
+          };
+          requireValue(
+            customer.date === null ||
+              (typeof customer.date === "string" &&
+                /^\d{4}-\d{2}-\d{2}$/.test(customer.date) &&
+                !Number.isNaN(Date.parse(customer.date + "T00:00:00Z")) &&
+                new Date(customer.date + "T00:00:00Z")
+                  .toISOString()
+                  .slice(0, 10) === customer.date),
+            "Choose a valid requested date.",
+          );
+          requireValue(
+            ["pickup", "delivery"].includes(body.fulfillment),
+            "Choose pickup or delivery.",
+          );
+          const hash = async (value) =>
+            [
+              ...new Uint8Array(
+                await crypto.subtle.digest(
+                  "SHA-256",
+                  new TextEncoder().encode(value),
+                ),
+              ),
+            ]
+              .map((part) => part.toString(16).padStart(2, "0"))
+              .join("");
+          const fingerprint = await hash(
+            JSON.stringify({
+              kind: body.kind,
+              productId: body.productId,
+              cardId: card?.id || null,
+              design,
+              customer,
+              fulfillment: body.fulfillment,
+            }),
+          );
+          // A fixed 4096-bucket hash space bounds rate-limit rows per shop and
+          // keeps customer network addresses out of the request ledger.
+          const ipBucket = (
+            await hash(
+              entry.id +
+                ":" +
+                (request.headers.get("CF-Connecting-IP") || "unknown"),
+            )
+          ).slice(0, 3);
+          const data = await responseData(
+            await shopStub(env, entry.id).fetch(
+              internal(
+                "/requests",
+                "POST",
+                {
+                  requestKey: body.requestKey,
+                  kind: body.kind,
+                  productId: body.productId,
+                  cardId: card?.id || null,
+                  design,
+                  pricing,
+                  publishedVersion: profile.version,
+                  customer,
+                  fulfillment: body.fulfillment,
+                  fingerprint,
+                  ipBucket,
+                },
+                entry.ownerUid,
+              ),
+            ),
+          );
+          const receipt = {
+            id: data.request.id,
+            status: data.request.status,
+            totalCents: data.request.totalCents,
+            currency: data.request.currency,
+            summary: data.request.summary,
+            pricingNote:
+              "Unpaid request. Tax and delivery charges are confirmed by the florist.",
+          };
+          const phone = profile.draft.phone.replace(/\D/g, "");
+          const whatsappUrl = /^\d{8,15}$/.test(phone)
+            ? `https://wa.me/${phone}?text=${encodeURIComponent(`Request ${receipt.id}: ${receipt.summary}. ${customer.name}, ${customer.phone}. ${body.fulfillment}. This is an unpaid request.`)}`
+            : null;
+          return decorateResponse(
+            json({ request: receipt, whatsappUrl }, 201),
+            origin,
+            env,
+          );
+        }
+      }
       if (operation === "draft" && request.method === "PUT") {
-        const body = await readJson(request, 80 * 1024);
+        const body = await readJson(request, REQUEST_LIMIT);
         object(body, "Save request", ["version", "draft"]);
         requireValue(
           Number.isSafeInteger(body.version) && body.version > 0,
           "A valid draft version is required.",
         );
-        const draft = validateDraft(body.draft, await loadCatalog(env));
+        const draft = validateDraft(body.draft, await loadCatalog(env), {
+          semantic: false,
+        });
         const result = await shopStub(env, entry.id).fetch(
           internal("/draft", "PUT", { version: body.version, draft }, user.uid),
         );
-        return decorateResponse(json(await responseData(result)), origin, env);
+        const data = await responseData(result);
+        await updateRegistrySummary(env, data.shop);
+        return decorateResponse(json(data), origin, env);
       }
       if (operation === "media" && request.method === "POST") {
         const slot = url.searchParams.get("slot"),
           kind = url.searchParams.get("kind");
         requireValue(
-          /^[1-5]$/.test(slot || "") &&
-            kind === (slot === "1" ? "logo" : "cover"),
-          "Use slot 1 for a logo or slots 2–5 for covers.",
+          /^(?:[1-9]|1[0-8])$/.test(slot || "") &&
+            ["logo", "cover", "hero"].includes(kind),
+          "Choose an image slot from 1 to 18 and a logo, cover, or hero image.",
         );
         requireValue(
           [...url.searchParams.keys()].every((key) =>
@@ -347,12 +697,23 @@ export function makeHandler({
           "Invalid media upload parameters.",
         );
         const image = await readImage(request, kind),
-          id = "slot-" + slot;
+          hash = new Uint8Array(
+            await crypto.subtle.digest("SHA-256", image.bytes),
+          ),
+          id =
+            "img_" +
+            [...hash]
+              .map((value) => value.toString(16).padStart(2, "0"))
+              .join("");
         await responseData(
           await shopStub(env, entry.id).fetch(
             new Request("https://internal/media/" + id, {
               method: "PUT",
-              headers: { "Content-Type": image.mime, "X-Owner-Uid": user.uid },
+              headers: {
+                "Content-Type": image.mime,
+                "X-Owner-Uid": user.uid,
+                "X-Media-Kind": kind,
+              },
               body: image.bytes,
             }),
           ),
@@ -371,12 +732,9 @@ export function makeHandler({
         mediaId &&
         request.method === "GET"
       ) {
-        if (!owner) {
-          const published = publicShop(shop);
-          const refs = [
-            published.draft.logoMediaId,
-            ...published.draft.collection.map((item) => item.cover),
-          ];
+        if (!owner && !adminMedia) {
+          const published = publicShop(shop, env);
+          const refs = mediaReferences(published.draft);
           requireValue(refs.includes(mediaId), "Image not found.", 404);
         }
         // Internal authorization always comes from the verified registry owner;
@@ -385,21 +743,92 @@ export function makeHandler({
           internal("/media/" + mediaId, "GET", undefined, entry.ownerUid),
         );
         if (!result.ok) await responseData(result);
+        if (!owner && !adminMedia && /^img_/.test(mediaId)) {
+          const headers = new Headers(result.headers);
+          // Keep the entitlement gate ahead of all storage reads; browser caching
+          // may reuse immutable bytes, but no shared cache can bypass revocation.
+          headers.set("Cache-Control", "private, max-age=300, immutable");
+          return decorateResponse(
+            new Response(result.body, { status: result.status, headers }),
+            origin,
+            env,
+          );
+        }
         return decorateResponse(result, origin, env);
       }
+      if (operation?.startsWith("products") && request.method === "GET") {
+        const profile = owner ? shop : publicShop(shop, env);
+        const products = profile.draft.products.filter(
+          (item) => owner || (item.available && item.priceCents !== null),
+        );
+        if (match[5]) {
+          const product = products.find((item) => item.id === match[5]);
+          requireValue(product, "Product not found.", 404);
+          return decorateResponse(
+            json({ product, currency: profile.draft.currency }),
+            origin,
+            env,
+          );
+        }
+        return decorateResponse(
+          json({ products, currency: profile.draft.currency }),
+          origin,
+          env,
+        );
+      }
       if (
-        ["publish", "billing/checkout", "square/connect"].includes(operation) &&
-        request.method === "POST"
+        operation?.startsWith("billing/") &&
+        ["GET", "POST"].includes(request.method)
       ) {
-        const messages = {
-          publish:
-            "Publishing is unavailable until subscription billing and Square provider setup are complete.",
-          "billing/checkout":
-            "Subscription billing provider setup is pending. No checkout session was created.",
-          "square/connect":
-            "Square provider setup is pending. No payment connection was created.",
-        };
-        throw new HttpError(409, messages[operation]);
+        let body;
+        if (request.method === "POST") {
+          const input = await readJson(request, 4096);
+          object(input, "Billing request", ["planId"]);
+          body = {
+            actor: { uid: user.uid, email: user.email },
+            planId: input.planId || "shop",
+          };
+        }
+        const result = await shopStub(env, entry.id).fetch(
+          internal("/" + operation, request.method, body, user.uid),
+        );
+        return decorateResponse(json(await responseData(result)), origin, env);
+      }
+      if (operation === "publish" && request.method === "POST") {
+        requireValue(
+          env.PUBLISHING_ENABLED === "true",
+          "Publishing is unavailable until platform setup is complete.",
+          409,
+        );
+        requireValue(
+          entitled(shop),
+          "Publishing is unavailable until a verified active subscription is available.",
+          409,
+        );
+        const input = await readJson(request, 4096);
+        object(input, "Publish request", ["version"]);
+        requireValue(
+          Number.isSafeInteger(input.version) && input.version > 0,
+          "A valid draft version is required.",
+        );
+        const data = await responseData(
+          await shopStub(env, entry.id).fetch(
+            internal("/publish", "POST", { version: input.version }, user.uid),
+          ),
+        );
+        await updateRegistrySummary(env, data.shop);
+        return decorateResponse(json(data), origin, env);
+      }
+      if (operation === "square/connect" && request.method === "POST") {
+        requireValue(
+          entitled(shop),
+          "An active paid subscription is required before connecting Square.",
+          409,
+        );
+        throw new HttpError(
+          409,
+          "Square provider setup is pending. No payment connection was created.",
+        );
       }
       throw new HttpError(404, "Not found.");
     } catch (error) {

@@ -182,12 +182,14 @@ const {
         body: png,
       },
     );
-    await data(upload, 201);
-    const image = await call("/api/shops/" + id + "/media/slot-1");
+    const uploaded = await data(upload, 201);
+    const imageId = uploaded.media.id;
+    assert.match(imageId, /^img_[a-f0-9]{64}$/);
+    const image = await call("/api/shops/" + id + "/media/" + imageId);
     assert.equal(image.status, 200);
     assert.deepEqual(Buffer.from(await image.arrayBuffer()), png);
     await data(
-      await call("/api/shops/" + id + "/media/slot-1", { token: "other" }),
+      await call("/api/shops/" + id + "/media/" + imageId, { token: "other" }),
       404,
     );
     await data(
@@ -199,7 +201,7 @@ const {
         method: "POST",
         body: {},
       }),
-      409,
+      503,
     );
     await data(
       await call("/api/shops/" + id + "/square/connect", {
@@ -215,9 +217,9 @@ const {
     assert.equal(restored.id, id);
     assert.equal(restored.version, 2);
     assert.equal(restored.draft.tagline, draft.tagline);
-    assert.deepEqual(restored.draft.collection, draft.collection);
+    assert.deepEqual(restored.draft.collection, shop.draft.collection);
     assert.equal(
-      (await call("/api/shops/" + id + "/media/slot-1")).status,
+      (await call("/api/shops/" + id + "/media/" + imageId)).status,
       200,
     );
     console.log(

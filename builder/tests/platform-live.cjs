@@ -5,7 +5,7 @@ const assert = require("node:assert/strict"),
   path = require("node:path");
 const { chromium } = require("playwright");
 (async () => {
-  const base = "https://nebula.aneslaidaoui06.workers.dev";
+  const base = process.env.PLATFORM_BASE || "https://app.nebulastudio.site";
   const out = path.resolve(__dirname, "../../.private/qa/platform/live");
   fs.mkdirSync(out, { recursive: true });
   const health = await fetch(base + "/api/health");
@@ -76,9 +76,9 @@ const { chromium } = require("playwright");
       waitUntil: "domcontentloaded",
     });
     await page
-      .getByText("This shop is a private draft.", { exact: false })
+      .getByText("This shop isn’t open to the public yet.", { exact: false })
       .waitFor();
-    assert.equal(await page.locator(".store-card").count(), 0);
+    assert.equal(await page.locator(".flower-card").count(), 0);
     assert.deepEqual(errors, []);
     console.log(
       "PASS live public SDK boot, login/deep routes, inactive provider flags, anonymous access denial, source-file exclusion and mobile layout. No login or write occurred.",

@@ -1,6 +1,8 @@
 # Nebula self-service beta — 28 October 2026
 
-## Current release
+> Historical v1 release. See [PLATFORM-V2-2026-10-28.md](PLATFORM-V2-2026-10-28.md) for the current feature set, branded hostname and closed billing status.
+
+## Original v1 release
 
 Private beta: **https://nebula.aneslaidaoui06.workers.dev/login**.
 

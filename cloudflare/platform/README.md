@@ -1,104 +1,70 @@
-# Nebula private beta Worker
+# Nebula florist platform, v2
 
-This Worker serves the self-service florist beta and its private saved drafts. It targets the existing **`nebula`** Worker in account `1b65e5ab35edeaa924ddf8fcff2e95aa`. It does not modify the Ray's payment Workers, existing storefronts, custom domains, or DNS.
+Current private-beta app: https://app.nebulastudio.site/login
+Platform administrator: https://app.nebulastudio.site/admin
 
-Subscription billing, Square connection, publishing, order creation, and checkout are unavailable. Provider endpoints always return HTTP 409. Setting an environment variable to `true` cannot activate them: verified provider integration and entitlement handling have not been implemented.
+This service uses the existing `nebula` Worker and existing SQLite Durable Objects. The main GitHub Pages site, Ray's existing shop and payment services are separate. The new `app` subdomain is a Worker Custom Domain; the apex domain is not moved. The old workers.dev page redirects to the branded app. Firebase must authorize `app.nebulastudio.site` (owner confirmed this on 2026-10-28).
 
-## Access and storage
+## Delivered product
 
-- Firebase ID tokens are verified with `../rays-payments/security.mjs`, including the RS256 signature, issuer, audience, expiry, and `email_verified === true`.
-- `PUBLIC_SIGNUPS` defaults to the exact string `false`. With signups closed, verified users must match `BETA_ACCESS_EMAILS`. The allowlist grants beta access only; shop authorization still requires the matching Firebase UID. The API never discloses the list. A rejected beta login reaches no Durable Object.
-- `ShopRegistry` is one SQLite Durable Object. A single synchronous SQLite transaction claims both its unique owner UID and unique slug, preventing races from creating duplicate shops or addresses. Registry seeds recover initialization if a request stops between registry creation and shop initialization.
-- `ShopStore` is a separate SQLite Durable Object for each registry-assigned shop ID. It contains its draft, five bounded media BLOBs, and fixed mutation counters. Draft writes require the current optimistic version. A conflict returns 409 and leaves the saved draft unchanged.
-- Subscription status, Square status, published state, owner UID, slug, and version are controlled by the server. The draft schema rejects extra properties and validates catalog IDs, integer cents, hex colors, collection entries, and bounded JSON designs.
-- Draft saves are capped at 60/minute per shop; image uploads at 10/minute; authenticated image reads at 120/minute. Each shop has only one counter row for each action. Catalog and public config reads do not allocate tenant storage.
+- One shop per verified Firebase UID, with atomic slug reservation.
+- Shared version-2 fresh and satin catalogues, filtered by preset. Merchants toggle and price their own items. Missing prices remain null, never silently free. Sample amounts are copied only by an explicit owner action and must be replaced/approved before activation.
+- Six independently editable customisable recipes and ten separate fixed products. A new shop begins empty. Order and Customise use the same stored bouquet; Open Builder starts a separate blank design.
+- Existing fresh renderer/model/geometry copied unchanged. Satin uses the existing Ray integration with a generic tenant policy and no Classic mode. Ray's original deployment is not modified.
+- Click-to-edit storefront, compressed image upload, section visibility/order, mobile canvas, optimistic draft autosave and explicit publication.
+- Protected administrator directory of verified users who have opened a platform session, including those without shops. Indexed pagination and read-only draft/live inspection; role comes from the existing Firebase `/adminUids/:uid` rule, not an email address.
+- Tested publication and persisted unpaid product/design request paths behind closed server gates. Optional Square is not required for publication. No request is labelled paid.
 
-## API
+## Release gates
 
-All JSON responses and private media use `Cache-Control: no-store`. Errors return `{ "error": "Human-readable message" }` with a relevant HTTP status. JSON writes require `Content-Type: application/json`. Every API mutation requires an `Origin` matching `PUBLIC_ORIGIN` or `https://nebulastudio.site`. HTTP localhost/127.0.0.1 origins are accepted only when `ENVIRONMENT=local` is explicitly configured.
+**Public beta access, live publication, subscriptions, Square OAuth and card checkout are disabled in production.** Existing invited owners can sign in and edit their private previews. Only server-owned verified billing entitlements may permit public access. Return URLs, saved drafts and browser flags never activate a shop.
 
-| Request                                       | Result                                                                                                                                                                                                     |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /api/health`                             | Truthful private-beta stage, configured bindings, closed provider flags and signup mode. No provider success claim.                                                                                        |
-| `GET /api/config`                             | `{firebase, stage, signupMode, billingEnabled:false, checkoutEnabled:false, publishingEnabled:false}`. Firebase config is copied from the existing public `b/config.js`; it contains no server credential. |
-| `GET /api/catalog`                            | Public local `platform/public/catalog.json`, fetched through `ASSETS`. Returns 503 if missing or malformed.                                                                                                |
-| `GET /api/session`                            | Requires invited verified identity. `{user:{uid,email},shop:null\|ownerShop}`.                                                                                                                             |
-| `POST /api/shops`                             | `{name,slug,currency:"USD"\|"CAD",preset:"fresh"\|"satin"}` → 201 `{shop}`. One shop per UID.                                                                                                              |
-| `GET /api/shops/:id`                          | Owner token returns the saved draft. Anonymous/unrelated identities receive 404 while the shop is private.                                                                                                 |
-| `GET /api/shops/resolve/:slug`                | The same owner/public visibility rules, looked up by shop slug. `GET /api/shops/:slug` is also supported.                                                                                                  |
-| `PUT /api/shops/:id/draft`                    | `{version,draft}` → `{shop}` with incremented version. Whole request ≤80 KiB; each bouquet design ≤24 KiB, depth ≤14, total nodes ≤2,500, any array ≤300.                                                  |
-| `POST /api/shops/:id/media?slot=1&kind=logo`  | Owner-only raw PNG/JPEG/WebP ≤80 KiB. Returns `{media:{id:"slot-1",url}}`.                                                                                                                                 |
-| `POST /api/shops/:id/media?slot=2&kind=cover` | Cover slots 2–5; owner-only raw PNG/JPEG/WebP ≤150 KiB each. Existing fixed slots can be replaced. No arbitrary object key or SVG.                                                                         |
-| `GET /api/shops/:id/media/:mediaId`           | Private image fetch requires owner Bearer token. The browser must fetch the image with the token and create a local object URL.                                                                            |
-| `POST /api/shops/:id/publish`                 | 409: billing and Square provider setup pending.                                                                                                                                                            |
-| `POST /api/shops/:id/billing/checkout`        | 409: no checkout session created.                                                                                                                                                                          |
-| `POST /api/shops/:id/square/connect`          | 409: no payment connection created.                                                                                                                                                                        |
+The user's payout onboarding is unresolved. `billing.mjs` deliberately returns disabled status/503 on checkout and webhook actions. `lemon.mjs` is a disconnected test-only adapter, not proof of a functioning subscription integration. There is no live subscription webhook ledger or automatic entitlement activation yet. Switching a config flag does not make billing operational. The proposed plans are $29 USD/month hosted and $35/month own-domain connection; the second tier remains unavailable until domain provisioning is implemented and tested. Merchant domain purchase/renewal is separate.
 
-The initial owner shop is:
+Before accepting subscriptions: confirm a supported payout account with the provider, complete merchant activation, implement persistent checkout/webhook reconciliation, test real provider sandbox flows, and agree activation/cancellation policy. Before customer card payments: finish generic Square OAuth, encrypted token storage, full merchant-approved pricing/fulfillment/taxes and real Sandbox testing. Existing Ray payment code is not automatically used for all shops.
 
-```js
-{
-  id: "sh_<randomhex>", ownerUid, slug, version: 1,
-  draft: {
-    name, tagline: "", city: "", phone: "", instagram: "",
-    logoMediaId: null,
-    theme: { primary: "#7c6649", background: "#f7f4ee" },
-    currency, preset, flowerPrices: {}, disabledFlowers: [],
-    extrasCents: {}, collection: []
-  },
-  subscription: { status: "inactive" },
-  square: { status: "not_connected" },
-  published: null,
-  readiness: [{ code, message }]
-}
-```
+## Data and isolation
 
-Collection entries contain `{id,title,recipeId:null|catalogId,design:null|JSON,cover:null|"slot-2"..."slot-5"}`. At least a recipe or a design is required. Up to four entries can be saved. `draft.logoMediaId` accepts `null` or `slot-1`. An attached media ID must already exist in this shop's SQLite storage.
+`ShopRegistry` owns unique UID/slug claims, indexed account summaries and unique provider-resource associations. Each `ShopStore` owns its draft, current and previous published snapshots, media and unpaid requests. Old v1 rows hydrate to schema v2 without rewriting or dropping the saved draft.
 
-Anonymous reads are guarded by a published snapshot **and** server-owned active subscription **and** connected Square status. No current endpoint can create those conditions. Before future publishing is implemented, also implement provider webhook verification, entitlement revocation, immutable published media snapshots, and a controlled activation review. This beta has no payment or order API.
+Draft JSON is capped at 192 KiB; each design at 24 KiB. A shop has at most 18 active media references: logo 80 KiB, six recipe covers and ten product covers 150 KiB each, hero 250 KiB. Media IDs are immutable SHA-256 hashes. A 12 MiB retained-image quota covers current, previous, draft and historical request media. Unreferenced uploads older than 24 hours may be reclaimed; current snapshots and request product photos are protected. Uploads stop at the quota instead of silently deleting order evidence. No paid storage upgrade is automatic. Legacy slots remain readable and cannot be overwritten.
 
-## Local verification and deployment
+Unpaid requests persist the published product or full bouquet design, calculated price, currency, customer details and fulfillment preference. The server recalculates design prices against the published policy using the same semantic model as the browser; it accepts no client amount. Duplicate UUID retries return the existing record, conflicting reuse returns 409. Only the owner/admin can read request history. A WhatsApp link is an optional explicit action after persistence, never proof of delivery or payment.
 
-Node 22.19+ is required. Run from the repository root:
+Semantic validation/pricing runs in the SQLite object, avoiding repeated expensive geometry work on the Worker Free request budget. Geometry runtimes are cached by preset and reset all prices synchronously between merchants. Static artwork/runtime requests bypass Worker execution; API/SPA routes run through it. Free quotas remain finite and shared; no unlimited-user claim is made. The central directory pages indexed summaries rather than opening every shop.
+
+## Routes
+
+- `/login`, `/dashboard`, `/dashboard/shop`, `/dashboard/prices`, `/dashboard/collection`, `/dashboard/products`, `/dashboard/editor`, `/dashboard/billing`, `/dashboard/payments`
+- `/s/:slug`: owner private draft or eligible immutable public storefront
+- `/studio/studio.html?shop=:id&card=:id`: owner recipe; `blank=1`: independent design
+- `/studio/studio.html?slug=:slug&card=:id`: public recipe when eligible
+- `/admin`: protected platform accounts and inspection
+- `GET /api/config`, `/api/health`, `/api/catalog`
+- `GET /api/session`; `POST /api/shops`; `GET /api/shops/:id`
+- `PUT /api/shops/:id/draft` with current `{version,draft}`
+- `POST /api/shops/:id/media?slot=1..18&kind=logo|cover|hero`
+- `GET /api/public/shops/:slug`; `POST /api/shops/:id/publish`
+- `POST /api/shops/:id/requests`; owner/admin `GET` on same path
+- `GET /api/admin/users?q=&cursor=&status=&limit=`; `GET /api/admin/shops/:id`
+- `/billing/*` and `/square/connect`: closed provider setup responses
+
+JSON/API mutations require an approved Origin. Authentication verifies Firebase signature, project, expiry and verified email. Owner UID and server-side admin role enforce tenancy; invite emails only control private-beta admission. Source/private files are outside the static asset allowlist.
+
+## Build and verification
+
+From repository root (Node 22.19+):
 
 ```powershell
+node builder/tools/build-platform.cjs
+node builder/tests/platform-policy.cjs
 node --test cloudflare/platform/test/*.test.mjs
+node builder/tests/platform-durable.cjs
+node builder/tests/platform-browser.cjs
 ```
 
-Tests execute the actual SQLite schema and transactions using Node's `node:sqlite`. In-memory test namespaces call the real Durable Object classes. The suite tests real signed Firebase tokens, verified-email rejection, invite checks before object allocation, atomic uniqueness races, owner isolation, private preview/media, stale versions, spoofed entitlement fields, bounded drafts/images, mutation rate caps, origins, static routes, and fail-closed provider actions. Node currently labels its SQLite module experimental.
+The last two additionally require Miniflare/esbuild and Playwright with Edge respectively. Browser/workerd QA uses a real local SQLite/runtime implementation but injected local Firebase identities and a synthetic local entitlement, never production bypasses. Tests never send email, connect Square or charge a card. Generated studio/policy/runtime copies and QA captures are ignored in Git. The original model/renderer identity is checked at build time.
 
-From this directory, install the pinned development dependency if needed and run:
+From `cloudflare/platform`, `npm run check` builds and performs a Wrangler dry run. `npm run deploy` builds and deploys to the existing `nebula` Worker only. Review account, route, flags and binding preservation before deployment. Do not replace the apex domain or deploy over a Ray payment Worker. Read-only live smoke: `node builder/tests/platform-live.cjs`; optional `PLATFORM_BASE` overrides the branded origin.
 
-```powershell
-npm run check
-npm run dev
-```
-
-`check` is a Wrangler **dry run**. `dev` starts only a local Worker at `127.0.0.1:4192`, with state under the ignored repository `.private/qa/platform-state`. For local browser requests, override `ENVIRONMENT=local` and `PUBLIC_ORIGIN=http://127.0.0.1:4192` using local development vars. Public signup remains closed unless explicitly changed. No test token or authentication bypass exists in the deployed entry point; tests inject a verifier through the exported `makeHandler` factory.
-
-`wrangler.jsonc` binds `REGISTRY`, `SHOPS`, and `ASSETS` with SQLite migration `platform-v1`. Static assets come from `../../platform/public`. `/`, `/login`, `/dashboard`, and `/s/:slug` serve `index.html`; `/studio/*` is served as ordinary static files. The Worker uses its `workers.dev` origin; no custom-domain route is declared.
-
-Deployment is a separate authorized operator action: `npm run deploy` uploads to **`nebula`** only. Review the account, existing Worker migration history, generated asset bundle, and local checks before that action. Never deploy this config over a payment Worker or infer that a successful upload has enabled billing, Square, publishing, checkout, or public signup.
-
-## Separate Lemon Squeezy adapter foundation
-
-`lemon.mjs` is a disconnected library, **not imported by the Worker**. No route, store, configuration binding, provider account, or entitlement is changed by this foundation. The deployed billing endpoint continues to return 409. Tests use only locally mocked API responses and locally signed fixtures; no real provider API request, charge, or credential was used.
-
-The implementation was checked against these official documents on 2026-10-28:
-
-- [API request requirements](https://docs.lemonsqueezy.com/api/getting-started/requests): HTTPS API endpoint, JSON:API content headers, and server Bearer authentication.
-- [Create a checkout](https://docs.lemonsqueezy.com/api/checkouts/create-checkout): the selected store/variant relationships, test-mode flag, enabled variant restriction, custom data, expiry, and returned checkout URL.
-- [Signing requests](https://docs.lemonsqueezy.com/help/webhooks/signing-requests): HMAC-SHA256 over unchanged raw request bytes, checked against `X-Signature`.
-- [Webhook requests](https://docs.lemonsqueezy.com/help/webhooks/webhook-requests): signed JSON resource payloads, event header, custom metadata, and delivery retries.
-- [Event types](https://docs.lemonsqueezy.com/help/webhooks/event-types): subscription lifecycle events contain subscription resources; payment events contain invoice resources.
-- [Subscription object](https://docs.lemonsqueezy.com/api/subscriptions/the-subscription-object): provider status, cancellation, renewal/end/trial dates, store, variant, and test-mode fields.
-
-The server-only `createLemonAdapter(config, dependencies)` factory requires `testMode: true`, one fixed `storeId`, one fixed `variantId`, a test API key, a webhook signing secret, and an exact approved store host under `lemonsqueezy.com`. Its return origin is restricted to the existing Nebula Worker origin or `https://nebulastudio.site`. Live mode and client-selected provider configuration are rejected. Configuration has no defaults for credentials or product IDs and is not read from browser input.
-
-`createCheckout({verifiedUser, shop})` must receive an already verified Firebase user and a shop loaded from trusted server storage. It rejects a UID mismatch. It generates the shop ID, owner UID, random checkout nonce, and a separate domain-scoped HMAC metadata binding on the server. It sends no custom price or client-selected variant. The API URL is fixed; HTTP redirects are forbidden; successful responses must remain test mode and match the configured store/variant. The returned checkout must use the exact HTTPS store host and matching custom-checkout path. Return links, credentials, fragments, arbitrary query parameters, unexpected expiry, cross-host URLs, and malformed responses are rejected. Requests and response reads share a bounded timeout, and provider responses are capped at 64 KiB. Errors never include provider bodies, API keys, or signing secrets.
-
-`verifyWebhook(request, {expectedShop, expectedCheckoutNonce})` requires trusted shop/checkout context from a future server ledger. It bounds raw bytes to 64 KiB, verifies the MAC using WebCrypto before JSON parsing, checks the server-generated metadata binding and expected shop/UID/nonce, and rejects unapproved stores, variants, live-mode payloads, inconsistent event headers, and malformed subscription fields. It normalizes subscription lifecycle events into a payload fingerprint ID, event type, provider subscription ID, fixed store/variant, test-mode flag, verified custom data, subscription status, cancellation object, and period dates. `paidUntil` is a conservative mapping of the provider's renewal/end fields; it is **not proof that an invoice was paid**, and trials/past-due/paused/unpaid states receive no paid-until value.
-
-This library deliberately returns `requiresReconciliation: true` and no activation decision. A payload SHA-256 fingerprint is a replay key because the documented webhook resource ID identifies the subscription rather than a unique delivery. A production integration still needs an atomic persistent ledger for checkout attempts, nonce bindings, duplicate events, resource ownership, webhook retries, event ordering, and entitlement transitions. Creation timeouts have an unknown provider outcome and cannot be blindly retried. Future code must handle webhook arrival before checkout persistence, confirm the actual recurring USD plan/product and price, reconcile current subscription state with authenticated provider retrieval, process payment/refund/invoice events, enforce separate test/live credentials and storage, and define cancellation/expiry/grace rules before opening access. Subscription-invoice, order, refund, and other unsupported event types are rejected for separate reconciliation rather than treated as activation. Timestamp ordering and payload fingerprints alone cannot solve stale or out-of-order events.
-
-Run only the foundation tests with `node --test cloudflare/platform/test/lemon.test.mjs`, or run the complete beta suite with the command above. No deployed entry point uses test-injected identities or this adapter.
+See `docs/PLATFORM-V2-2026-10-28.md` for release evidence and remaining user tasks. Earlier beta notes are historical, not current specifications.
