@@ -11,6 +11,7 @@ generated shop folders are deployment output.
 | `clients/` | Shop-specific source, artwork and approved/draft configurations |
 | `shops/` | Generated storefronts; rebuild instead of editing directly |
 | `cloudflare/` | Short-link and payment services |
+| `platform/` | Self-service private beta UI and shared-builder adapter |
 | `firebase/` | Authentication/database rules and short-link Functions alternative |
 | `demo/` | Existing public previews and concept websites |
 | `dz/` | Existing Algerian website and logistics demo |
@@ -25,8 +26,11 @@ activation are still required. See
 [payment documentation](cloudflare/rays-payments/README.md) and
 [Arabic account setup](cloudflare/rays-payments/SETUP.ar.md).
 
-The proposed self-service shop preview and Lemon Squeezy subscription activation
-are the next product phase. They are not implemented or active yet.
+The self-service owner dashboard, private shop preview and shared fresh-flower
+studio are deployed as an invited private beta on the `nebula` Worker. Lemon
+subscription activation, public publication and generic merchant Square checkout
+remain unavailable. See the [tested beta state and founder tasks](docs/PLATFORM-BETA-2026-10-28.md)
+and [platform service documentation](cloudflare/platform/README.md).
 
 ## Useful commands
 

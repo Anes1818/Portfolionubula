@@ -1,0 +1,662 @@
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "fresh",
+      "name": "Fresh flowers",
+      "available": true
+    },
+    {
+      "id": "satin",
+      "name": "Satin and eternal flowers",
+      "available": false
+    }
+  ],
+  "flowers": [
+    {
+      "id": "rose_red",
+      "en": "Red rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/client/crimson-velvet/rose-crimson.png"
+    },
+    {
+      "id": "rose_pink",
+      "en": "Pink rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/rose_pink.webp"
+    },
+    {
+      "id": "rose_white",
+      "en": "White rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/rose_white.webp"
+    },
+    {
+      "id": "rose_violet",
+      "en": "Violet rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/rose_violet.webp"
+    },
+    {
+      "id": "rose_yellow",
+      "en": "Yellow rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/rose_yellow.webp"
+    },
+    {
+      "id": "rose_orange",
+      "en": "Orange rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/rose_orange.webp"
+    },
+    {
+      "id": "tulip_red",
+      "en": "Red tulip",
+      "family": "tulip",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/tulip_red.webp"
+    },
+    {
+      "id": "tulip_pink",
+      "en": "Pink tulip",
+      "family": "tulip",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/tulip_pink.webp"
+    },
+    {
+      "id": "tulip_white",
+      "en": "White tulip",
+      "family": "tulip",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/tulip_white.webp"
+    },
+    {
+      "id": "tulip_violet",
+      "en": "Violet tulip",
+      "family": "tulip",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/tulip_violet.webp"
+    },
+    {
+      "id": "tulip_yellow",
+      "en": "Yellow tulip",
+      "family": "tulip",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/tulip_yellow.webp"
+    },
+    {
+      "id": "tulip_orange",
+      "en": "Orange tulip",
+      "family": "tulip",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/tulip_orange.webp"
+    },
+    {
+      "id": "carnation_red",
+      "en": "Red carnation",
+      "family": "carnation",
+      "priceCents": 250,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/carnation_red.webp"
+    },
+    {
+      "id": "carnation_pink",
+      "en": "Pink carnation",
+      "family": "carnation",
+      "priceCents": 250,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/carnation_pink.webp"
+    },
+    {
+      "id": "carnation_white",
+      "en": "White carnation",
+      "family": "carnation",
+      "priceCents": 250,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/carnation_white.webp"
+    },
+    {
+      "id": "carnation_violet",
+      "en": "Violet carnation",
+      "family": "carnation",
+      "priceCents": 250,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/carnation_violet.webp"
+    },
+    {
+      "id": "carnation_yellow",
+      "en": "Yellow carnation",
+      "family": "carnation",
+      "priceCents": 250,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/carnation_yellow.webp"
+    },
+    {
+      "id": "carnation_orange",
+      "en": "Orange carnation",
+      "family": "carnation",
+      "priceCents": 250,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/carnation_orange.webp"
+    },
+    {
+      "id": "lily",
+      "en": "Pink lily",
+      "family": "accents",
+      "priceCents": 500,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/lily.webp"
+    },
+    {
+      "id": "gerbera_daisy",
+      "en": "White gerbera",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/gerbera_daisy.webp"
+    },
+    {
+      "id": "sunflower",
+      "en": "Sunflower",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/sunflower.webp"
+    },
+    {
+      "id": "ranunculus",
+      "en": "Cream ranunculus",
+      "family": "accents",
+      "priceCents": 500,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/ranunculus.webp"
+    },
+    {
+      "id": "alstroemeria",
+      "en": "Alstroemeria",
+      "family": "accents",
+      "priceCents": 300,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/alstroemeria.webp"
+    },
+    {
+      "id": "eucalyptus",
+      "en": "Eucalyptus sprig",
+      "family": "texture",
+      "priceCents": 200,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/eucalyptus.webp"
+    },
+    {
+      "id": "statice_purple",
+      "en": "Purple statice",
+      "family": "texture",
+      "priceCents": 200,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/statice_purple.webp"
+    },
+    {
+      "id": "babys_breath",
+      "en": "Airy baby’s breath",
+      "family": "texture",
+      "priceCents": 200,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/babys_breath.webp"
+    },
+    {
+      "id": "hydrangea",
+      "en": "White hydrangea",
+      "family": "accents",
+      "priceCents": 650,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/hydrangea.webp"
+    },
+    {
+      "id": "chrysanthemum_yellow",
+      "en": "Yellow chrysanthemum",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/chrysanthemum_yellow.webp"
+    },
+    {
+      "id": "spray_rose",
+      "en": "Blush spray rose",
+      "family": "accents",
+      "priceCents": 450,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/spray_rose.webp"
+    },
+    {
+      "id": "stock_yellow",
+      "en": "Yellow stock",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/stock_yellow.webp"
+    },
+    {
+      "id": "rose_cream",
+      "en": "Cream rose",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/rose_cream.webp"
+    },
+    {
+      "id": "__choc",
+      "en": "Gold chocolate",
+      "family": "chocolate",
+      "priceCents": 500,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/finishes/extra_chocolate_gold.webp"
+    },
+    {
+      "id": "__berry",
+      "en": "Strawberry",
+      "family": "strawberry",
+      "priceCents": 300,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/heads/strawberry-overhead-1.webp"
+    },
+    {
+      "id": "rosemary",
+      "en": "Rosemary sprig",
+      "family": "texture",
+      "priceCents": 200,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/classic/rosemary-3.webp"
+    },
+    {
+      "id": "rose_ivory",
+      "en": "Ivory rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/fall/rose-ivory-a.webp"
+    },
+    {
+      "id": "mum_rust",
+      "en": "Rust chrysanthemum",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/fall/orange-flower.webp"
+    },
+    {
+      "id": "rose_caramel",
+      "en": "Caramel rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/fall/rose-caramel.webp"
+    },
+    {
+      "id": "mum_burgundy",
+      "en": "Burgundy chrysanthemum",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/fall/mum-burgundy.webp"
+    },
+    {
+      "id": "rose_black",
+      "en": "Black rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/halloween/rose-black-a.webp"
+    },
+    {
+      "id": "pink_daisy",
+      "en": "Dusky pink gerbera",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/halloween/pink-dark-daisy.webp"
+    },
+    {
+      "id": "blue_thistle",
+      "en": "Blue thistle",
+      "family": "texture",
+      "priceCents": 250,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/client/midnight-oct20/thistle-blue.png"
+    },
+    {
+      "id": "white_flower_spray",
+      "en": "White flowering spray",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/client/lily-family/white-flower-spray.webp"
+    },
+    {
+      "id": "lily_bud",
+      "en": "Pink lily bud",
+      "family": "accents",
+      "priceCents": 500,
+      "classic": true,
+      "preset": "fresh",
+      "image": "/studio/assets/client/celebration/lily-bud.png"
+    },
+    {
+      "id": "peony_apricot",
+      "en": "Apricot peony",
+      "family": "accents",
+      "priceCents": 800,
+      "classic": false,
+      "preset": "fresh",
+      "image": "/studio/assets/peony/apricot-peony-v1.png"
+    }
+  ],
+  "extras": [
+    {
+      "id": "butterfly",
+      "label": "Gold butterflies",
+      "priceCents": 300
+    },
+    {
+      "id": "crown",
+      "label": "Gold crown",
+      "priceCents": 1500
+    },
+    {
+      "id": "ribbon",
+      "label": "Ribbon",
+      "priceCents": 0
+    },
+    {
+      "id": "sash",
+      "label": "Printed sash",
+      "priceCents": 0
+    },
+    {
+      "id": "filler",
+      "label": "Babyâ€™s breath",
+      "priceCents": 200
+    },
+    {
+      "id": "snoopy",
+      "label": "Snoopy plush",
+      "priceCents": 2200
+    },
+    {
+      "id": "kitty",
+      "label": "Hello Kitty plush",
+      "priceCents": 2200
+    },
+    {
+      "id": "snoopy_topper",
+      "label": "Snoopy pumpkin topper",
+      "priceCents": 600
+    },
+    {
+      "id": "floralInitial",
+      "label": "Floral initial",
+      "priceCents": 1200
+    },
+    {
+      "id": "pumpkin",
+      "label": "Pumpkin plush",
+      "priceCents": 1800
+    },
+    {
+      "id": "bow",
+      "label": "Satin bow",
+      "priceCents": 400
+    },
+    {
+      "id": "spookyMask",
+      "label": "Scream mask",
+      "priceCents": 2000
+    },
+    {
+      "id": "spookyBow",
+      "label": "Long black satin bow",
+      "priceCents": 400
+    },
+    {
+      "id": "ghostCount",
+      "label": "Ghost decals",
+      "priceCents": 100
+    },
+    {
+      "id": "thistleCount",
+      "label": "Blue thistle accents",
+      "priceCents": 250
+    },
+    {
+      "id": "satin_bow",
+      "label": "Blush satin bow",
+      "priceCents": 400
+    },
+    {
+      "id": "chocolateBox",
+      "label": "Chocolate gift box",
+      "priceCents": 1500
+    },
+    {
+      "id": "pumpkin_plush",
+      "label": "Pumpkin plush",
+      "priceCents": 1800
+    },
+    {
+      "id": "satin_black",
+      "label": "Black satin bow",
+      "priceCents": 400
+    },
+    {
+      "id": "satin_cocoa",
+      "label": "Cocoa satin bow",
+      "priceCents": 400
+    },
+    {
+      "id": "satin_burgundy",
+      "label": "Burgundy satin bow",
+      "priceCents": 400
+    },
+    {
+      "id": "satin_sage",
+      "label": "Sage satin bow",
+      "priceCents": 400
+    }
+  ],
+  "recipes": [
+    {
+      "id": "pink-promise",
+      "name": "Pink Promise",
+      "en": "Pink Promise",
+      "description": "Salmon roses, delicate baby’s breath and peach gingham.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/pink-promise.webp"
+    },
+    {
+      "id": "blush-lilies",
+      "name": "Blush Lilies",
+      "en": "Blush Lilies",
+      "description": "Pink lilies, ivory roses and soft eucalyptus.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/blush-lilies.webp"
+    },
+    {
+      "id": "golden-sunshine",
+      "name": "Golden Sunshine",
+      "en": "Golden Sunshine",
+      "description": "Seven sunflowers in yellow paper, with an optional chocolate gift.",
+      "mode": "classic",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/golden-sunshine.webp"
+    },
+    {
+      "id": "crimson-velvet",
+      "name": "Crimson Velvet",
+      "en": "Crimson Velvet",
+      "description": "Red roses, white accents and smoke-black wrapping.",
+      "mode": "classic",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/crimson-velvet.webp"
+    },
+    {
+      "id": "pink-celebration",
+      "name": "Pink Celebration",
+      "en": "Pink Celebration",
+      "description": "Pink lilies and roses with optional lily buds, eucalyptus and white accents.",
+      "mode": "classic",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/pink-celebration.webp"
+    },
+    {
+      "id": "peony-and-pearl",
+      "name": "Peony & Pearl",
+      "en": "Peony & Pearl",
+      "description": "Apricot peonies, ivory roses and airy eucalyptus in a cream ruffle.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/peony-and-pearl.webp"
+    },
+    {
+      "id": "written-in-roses",
+      "name": "Written in Roses",
+      "en": "Written in Roses",
+      "description": "Red roses, dark paper and their initial in flowers.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/written-in-roses.webp"
+    },
+    {
+      "id": "always-you",
+      "name": "Always You",
+      "en": "Always You",
+      "description": "Sixteen roses, loosely gathered with eucalyptus and baby’s breath.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/always-you.webp"
+    },
+    {
+      "id": "midnight-blooms",
+      "name": "Midnight Blooms",
+      "en": "Midnight Blooms",
+      "description": "Five pink lilies, black roses and dusky daisies in black wrapping.",
+      "mode": "classic",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/midnight-blooms.webp"
+    },
+    {
+      "id": "scream-for-you",
+      "name": "Scream for You",
+      "en": "Scream for You",
+      "description": "Thirty red roses frame a ghostly face, with white filler and black satin.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/scream-for-you.webp"
+    },
+    {
+      "id": "forever-my-boo",
+      "name": "Forever My Boo",
+      "en": "Forever My Boo",
+      "description": "Twenty-two red roses, twenty-two black roses, and a message of your own.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/forever-my-boo.webp"
+    },
+    {
+      "id": "autumn-latte",
+      "name": "Autumn Latte",
+      "en": "Autumn Latte",
+      "description": "Caramel roses, burgundy petals and a little Snoopy.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/autumn-latte.webp"
+    },
+    {
+      "id": "october-cream",
+      "name": "October Cream",
+      "en": "October Cream",
+      "description": "Ivory roses, an autumn border, a little pumpkin.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/october-cream.webp"
+    },
+    {
+      "id": "pumpkin-patch",
+      "name": "Pumpkin Patch",
+      "en": "Pumpkin Patch",
+      "description": "Rust petals and cream roses, gathered together.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/pumpkin-patch.webp"
+    },
+    {
+      "id": "harvest-sunshine",
+      "name": "Harvest Sunshine",
+      "en": "Harvest Sunshine",
+      "description": "Four generous sunflowers with warm autumn blooms.",
+      "mode": "dome",
+      "preset": "fresh",
+      "cover": "/studio/assets/catalog/thumbs/harvest-sunshine.webp"
+    }
+  ]
+}

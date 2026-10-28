@@ -32,6 +32,8 @@ cloudflare/**/dist/
 /builder/demo-brand/mobile-preview.png
 /marketing/screenshots-*/
 /demo/*/preview/
+# Generated from the existing builder with builder/tools/build-platform.cjs.
+/platform/public/studio/
 __pycache__/
 *.pyc
 .DS_Store
