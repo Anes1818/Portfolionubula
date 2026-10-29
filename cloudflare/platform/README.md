@@ -15,6 +15,7 @@ This service uses the existing `nebula` Worker and existing SQLite Durable Objec
 - Six independently editable customisable recipes and ten separate fixed products. A new shop begins empty. Order and Customise use the same stored bouquet; Open Builder starts a separate blank design.
 - Existing fresh renderer/model/geometry copied unchanged. Satin uses the existing Ray integration with a generic tenant policy and no Classic mode. Ray's original deployment is not modified.
 - Click-to-edit storefront, compressed image upload, section visibility/order, mobile canvas, optimistic draft autosave and explicit publication.
+- Florist-controlled announcement/menu labels, full hero copy and buttons, three hero layouts, section headings/introductions, story, contact hours/details and footer/ribbon copy. Brand colors and optional gentle movement render immediately in the private canvas, with reduced-motion support. Strict plain-text presentation settings use the same per-shop versioned draft/publication flow; no pricing or access rules change.
 - Protected administrator directory of verified users who have opened a platform session, including those without shops. Indexed pagination and read-only draft/live inspection; role comes from the existing Firebase `/adminUids/:uid` rule, not an email address.
 - Tested publication and persisted unpaid product/design request paths behind closed server gates. Optional Square is not required for publication. No request is labelled paid.
 

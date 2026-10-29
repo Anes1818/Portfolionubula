@@ -3543,3 +3543,300 @@ body.public-shop > .app-footer {
     grid-template-columns: minmax(0, 1fr) 380px;
   }
 }
+
+/* Merchant-authored storefront copy and layout choices. */
+.floral-store .hero-copy,
+.floral-store .hero-photo,
+.floral-store .store-section-heading > div {
+  min-width: 0;
+}
+.floral-store .floral-hero h1,
+.floral-store .store-section-heading h2,
+.floral-store .store-about h2,
+.floral-store .store-contact h2 {
+  overflow-wrap: anywhere;
+}
+.floral-store .hero-description,
+.floral-store .store-section-heading > p,
+.floral-store .store-about > p:not(.eyebrow),
+.floral-store .contact-extra {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.floral-store .contact-extra {
+  max-width: 640px;
+  line-height: 1.8;
+}
+.floral-store .store-announcement,
+.floral-store .hero-footnote,
+.floral-store .hero-stamp,
+.floral-store .hero-copy .actions > a,
+.floral-store .store-bottom > * {
+  overflow-wrap: anywhere;
+}
+.floral-store .hero-copy .actions > a {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+.floral-store .hero-footnote {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+.floral-store .hero-footnote > span {
+  flex-shrink: 0;
+}
+.floral-store .hero-stamp {
+  padding: 10px;
+  font-size: 9px;
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
+}
+.floral-store .hero-stamp > span {
+  flex-shrink: 0;
+  font-size: 22px;
+  line-height: 1;
+}
+.store-preview-frame .floral-store .hero-stamp {
+  padding: 8px;
+  font-size: 7px;
+}
+.store-preview-frame .floral-store .hero-stamp > span {
+  font-size: 18px;
+}
+.floral-store .store-header {
+  flex-wrap: wrap;
+}
+.floral-store .store-brand {
+  min-width: 0;
+  flex-shrink: 1;
+  overflow-wrap: anywhere;
+}
+.floral-store .store-brand > span,
+.floral-store .store-brand > img {
+  flex-shrink: 0;
+}
+.floral-store .store-header nav {
+  min-width: 0;
+  flex: 1 1 280px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 18px;
+}
+.floral-store .store-header nav a {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.floral-store .store-builder-nav {
+  min-width: 0;
+  max-width: 200px;
+  flex: 0 1 auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  line-height: 1.5;
+}
+.floral-store .store-bottom {
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.floral-store .store-bottom > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.floral-store .store-bottom > span:nth-child(2) {
+  display: block;
+  flex: 1 1 240px;
+}
+.floral-store .floral-ribbon .ribbon-copy {
+  display: block;
+  width: 100%;
+  text-align: center;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.9;
+}
+.floral-store.hero-layout-image-first .floral-hero {
+  grid-template-areas: "image copy";
+}
+.floral-store.hero-layout-image-first .hero-copy {
+  grid-area: copy;
+}
+.floral-store.hero-layout-image-first .hero-photo {
+  grid-area: image;
+}
+.floral-store.hero-layout-centered .floral-hero {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "copy" "image";
+  justify-items: center;
+  gap: 28px;
+  text-align: center;
+}
+.floral-store.hero-layout-centered .hero-copy {
+  grid-area: copy;
+  width: 100%;
+  max-width: 850px;
+}
+.floral-store.hero-layout-centered .floral-hero h1 {
+  max-width: 850px;
+  margin-inline: auto;
+}
+.floral-store.hero-layout-centered .hero-description {
+  max-width: 580px;
+  margin-inline: auto;
+}
+.floral-store.hero-layout-centered .hero-copy .actions,
+.floral-store.hero-layout-centered .hero-footnote {
+  justify-content: center;
+}
+.floral-store.hero-layout-centered .hero-photo {
+  grid-area: image;
+  width: min(100%, 760px);
+  aspect-ratio: 16 / 9;
+  max-height: 520px;
+}
+.floral-store.hero-layout-centered .hero-photo > img {
+  border-radius: 32px;
+}
+.editor-customization {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+}
+.editor-customization button {
+  padding: 9px 12px;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fffefa;
+  color: var(--wine);
+  font-size: 11px;
+}
+.editor-customization button:hover,
+.editor-customization button:focus-visible {
+  background: #eee5df;
+  border-color: #b9939c;
+}
+@keyframes storefront-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.floral-store.store-motion:not(.is-editing) .hero-copy,
+.floral-store.store-motion:not(.is-editing) .hero-photo {
+  animation: storefront-arrive 550ms ease-out both;
+}
+.floral-store.store-motion:not(.is-editing) .hero-photo {
+  animation-delay: 80ms;
+}
+.floral-store.store-motion:not(.is-editing) .flower-card {
+  transition:
+    transform 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+.floral-store:not(.store-motion) .flower-card,
+.floral-store.is-editing .flower-card {
+  transition: none;
+}
+.floral-store:not(.store-motion) .flower-card:hover,
+.floral-store.is-editing .flower-card:hover {
+  transform: none;
+}
+@container (max-width: 650px) {
+  .store-preview-frame .floral-store.hero-layout-image-first .floral-hero,
+  .store-preview-frame .floral-store.hero-layout-centered .floral-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "copy" "image";
+  }
+  .store-preview-frame .floral-store .floral-ribbon .ribbon-copy {
+    display: block;
+    white-space: pre-line;
+  }
+  .store-preview-frame .floral-store.hero-layout-centered .hero-photo {
+    width: 85%;
+    aspect-ratio: 1 / 1.05;
+    max-height: 370px;
+  }
+}
+@media (max-width: 760px) {
+  .floral-store.hero-layout-image-first .floral-hero,
+  .floral-store.hero-layout-centered .floral-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "copy" "image";
+  }
+  .floral-store.hero-layout-centered .hero-photo {
+    width: 82%;
+    aspect-ratio: 1 / 1.05;
+    max-height: 500px;
+  }
+  .floral-store .floral-ribbon .ribbon-copy {
+    display: block;
+    white-space: pre-line;
+  }
+  .editor-customization button {
+    flex: 1 1 135px;
+    text-align: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floral-store.store-motion .hero-copy,
+  .floral-store.store-motion .hero-photo {
+    animation: none;
+  }
+  .floral-store .flower-card,
+  .floral-store .hero-photo > img {
+    transition: none;
+  }
+  .floral-store .flower-card:hover {
+    transform: none;
+  }
+}
+
+@container (max-width: 650px) {
+  .store-preview-frame .floral-store .store-brand {
+    flex: 1 1 48%;
+    max-width: 52%;
+  }
+  .store-preview-frame .floral-store .store-builder-nav {
+    flex: 0 1 44%;
+    max-width: 44%;
+  }
+  .store-preview-frame .floral-store .store-bottom > span:nth-child(2) {
+    display: block;
+  }
+}
+@media (max-width: 760px) {
+  .floral-store .store-brand {
+    flex: 1 1 48%;
+    max-width: 52%;
+  }
+  .floral-store .store-builder-nav {
+    flex: 0 1 44%;
+    max-width: 44%;
+  }
+  .floral-store .hero-stamp {
+    padding: 8px;
+    font-size: 8px;
+  }
+  .floral-store .hero-stamp > span {
+    font-size: 20px;
+  }
+  .floral-store .store-bottom > span:nth-child(2) {
+    display: block;
+  }
+}

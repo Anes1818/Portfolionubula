@@ -1,4 +1,9 @@
 import { initialize, getUser, refreshUser, token, api } from "/session.js";
+import {
+  storefrontHomeDefaults,
+  storefrontGroups,
+  storefrontControls,
+} from "/storefront-options.js";
 import { openOrderRequest } from "/order-ui.js";
 import {
   mountManualPlan,
@@ -209,6 +214,7 @@ function normalizeDraft(value) {
     ),
   ];
   result.home = {
+    ...storefrontHomeDefaults,
     headline: "For your kind of beautiful.",
     description:
       result.tagline ||
@@ -936,7 +942,20 @@ function editAttribute(target, editing) {
     ? `data-edit="${html(target)}" tabindex="0" role="button" aria-label="Edit ${html(target.split(":")[0])}"`
     : "";
 }
+function instagramContact(value) {
+  const input = (value || "").trim();
+  if (!input) return "";
+  const match =
+    input.match(/^@?([a-zA-Z0-9_.]{1,30})$/) ||
+    input.match(
+      /^https:\/\/(?:www\.)?instagram\.com\/([a-zA-Z0-9_.]{1,30})\/?$/,
+    );
+  return match
+    ? `<a href="https://www.instagram.com/${encodeURIComponent(match[1])}/" target="_blank" rel="noopener noreferrer">${html(input)}</a>`
+    : `<span>${html(input)}</span>`;
+}
 function storefrontMarkup(editing = false, publicView = false) {
+  const home = draft.home;
   const edit = (target) => editAttribute(target, editing);
   const ordersOpen = publicView && shop.features?.requestsEnabled === true;
   const ownerReview =
@@ -944,18 +963,22 @@ function storefrontMarkup(editing = false, publicView = false) {
   const visibleSections = new Set(draft.home.sections);
   const builderVisible = visibleSections.has("builder");
   const navigationNames = {
-    custom: "Bouquets",
-    products: "Our shop",
-    about: "Our story",
-    contact: "Say hello",
+    custom: home.navCustom || "Bouquets",
+    products: home.navProducts || "Our shop",
+    about: home.navAbout || "Our story",
+    contact: home.navContact || "Say hello",
   };
   const sectionNavigation = draft.home.sections
     .filter((key) => navigationNames[key])
-    .map((key) => `<a href="#${key}">${navigationNames[key]}</a>`)
+    .map((key) => `<a href="#${key}">${html(navigationNames[key])}</a>`)
     .join("");
-  const heroTarget = ["custom", "products", "builder", "contact", "about"].find(
-    (key) => visibleSections.has(key),
-  );
+  const heroTarget =
+    home.heroButtonTarget !== "auto" &&
+    visibleSections.has(home.heroButtonTarget)
+      ? home.heroButtonTarget
+      : ["custom", "products", "builder", "contact", "about"].find((key) =>
+          visibleSections.has(key),
+        );
   const heroLabels = {
     custom: "Explore the bouquets ↓",
     products: "Explore our shop ↓",
@@ -964,13 +987,13 @@ function storefrontMarkup(editing = false, publicView = false) {
   };
   const heroPrimary =
     heroTarget === "builder"
-      ? `<a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? "Open Builder ✳" : "Matching studio preparing"}</a>`
+      ? `<a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? html(home.heroButtonLabel || home.builderButtonLabel) : "Matching studio preparing"}</a>`
       : heroTarget
-        ? `<a class="button" href="#${heroTarget}">${heroLabels[heroTarget]}</a>`
+        ? `<a class="button" href="#${heroTarget}">${html(home.heroButtonLabel || heroLabels[heroTarget])}</a>`
         : "";
   const heroBuilder =
     builderVisible && heroTarget !== "builder"
-      ? `<a class="plain-button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>Make your own ✳</a>`
+      ? `<a class="plain-button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${html(home.builderButtonLabel)}</a>`
       : "";
   const cards = draft.collection.filter(
     (item) => editing || item.available !== false,
@@ -979,13 +1002,13 @@ function storefrontMarkup(editing = false, publicView = false) {
     (item) => editing || item.available !== false,
   );
   const sections = {
-    custom: `<section id="custom" class="flower-section"><div class="store-section-heading"><div><p class="eyebrow">A LITTLE IMAGINATION</p><h2>Make it your kind<br>of <em>beautiful.</em></h2></div><p>Start with a favourite.<br>Make the finishing touches your own.</p></div>${cards.length ? `<div class="flower-grid">${cards.map((card) => `<article class="flower-card ${card.available === false ? "item-hidden" : ""}" ${edit("collection:" + card.id)}><div class="photo-wrap">${cover(card, "flower-photo")}<span class="photo-caption">${card.cover ? "Florist photo" : card.design ? "Starting recipe preview" : "Library recipe preview"}</span>${card.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(card.category || "CUSTOMISABLE BOUQUET")}</span><h3>${html(card.title)}</h3><p>${html(recipeFor(card)?.description || recipeFor(card)?.name || "Your florist’s saved bouquet design, ready for your personal touch.")}</p><div class="card-actions">${presetReady() ? `<a class="button small" href="${studioLink(card, true)}" data-studio>Custom Order ↗</a><a class="plain-button" href="${studioLink(card)}" data-studio>Customise ✳</a>` : '<button class="button small" disabled>Studio preparing</button>'}</div></div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>✿</span><p>Your signature bouquets belong here.</p><button class="button secondary small" data-action="inspect" data-target="add-card">Choose a recipe +</button></div>' : ""}</section>`,
-    products: `<section id="products" class="flower-section fixed-section"><div class="store-section-heading"><div><p class="eyebrow">FROM OUR FLOWER SHOP</p><h2>Lovely, just<br><em>as they are.</em></h2></div><p>Handcrafted favourites.<br>Ready for your kind of moment.</p></div>${products.length ? `<div class="flower-grid">${products.map((item) => `<article class="flower-card ${item.available === false ? "item-hidden" : ""}" ${edit("products:" + item.id)}><div class="photo-wrap">${productCover(item, "flower-photo")}${item.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(item.category || "FROM THE COLLECTION")}</span><h3>${html(item.title)}</h3><p>${html(item.description || "Thoughtfully made by your local florist.")}</p><div class="fixed-price">${formatMoney(item.priceCents)}</div>${ordersOpen && item.available !== false && item.priceCents !== null ? `<button class="button secondary small" data-action="product-request" data-id="${html(item.id)}">Request this product ↗</button>` : ownerReview && item.available !== false && Number.isSafeInteger(item.priceCents) ? `<button class="button secondary small" data-action="product-preview" data-id="${html(item.id)}">Preview order ↗</button>` : `<button class="button secondary small" disabled>${!ordersOpen ? "Preview only" : "Contact florist to order"}</button>`}</div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>❀</span><p>A photo, a name, a little something lovely.</p><button class="button secondary small" data-action="add-product">Add your first product +</button></div>' : ""}</section>`,
-    builder: `<section id="builder" class="independent-builder"><div><p class="eyebrow">SOMETHING ENTIRELY YOURS</p><h2>A little imagination.<br><em>A beautiful bouquet.</em></h2><p>Choose your flowers, find your colours and bring your own idea to life in our bouquet builder.</p><a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? "Open Builder ✳" : "Matching studio preparing"}</a><p class="helper">Start fresh with a blank bouquet.</p></div><div class="builder-decoration" aria-hidden="true"><span>✳</span><i>made by you</i></div></section>`,
-    about: `<section id="about" class="store-about" ${edit("about")}><p class="eyebrow">A NOTE FROM YOUR FLORIST</p><h2>Flowers with<br><em>a personal touch.</em></h2><p>${html(draft.home.about || (editing ? "Tell your story here. A few warm words about your flowers, your craft and the people you make them for." : "Thoughtfully chosen flowers, made with care for your everyday joys and once-in-a-lifetime moments."))}</p><span class="about-signature">${html(draft.name)}</span></section>`,
-    contact: `<section id="contact" class="store-contact" ${edit("contact")}><span aria-hidden="true">✳</span><div><p class="eyebrow">LET’S MAKE SOMETHING LOVELY</p><h2>A little hello goes a long way.</h2><div class="contact-details">${draft.city ? `<span>${html(draft.city)}</span>` : ""}${draft.phone ? `<a href="tel:${html(draft.phone.replace(/[^+\d]/g, ""))}">${html(draft.phone)}</a>` : ""}${draft.instagram ? `<span>${html(draft.instagram)}</span>` : ""}${!draft.phone && !draft.city && editing ? "<span>Add your contact details</span>" : ""}</div></div></section>`,
+    custom: `<section id="custom" class="flower-section"><div class="store-section-heading"><div><p class="eyebrow">A LITTLE IMAGINATION</p><h2 ${edit("section-custom")}>${html(home.customTitle)}</h2></div><p ${edit("section-custom")}>${html(home.customDescription)}</p></div>${cards.length ? `<div class="flower-grid">${cards.map((card) => `<article class="flower-card ${card.available === false ? "item-hidden" : ""}" ${edit("collection:" + card.id)}><div class="photo-wrap">${cover(card, "flower-photo")}<span class="photo-caption">${card.cover ? "Florist photo" : card.design ? "Starting recipe preview" : "Library recipe preview"}</span>${card.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(card.category || "CUSTOMISABLE BOUQUET")}</span><h3>${html(card.title)}</h3><p>${html(recipeFor(card)?.description || recipeFor(card)?.name || "Your florist’s saved bouquet design, ready for your personal touch.")}</p><div class="card-actions">${presetReady() ? `<a class="button small" href="${studioLink(card, true)}" data-studio>Custom Order ↗</a><a class="plain-button" href="${studioLink(card)}" data-studio>Customise ✳</a>` : '<button class="button small" disabled>Studio preparing</button>'}</div></div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>✿</span><p>Your signature bouquets belong here.</p><button class="button secondary small" data-action="inspect" data-target="add-card">Choose a recipe +</button></div>' : ""}</section>`,
+    products: `<section id="products" class="flower-section fixed-section"><div class="store-section-heading"><div><p class="eyebrow">FROM OUR FLOWER SHOP</p><h2 ${edit("section-products")}>${html(home.productsTitle)}</h2></div><p ${edit("section-products")}>${html(home.productsDescription)}</p></div>${products.length ? `<div class="flower-grid">${products.map((item) => `<article class="flower-card ${item.available === false ? "item-hidden" : ""}" ${edit("products:" + item.id)}><div class="photo-wrap">${productCover(item, "flower-photo")}${item.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(item.category || "FROM THE COLLECTION")}</span><h3>${html(item.title)}</h3><p>${html(item.description || "Thoughtfully made by your local florist.")}</p><div class="fixed-price">${formatMoney(item.priceCents)}</div>${ordersOpen && item.available !== false && item.priceCents !== null ? `<button class="button secondary small" data-action="product-request" data-id="${html(item.id)}">Request this product ↗</button>` : ownerReview && item.available !== false && Number.isSafeInteger(item.priceCents) ? `<button class="button secondary small" data-action="product-preview" data-id="${html(item.id)}">Preview order ↗</button>` : `<button class="button secondary small" disabled>${!ordersOpen ? "Preview only" : "Contact florist to order"}</button>`}</div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>❀</span><p>A photo, a name, a little something lovely.</p><button class="button secondary small" data-action="add-product">Add your first product +</button></div>' : ""}</section>`,
+    builder: `<section id="builder" class="independent-builder"><div><p class="eyebrow">SOMETHING ENTIRELY YOURS</p><h2 ${edit("section-builder")}>${html(home.builderTitle)}</h2><p ${edit("section-builder")}>${html(home.builderDescription)}</p><a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? html(home.builderButtonLabel) : "Matching studio preparing"}</a><p class="helper">Start fresh with a blank bouquet.</p></div><div class="builder-decoration" aria-hidden="true"><span>✳</span><i>made by you</i></div></section>`,
+    about: `<section id="about" class="store-about" ${edit("about")}><p class="eyebrow">A NOTE FROM YOUR FLORIST</p><h2>${html(home.aboutTitle)}</h2><p>${html(draft.home.about || (editing ? "Tell your story here. A few warm words about your flowers, your craft and the people you make them for." : "Thoughtfully chosen flowers, made with care for your everyday joys and once-in-a-lifetime moments."))}</p><span class="about-signature">${html(draft.name)}</span></section>`,
+    contact: `<section id="contact" class="store-contact" ${edit("contact")}><span aria-hidden="true">✳</span><div><p class="eyebrow">LET’S MAKE SOMETHING LOVELY</p><h2>${html(home.contactTitle)}</h2><div class="contact-details">${draft.city ? `<span>${html(draft.city)}</span>` : ""}${draft.phone ? `<a href="tel:${html(draft.phone.replace(/[^+\d]/g, ""))}">${html(draft.phone)}</a>` : ""}${instagramContact(draft.instagram)}${home.contactDetails ? `<p class="contact-extra">${html(home.contactDetails)}</p>` : ""}${!draft.phone && !draft.city && editing ? "<span>Add your contact details</span>" : ""}</div></div></section>`,
   };
-  return `<div class="storefront floral-store ${editing && editorMode && !adminReadOnly ? "is-editing" : ""}" style="--shop-primary:${html(draft.theme.primary)};--shop-background:${html(draft.theme.background)}"><div class="store-announcement">${html(draft.city || "Thoughtful flowers. Beautiful moments.")} <span>✧</span> ${draft.preset === "satin" ? "Satin & eternal flowers" : "Fresh from our flower shop"}</div><header class="store-header"><div class="store-brand" ${edit("brand")}>${draft.logoMediaId ? `<img data-media-id="${html(draft.logoMediaId)}" alt="${html(draft.name)} logo">` : '<span aria-hidden="true">✳</span>'}${html(draft.name)}</div>${sectionNavigation ? `<nav aria-label="Shop sections">${sectionNavigation}</nav>` : ""}${builderVisible ? `<a class="store-builder-nav" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>Build your own ↗</a>` : ""}</header><section class="floral-hero"><div class="hero-copy"><p class="eyebrow">YOUR MOMENTS, IN FULL BLOOM</p><h1 ${edit("headline")}>${html(draft.home.headline)}</h1><p class="hero-description" ${edit("description")}>${html(draft.home.description)}</p>${heroPrimary || heroBuilder ? `<div class="actions">${heroPrimary}${heroBuilder}</div>` : ""}<div class="hero-footnote"><span>❀</span> Thoughtfully made. A little more you.</div></div><div class="hero-photo" ${edit("hero")}><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="${draft.home.heroMediaId ? html(draft.name) + " flowers" : "Floral inspiration: blush roses wrapped in ivory paper"}"><div class="hero-stamp">a little<br><em>flower magic</em><span>✳</span></div>${editing && editorMode ? '<span class="edit-photo-label">Change hero photo ↗</span>' : ""}</div></section><div class="floral-ribbon"><span>FLOWERS FOR THE LITTLE THINGS</span><i>✳</i><span>AND THE REALLY BIG FEELINGS</span><i>✳</i><span>MADE WITH A PERSONAL TOUCH</span></div>${draft.home.sections.map((key) => sections[key] || "").join("")}<footer class="store-bottom"><strong>${html(draft.name)}</strong><span>Your craft. Their imagination.</span><span>Made with Nebula ✳</span></footer></div>`;
+  return `<div class="storefront floral-store hero-layout-${html(home.heroLayout)} ${home.motionEnabled && !editing && !adminReadOnly ? "store-motion" : ""} ${editing && editorMode && !adminReadOnly ? "is-editing" : ""}" style="--shop-primary:${html(draft.theme.primary)};--shop-background:${html(draft.theme.background)}">${home.announcementEnabled ? `<div class="store-announcement" ${edit("header")}>${html(home.announcementText || (draft.city ? draft.city + " · " : "") + (draft.preset === "satin" ? "Satin & eternal flowers" : "Thoughtful flowers. Beautiful moments."))}</div>` : ""}<header class="store-header"><div class="store-brand" ${edit("brand")}>${draft.logoMediaId ? `<img data-media-id="${html(draft.logoMediaId)}" alt="${html(draft.name)} logo">` : '<span aria-hidden="true">✳</span>'}${html(draft.name)}</div>${sectionNavigation ? `<nav aria-label="Shop sections">${sectionNavigation}</nav>` : ""}${builderVisible ? `<a class="store-builder-nav" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${html(home.builderButtonLabel)} ↗</a>` : ""}</header><section class="floral-hero"><div class="hero-copy">${home.heroEyebrow ? `<p class="eyebrow" ${edit("hero-copy")}>${html(home.heroEyebrow)}</p>` : ""}<h1 ${edit("headline")}>${html(draft.home.headline)}</h1><p class="hero-description" ${edit("description")}>${html(draft.home.description)}</p>${heroPrimary || heroBuilder ? `<div class="actions">${heroPrimary}${heroBuilder}</div>` : ""}${home.heroNote ? `<div class="hero-footnote" ${edit("hero-copy")}><span>❀</span> ${html(home.heroNote)}</div>` : ""}</div><div class="hero-photo" ${edit("hero")}><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="${draft.home.heroMediaId ? html(draft.name) + " flowers" : "Floral inspiration: blush roses wrapped in ivory paper"}">${home.heroStamp ? `<div class="hero-stamp" ${edit("hero-copy")}>${html(home.heroStamp)}<span>✳</span></div>` : ""}${editing && editorMode ? '<span class="edit-photo-label">Change hero photo ↗</span>' : ""}</div></section>${home.ribbonEnabled && home.ribbonText ? `<div class="floral-ribbon" ${edit("footer")}><span class="ribbon-copy">${html(home.ribbonText)}</span></div>` : ""}${draft.home.sections.map((key) => sections[key] || "").join("")}<footer class="store-bottom"><strong>${html(draft.name)}</strong><span ${edit("footer")}>${html(home.footerText)}</span><span>Made with Nebula ✳</span></footer></div>`;
 }
 function renderPreview() {
   document.body.classList.add("public-shop");
@@ -997,13 +1020,31 @@ function renderPreview() {
     shop = publicSnapshot;
     draft = normalizeDraft(shop.draft);
   }
+  document.title = `${draft.name} · ${draft.tagline || "Your flower shop"}`;
   main.innerHTML = `${owner ? `<div class="preview-banner"><span>✧ OWNER PREVIEW · Private draft${!isPaid() ? " · Orders closed" : ""}</span><a href="/dashboard/editor" data-nav>Edit my storefront ↗</a></div>` : ""}${storefrontMarkup(false, !owner)}`;
   hydrateMedia();
 }
 function renderEditor() {
   const readOnly = adminReadOnly;
   shell(
-    `<div class="editor-toolbar"><div class="editor-status"><span class="status-dot"></span>${readOnly ? "Administrator · read-only preview" : "Your private storefront draft"}</div><div class="actions">${!readOnly ? `<button class="editor-toggle ${editorMode ? "selected" : ""}" data-action="toggle-edit" aria-pressed="${editorMode}">✎ Edit mode ${editorMode ? "on" : "off"}</button><button class="editor-toggle" data-action="inspect" data-target="sections">☷ Sections</button>` : ""}<button class="editor-toggle ${mobilePreview ? "selected" : ""}" data-action="toggle-mobile" aria-pressed="${mobilePreview}">${mobilePreview ? "▣ Desktop" : "▯ Mobile"}</button><a href="${readOnly ? "/admin" : previewLink()}" data-nav class="plain-button">${readOnly ? "Back to admin" : "Preview"} ↗</a></div></div><p class="editor-hint">${readOnly ? "Inspect this merchant’s saved content. Changes are disabled." : "Click a name, a photo or a product to change it. Your edits save automatically."}</p><div class="store-preview-frame ${mobilePreview ? "mobile-frame" : ""}" data-store-mount>${storefrontMarkup(!readOnly, false)}</div>${!readOnly ? inspectorMarkup() : ""}`,
+    `<div class="editor-toolbar"><div class="editor-status"><span class="status-dot"></span>${readOnly ? "Administrator · read-only preview" : "Your private storefront draft"}</div><div class="actions">${!readOnly ? `<button class="editor-toggle ${editorMode ? "selected" : ""}" data-action="toggle-edit" aria-pressed="${editorMode}">✎ Edit mode ${editorMode ? "on" : "off"}</button><button class="editor-toggle" data-action="inspect" data-target="sections">☷ Sections</button>` : ""}<button class="editor-toggle ${mobilePreview ? "selected" : ""}" data-action="toggle-mobile" aria-pressed="${mobilePreview}">${mobilePreview ? "▣ Desktop" : "▯ Mobile"}</button><a href="${readOnly ? "/admin" : previewLink()}" data-nav class="plain-button">${readOnly ? "Back to admin" : "Preview"} ↗</a></div></div><p class="editor-hint">${readOnly ? "Inspect this merchant’s saved content. Changes are disabled." : "Click a name, a photo or a product to change it. Your edits save automatically."}</p>${
+      !readOnly
+        ? `<nav class="editor-customization" aria-label="Customise your storefront">${[
+            ["header", "Top bar & menu"],
+            ["hero-copy", "Hero & buttons"],
+            ["hero-look", "Photo & layout"],
+            ["sections", "Sections & text"],
+            ["contact", "Contact & hours"],
+            ["footer", "Footer"],
+            ["appearance", "Style & movement"],
+          ]
+            .map(
+              ([target, label]) =>
+                `<button class="button secondary small" data-action="inspect" data-target="${target}">${label}</button>`,
+            )
+            .join("")}</nav>`
+        : ""
+    }<div class="store-preview-frame ${mobilePreview ? "mobile-frame" : ""}" data-store-mount>${storefrontMarkup(!readOnly, false)}</div>${!readOnly ? inspectorMarkup() : ""}`,
     "Your shop,<br><em>your finishing touches.</em>",
     readOnly
       ? "A read-only view of this merchant’s storefront."
@@ -1030,23 +1071,38 @@ function inspectorMarkup() {
   );
   let title = "Your finishing touches",
     content = "";
-  if (kind === "headline" || kind === "description" || kind === "about") {
+  if (kind === "about") {
+    title = "Your story";
+    content = storefrontControls("section-about", draft.home, html);
+  } else if (
+    storefrontGroups[kind] &&
+    !["hero-look", "contact", "appearance"].includes(kind)
+  ) {
+    title = storefrontGroups[kind][0];
+    content = storefrontControls(kind, draft.home, html);
+    if (kind === "hero-copy")
+      content +=
+        '<p class="helper">A hidden destination falls back to the first visible section. Button links always stay inside your shop.</p>';
+  } else if (kind === "appearance") {
+    title = "Style & movement";
+    content = `${field("Signature colour", "theme.primary", { type: "color" })}${field("Page background", "theme.background", { type: "color" })}${storefrontControls("appearance", draft.home, html)}<p class="helper">Movement is always reduced for visitors who request reduced motion on their device.</p>`;
+  } else if (kind === "headline" || kind === "description") {
     title = {
       headline: "Your welcome headline",
       description: "A little introduction",
       about: "Your flower story",
     }[kind];
     const key = kind === "about" ? "about" : kind;
-    content = `<label class="field">${title}<textarea data-path="home.${key}" maxlength="${kind === "headline" ? 120 : kind === "about" ? 2000 : 400}">${html(draft.home[key])}</textarea></label><p class="helper">Keep it warm, clear and true to your shop.</p>`;
+    content = `<label class="field">${title}<textarea data-path="home.${key}" maxlength="${kind === "headline" ? 160 : 600}">${html(draft.home[key])}</textarea></label><p class="helper">Keep it warm, clear and true to your shop.</p>`;
   } else if (kind === "brand" || kind === "contact") {
     title = kind === "brand" ? "Your shop identity" : "Say a little hello";
     content =
       kind === "brand"
         ? `${field("Shop name", "name", { max: 80, required: true })}${uploadField("logo", null, 1, "Change logo")}<label class="field">Signature colour<input type="color" data-path="theme.primary" value="${html(draft.theme.primary)}"></label>`
-        : `${field("City or neighbourhood", "city", { max: 80 })}${field("Phone or WhatsApp", "phone", { max: 40 })}${field("Instagram", "instagram", { max: 120 })}`;
-  } else if (kind === "hero") {
+        : `${field("City or neighbourhood", "city", { max: 80 })}${field("Phone or WhatsApp", "phone", { max: 40 })}${field("Instagram", "instagram", { max: 120 })}${storefrontControls("contact", draft.home, html)}`;
+  } else if (kind === "hero" || kind === "hero-look") {
     title = "Your first impression";
-    content = `<div class="inspector-photo"><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="Hero image preview"></div>${uploadField("hero", null, 18, "Choose hero photo")}<p class="helper">Landscape or portrait · resized to 250 KB. Our default photo is floral inspiration; replace it with your own work.</p>${draft.home.heroMediaId ? '<button class="plain-button" data-action="remove-hero">Use default inspiration photo</button>' : ""}`;
+    content = `<div class="inspector-photo"><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="Hero image preview"></div>${storefrontControls("hero-look", draft.home, html)}${uploadField("hero", null, 18, "Choose hero photo")}<p class="helper">Landscape or portrait · resized to 250 KB. Our default photo is floral inspiration; replace it with your own work.</p>${draft.home.heroMediaId ? '<button class="plain-button" data-action="remove-hero">Use default inspiration photo</button>' : ""}`;
   } else if (item) {
     title =
       kind === "collection" ? "Customisable bouquet" : "Your fixed product";
@@ -1068,7 +1124,19 @@ function inspectorMarkup() {
       ...draft.home.sections,
       ...all.filter((key) => !draft.home.sections.includes(key)),
     ];
-    content = `<p class="subtle">Choose which sections appear, then arrange your page.</p><div class="section-sort">${order.map((key) => `<div><label class="toggle-line"><input type="checkbox" data-section="${key}" ${draft.home.sections.includes(key) ? "checked" : ""}>${names[key]}</label><button data-action="move-section" data-section="${key}" data-direction="-1" aria-label="Move ${names[key]} up">↑</button><button data-action="move-section" data-section="${key}" data-direction="1" aria-label="Move ${names[key]} down">↓</button></div>`).join("")}</div><a class="button secondary small" href="/dashboard/collection" data-nav>Manage bouquet recipes ↗</a><a class="button secondary small" href="/dashboard/products" data-nav>Manage fixed products ↗</a>`;
+    content = `<p class="subtle">Choose which sections appear, then arrange your page.</p><div class="section-sort">${order.map((key) => `<div><label class="toggle-line"><input type="checkbox" data-section="${key}" ${draft.home.sections.includes(key) ? "checked" : ""}>${names[key]}</label><button data-action="move-section" data-section="${key}" data-direction="-1" aria-label="Move ${names[key]} up">↑</button><button data-action="move-section" data-section="${key}" data-direction="1" aria-label="Move ${names[key]} down">↓</button></div>`).join("")}</div><div class="editor-customization">${[
+      ["section-custom", "Bouquet section text"],
+      ["section-products", "Product section text"],
+      ["section-builder", "Builder section text"],
+      ["section-about", "Your story"],
+    ]
+      .map(
+        ([target, label]) =>
+          `<button class="button secondary small" data-action="inspect" data-target="${target}">${label}</button>`,
+      )
+      .join(
+        "",
+      )}</div><a class="button secondary small" href="/dashboard/collection" data-nav>Manage bouquet recipes ↗</a><a class="button secondary small" href="/dashboard/products" data-nav>Manage fixed products ↗</a>`;
   } else if (kind === "add-card") {
     title = "Choose a starting recipe";
     content = `<p class="subtle">${draft.collection.length} of 6 cards in your collection.</p><div class="drawer-recipes">${
@@ -2300,7 +2368,8 @@ document.addEventListener("input", (event) => {
     const parent = keys
       .slice(0, -1)
       .reduce((object, key) => object[key], draft);
-    parent[keys.at(-1)] = input.value;
+    parent[keys.at(-1)] =
+      input.type === "checkbox" ? input.checked : input.value;
     if (keys[0] === "theme") {
       const label = document.querySelector(`[data-colour-label="${keys[1]}"]`);
       if (label) label.textContent = input.value.toUpperCase();

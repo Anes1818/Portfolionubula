@@ -45,6 +45,82 @@ const reservedSlugs = new Set([
   "terms",
 ]);
 
+// Plain text and bounded presentation choices only. These defaults are added
+// when reading older records; existing stored drafts are not rewritten.
+export const storefrontHomeDefaults = Object.freeze({
+  announcementText: "",
+  announcementEnabled: true,
+  heroEyebrow: "YOUR MOMENTS, IN FULL BLOOM",
+  heroButtonLabel: "",
+  heroButtonTarget: "auto",
+  builderButtonLabel: "Build your own",
+  heroNote: "Thoughtfully made. A little more you.",
+  heroStamp: "a little flower magic",
+  heroLayout: "split",
+  ribbonText:
+    "Flowers for the little things · And the really big feelings · Made with a personal touch",
+  ribbonEnabled: true,
+  customTitle: "Make it your kind of beautiful.",
+  customDescription:
+    "Start with a favourite. Make the finishing touches your own.",
+  productsTitle: "Lovely, just as they are.",
+  productsDescription: "Handcrafted favourites. Ready for your kind of moment.",
+  builderTitle: "A little imagination. A beautiful bouquet.",
+  builderDescription:
+    "Choose your flowers, find your colours and bring your own idea to life in our bouquet builder.",
+  aboutTitle: "Flowers with a personal touch.",
+  contactTitle: "A little hello goes a long way.",
+  contactDetails: "",
+  footerText: "Your craft. Their imagination.",
+  navCustom: "Bouquets",
+  navProducts: "Our shop",
+  navAbout: "Our story",
+  navContact: "Say hello",
+  motionEnabled: true,
+});
+
+const homeTextLimits = Object.freeze({
+  announcementText: 160,
+  heroEyebrow: 80,
+  heroButtonLabel: 60,
+  builderButtonLabel: 60,
+  heroNote: 160,
+  heroStamp: 60,
+  ribbonText: 200,
+  customTitle: 120,
+  productsTitle: 120,
+  builderTitle: 120,
+  aboutTitle: 120,
+  contactTitle: 120,
+  footerText: 160,
+  navCustom: 40,
+  navProducts: 40,
+  navAbout: 40,
+  navContact: 40,
+});
+const homeMultilineLimits = Object.freeze({
+  customDescription: 300,
+  productsDescription: 300,
+  builderDescription: 400,
+  contactDetails: 1200,
+});
+const homeBooleanFields = [
+  "announcementEnabled",
+  "ribbonEnabled",
+  "motionEnabled",
+];
+const homeChoices = Object.freeze({
+  heroButtonTarget: [
+    "auto",
+    "custom",
+    "products",
+    "builder",
+    "about",
+    "contact",
+  ],
+  heroLayout: ["split", "image-first", "centered"],
+});
+
 export function object(value, label, allowed) {
   requireValue(
     value && typeof value === "object" && !Array.isArray(value),
@@ -260,6 +336,7 @@ export function initialDraft(input) {
       heroMediaId: null,
       about: "",
       sections: ["custom", "products", "builder", "about", "contact"],
+      ...storefrontHomeDefaults,
     },
   };
 }
@@ -536,6 +613,7 @@ export function validateDraft(value, catalog, { semantic = true } = {}) {
     "heroMediaId",
     "about",
     "sections",
+    ...Object.keys(storefrontHomeDefaults),
   ]);
   const sections = ["custom", "products", "builder", "about", "contact"];
   requireValue(
@@ -552,6 +630,21 @@ export function validateDraft(value, catalog, { semantic = true } = {}) {
     about: multilineText(value.home.about, "About", 3000),
     sections: [...value.home.sections],
   };
+  for (const [key, max] of Object.entries(homeTextLimits))
+    result.home[key] = text(value.home[key], key, max);
+  for (const [key, max] of Object.entries(homeMultilineLimits))
+    result.home[key] = multilineText(value.home[key], key, max);
+  for (const key of homeBooleanFields) {
+    requireValue(
+      typeof value.home[key] === "boolean",
+      `${key} must be true or false.`,
+    );
+    result.home[key] = value.home[key];
+  }
+  for (const [key, choices] of Object.entries(homeChoices)) {
+    requireValue(choices.includes(value.home[key]), `Choose a valid ${key}.`);
+    result.home[key] = value.home[key];
+  }
   requireValue(
     Array.isArray(value.collection) && value.collection.length <= 6,
     "A collection can contain up to six bouquets.",

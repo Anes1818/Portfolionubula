@@ -284,7 +284,121 @@ const { chromium } = require("playwright");
     const headline = page.locator('[data-path="home.headline"]');
     await headline.fill("Flowers made for your moments");
     await page.locator('[data-action="close-inspector"]').first().click();
+    const editGroup = async (target) =>
+      page
+        .locator(`.editor-customization [data-target="${target}"]`)
+        .first()
+        .click();
+    const closeGroup = async () =>
+      page.locator('[data-action="close-inspector"]').first().click();
+    await editGroup("header");
+    await page
+      .locator('[data-path="home.announcementText"]')
+      .fill("Holiday orders open · Toronto pickup");
+    await page.locator('[data-path="home.navProducts"]').fill("Gifts");
+    await page.locator('[data-path="home.announcementEnabled"]').uncheck();
+    assert.equal(await page.locator(".store-announcement").count(), 0);
+    await page.locator('[data-path="home.announcementEnabled"]').check();
+    await closeGroup();
+    await editGroup("hero-copy");
+    await page
+      .locator('[data-path="home.heroEyebrow"]')
+      .fill("Handcrafted in Toronto");
+    await page
+      .locator('[data-path="home.description"]')
+      .fill(
+        "Satin flowers for every little celebration.\nChoose your colours and make them yours.",
+      );
+    await page
+      .locator('[data-path="home.heroButtonLabel"]')
+      .fill("Shop our gifts");
+    await page
+      .locator('[data-path="home.heroButtonTarget"]')
+      .selectOption("products");
+    await page.locator('[data-path="home.heroStamp"]').fill("made with care");
+    await closeGroup();
+    assert.equal(
+      await page.locator(".hero-copy .button").getAttribute("href"),
+      "#products",
+    );
+    await editGroup("sections");
+    await page.locator('input[data-section="products"]').uncheck();
+    assert.equal(
+      await page.locator(".hero-copy .button").getAttribute("href"),
+      "#custom",
+    );
+    assert.equal(
+      await page.locator('.store-header nav a[href="#products"]').count(),
+      0,
+    );
+    await page.locator('input[data-section="products"]').check();
+    await closeGroup();
+    await editGroup("hero-look");
+    for (const layout of ["centered", "image-first", "split"]) {
+      await page.locator('[data-path="home.heroLayout"]').selectOption(layout);
+      assert.equal(
+        await page.locator(`.floral-store.hero-layout-${layout}`).count(),
+        1,
+      );
+    }
+    await page
+      .locator('[data-path="home.heroLayout"]')
+      .selectOption("image-first");
+    await closeGroup();
+    await editGroup("sections");
+    await page.locator('[data-target="section-custom"]').click();
+    await page
+      .locator('[data-path="home.customTitle"]')
+      .fill("Build your forever flowers");
+    await page
+      .locator('[data-path="home.customDescription"]')
+      .fill("Choose a favourite and make it personal.");
+    await closeGroup();
+    await editGroup("contact");
+    await page
+      .locator('[data-path="home.contactTitle"]')
+      .fill("Visit our flower room");
+    await page
+      .locator('[data-path="home.contactDetails"]')
+      .fill("Pickup by appointment\nTuesday–Saturday, 10am–6pm");
+    await page.locator('[data-path="instagram"]').fill("@flowerroom");
+    await closeGroup();
+    await editGroup("footer");
+    await page
+      .locator('[data-path="home.footerText"]')
+      .fill('<img src=x onerror="window.unsafeStorefront=true">');
+    assert.equal(
+      await page.locator(".store-bottom img").count(),
+      0,
+      "Store text never becomes executable HTML",
+    );
+    await page
+      .locator('[data-path="home.footerText"]')
+      .fill("Handmade with love in Toronto");
+    await page
+      .locator('[data-path="home.ribbonText"]')
+      .fill("Made by hand · Designed by you");
+    await closeGroup();
+    await editGroup("appearance");
+    await page.locator('[data-path="home.motionEnabled"]').uncheck();
+    await closeGroup();
     await clickSave(page);
+    await page.reload();
+    await page.locator(".floral-store.hero-layout-image-first").waitFor();
+    assert.equal(
+      await page.locator(".store-announcement").textContent(),
+      "Holiday orders open · Toronto pickup",
+    );
+    assert.equal(
+      await page.locator("#custom .store-section-heading h2").textContent(),
+      "Build your forever flowers",
+    );
+    assert.equal(
+      await page
+        .locator('#contact a[href="https://www.instagram.com/flowerroom/"]')
+        .count(),
+      1,
+    );
     await page.screenshot({
       path: path.join(output, "editor-desktop.png"),
       fullPage: true,
@@ -544,6 +658,34 @@ const { chromium } = require("playwright");
     await visitor.reload();
     await visitor.locator("#products .flower-card").first().waitFor();
     assert.equal(await visitor.locator("#custom .flower-card").count(), 6);
+    assert.equal(
+      await visitor.locator(".store-announcement").textContent(),
+      "Holiday orders open · Toronto pickup",
+    );
+    assert.equal(
+      await visitor.locator(".hero-copy .button").getAttribute("href"),
+      "#products",
+    );
+    assert.equal(
+      await visitor.locator(".store-motion").count(),
+      0,
+      "Saved motion preference controls the public page",
+    );
+    assert.ok(
+      await visitor
+        .locator(".contact-extra")
+        .textContent()
+        .then((t) => t.includes("Tuesday–Saturday")),
+    );
+    assert.equal(
+      await visitor.locator(".floral-ribbon .ribbon-copy").isVisible(),
+      true,
+    );
+    assert.ok(
+      await visitor.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+    );
     await visitor.locator('[data-action="product-request"]').first().click();
     await visitor
       .locator('.nb-order-form input[name="name"]')
