@@ -348,6 +348,7 @@ function renderOverview() {
     "Welcome to<br><em>your little flower shop.</em>",
     "Everything you need to make a beautiful beginning.",
   );
+  renderShopAddress();
 }
 
 function renderBrand() {
@@ -436,6 +437,12 @@ function productCover(item, className = "cover-preview") {
   return `<div class="${className} product-photo">${item.cover ? `<img data-media-id="${html(item.cover)}" alt="${html(item.title)}">` : '<span class="cover-placeholder" aria-hidden="true">❀</span>'}${className === "cover-preview" ? `<span class="cover-label">${item.cover ? "YOUR PRODUCT PHOTO" : "ADD YOUR PRODUCT PHOTO"}</span>` : ""}</div>`;
 }
 
+function renderShopAddress() {
+  const section = document.createElement("section");
+  section.className = "surface shop-address";
+  section.innerHTML = `<p class="eyebrow">YOUR SHOP LINK</p><h2>${isPublished() ? "Ready to share." : "Your address is reserved."}</h2><label class="field">Shop address<input id="shopAddress" type="url" readonly value="${html(location.origin + previewLink())}"></label><p class="helper">${isPublished() ? "Customers can open this published shop without signing in." : "Only you can preview this draft. Customers can open this same address after activation and publication."}</p><div class="actions"><button class="button secondary" data-action="copy-shop-link">Copy shop link</button><a class="plain-button" href="${previewLink()}" data-nav>${isPublished() ? "Open shop" : "Open private preview"} ↗</a></div><p id="shopLinkStatus" class="helper" role="status"></p>`;
+  main.querySelector(".dashboard-content .page-heading").after(section);
+}
 function renderBilling() {
   const paid = isPaid(),
     active = isPublished();
@@ -451,6 +458,7 @@ function renderBilling() {
     publicationState.shopId === shop.id &&
     publicationState.version === version &&
     publicationState.report?.canPublish === true &&
+    publicationState.report?.draftVersion === version &&
     !dirty &&
     !saving;
   shell(
@@ -469,13 +477,27 @@ function renderBilling() {
             )
             .join("")}</div>`
         : ""
-    }<button class="button" data-action="publish-shop" ${!canPublish ? "disabled" : ""}>${active ? "Publish latest changes" : "Publish my shop"} ↗</button><p class="helper">${!paid ? "Your public address remains locked until your subscription is verified and you publish." : !config.publishingEnabled ? "Publication setup is pending. Your active plan does not bypass the server’s publication checks." : "Publication saves a separate snapshot. Later draft edits stay private."}</p></section></div><section class="surface domain-plan"><div><span class="pill">COMING LATER</span><h3>Your own domain · $35 USD / month</h3><p class="subtle">A future option for your own website address. Domain registration and renewal are paid by you, separately.</p><p class="helper">Domain setup and verification are being tested. This plan is not available to purchase yet.</p></div><button class="button secondary" disabled>Own-domain setup preparing</button></section>`,
+    }<button class="button" data-action="${canPublish ? "publish-shop" : "review-publication"}" ${publicationState.loading || saving ? "disabled" : ""}>${canPublish ? (active ? "Publish latest changes" : "Publish my shop") : "Review publishing requirements"} ↗</button><p class="helper" role="status">${html(!paid ? (config.sandboxTestAccess ? "Test access is not active. Use the administrator test-access button on this page." : "Activate your plan before publishing. Your preview and reserved link are ready.") : dirty ? "Save your edits before publishing." : publicationState.error || (publicationState.report?.canPublish ? "Your saved draft is ready to publish." : "Review the checklist below for missing prices or shop details."))}</p><p class="helper">${!paid ? "Your public address remains locked until your subscription is verified and you publish." : !config.publishingEnabled ? "Publication setup is pending. Your active plan does not bypass the server’s publication checks." : "Publication saves a separate snapshot. Later draft edits stay private."}</p></section></div><section class="surface domain-plan"><div><span class="pill">COMING LATER</span><h3>Your own domain · $35 USD / month</h3><p class="subtle">A future option for your own website address. Domain registration and renewal are paid by you, separately.</p><p class="helper">Domain setup and verification are being tested. This plan is not available to purchase yet.</p></div><button class="button secondary" disabled>Own-domain setup preparing</button></section>`,
     "A beautiful space.<br><em>A clear next step.</em>",
     "Free private preview. $29 for 30 days after manual activation.",
     "PLAN & PUBLISHING",
   );
+  renderShopAddress();
   renderPublicationChecklist();
   mountManualPlan({
+    isAdmin: sessionState.isAdmin,
+    onAccessChange: (next) => {
+      shop = next;
+      // Discard any readiness response started before the access grant.
+      publicationState = {
+        shopId: null,
+        version: null,
+        report: null,
+        error: "",
+        loading: false,
+      };
+      renderBilling();
+    },
     shop,
     config,
     api,
@@ -528,9 +550,14 @@ async function loadPublicationReadiness() {
   state.error = "";
   if (route() === "/dashboard/billing") renderBilling();
   try {
-    const report = await api(
-      "/api/shops/" + encodeURIComponent(state.shopId) + "/readiness",
-    );
+    const [report, current] = await Promise.all([
+      api("/api/shops/" + encodeURIComponent(state.shopId) + "/readiness"),
+      api("/api/shops/" + encodeURIComponent(state.shopId)),
+    ]);
+    if (state === publicationState && shop?.id === state.shopId) {
+      shop.subscription = current.shop.subscription;
+      shop.published = current.shop.published;
+    }
     if (
       state === publicationState &&
       state.shopId === shop?.id &&
@@ -1783,6 +1810,26 @@ document.addEventListener("click", async (event) => {
     showMessage(
       "Unpriced catalogue items are now turned off. Your saved prices and bouquet artwork have been kept; turn any item back on when its price is ready.",
     );
+  } else if (action === "copy-shop-link") {
+    const field = $("shopAddress");
+    try {
+      await navigator.clipboard.writeText(field.value);
+      $("shopLinkStatus").textContent = isPublished()
+        ? "Shop link copied."
+        : "Reserved link copied. Publish before sharing it with customers.";
+    } catch {
+      field.focus();
+      field.select();
+      $("shopLinkStatus").textContent = "Select and copy this address.";
+    }
+  } else if (action === "review-publication") {
+    if (dirty && !(await saveDraft(true))) return;
+    publicationState.report = null;
+    publicationState.error = "";
+    await loadPublicationReadiness();
+    main
+      .querySelector(".publication-checklist")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   } else if (action === "publish-shop")
     await authTask(button, async () => {
       if (dirty && !(await saveDraft(true))) return;

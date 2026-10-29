@@ -8,7 +8,14 @@ const escape = (v = "") =>
   );
 const date = (v) => (v ? new Date(v).toLocaleString() : "Not activated");
 
-export function mountManualPlan({ shop, config, api, onChange }) {
+export function mountManualPlan({
+  shop,
+  config,
+  api,
+  onChange,
+  isAdmin = false,
+  onAccessChange,
+}) {
   if (!config.manualActivationEnabled) return;
   const target = document.querySelector(".plan-surface");
   if (!target) return;
@@ -16,6 +23,40 @@ export function mountManualPlan({ shop, config, api, onChange }) {
   if (config.sandboxTestAccess) {
     target.innerHTML =
       '<p class="eyebrow">ISOLATED SQUARE SANDBOX</p><h2>Test your shop.</h2><p>This environment does not collect subscription payments. A platform administrator can grant seven days of test access. Never send a real PayPal payment for this sandbox.</p>';
+    if (
+      isAdmin &&
+      !(
+        shop.subscription?.status === "active" &&
+        shop.subscription.paidUntil > Date.now()
+      )
+    ) {
+      const button = document.createElement("button");
+      button.className = "button light";
+      button.id = "grantSandboxAccess";
+      button.textContent = "Activate 7-day test access";
+      const message = document.createElement("p");
+      message.setAttribute("role", "status");
+      target.append(button, message);
+      const operationId = crypto.randomUUID();
+      button.onclick = async () => {
+        button.disabled = true;
+        try {
+          const current = await api(`/api/admin/shops/${shop.id}/activation`);
+          const result = await api(`/api/admin/shops/${shop.id}/activation`, {
+            method: "POST",
+            body: {
+              operationId,
+              revision: current.subscription.revision || 0,
+              action: "test",
+            },
+          });
+          onAccessChange(result.shop);
+        } catch (error) {
+          message.textContent = error.message;
+          button.disabled = false;
+        }
+      };
+    }
     return;
   }
   target.innerHTML = `<p class="eyebrow">PREVIEW FIRST. OPEN WHEN READY.</p><h2>Your shop,<br>on your terms.</h2><div class="plan-price"><strong>$29</strong><span>USD / 30 days</span></div><p>Payment and activation are reviewed by Nebula. There is no automatic charge or renewal.</p><ul class="feature-list"><li>Your branded storefront and bouquet builder</li><li>Six customisable bouquets and ten fixed products</li><li>Optional Square connection, after setup and testing</li></ul><p>Current access ends: <strong>${escape(date(shop.subscription?.paidUntil))}</strong></p><button class="button light" id="requestActivation">${pending ? "Activation requested · resend details" : "Request activation / renewal ↗"}</button><p id="manualPlanMessage" class="helper" role="status">${pending ? "Your request is saved in Nebula’s admin dashboard. Contact us below to arrange your commercial PayPal invoice." : "Save your activation request, then contact Nebula with your shop reference. Payment alone does not publish your draft."}</p><p><a style="color:inherit" href="https://www.instagram.com/nebulaa_studio" target="_blank" rel="noopener noreferrer">Message Nebula on Instagram ↗</a></p><p class="helper">Shop reference: ${escape(shop.id)}<br>Only pay an invoice you recognise. Your shop activates after the payment is verified and access is granted.</p>`;

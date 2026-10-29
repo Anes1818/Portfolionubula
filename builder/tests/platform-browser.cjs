@@ -495,6 +495,15 @@ const { chromium } = require("playwright");
       (await visitor.request.get(origin + "/api/shops/" + shop.id)).status(),
       404,
     );
+    await page.goto(origin + "/dashboard/billing");
+    await page.locator('[data-action="review-publication"]:enabled').waitFor();
+    assert.equal(
+      await page.locator("#shopAddress").inputValue(),
+      origin + "/s/" + shop.slug,
+    );
+    await page
+      .getByText("Your address is reserved.", { exact: true })
+      .waitFor();
     // Only local QA receives a synthetic entitlement, never the deployed service.
     shop = await readShop();
     const object = f.env.SHOPS.objects.get(shop.id);
@@ -510,11 +519,17 @@ const { chromium } = require("playwright");
       }),
     );
     f.env.PUBLISHING_ENABLED = "true";
-    const published = await f.call("/api/shops/" + shop.id + "/publish", {
-      method: "POST",
-      body: { version: shop.version },
-    });
-    assert.equal(published.status, 200, await published.clone().text());
+    // Refresh detects a plan activated elsewhere without losing the draft.
+    await page.locator('[data-action="review-publication"]').click();
+    // The configuration flag changed only inside this local fixture.
+    await page.reload();
+    await page.locator('[data-action="publish-shop"]:enabled').waitFor();
+    await page.locator('[data-action="publish-shop"]').click();
+    await page.getByText("Ready to share.", { exact: true }).waitFor();
+    assert.equal(
+      await page.locator("#shopAddress").inputValue(),
+      origin + "/s/" + shop.slug,
+    );
     await visitor.reload();
     await visitor.locator("#products .flower-card").first().waitFor();
     assert.equal(await visitor.locator("#custom .flower-card").count(), 6);
@@ -657,6 +672,30 @@ const { chromium } = require("playwright");
       path: path.join(output, "manual-plan-mobile.png"),
       fullPage: true,
     });
+    // Isolated sandbox activation uses the real audited admin endpoint in local QA.
+    f.env.ENVIRONMENT = "test";
+    f.env.PUBLIC_ORIGIN = origin;
+    f.env.BILLING_TEST_MODE = "true";
+    f.env.SANDBOX_TEST_ACCESS = "true";
+    const beforeTest = await readShop();
+    object.state.storage.sql.exec(
+      "UPDATE shop SET data=? WHERE singleton=1",
+      JSON.stringify({
+        ...beforeTest,
+        subscription: {
+          ...beforeTest.subscription,
+          status: "inactive",
+          paidUntil: 0,
+        },
+      }),
+    );
+    await page.reload();
+    await page.locator("#grantSandboxAccess").click();
+    await page.locator('[data-action="publish-shop"]:enabled').waitFor();
+    await page.locator('[data-action="publish-shop"]').click();
+    await page.getByText("Ready to share.", { exact: true }).waitFor();
+    assert.equal((await readShop()).subscription.source, "sandbox_test");
+    assert.equal(await page.locator("#grantSandboxAccess").count(), 0);
     assert.deepEqual(errors, [], "No unhandled browser errors");
     assert.deepEqual(badRequests, [], "No unexpected outbound service");
     console.log(
