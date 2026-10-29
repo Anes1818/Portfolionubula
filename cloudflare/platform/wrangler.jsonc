@@ -20,7 +20,6 @@
       "/dashboard",
       "/dashboard/*",
       "/admin",
-      "/admin/",
       "/admin/*",
       "/admin.html",
       "/s/*",
