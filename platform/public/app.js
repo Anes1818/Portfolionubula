@@ -33,8 +33,40 @@ let user, auth, authApi, config, shop, draft, catalog;
 let sessionState = {},
   publicSnapshot = null,
   publicSlugLoaded = null;
-let merchantRequests = null,
-  requestsLoading = false;
+const emptyOrdersState = () => ({
+  shopId: null,
+  admin: false,
+  rows: [],
+  counts: {},
+  nextCursor: null,
+  status: "all",
+  loaded: false,
+  loading: false,
+  selectedId: null,
+  detail: null,
+  detailLoading: false,
+  error: "",
+  message: "",
+  busy: false,
+  edits: new Map(),
+});
+let ordersState = emptyOrdersState();
+const hasRequestEdits = () =>
+  [...ordersState.edits.values()].some((edit) => edit.dirty);
+let publicationState = {
+  shopId: null,
+  version: null,
+  report: null,
+  error: "",
+  loading: false,
+};
+let squareState = {
+  shopId: null,
+  loaded: false,
+  loading: false,
+  data: null,
+  error: "",
+};
 let editorMode = true,
   mobilePreview = false,
   inspector = null,
@@ -67,7 +99,8 @@ const tabs = [
   ["/dashboard/collection", "Your collection", "▦"],
   ["/dashboard/products", "Fixed products", "▧"],
   ["/dashboard/billing", "Plan & publishing", "◇"],
-  ["/dashboard/payments", "Square & orders", "□"],
+  ["/dashboard/orders", "Customer requests", "▤"],
+  ["/dashboard/payments", "Square payments", "□"],
 ];
 const currency = () => draft?.currency || shop?.draft?.currency || "USD";
 const amount = (cents) => (cents == null ? "" : (cents / 100).toFixed(2));
@@ -256,6 +289,16 @@ function shell(content, heading, description, eyebrow = "YOUR FLOWER SHOP") {
 function renderLogin() {
   const signup = loginMode === "signup";
   main.innerHTML = `<div class="login-layout"><section class="login-story"><p class="eyebrow">A LITTLE SPACE FOR YOUR FLOWER SHOP</p><h1>Your flowers.<br>Your name.<br><em>A beautiful beginning.</em></h1><p class="subtle">Bring your collection together, make it feel like you, and explore your very own bouquet studio.</p><div class="story-image"><img src="/assets/studio-pink.webp" alt="Soft pink roses and delicate white flowers, wrapped in ivory paper" width="928" height="1152"></div><div class="story-caption"><span>YOUR CRAFT. THEIR IMAGINATION.</span><span>✳</span></div></section><section class="auth-card"><p class="eyebrow">${signup ? "LET’S GET ACQUAINTED" : "WELCOME TO YOUR STUDIO"}</p><h2>${signup ? "Something lovely starts here." : "A little more you."}</h2><p class="subtle">${signup ? "Create your account and start your free private shop preview." : "Sign in to pick up where your flowers left off."}</p><div id="authMessage" class="notice" role="status" hidden></div><button class="google-button" data-action="google"><span class="google-icon" aria-hidden="true">G</span>Continue with Google</button><div class="divider">or use your email</div><form id="authForm"><label class="field">Email address<input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@yourflowershop.com" required></label><label class="field"><span class="password-heading">Password${signup ? "" : '<button class="plain-button" type="button" data-action="reset">Forgot password?</button>'}</span><input id="password" name="password" type="password" autocomplete="${signup ? "new-password" : "current-password"}" ${signup ? 'minlength="10"' : ""} required placeholder="${signup ? "At least 10 characters" : "Your password"}"></label><button type="submit" class="button">${signup ? "Create my account" : "Step into my studio"}<span aria-hidden="true">↗</span></button></form><p class="auth-bottom">${signup ? "Already have an account?" : "New around here?"} <button class="plain-button" data-action="auth-mode">${signup ? "Sign in" : "Create an account"}</button></p><p class="beta-note">Your private preview is free. Creating an account does not activate a paid subscription or open customer orders.</p></section></div>`;
+  if (config?.signupMode === "private-beta") {
+    main.querySelector(".auth-card > .subtle").textContent = signup
+      ? "Create an account using your invited email address. Access is limited to invited shops during this beta."
+      : "Sign in with your invited account to continue your private shop preview.";
+    main.querySelector(".beta-note").textContent =
+      "Private beta · invitation required. Creating an account does not open public access, activate a subscription or enable customer orders.";
+    if (!signup)
+      main.querySelector('[data-action="auth-mode"]').textContent =
+        "Invited? Create an account";
+  }
 }
 function renderVerification() {
   main.innerHTML = `<section class="setup-form"><div class="auth-card"><div class="verification-icon" aria-hidden="true">✉</div><p class="eyebrow">ONE LITTLE STEP FIRST</p><h1>Check your inbox.</h1><p class="subtle">Verify <strong>${html(user.email)}</strong> before opening your shop. Follow the link in your verification email, then come back here.</p><div id="authMessage" class="notice" role="status" hidden></div><div class="actions"><button class="button" data-action="check-verification">I’ve verified my email <span aria-hidden="true">↗</span></button><button class="button secondary" data-action="send-verification">Send verification email</button></div><p class="helper">Email is sent only when you request it. Check your spam folder if it hasn’t arrived.</p></div></section>`;
@@ -337,9 +380,10 @@ function priceRows(items, extras = false) {
 function renderPrices() {
   const flowers = matchingFlowers(),
     extras = matchingExtras();
-  const groups = [...new Set(flowers.map((item) => item.group || "flowers"))];
+  const priceGroup = (item) => item.group || item.family || "flowers";
+  const groups = [...new Set(flowers.map(priceGroup))];
   shell(
-    `${!presetReady() ? '<div class="notice">Your matching studio is preparing. You can save brand details and products now. We only show assets belonging to your chosen preset.</div>' : ""}${flowers.length ? `<section class="surface"><div class="section-heading"><div><h2>Your flowers. Your prices.</h2><p class="subtle">Choose what you offer. Enter a price per stem in ${currency()}.</p></div><span class="pill">${currency()}</span></div><div class="price-toolbar"><input id="flowerSearch" type="search" placeholder="Find a flower…" aria-label="Search flowers"><button class="plain-button" data-action="sample-prices">Use sample prices</button></div>${groups.map((group) => `<h3 class="catalogue-group">${html(group.replaceAll("_", " "))}</h3><table class="price-table"><thead><tr><th>OFFER</th><th>FLOWER</th><th>PER STEM · ${currency()}</th></tr></thead><tbody>${priceRows(flowers.filter((item) => (item.group || "flowers") === group))}</tbody></table>`).join("")}<p id="noFlowers" class="helper" hidden>No flowers match your search.</p></section>` : '<section class="surface"><h2>A library, taking shape.</h2><p class="subtle">Matching flowers are not available in this preset yet.</p></section>'}${extras.length ? `<section class="surface"><h2>The finishing touches.</h2><p class="subtle">Toggle availability and set your own prices for extras.</p><table class="price-table"><thead><tr><th>OFFER</th><th>EXTRA</th><th>PRICE · ${currency()}</th></tr></thead><tbody>${priceRows(extras, true)}</tbody></table></section>` : ""}`,
+    `${!presetReady() ? '<div class="notice">Your matching studio is preparing. You can save brand details and products now. We only show assets belonging to your chosen preset.</div>' : ""}${flowers.length ? `<section class="surface"><div class="section-heading"><div><h2>Your flowers. Your prices.</h2><p class="subtle">Choose what you offer. Enter a price per stem in ${currency()}.</p></div><span class="pill">${currency()}</span></div><div class="price-toolbar"><input id="flowerSearch" type="search" placeholder="Find a flower…" aria-label="Search flowers"><button class="plain-button" data-action="sample-prices">Use sample prices</button><button class="plain-button" data-action="disable-unpriced">Turn off unpriced items</button></div>${groups.map((group) => `<h3 class="catalogue-group">${html(group.replaceAll("_", " "))}</h3>${group === "money" ? `<p class="helper">Price each folded note in ${currency()}, including cash and any styling. No automatic exchange rate, fixed assembly fee or customer-supplied-cash adjustment is added.</p>` : ""}<table class="price-table"><thead><tr><th>OFFER</th><th>FLOWER</th><th>${group === "money" ? "PER NOTE" : "PER ITEM"} · ${currency()}</th></tr></thead><tbody>${priceRows(flowers.filter((item) => priceGroup(item) === group))}</tbody></table>`).join("")}<p id="noFlowers" class="helper" hidden>No flowers match your search.</p></section>` : '<section class="surface"><h2>A library, taking shape.</h2><p class="subtle">Matching flowers are not available in this preset yet.</p></section>'}${extras.length ? `<section class="surface"><h2>The finishing touches.</h2><p class="subtle">Toggle availability and set your own prices for extras.</p><table class="price-table"><thead><tr><th>OFFER</th><th>EXTRA</th><th>PRICE · ${currency()}</th></tr></thead><tbody>${priceRows(extras, true)}</tbody></table></section>` : ""}`,
     "Every stem,<br><em>thoughtfully priced.</em>",
     "Your catalogue is shared. What you offer is entirely yours.",
     "FLOWERS & PRICES",
@@ -402,11 +446,11 @@ function renderBilling() {
   const canPublish =
     paid &&
     config.publishingEnabled === true &&
-    !readiness.some(
-      (item) =>
-        item.blocking !== false &&
-        !["square_setup_pending", "square_not_connected"].includes(item.code),
-    );
+    publicationState.shopId === shop.id &&
+    publicationState.version === version &&
+    publicationState.report?.canPublish === true &&
+    !dirty &&
+    !saving;
   shell(
     `<div class="activation-grid"><section class="surface plan-surface"><p class="eyebrow">YOUR OWN NEBULA SHOP</p><h2>Make a beautiful<br>beginning.</h2><div class="plan-price"><strong>$29</strong><span>USD / month</span></div><p class="helper">${paid ? "Your subscription is active." : "Start with a free private preview. Activate only when you’re ready to publish."}</p><ul class="feature-list"><li>A branded public storefront</li><li>Six customisable bouquet cards</li><li>Ten fixed products with your own photos</li><li>Your flower library, prices and bouquet builder</li><li>Optional Square connection for customer payments</li></ul>${paid ? `<button class="button light" data-action="billing-portal" ${config.billingPortalEnabled === false ? "disabled" : ""}>Manage subscription ↗</button>` : `<button class="button light" data-action="billing-checkout" ${!billingReady ? "disabled" : ""}>${billingReady ? (test ? "Test checkout · $29 / month" : "Activate my shop · $29 / month") : "Activation setup pending"}</button>`}<p class="helper">${billingReady ? (test ? "Test environment. This checkout does not represent a live paid launch." : "Secure subscription checkout. Your plan activates after the provider confirms payment.") : "Your free preview is ready. Secure billing is being connected; activation is unavailable until setup is complete."}</p></section><section class="surface"><span class="pill ${paid ? "green" : ""}">${active ? "PUBLISHED" : paid ? "PLAN ACTIVE" : "FREE PRIVATE PREVIEW"}</span><h2 style="margin-top:24px">Your opening day,<br>on your terms.</h2><p class="subtle">Saving edits updates your private draft. Publish a complete version when you want your customers to see it.</p><ol class="checklist"><li><span class="check-circle ${paid ? "done" : ""}">${paid ? "✓" : "○"}</span><div><strong>${paid ? "Plan active" : "Activate your plan"}</strong><p>Hosted storefront · $29 USD per month.</p></div></li><li><span class="check-circle ${active ? "done" : ""}">${active ? "✓" : "○"}</span><div><strong>${active ? "Your shop is published" : "Publish your chosen draft"}</strong><p>Square is optional and never required to publish.</p></div></li></ol>${
       readiness.length
@@ -428,38 +472,361 @@ function renderBilling() {
     "Free to preview. $29 per month to activate and publish.",
     "PLAN & PUBLISHING",
   );
+  renderPublicationChecklist();
+}
+function renderPublicationChecklist() {
+  if (
+    publicationState.shopId !== shop.id ||
+    publicationState.version !== version
+  )
+    publicationState = {
+      shopId: shop.id,
+      version,
+      report: null,
+      error: "",
+      loading: false,
+    };
+  const state = publicationState,
+    report = state.report;
+  const section = document.createElement("section");
+  section.className = "surface publication-checklist";
+  const checks = report?.checks || [];
+  section.innerHTML = `<div class="section-heading"><div><p class="eyebrow">YOUR SAVED DRAFT</p><h2>${report?.contentReady ? "Your content is ready." : "A few details before opening."}</h2><p class="subtle">${dirty || saving ? "Save your current edits to check the latest version." : "Checks use the saved catalogue, recipes and product prices."}</p></div><button class="button secondary small" data-action="refresh-readiness" ${state.loading || dirty || saving ? "disabled" : ""}>${state.loading ? "Checking…" : "Check saved draft ↻"}</button></div>${state.error ? `<div class="notice error">${html(state.error)}</div>` : ""}${
+    report
+      ? `<div class="publication-summary"><span class="pill ${report.contentReady ? "green" : ""}">${report.contentReady ? "CONTENT READY" : "CONTENT NEEDS ATTENTION"}</span><span class="helper">Draft version ${html(report.draftVersion)} · ${report.canPublish ? "Eligible to publish" : "Publication is not enabled"}</span></div>${
+          checks.length
+            ? `<ul class="publication-issues">${checks
+                .map((check) => {
+                  const href = safeReturnPath(check.href);
+                  return `<li class="${check.severity === "warning" ? "warning" : ""}"><span aria-hidden="true">${check.severity === "warning" ? "○" : "!"}</span><div><strong>${html(check.message || check.code)}</strong>${check.path ? `<small>${html(check.path)}</small>` : ""}</div>${href ? `<a href="${html(href)}" data-nav>Review ↗</a>` : ""}</li>`;
+                })
+                .join("")}</ul>`
+            : '<p class="helper">All available catalogue items and saved products passed the content check.</p>'
+        }<p class="helper">Content readiness is separate from your subscription and payment connection. A ready draft does not activate billing or customer checkout.</p>`
+      : state.loading
+        ? '<p class="subtle">Reviewing your saved shop details…</p>'
+        : ""
+  }`;
+  main.querySelector(".dashboard-content").append(section);
+  if (!state.report && !state.error && !state.loading)
+    loadPublicationReadiness();
+}
+async function loadPublicationReadiness() {
+  const state = publicationState;
+  if (state.loading || !shop || adminReadOnly) return;
+  state.loading = true;
+  state.error = "";
+  if (route() === "/dashboard/billing") renderBilling();
+  try {
+    const report = await api(
+      "/api/shops/" + encodeURIComponent(state.shopId) + "/readiness",
+    );
+    if (
+      state === publicationState &&
+      state.shopId === shop?.id &&
+      state.version === version
+    )
+      state.report = report;
+  } catch (error) {
+    if (state === publicationState) state.error = errorText(error);
+  } finally {
+    state.loading = false;
+    if (state === publicationState && route() === "/dashboard/billing")
+      renderBilling();
+  }
+}
+async function loadSquareStatus() {
+  if (squareState.loading || !shop || adminReadOnly) return;
+  const state = squareState;
+  state.loading = true;
+  state.error = "";
+  try {
+    state.data = await api(
+      "/api/shops/" + encodeURIComponent(shop.id) + "/square/status",
+    );
+  } catch (error) {
+    state.error = errorText(error);
+  } finally {
+    state.loaded = true;
+    state.loading = false;
+    if (state === squareState && route() === "/dashboard/payments")
+      renderPayments();
+  }
 }
 function renderPayments() {
+  if (squareState.shopId !== shop.id)
+    squareState = {
+      shopId: shop.id,
+      loaded: false,
+      loading: false,
+      data: null,
+      error: "",
+    };
+  if (!squareState.loaded && !squareState.loading)
+    queueMicrotask(loadSquareStatus);
   const paid = isPaid(),
-    squareReady =
-      config.squareEnabled === true ||
-      config.providers?.square === "configured";
-  const connected = shop.square?.status === "connected";
+    connection = squareState.data,
+    ready =
+      config.squareConnectionEnabled === true && connection?.available === true;
+  const connected = connection?.connected === true,
+    manage = connection?.canManage === true;
+  const labels = {
+    not_connected: "NOT CONNECTED",
+    connected: connected ? "SANDBOX CONNECTED" : "CONNECTION PAUSED",
+    expired: "TOKEN EXPIRED",
+    reconnect_required: "RECONNECT REQUIRED",
+    disconnect_pending: "DISCONNECT PENDING",
+    revoked: "DISCONNECTED",
+    provider_setup_pending: "SETUP PENDING",
+  };
+  const stateLabel = squareState.loading
+    ? "CHECKING CONNECTION"
+    : labels[connection?.status] || "SETUP PENDING";
+  const choices = connection?.locations || [];
   shell(
-    `<div class="activation-grid"><section class="surface"><div class="connection-mark" aria-hidden="true">□</div><span class="pill ${connected ? "green" : ""}">${connected ? "CONNECTED" : paid ? "CONNECTION PENDING" : "AVAILABLE AFTER ACTIVATION"}</span><h2 style="margin-top:23px">Your sales.<br>Your Square account.</h2><p class="subtle">Square is an optional way to collect your customers’ bouquet payments. It is separate from your Nebula subscription and is never required to publish.</p><button class="button" data-action="square-connect" ${!paid || !squareReady ? "disabled" : ""}>${connected ? "Manage Square connection" : !paid ? "Activate your shop first" : squareReady ? "Connect Square ↗" : "Square connection setup pending"}</button><p class="helper">${!paid ? "You can build and preview your shop for free. Activate the $29 plan before connecting customer payments." : !squareReady ? "Your plan is active. Square provider setup is still pending; customer card payments remain unavailable." : "Only your verified merchant connection can enable card payments. Country, currency and fulfillment checks apply."}</p></section><section class="surface"><p class="eyebrow">CUSTOMER ORDERS</p><h2>A little room<br>for future bouquets.</h2><p class="subtle">${!paid ? "Your private preview cannot submit a successful customer order or payment." : connected ? "Customer payment availability is controlled by your verified connection and published shop." : "Your shop can be published while Square is being connected. Customer card checkout will stay unavailable until it is verified."}</p><div class="notice">A saved design is a creative preview. It is never a payment confirmation.</div><a class="button secondary small" href="${previewLink()}" data-nav>Preview my shop ↗</a></section></div>`,
-    "The craft is yours.<br><em>The payments, too.</em>",
-    "Optional customer payments, connected to your own merchant account.",
-    "SQUARE & ORDERS",
+    `<div class="activation-grid"><section class="surface"><div class="connection-mark" aria-hidden="true">□</div><span class="pill ${connected ? "green" : ""}">${html(stateLabel)}</span><h2 style="margin-top:23px">Your sales.<br>Your Square account.</h2><p class="subtle">Connect your own Square merchant account. The current integration is for Sandbox testing only. Customer card checkout remains closed.</p>${squareState.error ? `<div class="notice" role="alert">${html(squareState.error)}</div>` : ""}<div class="actions">${!connected ? `<button class="button" data-action="square-connect" ${!paid || !ready || squareState.loading ? "disabled" : ""}>${!paid ? "Activate your plan first" : ready ? "Connect Square Sandbox ↗" : "Square setup pending"}</button>` : ""}<button class="button secondary small" data-action="square-refresh" ${squareState.loading ? "disabled" : ""}>Refresh status</button>${manage && connection?.merchantId && connection.status !== "revoked" ? '<button class="button secondary small" data-action="square-disconnect">Disconnect Square</button>' : ""}</div><p class="helper">${!paid ? "You can keep editing your private shop. A paid plan is required to begin a merchant connection. Existing connections can still be inspected or disconnected after plan expiry." : !ready ? "Sandbox configuration must be completed securely on the server before connecting." : "Your Square authorization returns here. Status comes from the server, never the return URL."}</p>${connection?.verifiedAt ? `<p class="helper">Last provider check: ${html(new Date(connection.verifiedAt).toLocaleString())}</p>` : ""}${choices.length ? `<label class="field">Square location<select id="squareLocation"><option value="">Choose a matching location</option>${choices.map((item) => `<option value="${html(item.id)}" ${item.id === connection.locationId ? "selected" : ""}>${html(item.name)} · ${html(item.currency)}</option>`).join("")}</select></label><button class="button secondary small" data-action="square-location" ${!paid || !ready ? "disabled" : ""}>Use this location</button>` : ""}</section><section class="surface"><p class="eyebrow">YOUR CUSTOMER REQUESTS</p><h2>Every bouquet,<br>in one place.</h2><p class="subtle">View saved requests, the bouquet contents and customer details. Accept, fulfill or cancel a request without changing its recorded price.</p><div class="notice">A Square connection is separate from a payment. All current requests remain unpaid; accepting a request never marks it paid.</div><a class="button secondary small" href="/dashboard/orders" data-nav>Open requests ↗</a></section></div>`,
+    "Your merchant account.<br><em>Your connection.</em>",
+    "Sandbox connection setup and status. No customer payment is enabled.",
+    "SQUARE PAYMENTS",
   );
-  const container = document.createElement("section");
-  container.className = "surface merchant-requests";
-  container.innerHTML = `<div class="section-heading"><div><p class="eyebrow">SAVED CUSTOMER REQUESTS</p><h2>The next little occasion.</h2></div><button class="plain-button" data-action="refresh-requests">Refresh ↻</button></div>${merchantRequests ? `<div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>REQUEST / CUSTOMER</th><th>DETAILS</th><th>SERVER TOTAL</th><th>STATUS</th></tr></thead><tbody>${merchantRequests.map((request) => `<tr><td><strong>${html(request.customer?.name || request.id)}</strong><span>${html(request.customer?.phone || "")}</span><small>${html(request.id)}</small></td><td>${html(request.product?.title || request.snapshot?.title || request.summary?.title || (typeof request.summary === "string" ? request.summary : "Custom bouquet"))}<small>${html(request.fulfillment || "")} ${html(request.customer?.date || "")}</small>${request.customer?.note ? `<p class="helper">${html(request.customer.note)}</p>` : ""}</td><td>${formatMoney(request.totalCents)}</td><td><span class="pill">${html(request.status || "requested")}</span><small>Unpaid request</small></td></tr>`).join("") || '<tr><td colspan="4">Your saved customer requests will appear here.</td></tr>'}</tbody></table></div>` : '<p class="subtle">Loading your customer requests…</p>'}`;
-  main.querySelector(".dashboard-content").append(container);
-  if (merchantRequests === null && !requestsLoading) loadMerchantRequests();
 }
-async function loadMerchantRequests() {
-  requestsLoading = true;
-  try {
-    const data = await api(
-      "/api/shops/" + encodeURIComponent(shop.id) + "/requests",
+const requestStatuses = ["requested", "accepted", "fulfilled", "cancelled"];
+const requestStatusLabel = (status) =>
+  ({
+    requested: "New request",
+    accepted: "Accepted",
+    fulfilled: "Fulfilled",
+    cancelled: "Cancelled",
+  })[status] || "New request";
+const requestTransitions = (status) =>
+  ({
+    requested: ["requested", "accepted", "cancelled"],
+    accepted: ["accepted", "fulfilled", "cancelled"],
+    fulfilled: ["fulfilled"],
+    cancelled: ["cancelled"],
+  })[status] || ["requested"];
+const requestMoney = (request) =>
+  new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: request.currency || currency(),
+  }).format(request.totalCents / 100);
+const requestDate = (timestamp) =>
+  Number.isFinite(Number(timestamp))
+    ? new Intl.DateTimeFormat("en", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(Number(timestamp)))
+    : "—";
+function ordersContext() {
+  if (ordersState.shopId !== shop?.id || ordersState.admin !== adminReadOnly)
+    ordersState = {
+      ...emptyOrdersState(),
+      shopId: shop?.id,
+      admin: adminReadOnly,
+    };
+  return ordersState;
+}
+function requestsPath() {
+  return (
+    (adminReadOnly ? "/api/admin/shops/" : "/api/shops/") +
+    encodeURIComponent(shop.id) +
+    "/requests"
+  );
+}
+function requestEdit(request) {
+  let edit = ordersState.edits.get(request.id);
+  if (!edit) {
+    edit = {
+      version: request.version || 1,
+      status: request.status,
+      merchantNote: request.merchantNote || "",
+      dirty: false,
+      conflict: false,
+    };
+    ordersState.edits.set(request.id, edit);
+  }
+  return edit;
+}
+function requestContents(request) {
+  if (request.kind === "product")
+    return `<section class="request-contents"><h3>The product they chose</h3>${request.product?.cover ? `<img class="request-photo" data-media-id="${html(request.product.cover)}" alt="Saved product photo">` : ""}<strong>${html(request.product?.title || request.summary)}</strong>${request.product?.description ? `<p class="request-multiline">${html(request.product.description)}</p>` : ""}</section>`;
+  const lines = [
+    ...(request.pricing?.lines || []),
+    ...(request.pricing?.extraLines || []),
+  ];
+  const itemName = (id) => {
+    const row = [...(catalog?.flowers || []), ...(catalog?.extras || [])].find(
+      (item) => item.id === id,
     );
-    merchantRequests = data.requests || [];
+    return row?.en || row?.label || id;
+  };
+  const contents = lines.length
+    ? lines
+    : Object.entries(
+        (request.design?.items || []).reduce((counts, item) => {
+          counts[item.id] = (counts[item.id] || 0) + 1;
+          return counts;
+        }, {}),
+      ).map(([id, quantity]) => ({ id, quantity }));
+  return `<section class="request-contents"><h3>The bouquet they created</h3><p class="helper">${html(request.design?.mode || "Custom")} · ${request.design?.items?.length || 0} pieces · saved with the request</p><ul class="request-pick-list">${contents.map((line) => `<li><span>${html(line.quantity || 1)} × ${html(itemName(line.id))}</span>${Number.isSafeInteger(line.totalCents) ? `<strong>${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency || currency() }).format(line.totalCents / 100))}</strong>` : ""}</li>`).join("")}</ul>${request.design?.finishes?.message ? `<p class="request-multiline"><strong>Bouquet message</strong><br>${html(request.design.finishes.message)}</p>` : ""}<button class="plain-button" data-action="orders-download" data-id="${html(request.id)}">Download saved bouquet details ↓</button></section>`;
+}
+function requestDetailMarkup() {
+  const state = ordersState,
+    request = state.detail;
+  if (state.detailLoading)
+    return '<aside class="surface request-detail" aria-busy="true"><p class="subtle">Opening the saved request…</p></aside>';
+  if (!request)
+    return '<aside class="surface request-detail request-empty-detail"><span aria-hidden="true">✳</span><h2>A little occasion,<br>waiting to unfold.</h2><p class="subtle">Choose a request to see its saved bouquet, customer details and fulfillment progress.</p></aside>';
+  const edit = requestEdit(request);
+  const customer = request.customer || {};
+  const phone = customer.phone?.replace(/[^\d+]/g, "") || "";
+  return `<aside class="surface request-detail"><div class="request-detail-heading"><div><p class="eyebrow">SAVED CUSTOMER REQUEST</p><h2>${html(request.summary || "A personal bouquet")}</h2></div><button class="plain-button" data-action="orders-close" aria-label="Close request details">×</button></div><div class="request-status-line"><span class="pill request-status-${html(request.status)}">${html(requestStatusLabel(request.status))}</span><span class="pill">Unpaid</span></div><p class="request-id">${html(request.id)}</p><dl class="request-facts"><div><dt>Saved total</dt><dd class="request-total">${html(requestMoney(request))}</dd></div><div><dt>Received</dt><dd>${html(requestDate(request.createdAt))}</dd></div><div><dt>Customer</dt><dd>${html(customer.name || "—")}</dd></div><div><dt>Contact</dt><dd>${phone && /^\+?\d{5,15}$/.test(phone) ? `<a href="tel:${html(phone)}">${html(customer.phone)}</a>` : html(customer.phone || "—")}</dd></div><div><dt>Fulfillment</dt><dd>${html(request.fulfillment === "delivery" ? "Delivery · confirm details" : "Pickup")}</dd></div><div><dt>Preferred date</dt><dd>${html(customer.date || "To be confirmed")}</dd></div></dl>${customer.note ? `<div class="request-customer-note"><strong>From the customer</strong><p class="request-multiline">${html(customer.note)}</p></div>` : ""}${requestContents(request)}<section class="request-progress"><h3>Fulfillment progress</h3>${
+    adminReadOnly
+      ? `<p class="helper">Administrator view · request changes are available only to this shop’s owner.</p><strong>${html(requestStatusLabel(request.status))}</strong><p class="request-multiline">${html(request.merchantNote || "No internal note saved.")}</p>`
+      : `<form id="requestUpdateForm" data-request-id="${html(request.id)}"><label class="field">Request status<select id="requestStatus" ${state.busy ? "disabled" : ""}>${requestTransitions(
+          request.status,
+        )
+          .map(
+            (status) =>
+              `<option value="${status}" ${edit.status === status ? "selected" : ""}>${html(requestStatusLabel(status))}</option>`,
+          )
+          .join(
+            "",
+          )}</select></label><label class="field">Internal note<textarea id="requestMerchantNote" maxlength="1000" placeholder="Preparation details, pickup arrangement…" ${state.busy ? "disabled" : ""}>${html(edit.merchantNote)}</textarea><span class="helper">Private to the shop owner and platform administrator.</span></label>${edit.conflict ? '<div class="notice error">This request changed in another window. Your note is kept. Load the latest status, review it, then save again.<button class="plain-button" type="button" data-action="orders-review">Review latest request ↻</button></div>' : ""}<button class="button small" type="submit" ${state.busy || edit.conflict ? "disabled" : ""}>${state.busy ? "Saving request…" : "Save request changes"}</button><p class="helper">Fulfillment status does not record or confirm a payment. This remains an unpaid request.</p></form>`
+  }<p class="helper">Last updated ${html(requestDate(request.updatedAt || request.createdAt))}</p></section></aside>`;
+}
+function renderOrders() {
+  const state = ordersContext();
+  const filterButtons = ["all", ...requestStatuses]
+    .map(
+      (status) =>
+        `<button class="request-filter ${state.status === status ? "selected" : ""}" data-action="orders-filter" data-status="${status}" aria-pressed="${state.status === status}" ${state.loading ? "disabled" : ""}>${status === "all" ? "All requests" : requestStatusLabel(status)}<span>${state.counts[status] ?? "—"}</span></button>`,
+    )
+    .join("");
+  shell(
+    `<div class="requests-toolbar"><div><p class="helper">${adminReadOnly ? "Read-only merchant request history." : "Your saved request history remains available when your plan is inactive."} All requests shown here are unpaid.</p></div><button class="button secondary small" data-action="orders-refresh" ${state.loading ? "disabled" : ""}>${state.loading ? "Loading…" : "Refresh ↻"}</button></div><div class="request-filters" aria-label="Filter requests">${filterButtons}</div>${state.error ? `<div class="notice error" role="alert">${html(state.error)}</div>` : ""}${state.message ? `<div class="notice" role="status">${html(state.message)}</div>` : ""}<div class="requests-layout"><section class="surface requests-list" aria-busy="${state.loading}"><div class="section-heading"><div><p class="eyebrow">CUSTOMER REQUESTS</p><h2>The next little occasion.</h2></div><span class="pill">${state.rows.length} loaded</span></div>${!state.loaded && state.loading ? '<p class="subtle">Loading saved customer requests…</p>' : state.rows.length ? `<div class="request-list-items">${state.rows.map((request) => `<button class="request-list-item ${state.selectedId === request.id ? "selected" : ""}" data-action="orders-select" data-id="${html(request.id)}" aria-pressed="${state.selectedId === request.id}"><div><strong>${html(request.customer?.name || "Customer")}</strong><span>${html(request.summary || request.product?.title || "Custom bouquet")}</span><small>${html(requestDate(request.createdAt))}</small></div><div class="request-list-right"><span class="pill request-status-${html(request.status)}">${html(requestStatusLabel(request.status))}</span><strong>${html(requestMoney(request))}</strong><small>Unpaid request</small></div></button>`).join("")}</div>${state.nextCursor ? `<button class="button secondary small request-more" data-action="orders-more" ${state.loading ? "disabled" : ""}>Load more requests ↓</button>` : ""}` : `<div class="requests-empty"><span aria-hidden="true">✿</span><h3>${state.status === "all" ? "A little room for your first request." : "No " + html(requestStatusLabel(state.status).toLowerCase()) + " requests here."}</h3><p class="subtle">${state.status === "all" ? "When an eligible published shop receives a request, its customer details and saved design appear here." : "Try another status or refresh your list."}</p></div>`}</section>${requestDetailMarkup()}</div>`,
+    "Every little request.<br><em>Thoughtfully looked after.</em>",
+    "Saved customer details, exact bouquet contents and fulfillment progress.",
+    "CUSTOMER REQUESTS",
+  );
+  if (!state.loaded && !state.loading) loadMerchantRequests();
+}
+async function loadMerchantRequests(more = false) {
+  const state = ordersContext();
+  if (state.loading || (more && !state.nextCursor)) return;
+  state.loading = true;
+  state.error = "";
+  const params = new URLSearchParams({ status: state.status, limit: "25" });
+  if (more) params.set("cursor", state.nextCursor);
+  const path = requestsPath();
+  if (route() === "/dashboard/orders") renderOrders();
+  try {
+    const data = await api(path + "?" + params);
+    if (state !== ordersState) return;
+    const known = new Set(more ? state.rows.map((row) => row.id) : []);
+    state.rows = more
+      ? [
+          ...state.rows,
+          ...(data.requests || []).filter((row) => !known.has(row.id)),
+        ]
+      : data.requests || [];
+    state.counts = data.counts || {};
+    state.nextCursor = data.nextCursor || null;
+    state.loaded = true;
   } catch (error) {
-    merchantRequests = [];
-    pageMessage = errorText(error);
+    if (state === ordersState) {
+      state.error = errorText(error);
+      state.loaded = true;
+    }
   } finally {
-    requestsLoading = false;
-    if (route() === "/dashboard/payments") renderPayments();
+    state.loading = false;
+    if (state === ordersState && route() === "/dashboard/orders")
+      renderOrders();
+  }
+}
+async function selectRequest(id, review = false) {
+  const state = ordersContext(),
+    path = requestsPath();
+  state.selectedId = id;
+  state.detailLoading = true;
+  state.error = "";
+  state.message = "";
+  renderOrders();
+  try {
+    const data = await api(path + "/" + encodeURIComponent(id));
+    if (state !== ordersState || state.selectedId !== id) return;
+    const previous = state.edits.get(id),
+      request = data.request;
+    state.detail = request;
+    if (review && previous) {
+      const statuses = requestTransitions(request.status);
+      state.edits.set(id, {
+        ...previous,
+        version: request.version || 1,
+        status: statuses.includes(previous.status)
+          ? previous.status
+          : request.status,
+        conflict: false,
+      });
+      state.message =
+        "The latest saved status is loaded. Your internal note is kept; review and save your changes again.";
+    } else if (!previous?.dirty) state.edits.delete(id);
+    else if (previous.version !== (request.version || 1))
+      previous.conflict = true;
+  } catch (error) {
+    if (state === ordersState) state.error = errorText(error);
+  } finally {
+    if (state === ordersState && state.selectedId === id) {
+      state.detailLoading = false;
+      if (route() === "/dashboard/orders") {
+        renderOrders();
+        if (matchMedia("(max-width:1150px)").matches)
+          main
+            .querySelector(".request-detail:not(.request-empty-detail)")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }
+}
+async function saveRequestChanges() {
+  const state = ordersContext(),
+    request = state.detail;
+  if (!request || state.busy || adminReadOnly) return;
+  const edit = requestEdit(request);
+  if (edit.conflict) return;
+  state.busy = true;
+  state.error = "";
+  state.message = "";
+  const path = requestsPath(),
+    body = {
+      version: edit.version,
+      status: edit.status,
+      merchantNote: edit.merchantNote,
+    };
+  renderOrders();
+  try {
+    const data = await api(path + "/" + encodeURIComponent(request.id), {
+      method: "PATCH",
+      body,
+    });
+    if (state !== ordersState) return;
+    state.detail = data.request;
+    state.edits.delete(request.id);
+    state.message = "Request changes saved. No payment was recorded.";
+    state.rows = state.rows
+      .map((row) => (row.id === request.id ? data.request : row))
+      .filter((row) => state.status === "all" || row.status === state.status);
+    state.loaded = false;
+  } catch (error) {
+    if (state === ordersState) {
+      state.error = errorText(error);
+      if (error.status === 409 || error.statusCode === 409)
+        edit.conflict = true;
+    }
+  } finally {
+    state.busy = false;
+    if (state === ordersState && route() === "/dashboard/orders")
+      renderOrders();
   }
 }
 function renderLocked() {
@@ -473,6 +840,8 @@ function editAttribute(target, editing) {
 function storefrontMarkup(editing = false, publicView = false) {
   const edit = (target) => editAttribute(target, editing);
   const ordersOpen = publicView && shop.features?.requestsEnabled === true;
+  const ownerReview =
+    !publicView && !adminReadOnly && user?.uid === shop.ownerUid;
   const visibleSections = new Set(draft.home.sections);
   const builderVisible = visibleSections.has("builder");
   const navigationNames = {
@@ -512,7 +881,7 @@ function storefrontMarkup(editing = false, publicView = false) {
   );
   const sections = {
     custom: `<section id="custom" class="flower-section"><div class="store-section-heading"><div><p class="eyebrow">A LITTLE IMAGINATION</p><h2>Make it your kind<br>of <em>beautiful.</em></h2></div><p>Start with a favourite.<br>Make the finishing touches your own.</p></div>${cards.length ? `<div class="flower-grid">${cards.map((card) => `<article class="flower-card ${card.available === false ? "item-hidden" : ""}" ${edit("collection:" + card.id)}><div class="photo-wrap">${cover(card, "flower-photo")}<span class="photo-caption">${card.cover ? "Florist photo" : card.design ? "Starting recipe preview" : "Library recipe preview"}</span>${card.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(card.category || "CUSTOMISABLE BOUQUET")}</span><h3>${html(card.title)}</h3><p>${html(recipeFor(card)?.description || recipeFor(card)?.name || "Your florist’s saved bouquet design, ready for your personal touch.")}</p><div class="card-actions">${presetReady() ? `<a class="button small" href="${studioLink(card, true)}" data-studio>Custom Order ↗</a><a class="plain-button" href="${studioLink(card)}" data-studio>Customise ✳</a>` : '<button class="button small" disabled>Studio preparing</button>'}</div></div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>✿</span><p>Your signature bouquets belong here.</p><button class="button secondary small" data-action="inspect" data-target="add-card">Choose a recipe +</button></div>' : ""}</section>`,
-    products: `<section id="products" class="flower-section fixed-section"><div class="store-section-heading"><div><p class="eyebrow">FROM OUR FLOWER SHOP</p><h2>Lovely, just<br><em>as they are.</em></h2></div><p>Handcrafted favourites.<br>Ready for your kind of moment.</p></div>${products.length ? `<div class="flower-grid">${products.map((item) => `<article class="flower-card ${item.available === false ? "item-hidden" : ""}" ${edit("products:" + item.id)}><div class="photo-wrap">${productCover(item, "flower-photo")}${item.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(item.category || "FROM THE COLLECTION")}</span><h3>${html(item.title)}</h3><p>${html(item.description || "Thoughtfully made by your local florist.")}</p><div class="fixed-price">${formatMoney(item.priceCents)}</div>${ordersOpen && item.available !== false && item.priceCents !== null ? `<button class="button secondary small" data-action="product-request" data-id="${html(item.id)}">Request this product ↗</button>` : `<button class="button secondary small" disabled>${!ordersOpen ? "Preview only" : "Contact florist to order"}</button>`}</div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>❀</span><p>A photo, a name, a little something lovely.</p><button class="button secondary small" data-action="add-product">Add your first product +</button></div>' : ""}</section>`,
+    products: `<section id="products" class="flower-section fixed-section"><div class="store-section-heading"><div><p class="eyebrow">FROM OUR FLOWER SHOP</p><h2>Lovely, just<br><em>as they are.</em></h2></div><p>Handcrafted favourites.<br>Ready for your kind of moment.</p></div>${products.length ? `<div class="flower-grid">${products.map((item) => `<article class="flower-card ${item.available === false ? "item-hidden" : ""}" ${edit("products:" + item.id)}><div class="photo-wrap">${productCover(item, "flower-photo")}${item.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(item.category || "FROM THE COLLECTION")}</span><h3>${html(item.title)}</h3><p>${html(item.description || "Thoughtfully made by your local florist.")}</p><div class="fixed-price">${formatMoney(item.priceCents)}</div>${ordersOpen && item.available !== false && item.priceCents !== null ? `<button class="button secondary small" data-action="product-request" data-id="${html(item.id)}">Request this product ↗</button>` : ownerReview && item.available !== false && Number.isSafeInteger(item.priceCents) ? `<button class="button secondary small" data-action="product-preview" data-id="${html(item.id)}">Preview order ↗</button>` : `<button class="button secondary small" disabled>${!ordersOpen ? "Preview only" : "Contact florist to order"}</button>`}</div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>❀</span><p>A photo, a name, a little something lovely.</p><button class="button secondary small" data-action="add-product">Add your first product +</button></div>' : ""}</section>`,
     builder: `<section id="builder" class="independent-builder"><div><p class="eyebrow">SOMETHING ENTIRELY YOURS</p><h2>A little imagination.<br><em>A beautiful bouquet.</em></h2><p>Choose your flowers, find your colours and bring your own idea to life in our bouquet builder.</p><a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? "Open Builder ✳" : "Matching studio preparing"}</a><p class="helper">Start fresh with a blank bouquet.</p></div><div class="builder-decoration" aria-hidden="true"><span>✳</span><i>made by you</i></div></section>`,
     about: `<section id="about" class="store-about" ${edit("about")}><p class="eyebrow">A NOTE FROM YOUR FLORIST</p><h2>Flowers with<br><em>a personal touch.</em></h2><p>${html(draft.home.about || (editing ? "Tell your story here. A few warm words about your flowers, your craft and the people you make them for." : "Thoughtfully chosen flowers, made with care for your everyday joys and once-in-a-lifetime moments."))}</p><span class="about-signature">${html(draft.name)}</span></section>`,
     contact: `<section id="contact" class="store-contact" ${edit("contact")}><span aria-hidden="true">✳</span><div><p class="eyebrow">LET’S MAKE SOMETHING LOVELY</p><h2>A little hello goes a long way.</h2><div class="contact-details">${draft.city ? `<span>${html(draft.city)}</span>` : ""}${draft.phone ? `<a href="tel:${html(draft.phone.replace(/[^+\d]/g, ""))}">${html(draft.phone)}</a>` : ""}${draft.instagram ? `<span>${html(draft.instagram)}</span>` : ""}${!draft.phone && !draft.city && editing ? "<span>Add your contact details</span>" : ""}</div></div></section>`,
@@ -653,6 +1022,8 @@ function render() {
       return renderBilling();
     case "/dashboard/payments":
       return renderPayments();
+    case "/dashboard/orders":
+      return renderOrders();
     default:
       return renderOverview();
   }
@@ -724,7 +1095,7 @@ function renderAdmin() {
       })
       .join("") ||
     `<tr><td colspan="5">${adminState.loading ? "Loading accounts…" : "No matching accounts."}</td></tr>`
-  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd>${html(detail.shop.slug)}</dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/dashboard/editor?adminShop=${encodeURIComponent(detail.shop.id)}&view=draft" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/dashboard/editor?adminShop=${encodeURIComponent(detail.shop.id)}&view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<p class="helper">Administrator previews are read only. No merchant content or subscription is changed here.</p>` : '<span class="admin-flower">✳</span><h2>Every shop has a story.</h2><p class="subtle">Choose a merchant to inspect their plan, draft and live storefront.</p>'}</aside></div></section>`;
+  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd>${html(detail.shop.slug)}</dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/dashboard/editor?adminShop=${encodeURIComponent(detail.shop.id)}&view=draft" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/dashboard/editor?adminShop=${encodeURIComponent(detail.shop.id)}&view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/dashboard/orders?adminShop=${encodeURIComponent(detail.shop.id)}" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Administrator previews are read only. No merchant content or subscription is changed here.</p>` : '<span class="admin-flower">✳</span><h2>Every shop has a story.</h2><p class="subtle">Choose a merchant to inspect their plan, draft and live storefront.</p>'}</aside></div></section>`;
   if (!adminState.loaded && !adminState.loading) loadAdminUsers();
 }
 async function loadAdminUsers(more = false) {
@@ -747,6 +1118,10 @@ async function loadAdminUsers(more = false) {
 }
 async function preserveDraftBeforeAdminPreview() {
   if (adminReadOnly || !shop || !draft) return;
+  if (ordersState.busy || hasRequestEdits())
+    throw Error(
+      "Save your request changes before opening another shop. Your internal notes have been kept.",
+    );
   if (uploadJobs.size)
     throw Error(
       "Your photo is still uploading. Keep this page open until it finishes, then open the administrator preview. Your edits have been kept.",
@@ -783,8 +1158,11 @@ async function loadAdminPreview(id, view = "draft") {
 async function renderHistoryRoute() {
   try {
     const params = new URLSearchParams(location.search);
-    const adminShop =
-      route() === "/dashboard/editor" ? params.get("adminShop") : null;
+    const adminShop = ["/dashboard/editor", "/dashboard/orders"].includes(
+      route(),
+    )
+      ? params.get("adminShop")
+      : null;
     if (adminShop)
       await loadAdminPreview(adminShop, params.get("view") || "draft");
     else if (
@@ -1158,6 +1536,16 @@ document.addEventListener("click", async (event) => {
     });
     return;
   }
+  const adminOrders = event.target.closest("[data-admin-orders]");
+  if (adminOrders) {
+    event.preventDefault();
+    await authTask(adminOrders, async () => {
+      await loadAdminPreview(adminOrders.dataset.id);
+      history.pushState(null, "", adminOrders.getAttribute("href"));
+      render();
+    });
+    return;
+  }
   const link = event.target.closest("a[data-nav]");
   if (
     link &&
@@ -1188,7 +1576,17 @@ document.addEventListener("click", async (event) => {
   const action = button.dataset.action;
   if (
     adminReadOnly &&
-    !["toggle-mobile", "close-inspector", "signout"].includes(action) &&
+    ![
+      "toggle-mobile",
+      "close-inspector",
+      "signout",
+      "orders-filter",
+      "orders-select",
+      "orders-more",
+      "orders-refresh",
+      "orders-close",
+      "orders-download",
+    ].includes(action) &&
     !action.startsWith("admin-")
   )
     return;
@@ -1252,11 +1650,7 @@ document.addEventListener("click", async (event) => {
       changed();
       renderEditor();
     }
-  } else if (
-    action === "billing-checkout" ||
-    action === "billing-portal" ||
-    action === "square-connect"
-  )
+  } else if (action === "billing-checkout" || action === "billing-portal")
     await authTask(button, async () => {
       if (dirty && !(await saveDraft(true))) return;
       const endpoint =
@@ -1278,7 +1672,91 @@ document.addEventListener("click", async (event) => {
         );
       location.assign(data.url);
     });
-  else if (action === "publish-shop")
+  else if (
+    [
+      "square-connect",
+      "square-refresh",
+      "square-disconnect",
+      "square-location",
+    ].includes(action)
+  )
+    await authTask(button, async () => {
+      if (dirty && !(await saveDraft(true))) return;
+      if (action === "square-refresh") {
+        if (squareState.data?.canManage && squareState.data?.merchantId)
+          await api(
+            "/api/shops/" + encodeURIComponent(shop.id) + "/square/verify",
+            { method: "POST", body: {} },
+          );
+        squareState.loaded = false;
+        await loadSquareStatus();
+        return;
+      }
+      if (
+        action === "square-disconnect" &&
+        !confirm(
+          "Disconnect this Square authorization? Existing unpaid requests and saved shop designs stay available.",
+        )
+      )
+        return;
+      const operation =
+        action === "square-connect"
+          ? "connect"
+          : action === "square-disconnect"
+            ? "disconnect"
+            : "location";
+      try {
+        const result = await api(
+          "/api/shops/" + encodeURIComponent(shop.id) + "/square/" + operation,
+          {
+            method: "POST",
+            body:
+              operation === "location"
+                ? { locationId: $("squareLocation").value }
+                : {},
+          },
+        );
+        if (operation === "connect") {
+          const url = new URL(result.authorizationUrl);
+          if (
+            url.origin !== "https://connect.squareupsandbox.com" ||
+            url.pathname !== "/oauth2/authorize" ||
+            url.username ||
+            url.password ||
+            url.hash
+          )
+            throw Error("Square returned an invalid authorization link.");
+          location.assign(url.href);
+          return;
+        }
+        squareState.data = result;
+        squareState.loaded = true;
+        renderPayments();
+      } catch (error) {
+        squareState.loaded = false;
+        await loadSquareStatus();
+        throw error;
+      }
+    });
+  else if (action === "disable-unpriced") {
+    for (const item of matchingFlowers())
+      if (
+        !Number.isSafeInteger(draft.flowerPrices[item.id]) &&
+        !draft.disabledFlowers.includes(item.id)
+      )
+        draft.disabledFlowers.push(item.id);
+    for (const item of matchingExtras())
+      if (
+        !Number.isSafeInteger(draft.extrasCents[item.id]) &&
+        !draft.disabledExtras.includes(item.id)
+      )
+        draft.disabledExtras.push(item.id);
+    changed();
+    renderPrices();
+    showMessage(
+      "Unpriced catalogue items are now turned off. Your saved prices and bouquet artwork have been kept; turn any item back on when its price is ready.",
+    );
+  } else if (action === "publish-shop")
     await authTask(button, async () => {
       if (dirty && !(await saveDraft(true))) return;
       const data = await api(
@@ -1298,9 +1776,67 @@ document.addEventListener("click", async (event) => {
       kind: "product",
       productId: button.dataset.id,
     });
-  } else if (action === "refresh-requests") {
-    merchantRequests = null;
+  } else if (action === "product-preview") {
+    if (publicSnapshot || adminReadOnly || user?.uid !== shop.ownerUid) return;
+    await openOrderRequest({
+      shop: { ...shop, draft },
+      kind: "product",
+      productId: button.dataset.id,
+      preview: true,
+    });
+  } else if (action === "refresh-readiness") {
+    publicationState.report = null;
+    publicationState.error = "";
+    await loadPublicationReadiness();
+  } else if (action === "orders-filter") {
+    const state = ordersContext();
+    if (
+      state.loading ||
+      !["all", ...requestStatuses].includes(button.dataset.status)
+    )
+      return;
+    state.status = button.dataset.status;
+    state.rows = [];
+    state.nextCursor = null;
+    state.loaded = false;
     await loadMerchantRequests();
+  } else if (action === "orders-select") await selectRequest(button.dataset.id);
+  else if (action === "orders-more") await loadMerchantRequests(true);
+  else if (action === "orders-refresh") await loadMerchantRequests();
+  else if (action === "orders-review" && ordersState.selectedId)
+    await selectRequest(ordersState.selectedId, true);
+  else if (action === "orders-close") {
+    ordersState.selectedId = null;
+    ordersState.detail = null;
+    ordersState.detailLoading = false;
+    renderOrders();
+  } else if (
+    action === "orders-download" &&
+    ordersState.detail?.id === button.dataset.id
+  ) {
+    const request = ordersState.detail;
+    const url = URL.createObjectURL(
+      new Blob(
+        [
+          JSON.stringify(
+            {
+              requestId: request.id,
+              currency: request.currency,
+              design: request.design,
+              pricing: request.pricing,
+            },
+            null,
+            2,
+          ),
+        ],
+        { type: "application/json" },
+      ),
+    );
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = request.id + "-bouquet.json";
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   } else if (action === "admin-more") await loadAdminUsers(true);
   else if (action === "admin-select")
     await authTask(button, async () => {
@@ -1331,15 +1867,23 @@ document.addEventListener("click", async (event) => {
   else if (action === "signout")
     await authTask(button, async () => {
       if (
-        dirty &&
+        (dirty || hasRequestEdits()) &&
         !confirm(
-          "Your draft has unsaved changes. Sign out and leave these edits?",
+          "You have unsaved shop or request changes. Sign out and leave these edits?",
         )
       )
         return;
       clearTimeout(saveTimer);
       await authApi.signOut(auth);
       user = shop = draft = catalog = null;
+      ordersState = emptyOrdersState();
+      publicationState = {
+        shopId: null,
+        version: null,
+        report: null,
+        error: "",
+        loading: false,
+      };
       dirty = conflict = false;
       pageMessage = "";
       for (const value of mediaCache.values())
@@ -1416,6 +1960,11 @@ document.addEventListener("click", async (event) => {
   }
 });
 document.addEventListener("submit", async (event) => {
+  if (event.target.id === "requestUpdateForm") {
+    event.preventDefault();
+    if (!adminReadOnly) await saveRequestChanges();
+    return;
+  }
   if (event.target.id === "adminSearchForm") {
     event.preventDefault();
     adminState.query = $("adminSearch").value.trim();
@@ -1455,6 +2004,16 @@ document.addEventListener("submit", async (event) => {
 });
 document.addEventListener("input", (event) => {
   const input = event.target;
+  if (["requestStatus", "requestMerchantNote"].includes(input.id)) {
+    if (adminReadOnly || !ordersState.detail) return;
+    const edit = requestEdit(ordersState.detail);
+    if (input.id === "requestStatus") edit.status = input.value;
+    else edit.merchantNote = input.value;
+    edit.dirty =
+      edit.status !== ordersState.detail.status ||
+      edit.merchantNote !== (ordersState.detail.merchantNote || "");
+    return;
+  }
   if (input.id === "flowerSearch") {
     const query = input.value.trim().toLowerCase();
     let shown = 0;
@@ -1620,7 +2179,13 @@ document.addEventListener("keydown", (event) => {
 });
 window.addEventListener("popstate", renderHistoryRoute);
 window.addEventListener("beforeunload", (event) => {
-  if (dirty || saving || uploadJobs.size) {
+  if (
+    dirty ||
+    saving ||
+    uploadJobs.size ||
+    ordersState.busy ||
+    hasRequestEdits()
+  ) {
     event.preventDefault();
     event.returnValue = "";
   }
@@ -1648,7 +2213,10 @@ async function start() {
         else publicSnapshot = displayedPublic;
       }
       const params = new URLSearchParams(location.search);
-      if (path === "/dashboard/editor" && params.get("adminShop"))
+      if (
+        ["/dashboard/editor", "/dashboard/orders"].includes(path) &&
+        params.get("adminShop")
+      )
         await loadAdminPreview(
           params.get("adminShop"),
           params.get("view") || "draft",

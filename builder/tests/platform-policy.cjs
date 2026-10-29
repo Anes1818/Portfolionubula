@@ -194,6 +194,27 @@ const clone = (value) => JSON.parse(JSON.stringify(value));
     amountB,
   );
   const satin = catalog.recipes.find((row) => row.preset === "satin");
+  const importedCashTerms = clone(satin.design);
+  importedCashTerms.finishes.studio = {
+    v: 1,
+    cashSupply: "customer",
+    paymentPlan: "deposit",
+  };
+  reject(
+    importedCashTerms,
+    { preset: "satin", currency: "CAD" },
+    "unsupported_cash_terms",
+  );
+  assert.equal(
+    validateDesign(
+      importedCashTerms,
+      { preset: "satin", currency: "CAD" },
+      catalog,
+      { allowUnpriced: true },
+    ).ok,
+    true,
+    "Imported artwork remains editable, while unsupported payment terms cannot become a public quote",
+  );
   reject(
     satin.design,
     { preset: "fresh", currency: "USD" },

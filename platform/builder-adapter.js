@@ -298,6 +298,14 @@ function configure(library, initial) {
     });
   if (policy.preset === "satin") {
     $("family").value = "all";
+    const moneyNote = document.createElement("p");
+    moneyNote.id = "platformMoneyPolicy";
+    moneyNote.className = "helper";
+    moneyNote.textContent =
+      "Folded notes use your florist’s price per note in " +
+      d.currency +
+      ". That price must include the cash and any styling. No automatic currency conversion or deposit is calculated here.";
+    $("panel-flowers").prepend(moneyNote);
     const details = document.createElement("section"),
       heading = document.createElement("h3");
     details.className = "custom-section";
@@ -472,6 +480,38 @@ function toolbar() {
     };
     bar.append(request);
   } else {
+    const review = document.createElement("button");
+    review.type = "button";
+    review.id = "platformPreviewOrder";
+    review.className = "button secondary small";
+    review.textContent = "Preview order";
+    review.onclick = async () => {
+      review.disabled = true;
+      try {
+        const r = validateDesign(
+          semantic(NebulaApp.state),
+          shop.draft,
+          catalog,
+          { allowUnpriced: true },
+        );
+        if (!r.ok) throw Error(r.issues[0]?.message || "Review your design.");
+        if (!r.design.items.length)
+          throw Error("Add at least one flower first.");
+        const { openOrderRequest } = await import("/order-ui.js");
+        await openOrderRequest({
+          shop,
+          kind: "design",
+          design: r.design,
+          preview: true,
+          ...(card ? { cardId: card.id } : {}),
+        });
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        review.disabled = false;
+      }
+    };
+    bar.append(review);
     if (blank) {
       const title = document.createElement("input");
       title.id = "platformCardTitle";
@@ -515,6 +555,14 @@ function toolbar() {
     saveButton.textContent = "Save to my collection";
     saveButton.onclick = save;
     bar.append(saveButton);
+    const cover = document.createElement("button");
+    cover.id = "platformUseDesignCover";
+    cover.type = "button";
+    cover.className = "button secondary small";
+    cover.textContent = "Use design as photo";
+    cover.disabled = !card?.design;
+    cover.onclick = useDesignCover;
+    bar.append(cover);
   }
   bar.append(status);
   document.body.prepend(bar);
@@ -601,6 +649,8 @@ async function save() {
     status.textContent = "Saved to your collection.";
     NebulaPlatformStudio.version = shop.version;
     NebulaPlatformStudio.cardId = id;
+    $("platformUseDesignCover").disabled = false;
+    return true;
   } catch (e) {
     if (e.status === 409 || e.statusCode === 409) {
       status.textContent =
@@ -612,6 +662,81 @@ async function save() {
         "The save failed. Your design is still here; please retry.";
   } finally {
     saveButton.disabled = saveButton.dataset.conflict === "true";
+  }
+}
+async function useDesignCover() {
+  const button = $("platformUseDesignCover");
+  if (button.disabled || saveButton.disabled || !card?.design) return;
+  if (
+    JSON.stringify(semantic(NebulaApp.state)) !== JSON.stringify(card.design)
+  ) {
+    status.textContent =
+      "Save your current design first, then use it as the collection photo.";
+    return;
+  }
+  const snapshot = clone(NebulaApp.state),
+    cardId = card.id;
+  button.disabled = true;
+  saveButton.disabled = true;
+  status.textContent = "Creating a photo from your saved design…";
+  try {
+    await NebulaRenderer.awaitAssets(snapshot);
+    let blob;
+    for (const size of [720, 600, 480]) {
+      const canvas = NebulaRenderer.exportCanvas(
+        snapshot,
+        size,
+        size,
+        NebulaApp.lang,
+      );
+      for (const quality of [0.86, 0.7, 0.52]) {
+        blob = await new Promise((resolve) =>
+          canvas.toBlob(resolve, "image/webp", quality),
+        );
+        if (blob && blob.size <= 150 * 1024) break;
+      }
+      if (blob && blob.size <= 150 * 1024) break;
+    }
+    if (!blob || blob.size > 150 * 1024)
+      throw Error(
+        "This preview is too large. Upload a compressed cover photo from your collection instead.",
+      );
+    const index = shop.draft.collection.findIndex((row) => row.id === cardId);
+    if (index < 0)
+      throw Error("This bouquet was removed. Reopen your current collection.");
+    const upload = await session.api(
+      "/api/shops/" +
+        encodeURIComponent(shop.id) +
+        "/media?slot=" +
+        (index + 2) +
+        "&kind=cover",
+      { method: "POST", body: blob },
+    );
+    if (!/^img_[a-f0-9]{64}$/.test(upload.media?.id || ""))
+      throw Error("The uploaded design photo could not be verified.");
+    const draft = clone(shop.draft);
+    draft.collection[index].cover = upload.media.id;
+    const result = await session.api(
+      "/api/shops/" + encodeURIComponent(shop.id) + "/draft",
+      { method: "PUT", body: { version: shop.version, draft } },
+    );
+    shop = result.shop;
+    card = shop.draft.collection.find((row) => row.id === cardId);
+    NebulaPlatformStudio.version = shop.version;
+    status.textContent =
+      "Your saved design is now this bouquet’s collection photo.";
+  } catch (error) {
+    if (error.status === 409) {
+      saveButton.dataset.conflict = "true";
+      status.textContent =
+        "Your shop changed in another tab. Reopen the latest collection before replacing its photo.";
+    } else
+      status.textContent =
+        error.message ||
+        "The design photo could not be saved. Your previous photo is still selected.";
+  } finally {
+    saveButton.disabled = saveButton.dataset.conflict === "true";
+    button.disabled = saveButton.disabled || !card?.design;
   }
 }
 async function branding(d) {
@@ -821,6 +946,17 @@ async function boot() {
   $("platformBoot").hidden = true;
   document.body.classList.remove("platform-loading");
   document.title = d.name + " — Bouquet studio";
+  if (q.get("action") === "order") {
+    // Consume the action once. Reloading or editing the design does not reopen
+    // an old request form, and the owner route remains a non-submitting preview.
+    const current = new URL(location.href);
+    current.searchParams.delete("action");
+    history.replaceState(null, "", current);
+    const trigger = $(
+      customer ? "platformRequestOrder" : "platformPreviewOrder",
+    );
+    if (trigger && !trigger.disabled) trigger.click();
+  }
 }
 boot().catch((e) => {
   const login = e.status === 401 || e.statusCode === 401;

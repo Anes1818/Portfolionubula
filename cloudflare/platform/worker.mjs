@@ -17,6 +17,7 @@ import {
   mediaReferences,
   text,
   multilineText,
+  requestUpdate,
 } from "./validation.mjs";
 import {
   priceDesign,
@@ -24,6 +25,10 @@ import {
   normalizePolicy,
 } from "../../platform/shared/policy.mjs";
 import { billingPublicConfig, handleBillingWebhook } from "./billing.mjs";
+import {
+  clearSquareCookie,
+  squareSandboxConfigured,
+} from "./square-storage.mjs";
 export { ShopRegistry, ShopStore };
 
 const PUBLIC_ORIGIN = "https://app.nebulastudio.site";
@@ -191,7 +196,8 @@ export async function updateRegistrySummary(env, shop) {
 function decorateResponse(response, origin, env) {
   const headers = new Headers(response.headers);
   headers.set("X-Content-Type-Options", "nosniff");
-  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  if (!headers.has("Referrer-Policy"))
+    headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   // API data is never an executable document, including when opened directly.
   if (headers.get("Content-Type")?.startsWith("application/json"))
@@ -201,7 +207,10 @@ function decorateResponse(response, origin, env) {
     );
   if (origin && allowedOrigin(origin, env)) {
     headers.set("Access-Control-Allow-Origin", origin);
-    headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    headers.set(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, OPTIONS",
+    );
     headers.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
     headers.set("Vary", "Origin");
   }
@@ -242,7 +251,7 @@ export function makeHandler({
         if (
           path === "/" ||
           /^\/login\/?$/.test(path) ||
-          /^\/dashboard(?:\/(shop|prices|collection|products|editor|billing|payments))?\/?$/.test(
+          /^\/dashboard(?:\/(shop|prices|collection|products|editor|billing|payments|orders))?\/?$/.test(
             path,
           ) ||
           /^\/s\/[a-z0-9-]+\/?$/.test(path) ||
@@ -261,6 +270,82 @@ export function makeHandler({
           null,
           env,
         );
+      if (request.method === "GET" && path === "/api/square/callback") {
+        let result = "connection_failed";
+        try {
+          requireValue(
+            squareSandboxConfigured(env),
+            "Square sandbox setup is pending.",
+            503,
+          );
+          requireValue(
+            url.origin ===
+              (env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN || PUBLIC_ORIGIN),
+            "Invalid Square return origin.",
+            403,
+          );
+          requireValue(
+            url.search.length < 2048 &&
+              [...url.searchParams.keys()].every((key) =>
+                [
+                  "state",
+                  "code",
+                  "error",
+                  "error_description",
+                  "response_type",
+                ].includes(key),
+              ) &&
+              [...url.searchParams.keys()].every(
+                (key) => url.searchParams.getAll(key).length === 1,
+              ),
+            "Invalid Square return parameters.",
+          );
+          const state = url.searchParams.get("state"),
+            matched = state?.match(/^(sh_[a-f0-9]{32})\.[A-Za-z0-9_-]{43}$/);
+          requireValue(
+            matched,
+            "The Square connection session is invalid.",
+            403,
+          );
+          const entry = await registryLookup(env, "id", matched[1]);
+          requireValue(entry, "Shop not found.", 404);
+          await responseData(
+            await shopStub(env, entry.id).fetch(
+              internal(
+                "/square/callback",
+                "POST",
+                {
+                  actor: { uid: entry.ownerUid },
+                  callback: {
+                    state,
+                    code: url.searchParams.get("code"),
+                    error: url.searchParams.get("error"),
+                    cookieHeader: request.headers.get("Cookie") || "",
+                  },
+                },
+                entry.ownerUid,
+              ),
+            ),
+          );
+          result = "sandbox_connected";
+        } catch {}
+        return decorateResponse(
+          new Response(null, {
+            status: 303,
+            headers: {
+              Location: new URL(
+                "/dashboard/payments?square=" + result,
+                env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN || PUBLIC_ORIGIN,
+              ).href,
+              "Set-Cookie": clearSquareCookie(),
+              "Cache-Control": "no-store",
+              "Referrer-Policy": "no-referrer",
+            },
+          }),
+          null,
+          env,
+        );
+      }
       origin = originCheck(request, env);
       if (request.method === "OPTIONS") {
         requireValue(origin, "An allowed request origin is required.", 403);
@@ -281,6 +366,8 @@ export function makeHandler({
             draftPersistence: "durable-object-sqlite",
             billingEnabled: billingPublicConfig(env).billingEnabled,
             checkoutEnabled: false,
+            squareConnectionEnabled: squareSandboxConfigured(env),
+            squareEnvironment: "sandbox",
             publishingEnabled:
               env.PUBLISHING_ENABLED === "true" &&
               billingPublicConfig(env).billingEnabled,
@@ -302,6 +389,8 @@ export function makeHandler({
             signupMode:
               env.PUBLIC_SIGNUPS === "true" ? "open-beta" : "private-beta",
             ...billingPublicConfig(env),
+            squareConnectionEnabled: squareSandboxConfigured(env),
+            squareEnvironment: "sandbox",
             branding: {
               name: "Nebula",
               hostedOrigin:
@@ -402,6 +491,53 @@ export function makeHandler({
           env,
         );
       }
+      const adminReadiness = path.match(
+        /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})\/readiness$/,
+      );
+      if (adminReadiness && request.method === "GET") {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        const entry = await registryLookup(env, "id", adminReadiness[1]);
+        requireValue(entry, "Shop not found.", 404);
+        return decorateResponse(
+          json(
+            await responseData(
+              await shopStub(env, entry.id).fetch(
+                internal("/readiness", "GET", undefined, entry.ownerUid),
+              ),
+            ),
+          ),
+          origin,
+          env,
+        );
+      }
+      const adminRequests = path.match(
+        /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})\/requests(?:\/(rq_[a-f0-9]{32}))?$/,
+      );
+      if (adminRequests && request.method === "GET") {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        const entry = await registryLookup(env, "id", adminRequests[1]);
+        requireValue(entry, "Shop not found.", 404);
+        return decorateResponse(
+          json(
+            await responseData(
+              await shopStub(env, entry.id).fetch(
+                internal(
+                  "/requests" +
+                    (adminRequests[2] ? "/" + adminRequests[2] : "") +
+                    url.search,
+                  "GET",
+                  undefined,
+                  entry.ownerUid,
+                ),
+              ),
+            ),
+          ),
+          origin,
+          env,
+        );
+      }
       const adminMatch = path.match(
         /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})(?:\/media\/(img_[a-f0-9]{64}|slot-[1-5]))?$/,
       );
@@ -449,12 +585,24 @@ export function makeHandler({
         );
       }
       const match = path.match(
-        /^\/api\/shops\/(?:resolve\/([a-z0-9-]{3,48})|(sh_[a-f0-9]{32}|[a-z0-9-]{3,48}))(?:\/(draft|media(?:\/(img_[a-f0-9]{64}|slot-[1-5]))?|publish|billing\/(?:checkout|status|portal)|square\/connect|products(?:\/([a-zA-Z0-9_-]{1,80}))?|requests))?$/,
+        /^\/api\/shops\/(?:resolve\/([a-z0-9-]{3,48})|(sh_[a-f0-9]{32}|[a-z0-9-]{3,48}))(?:\/(draft|readiness|media(?:\/(img_[a-f0-9]{64}|slot-[1-5]))?|publish|billing\/(?:checkout|status|portal)|square\/(?:connect|status|verify|location|disconnect)|products(?:\/([a-zA-Z0-9_-]{1,80}))?|requests(?:\/(rq_[a-f0-9]{32}))?))?$/,
       );
       if (!match) throw new HttpError(404, "Not found.");
       const value = match[1] || match[2],
         operation = match[3],
         mediaId = match[4];
+      const requestId = match[6];
+      const requestRead =
+        operation?.startsWith("requests") && request.method === "GET";
+      // Request history is private even when the storefront is public. Avoid
+      // looking up a tenant for anonymous history probes.
+      if (
+        (requestRead ||
+          operation === "readiness" ||
+          operation?.startsWith("square/")) &&
+        !request.headers.has("Authorization")
+      )
+        throw new HttpError(404, "Shop not found.");
       // Authenticate before allocating or querying tenant objects for every private
       // operation. A public read can only expose an entitled published snapshot.
       const privateOperation =
@@ -470,7 +618,8 @@ export function makeHandler({
       const owner = user?.uid === entry.ownerUid;
       const adminMedia =
         (operation?.startsWith("media/") ||
-          (operation === "requests" && request.method === "GET")) &&
+          requestRead ||
+          operation === "readiness") &&
         user &&
         !owner &&
         (await verifyAdmin(user, user.token, env));
@@ -491,7 +640,21 @@ export function makeHandler({
           origin,
           env,
         );
-      if (operation === "requests") {
+      if (request.method === "GET" && operation === "readiness") {
+        requireValue(owner || adminMedia, "Shop not found.", 404);
+        return decorateResponse(
+          json(
+            await responseData(
+              await shopStub(env, entry.id).fetch(
+                internal("/readiness", "GET", undefined, entry.ownerUid),
+              ),
+            ),
+          ),
+          origin,
+          env,
+        );
+      }
+      if (operation?.startsWith("requests")) {
         if (request.method === "GET") {
           requireValue(owner || adminMedia, "Shop not found.", 404);
           return decorateResponse(
@@ -499,7 +662,9 @@ export function makeHandler({
               await responseData(
                 await shopStub(env, entry.id).fetch(
                   internal(
-                    "/requests" + url.search,
+                    "/requests" +
+                      (requestId ? "/" + requestId : "") +
+                      url.search,
                     "GET",
                     undefined,
                     entry.ownerUid,
@@ -511,7 +676,22 @@ export function makeHandler({
             env,
           );
         }
-        if (request.method === "POST") {
+        if (requestId && request.method === "PATCH") {
+          requireValue(owner, "Shop not found.", 404);
+          const update = requestUpdate(await readJson(request, 8192));
+          return decorateResponse(
+            json(
+              await responseData(
+                await shopStub(env, entry.id).fetch(
+                  internal("/requests/" + requestId, "PATCH", update, user.uid),
+                ),
+              ),
+            ),
+            origin,
+            env,
+          );
+        }
+        if (!requestId && request.method === "POST") {
           const profile = publicShop(shop, env);
           const body = await readJson(request, 32 * 1024);
           object(body, "Customer request", [
@@ -522,7 +702,14 @@ export function makeHandler({
             "cardId",
             "customer",
             "fulfillment",
+            "publishedVersion",
           ]);
+          if (body.publishedVersion !== undefined)
+            requireValue(
+              Number.isSafeInteger(body.publishedVersion) &&
+                body.publishedVersion > 0,
+              "A valid published shop version is required.",
+            );
           requireValue(
             typeof body.requestKey === "string" &&
               /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(
@@ -635,7 +822,7 @@ export function makeHandler({
                   cardId: card?.id || null,
                   design,
                   pricing,
-                  publishedVersion: profile.version,
+                  publishedVersion: body.publishedVersion ?? profile.version,
                   customer,
                   fulfillment: body.fulfillment,
                   fingerprint,
@@ -819,16 +1006,47 @@ export function makeHandler({
         await updateRegistrySummary(env, data.shop);
         return decorateResponse(json(data), origin, env);
       }
-      if (operation === "square/connect" && request.method === "POST") {
+      if (operation?.startsWith("square/")) {
+        requireValue(owner, "Shop not found.", 404);
+        if (request.method === "GET" && operation === "square/status") {
+          const result = await shopStub(env, entry.id).fetch(
+            internal("/square/status", "GET", undefined, user.uid),
+          );
+          if (!result.ok) await responseData(result);
+          return decorateResponse(result, origin, env);
+        }
         requireValue(
-          entitled(shop),
-          "An active paid subscription is required before connecting Square.",
-          409,
+          request.method === "POST" && operation !== "square/status",
+          "Not found.",
+          404,
         );
-        throw new HttpError(
-          409,
-          "Square provider setup is pending. No payment connection was created.",
+        if (operation === "square/connect")
+          requireValue(
+            entitled(shop),
+            "An active paid subscription is required before connecting Square.",
+            409,
+          );
+        const body = await readJson(request, 4096);
+        object(
+          body,
+          "Square request",
+          operation === "square/location" ? ["locationId"] : [],
         );
+        const result = await shopStub(env, entry.id).fetch(
+          internal(
+            "/" + operation,
+            "POST",
+            {
+              actor: { uid: user.uid, authTime: user.authTime },
+              ...(operation === "square/location"
+                ? { locationId: text(body.locationId, "Location", 191, true) }
+                : {}),
+            },
+            user.uid,
+          ),
+        );
+        if (!result.ok) await responseData(result);
+        return decorateResponse(result, origin, env);
       }
       throw new HttpError(404, "Not found.");
     } catch (error) {

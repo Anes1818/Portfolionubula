@@ -40,6 +40,7 @@ export const png = Uint8Array.from(
 
 export function sqliteState() {
   const db = new DatabaseSync(":memory:");
+  let alarm = null;
   const sql = {
     exec(query, ...parameters) {
       const statement = db.prepare(query),
@@ -55,6 +56,15 @@ export function sqliteState() {
     db,
     storage: {
       sql,
+      async setAlarm(time) {
+        alarm = Number(time);
+      },
+      async getAlarm() {
+        return alarm;
+      },
+      async deleteAlarm() {
+        alarm = null;
+      },
       transactionSync(callback) {
         db.exec("BEGIN IMMEDIATE");
         try {

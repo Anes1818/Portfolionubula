@@ -14,8 +14,18 @@ import {
   validateDraft,
   validatePublication,
   boundedDesign,
+  REQUEST_STATUSES,
+  requestUpdate,
+  requestPage,
+  requestCursor,
+  hydrateRequest,
 } from "./validation.mjs";
 import { canonicalCatalog } from "./catalogue.mjs";
+import { publicationReport } from "./publish-readiness.mjs";
+import {
+  storedSquareService,
+  squareSandboxConfigured,
+} from "./square-storage.mjs";
 import {
   normalizePolicy,
   validateDesign,
@@ -97,11 +107,59 @@ export class ShopRegistry {
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS billing_resources (resource_key TEXT PRIMARY KEY, shop_id TEXT NOT NULL, owner_uid TEXT NOT NULL)",
     );
+    this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS square_merchants (environment TEXT NOT NULL, merchant_id TEXT NOT NULL, shop_id TEXT NOT NULL, owner_uid TEXT NOT NULL, PRIMARY KEY(environment,merchant_id), UNIQUE(environment,shop_id))",
+    );
   }
 
   async fetch(request) {
     try {
       const url = new URL(request.url);
+      if (request.method === "POST" && url.pathname === "/square-claim") {
+        const value = await readJson(request, 4096);
+        requireValue(
+          value.environment === "sandbox" &&
+            /^[A-Za-z0-9_-]{1,191}$/.test(value.merchantId || ""),
+          "Invalid Square merchant.",
+        );
+        this.state.storage.transactionSync(() => {
+          const entry = first(
+            this.sql.exec(
+              "SELECT owner_uid FROM registry WHERE id=?",
+              value.shopId,
+            ),
+          );
+          requireValue(
+            entry?.owner_uid === value.ownerUid,
+            "Shop not found.",
+            404,
+          );
+          const collision = first(
+            this.sql.exec(
+              "SELECT * FROM square_merchants WHERE environment=? AND (merchant_id=? OR shop_id=?)",
+              value.environment,
+              value.merchantId,
+              value.shopId,
+            ),
+          );
+          requireValue(
+            !collision ||
+              (collision.shop_id === value.shopId &&
+                collision.owner_uid === value.ownerUid &&
+                collision.merchant_id === value.merchantId),
+            "This Square merchant is already bound to another shop.",
+            409,
+          );
+          this.sql.exec(
+            "INSERT OR IGNORE INTO square_merchants(environment,merchant_id,shop_id,owner_uid) VALUES(?,?,?,?)",
+            value.environment,
+            value.merchantId,
+            value.shopId,
+            value.ownerUid,
+          );
+        });
+        return json({ ok: true });
+      }
       if (url.pathname === "/billing-resource") {
         if (request.method === "GET") {
           const key = url.searchParams.get("value") || "";
@@ -393,6 +451,9 @@ export class ShopStore {
     this.env = env;
     this.sql = state.storage.sql;
     this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS square_state (key TEXT PRIMARY KEY, data TEXT NOT NULL)",
+    );
+    this.sql.exec(
       "CREATE TABLE IF NOT EXISTS shop (singleton INTEGER PRIMARY KEY CHECK(singleton=1), data TEXT NOT NULL)",
     );
     this.sql.exec(
@@ -404,6 +465,34 @@ export class ShopStore {
     this.sql.exec(
       "CREATE INDEX IF NOT EXISTS requests_created_id ON customer_requests(created_at,id)",
     );
+    this.sql.exec(
+      "CREATE INDEX IF NOT EXISTS requests_status_created_id ON customer_requests(json_extract(data,'$.status'),created_at DESC,id DESC)",
+    );
+    this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS request_status_counts(status TEXT PRIMARY KEY,count INTEGER NOT NULL CHECK(count>=0))",
+    );
+    if (
+      !first(this.sql.exec("SELECT status FROM request_status_counts LIMIT 1"))
+    ) {
+      this.state.storage.transactionSync(() => {
+        for (const status of REQUEST_STATUSES)
+          this.sql.exec(
+            "INSERT OR IGNORE INTO request_status_counts(status,count) VALUES(?,0)",
+            status,
+          );
+        for (const row of rows(
+          this.sql.exec(
+            "SELECT json_extract(data,'$.status') status,COUNT(*) count FROM customer_requests GROUP BY json_extract(data,'$.status')",
+          ),
+        ))
+          if (REQUEST_STATUSES.includes(row.status))
+            this.sql.exec(
+              "UPDATE request_status_counts SET count=? WHERE status=?",
+              row.count,
+              row.status,
+            );
+      });
+    }
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS request_media (media_id TEXT PRIMARY KEY)",
     );
@@ -436,6 +525,15 @@ export class ShopStore {
         env: this.env,
         sql: this.sql,
       });
+    if (shop && squareSandboxConfigured(this.env, { requireEnabled: false })) {
+      try {
+        const result = await storedSquareService(this).refreshConnection();
+        if (result.status === "connected")
+          await this.state.storage.setAlarm(Date.now() + 6 * 86400000);
+      } catch {
+        await this.state.storage.setAlarm(Date.now() + 3600000);
+      }
+    }
   }
 
   async fetch(request) {
@@ -490,6 +588,49 @@ export class ShopStore {
         if (result) return result;
       }
       this.owner(request, shop);
+      if (url.pathname.startsWith("/square/")) {
+        const service = storedSquareService(this),
+          path = url.pathname;
+        if (path === "/square/status" && request.method === "GET")
+          return json(await service.status({ uid: shop.ownerUid }));
+        requireValue(request.method === "POST", "Not found.", 404);
+        const body = await readJson(request, 4096),
+          actor = body.actor;
+        requireValue(actor?.uid === shop.ownerUid, "Shop not found.", 404);
+        // Invalid public callbacks must not consume the owner's change budget.
+        if (path !== "/square/callback") limit(this.sql, "square-changes", 5);
+        if (path === "/square/connect") {
+          const { authorizationUrl, setCookie, expiresAt } =
+            await service.start(actor);
+          const response = json({ authorizationUrl, expiresAt });
+          response.headers.set("Set-Cookie", setCookie);
+          return response;
+        }
+        if (path === "/square/callback") {
+          const result = await service.callback(body.callback);
+          if (result.connected)
+            await this.state.storage.setAlarm(Date.now() + 6 * 86400000);
+          const { clearCookie, ...status } = result,
+            response = json(status);
+          response.headers.set("Set-Cookie", clearCookie);
+          return response;
+        }
+        if (path === "/square/verify")
+          return json(await service.status(actor, { verify: true }));
+        if (path === "/square/location")
+          return json(await service.chooseLocation(actor, body.locationId));
+        if (path === "/square/disconnect")
+          return json(await service.disconnect(actor));
+        throw new HttpError(404, "Not found.");
+      }
+      if (url.pathname === "/readiness" && request.method === "GET")
+        return json(
+          publicationReport(
+            this.shop(),
+            await canonicalCatalog(this.env),
+            this.env,
+          ),
+        );
       if (url.pathname === "/requests" && request.method === "POST") {
         const {
           requestKey,
@@ -516,6 +657,25 @@ export class ShopStore {
             typeof ipBucket === "string" &&
             /^[a-f0-9]{3}$/.test(ipBucket),
           "Invalid customer request.",
+        );
+        const existing = first(
+          this.sql.exec(
+            "SELECT fingerprint,data FROM customer_requests WHERE request_key=?",
+            requestKey,
+          ),
+        );
+        if (existing) {
+          requireValue(
+            existing.fingerprint === fingerprint,
+            "This request key was already used for different details.",
+            409,
+          );
+          return json({ request: JSON.parse(existing.data) }, 201);
+        }
+        requireValue(
+          shop.published?.version === publishedVersion,
+          "The shop changed. Reload the current prices before requesting.",
+          409,
         );
         if (kind === "design") {
           const checked = validateDesign(
@@ -553,6 +713,11 @@ export class ShopStore {
           );
           let product, totalCents, summary;
           requireValue(
+            current.published.version === publishedVersion,
+            "The shop changed. Reload the current prices before requesting.",
+            409,
+          );
+          requireValue(
             ["product", "design"].includes(kind),
             "Invalid customer request.",
           );
@@ -567,11 +732,6 @@ export class ShopStore {
             totalCents = product.priceCents;
             summary = product.title;
           } else {
-            requireValue(
-              current.published.version === publishedVersion,
-              "The shop changed. Reload the current bouquet prices before requesting.",
-              409,
-            );
             requireValue(
               design &&
                 Number.isSafeInteger(pricing?.totalCents) &&
@@ -591,6 +751,9 @@ export class ShopStore {
           const entry = {
             id: "rq_" + crypto.randomUUID().replaceAll("-", ""),
             status: "requested",
+            version: 1,
+            merchantNote: "",
+            paymentStatus: "unpaid",
             kind,
             totalCents,
             currency: current.published.draft.currency,
@@ -607,6 +770,7 @@ export class ShopStore {
             publishedVersion: current.published.version,
             createdAt: Date.now(),
           };
+          entry.updatedAt = entry.createdAt;
           this.sql.exec(
             "INSERT INTO customer_requests(id,request_key,fingerprint,created_at,data) VALUES(?,?,?,?,?)",
             entry.id,
@@ -614,6 +778,9 @@ export class ShopStore {
             fingerprint,
             entry.createdAt,
             JSON.stringify(entry),
+          );
+          this.sql.exec(
+            "UPDATE request_status_counts SET count=count+1 WHERE status='requested'",
           );
           if (product?.cover)
             this.sql.exec(
@@ -625,27 +792,121 @@ export class ShopStore {
         return json({ request: record }, 201);
       }
       if (url.pathname === "/requests" && request.method === "GET") {
-        const cursor = url.searchParams.get("cursor") || "";
-        requireValue(
-          cursor === "" || /^rq_[a-f0-9]{32}$/.test(cursor),
-          "Invalid request cursor.",
-        );
-        const pageSize = Math.min(
-          50,
-          Math.max(1, Number(url.searchParams.get("limit")) || 25),
-        );
-        requireValue(Number.isSafeInteger(pageSize), "Invalid page size.");
+        const {
+          status,
+          cursor,
+          limit: pageSize,
+        } = requestPage(url.searchParams);
+        const clauses = [],
+          parameters = [];
+        if (status !== "all") {
+          clauses.push("json_extract(data,'$.status')=?");
+          parameters.push(status);
+        }
+        if (cursor) {
+          clauses.push("(created_at,id)<(?,?)");
+          parameters.push(cursor.at, cursor.id);
+        }
         const page = rows(
           this.sql.exec(
-            "SELECT id,data FROM customer_requests WHERE id>? ORDER BY id LIMIT ?",
-            cursor,
+            "SELECT id,created_at,data FROM customer_requests" +
+              (clauses.length ? " WHERE " + clauses.join(" AND ") : "") +
+              " ORDER BY created_at DESC,id DESC LIMIT ?",
+            ...parameters,
             pageSize + 1,
           ),
         );
+        const requests = page
+          .slice(0, pageSize)
+          .map((row) => hydrateRequest(JSON.parse(row.data)));
+        const counts = {
+          all: 0,
+          ...Object.fromEntries(REQUEST_STATUSES.map((status) => [status, 0])),
+        };
+        for (const row of rows(
+          this.sql.exec("SELECT status,count FROM request_status_counts"),
+        )) {
+          counts.all += row.count;
+          if (REQUEST_STATUSES.includes(row.status))
+            counts[row.status] = row.count;
+        }
         return json({
-          requests: page.slice(0, pageSize).map((row) => JSON.parse(row.data)),
-          nextCursor: page.length > pageSize ? page[pageSize - 1].id : null,
+          requests,
+          nextCursor:
+            page.length > pageSize
+              ? requestCursor(requests.at(-1), status)
+              : null,
+          counts,
         });
+      }
+      const requestMatch = url.pathname.match(
+        /^\/requests\/(rq_[a-f0-9]{32})$/,
+      );
+      if (requestMatch && request.method === "GET") {
+        const row = first(
+          this.sql.exec(
+            "SELECT data FROM customer_requests WHERE id=?",
+            requestMatch[1],
+          ),
+        );
+        requireValue(row, "Request not found.", 404);
+        return json({ request: hydrateRequest(JSON.parse(row.data)) });
+      }
+      if (requestMatch && request.method === "PATCH") {
+        const update = requestUpdate(await readJson(request, 8192));
+        const record = this.state.storage.transactionSync(() => {
+          const row = first(
+            this.sql.exec(
+              "SELECT data FROM customer_requests WHERE id=?",
+              requestMatch[1],
+            ),
+          );
+          requireValue(row, "Request not found.", 404);
+          const current = hydrateRequest(JSON.parse(row.data));
+          requireValue(
+            update.version === current.version,
+            "This request changed in another tab. Reload its latest details before saving.",
+            409,
+          );
+          const nextStatus = update.status ?? current.status;
+          const allowed = {
+            requested: ["accepted", "cancelled"],
+            accepted: ["fulfilled", "cancelled"],
+            fulfilled: [],
+            cancelled: [],
+          };
+          requireValue(
+            nextStatus === current.status ||
+              allowed[current.status]?.includes(nextStatus),
+            "This request status change is not allowed.",
+            409,
+          );
+          limit(this.sql, "request_updates", 60);
+          const next = {
+            ...current,
+            status: nextStatus,
+            merchantNote: update.merchantNote ?? current.merchantNote,
+            version: current.version + 1,
+            updatedAt: Date.now(),
+          };
+          this.sql.exec(
+            "UPDATE customer_requests SET data=? WHERE id=?",
+            JSON.stringify(next),
+            next.id,
+          );
+          if (nextStatus !== current.status) {
+            this.sql.exec(
+              "UPDATE request_status_counts SET count=count-1 WHERE status=?",
+              current.status,
+            );
+            this.sql.exec(
+              "UPDATE request_status_counts SET count=count+1 WHERE status=?",
+              nextStatus,
+            );
+          }
+          return next;
+        });
+        return json({ request: record });
       }
       if (request.method === "PUT" && url.pathname === "/draft") {
         const { version, draft: rawDraft } = await readJson(

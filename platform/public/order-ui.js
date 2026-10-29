@@ -7,10 +7,81 @@ const escape = (value = "") =>
       ],
   );
 
-/** A request is persisted before an optional WhatsApp draft is offered. */
-export function openOrderRequest({ shop, kind, productId, design, cardId }) {
+let cataloguePromise;
+async function reviewDetails(shop, kind, productId, design, preview) {
+  if (kind === "product") {
+    const product = shop.draft?.products?.find((row) => row.id === productId);
+    if (
+      !product ||
+      product.available === false ||
+      !Number.isSafeInteger(product.priceCents)
+    )
+      throw new Error("This product is unavailable. Please reload the shop.");
+    return {
+      totalCents: product.priceCents,
+      lines: [
+        { label: product.title, quantity: 1, totalCents: product.priceCents },
+      ],
+    };
+  }
+  cataloguePromise ||= fetch("/api/catalog", {
+    cache: "no-store",
+    signal: AbortSignal.timeout(20000),
+  })
+    .then((response) => {
+      if (!response.ok)
+        throw new Error("The flower catalogue could not load. Please retry.");
+      return response.json();
+    })
+    .catch((error) => {
+      cataloguePromise = null;
+      throw error;
+    });
+  const [catalog, { priceDesign }] = await Promise.all([
+    cataloguePromise,
+    import("/policy.mjs"),
+  ]);
+  const pricing = priceDesign(design, shop.draft, catalog);
+  if (!pricing.ok && !preview)
+    throw new Error(
+      pricing.issues[0]?.message || "Review your bouquet before requesting.",
+    );
+  const labels = new Map(
+    [...catalog.flowers, ...catalog.extras].map((row) => [
+      row.id,
+      row.en || row.label || row.id,
+    ]),
+  );
+  const counts = new Map();
+  for (const item of design.items || [])
+    counts.set(item.id, (counts.get(item.id) || 0) + 1);
+  return {
+    totalCents: pricing.ok ? pricing.totalCents : null,
+    lines: pricing.ok
+      ? [...pricing.lines, ...pricing.extraLines].map((row) => ({
+          ...row,
+          label: labels.get(row.id) || row.id,
+        }))
+      : [...counts].map(([id, quantity]) => ({
+          label: labels.get(id) || id,
+          quantity,
+          totalCents: null,
+        })),
+  };
+}
+
+/** Preview sends nothing. Public requests persist before optional WhatsApp. */
+export async function openOrderRequest({
+  shop,
+  kind,
+  productId,
+  design,
+  cardId,
+  preview = false,
+}) {
   if (!shop?.id || !["product", "design"].includes(kind))
     return Promise.reject(new Error("This shop request is unavailable."));
+  const review = await reviewDetails(shop, kind, productId, design, preview);
   document.getElementById("nebula-order-modal")?.remove();
   if (!document.getElementById("nebula-order-styles")) {
     const style = document.createElement("style");
@@ -63,6 +134,24 @@ export function openOrderRequest({ shop, kind, productId, design, cardId }) {
       }
     };
     root.innerHTML = `<section class="nb-order-dialog" role="dialog" aria-modal="true" aria-labelledby="nb-order-title"><button class="nb-order-close" aria-label="Close request">×</button><p class="nb-order-kicker">A LITTLE SOMETHING LOVELY</p><h2 id="nb-order-title">${escape(title)}</h2><p class="nb-order-muted">${kind === "product" && item?.priceCents != null ? escape(money(item.priceCents)) + " · " : ""}Your florist will confirm availability and fulfillment. No payment is taken here.</p><form class="nb-order-form"><div class="nb-order-notice error" role="alert" hidden></div><label>Your name<input name="name" autocomplete="name" maxlength="100" required></label><label>Phone or WhatsApp<input name="phone" type="tel" autocomplete="tel" maxlength="40" required></label><div class="nb-order-row"><label>Preferred date<input name="date" type="date" min="${new Date().toISOString().slice(0, 10)}"></label><label>Fulfillment<select name="fulfillment"><option value="pickup">Pickup</option><option value="delivery">Delivery · confirm with florist</option></select></label></div><label>A little note<textarea name="note" maxlength="1000" placeholder="The occasion, your message or delivery details…"></textarea></label><button class="nb-order-button" type="submit">Send unpaid request ↗</button><p class="nb-order-muted">A request is not a confirmed order or a payment. Your request and price are saved by the shop before any optional WhatsApp draft opens.</p></form></section>`;
+    const heading = root.querySelector("#nb-order-title");
+    const section = document.createElement("section");
+    section.className = "nb-order-review";
+    section.setAttribute("aria-label", "Bouquet contents and estimate");
+    section.innerHTML = `<p class="nb-order-kicker">${preview ? "OWNER PREVIEW" : "REVIEW YOUR REQUEST"}</p><p class="nb-order-price">${review.totalCents === null ? "Prices needed" : escape(money(review.totalCents))}</p><ul>${review.lines.map((row) => `<li><span>${escape(row.quantity)} × ${escape(row.label)}</span>${row.totalCents === null ? "" : `<strong>${escape(money(row.totalCents))}</strong>`}</li>`).join("")}</ul><p class="nb-order-muted">Design estimate. Your florist confirms delivery, applicable tax and availability.${preview ? " This preview cannot submit a request or take a payment." : ""}</p>`;
+    section.style.cssText =
+      "background:#f5f1eb;border-radius:9px;padding:16px;margin:16px 0";
+    for (const row of section.querySelectorAll("li"))
+      row.style.cssText =
+        "display:flex;justify-content:space-between;gap:16px;margin:6px 0";
+    section.querySelector("ul").style.cssText =
+      "list-style:none;padding:0;margin:12px 0;font-size:12px";
+    heading.after(section);
+    if (preview) {
+      const submit = root.querySelector('button[type="submit"]');
+      submit.disabled = true;
+      submit.textContent = "Preview only · requests are closed";
+    }
     document.body.append(root);
     root.querySelector(".nb-order-close").onclick = close;
     root.addEventListener("click", (event) => {
@@ -72,6 +161,7 @@ export function openOrderRequest({ shop, kind, productId, design, cardId }) {
     root.querySelector("input")?.focus();
     root.querySelector("form").onsubmit = async (event) => {
       event.preventDefault();
+      if (preview) return;
       if (submitting) return;
       submitting = true;
       const button = event.submitter,
@@ -84,6 +174,7 @@ export function openOrderRequest({ shop, kind, productId, design, cardId }) {
         const body = {
           requestKey,
           kind,
+          publishedVersion: shop.published?.version ?? shop.version,
           ...(kind === "product"
             ? { productId }
             : { design, ...(cardId ? { cardId } : {}) }),

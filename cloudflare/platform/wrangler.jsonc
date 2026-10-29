@@ -34,6 +34,8 @@
     "BETA_ACCESS_EMAILS": "anescareer@gmail.com,aneslaidaoui06@gmail.com",
     "BILLING_ENABLED": "false",
     "CHECKOUT_ENABLED": "false",
+    "SQUARE_ENVIRONMENT": "sandbox",
+    "SQUARE_SANDBOX_CONNECT_ENABLED": "false",
     "PUBLISHING_ENABLED": "false",
   },
   "durable_objects": {

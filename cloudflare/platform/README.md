@@ -17,11 +17,11 @@ This service uses the existing `nebula` Worker and existing SQLite Durable Objec
 
 ## Release gates
 
-**Public beta access, live publication, subscriptions, Square OAuth and card checkout are disabled in production.** Existing invited owners can sign in and edit their private previews. Only server-owned verified billing entitlements may permit public access. Return URLs, saved drafts and browser flags never activate a shop.
+**Public beta access, live publication, subscriptions and card checkout are disabled in production. Square Sandbox connection is implemented but disabled until secure provider configuration and real Sandbox acceptance.** Existing invited owners can sign in and edit their private previews. Only server-owned verified billing entitlements may permit public access. Return URLs, saved drafts and browser flags never activate a shop.
 
 The user's payout onboarding is unresolved. `billing.mjs` deliberately returns disabled status/503 on checkout and webhook actions. `lemon.mjs` is a disconnected test-only adapter, not proof of a functioning subscription integration. There is no live subscription webhook ledger or automatic entitlement activation yet. Switching a config flag does not make billing operational. The proposed plans are $29 USD/month hosted and $35/month own-domain connection; the second tier remains unavailable until domain provisioning is implemented and tested. Merchant domain purchase/renewal is separate.
 
-Before accepting subscriptions: confirm a supported payout account with the provider, complete merchant activation, implement persistent checkout/webhook reconciliation, test real provider sandbox flows, and agree activation/cancellation policy. Before customer card payments: finish generic Square OAuth, encrypted token storage, full merchant-approved pricing/fulfillment/taxes and real Sandbox testing. Existing Ray payment code is not automatically used for all shops.
+Before accepting subscriptions: confirm a supported payout account with the provider, complete merchant activation, implement persistent checkout/webhook reconciliation, test real provider sandbox flows, and agree activation/cancellation policy. Before customer card payments: complete real Square Sandbox acceptance, the generic checkout/payment reconciliation ledger, full merchant-approved pricing/fulfillment/taxes and webhook testing. The sandbox OAuth lifecycle and encrypted SQLite token storage now exist; production connection is still rejected by the module. Existing Ray payment code is not automatically used for all shops.
 
 ## Data and isolation
 
@@ -47,7 +47,11 @@ Semantic validation/pricing runs in the SQLite object, avoiding repeated expensi
 - `GET /api/public/shops/:slug`; `POST /api/shops/:id/publish`
 - `POST /api/shops/:id/requests`; owner/admin `GET` on same path
 - `GET /api/admin/users?q=&cursor=&status=&limit=`; `GET /api/admin/shops/:id`
-- `/billing/*` and `/square/connect`: closed provider setup responses
+- `GET /api/shops/:id/readiness`: saved-draft content and activation checklist
+- Owner/admin `GET /api/shops/:id/requests/:requestId`; owner-only `PATCH` with `{version,status,merchantNote}`
+- `/square/status`, `/square/connect`, `/square/verify`, `/square/location`, `/square/disconnect`: owner-only sandbox connection lifecycle; configured environment and fresh sign-in required for changes
+- `GET /api/square/callback`: validates one-use browser-bound OAuth state, clears its cookie and redirects without exposing tokens
+- `/billing/*`: closed provider setup responses
 
 JSON/API mutations require an approved Origin. Authentication verifies Firebase signature, project, expiry and verified email. Owner UID and server-side admin role enforce tenancy; invite emails only control private-beta admission. Source/private files are outside the static asset allowlist.
 
@@ -61,10 +65,19 @@ node builder/tests/platform-policy.cjs
 node --test cloudflare/platform/test/*.test.mjs
 node builder/tests/platform-durable.cjs
 node builder/tests/platform-browser.cjs
+node builder/tests/platform-orders-ui.cjs
 ```
 
 The last two additionally require Miniflare/esbuild and Playwright with Edge respectively. Browser/workerd QA uses a real local SQLite/runtime implementation but injected local Firebase identities and a synthetic local entitlement, never production bypasses. Tests never send email, connect Square or charge a card. Generated studio/policy/runtime copies and QA captures are ignored in Git. The original model/renderer identity is checked at build time.
 
 From `cloudflare/platform`, `npm run check` builds and performs a Wrangler dry run. `npm run deploy` builds and deploys to the existing `nebula` Worker only. Review account, route, flags and binding preservation before deployment. Do not replace the apex domain or deploy over a Ray payment Worker. Read-only live smoke: `node builder/tests/platform-live.cjs`; optional `PLATFORM_BASE` overrides the branded origin.
 
-See `docs/PLATFORM-V2-2026-10-28.md` for release evidence and remaining user tasks. Earlier beta notes are historical, not current specifications.
+See `docs/PLATFORM-V3-2026-10-29.md` and `docs/SQUARE-CONNECTION.md` for the current release and sandbox connection boundary. `docs/PLATFORM-V2-2026-10-28.md` records the earlier release. Earlier beta notes are historical, not current specifications.
+
+## Request management and review
+
+Requests use independent optimistic versions. Owners can change requested → accepted/cancelled, then accepted → fulfilled/cancelled; terminal states do not reopen. Internal notes are private. Fulfillment status never records a payment. History stays readable by its owner after subscription expiry, and administrators have read-only inspection. Newest-first keyset pagination uses an opaque filter-bound cursor and indexed status/time/id queries. A fixed-size counter table tracks status totals, with one-time legacy backfill and atomic updates.
+
+New browser requests include the reviewed published version; a changed shop returns409 before insertion. Lost-response retries still return the original request first. Review shows contents and an estimate before submission. Owner review cannot send a request. Order consumes its URL action once; Customise opens the editor. Merchants may explicitly render the saved design into an immutable collection cover, preserving the previous photo until both upload and versioned draft save succeed.
+
+Generic folded notes use explicit merchant per-note pricing in shop currency. No exchange rate, assembly fee or deposit policy is inferred from Ray's separate implementation. Customer-supplied cash/payment-plan metadata can remain in private imported artwork but is blocked from public quotes until supported by an approved commerce policy. Ray's existing original service is unchanged.

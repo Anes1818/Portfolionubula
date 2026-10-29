@@ -96,6 +96,106 @@ export function multilineText(value, label, max) {
   return clean;
 }
 
+export const REQUEST_STATUSES = Object.freeze([
+  "requested",
+  "accepted",
+  "fulfilled",
+  "cancelled",
+]);
+const requestIdPattern = /^rq_[a-f0-9]{32}$/;
+
+export function requestUpdate(value) {
+  object(value, "Request update", ["version", "status", "merchantNote"]);
+  requireValue(
+    Number.isSafeInteger(value.version) && value.version > 0,
+    "A valid request version is required.",
+  );
+  requireValue(
+    value.status !== undefined || value.merchantNote !== undefined,
+    "Choose a status or update the private note.",
+  );
+  if (value.status !== undefined)
+    requireValue(
+      REQUEST_STATUSES.includes(value.status),
+      "Choose a valid request status.",
+    );
+  return {
+    version: value.version,
+    ...(value.status === undefined ? {} : { status: value.status }),
+    ...(value.merchantNote === undefined
+      ? {}
+      : {
+          merchantNote: multilineText(
+            value.merchantNote,
+            "Private merchant note",
+            1000,
+          ),
+        }),
+  };
+}
+
+export function requestPage(searchParams) {
+  requireValue(
+    [...searchParams.keys()].every((key) =>
+      ["status", "cursor", "limit"].includes(key),
+    ) && [...searchParams.keys()].length === new Set(searchParams.keys()).size,
+    "Invalid request filters.",
+  );
+  const status = searchParams.get("status") || "all";
+  requireValue(
+    status === "all" || REQUEST_STATUSES.includes(status),
+    "Invalid request status filter.",
+  );
+  const rawLimit = searchParams.get("limit") ?? "25";
+  requireValue(
+    /^\d{1,2}$/.test(rawLimit) &&
+      Number(rawLimit) >= 1 &&
+      Number(rawLimit) <= 50,
+    "Choose a page size from 1 to 50.",
+  );
+  const rawCursor = searchParams.get("cursor") || "";
+  let cursor = null;
+  if (rawCursor) {
+    try {
+      requireValue(
+        rawCursor.length <= 200 && /^[A-Za-z0-9_-]+$/.test(rawCursor),
+        "Invalid request cursor.",
+      );
+      cursor = JSON.parse(
+        atob(rawCursor.replaceAll("-", "+").replaceAll("_", "/")),
+      );
+      object(cursor, "Request cursor", ["at", "id", "status"]);
+      requireValue(
+        Number.isSafeInteger(cursor.at) &&
+          cursor.at >= 0 &&
+          requestIdPattern.test(cursor.id) &&
+          cursor.status === status,
+        "Invalid request cursor.",
+      );
+    } catch {
+      throw new HttpError(400, "Invalid request cursor.");
+    }
+  }
+  return { status, cursor, limit: Number(rawLimit) };
+}
+
+export function requestCursor(record, status) {
+  return btoa(JSON.stringify({ at: record.createdAt, id: record.id, status }))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replace(/=+$/, "");
+}
+
+export function hydrateRequest(record) {
+  return {
+    ...record,
+    version: record.version ?? 1,
+    merchantNote: record.merchantNote ?? "",
+    updatedAt: record.updatedAt ?? record.createdAt,
+    paymentStatus: record.paymentStatus ?? "unpaid",
+  };
+}
+
 export function safeId(value, label = "Item ID") {
   requireValue(
     typeof value === "string" && idPattern.test(value),
@@ -603,6 +703,10 @@ export function validatePublication(value, catalog) {
       checked.ok,
       checked.issues[0]?.message ||
         "Price every item in available bouquets before publishing.",
+    );
+    requireValue(
+      checked.design.items.length > 0,
+      "Add at least one flower to every available bouquet before publishing.",
     );
   }
   requireValue(

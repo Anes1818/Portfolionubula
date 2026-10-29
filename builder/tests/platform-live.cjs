@@ -17,12 +17,17 @@ const { chromium } = require("playwright");
     assert.equal(data[flag], false);
   const cfg = await (await fetch(base + "/api/config")).json();
   assert.equal(cfg.firebase.projectId, "la-flora-6ed47");
+  assert.equal(cfg.squareConnectionEnabled, false);
+  assert.equal(cfg.SQUARE_SANDBOX_APPLICATION_SECRET, undefined);
   assert.equal(cfg.BETA_ACCESS_EMAILS, undefined);
   assert.equal((await fetch(base + "/api/session")).status, 401);
   for (const route of [
     "/cloudflare/platform/worker.mjs",
     "/.private/qa/platform/test-entry.mjs",
     "/platform/builder-adapter.js",
+    "/cloudflare/platform/square-connection.mjs",
+    "/api/shops/sh_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/readiness",
+    "/api/shops/sh_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/square/status",
     "/api/shops/unpublished-preview",
   ])
     assert.equal(
@@ -56,7 +61,7 @@ const { chromium } = require("playwright");
       path: path.join(out, "login-desktop.png"),
       fullPage: true,
     });
-    await page.goto(base + "/dashboard/collection", {
+    await page.goto(base + "/dashboard/orders", {
       waitUntil: "domcontentloaded",
     });
     await page

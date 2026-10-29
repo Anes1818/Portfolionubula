@@ -271,6 +271,22 @@ function evaluate(design, draft, catalog, { allowUnpriced = false } = {}) {
   design.items.forEach((item, index) =>
     checkFlower(item?.id, `items.${index}.id`),
   );
+  // A generic per-note catalogue does not imply Ray's separate cash-supply,
+  // currency-conversion or deposit policy. Keep imported artwork editable, but
+  // never publish/request a design whose price would ignore those terms.
+  if (
+    !allowUnpriced &&
+    policy.preset === "satin" &&
+    (design.finishes?.studio?.cashSupply === "customer" ||
+      design.finishes?.studio?.paymentPlan !== undefined)
+  )
+    issues.push(
+      issue(
+        "unsupported_cash_terms",
+        "finishes.studio",
+        "Customer-supplied cash and payment-plan choices need a dedicated approved pricing policy. Use the shop’s per-note catalogue price instead.",
+      ),
+    );
   // Unused palette/accent references remain valid editing controls. Reject unknown
   // or foreign references, but availability/pricing applies to rendered units.
   const t = design.template;

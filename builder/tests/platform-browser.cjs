@@ -291,9 +291,30 @@ const { chromium } = require("playwright");
     await page
       .locator("#custom .flower-card")
       .first()
-      .getByRole("link", { name: "Customise" })
+      .getByRole("link", { name: "Custom Order" })
       .click();
     await studioReady(page);
+    await page.locator(".nb-order-review").waitFor();
+    assert.equal(
+      await page.locator('.nb-order-form button[type="submit"]').isEnabled(),
+      false,
+      "Owner order preview cannot send",
+    );
+    await page
+      .locator(".nb-order-form")
+      .evaluate((form) =>
+        form.dispatchEvent(
+          new Event("submit", { bubbles: true, cancelable: true }),
+        ),
+      );
+    assert.equal(
+      (await (await f.call("/api/shops/" + shop.id + "/requests")).json())
+        .requests.length,
+      0,
+    );
+    await page
+      .getByRole("button", { name: "Close request", exact: true })
+      .click();
     await page.evaluate(() => NebulaApp.setTab("finishing"));
     await page.locator("#designName").fill("Saved exact fresh design");
     await page.locator("#designName").blur();
@@ -312,6 +333,28 @@ const { chromium } = require("playwright");
     assert.deepEqual(
       await page.evaluate(() => NebulaPlatformStudio.design()),
       firstDesign,
+    );
+    assert.equal(
+      await page.locator("#nebula-order-modal").count(),
+      0,
+      "The order action is consumed once",
+    );
+    await page.locator("#platformUseDesignCover").click();
+    await page
+      .locator("#platformSaveStatus")
+      .filter({ hasText: "collection photo" })
+      .waitFor();
+    shop = await readShop();
+    assert.match(shop.draft.collection[0].cover, /^img_[a-f0-9]{64}$/);
+    const designPhoto = await f.call(
+      "/api/shops/" + shop.id + "/media/" + shop.draft.collection[0].cover,
+    );
+    assert.equal(designPhoto.status, 200);
+    assert.match(designPhoto.headers.get("Content-Type"), /^image\/(webp|png)/);
+    assert.deepEqual(
+      shop.draft.collection[0].design,
+      firstDesign,
+      "Creating a cover keeps the saved semantic design intact",
     );
     for (const mode of ["classic", "heart", "dome"]) {
       await page.locator('[data-mode="' + mode + '"]').click();
@@ -366,8 +409,14 @@ const { chromium } = require("playwright");
     const phone = await satin.newPage();
     phone.setDefaultTimeout(15000);
     await fillSample(phone);
+    await phone.locator('[data-action="disable-unpriced"]').click();
+    await clickSave(phone);
     await addCards(phone, 5);
     let satinShop = await readShop("other");
+    assert.ok(
+      satinShop.draft.disabledFlowers.length > 0,
+      "Unknown prices are explicitly turned off, with no invented cash conversion or zero fallback",
+    );
     assert.equal(
       Object.keys(satinShop.draft.flowerPrices).length,
       catalog.flowers.filter(
@@ -504,6 +553,29 @@ const { chromium } = require("playwright");
         .requests.length,
       2,
     );
+    await visitor.goto(origin + "/s/" + shop.slug);
+    await visitor
+      .locator("#custom .flower-card")
+      .first()
+      .getByRole("link", { name: "Custom Order" })
+      .click();
+    await studioReady(visitor);
+    await visitor.locator(".nb-order-review").waitFor();
+    assert.equal(
+      await visitor.locator('.nb-order-form button[type="submit"]').isEnabled(),
+      true,
+      "Public order action opens the same recipe review",
+    );
+    assert.equal(new URL(visitor.url()).searchParams.has("action"), false);
+    await visitor
+      .getByRole("button", { name: "Close request", exact: true })
+      .click();
+    assert.equal(
+      (await (await f.call("/api/shops/" + shop.id + "/requests")).json())
+        .requests.length,
+      2,
+      "Reviewing without submitting creates no order",
+    );
     await anon.close();
     await page.goto(origin + "/admin");
     await page.locator(".admin-table tbody tr").first().waitFor();
@@ -512,6 +584,12 @@ const { chromium } = require("playwright");
       path: path.join(output, "admin-desktop.png"),
       fullPage: true,
     });
+    await page.goto(origin + "/dashboard/payments");
+    await page.getByText("SETUP PENDING", { exact: true }).waitFor();
+    assert.equal(
+      await page.locator('[data-action="square-connect"]').isEnabled(),
+      false,
+    );
     assert.deepEqual(errors, [], "No unhandled browser errors");
     assert.deepEqual(badRequests, [], "No unexpected outbound service");
     console.log(
