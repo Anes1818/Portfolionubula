@@ -150,12 +150,64 @@ const { chromium } = require("playwright");
     await blocked.goto(`${origin}/receipt.html#shop=${f.shop.id}&order=${id}`);
     await blocked.getByRole("alert").waitFor();
     assert.equal(await blocked.locator("#payFull").count(), 0);
+    // Browsers may deny persistent storage while allowing this tab's session.
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "localStorage", {
+        get() {
+          throw new DOMException("Storage blocked", "SecurityError");
+        },
+      });
+    });
+    await page.goto(
+      `${origin}/receipt.html#shop=${f.shop.id}&request=${f.requestId}&token=${token}`,
+    );
+    await page.locator("#payDeposit").waitFor();
+    const fallbackId = new URLSearchParams(
+      new URL(page.url()).hash.slice(1),
+    ).get("order");
+    assert.ok(!page.url().includes(token));
+    await page.locator("#payDeposit").click();
+    await page.getByRole("heading", { name: "Mock Square checkout" }).waitFor();
+    await page.goto(
+      `${origin}/receipt.html#shop=${f.shop.id}&order=${fallbackId}`,
+    );
+    await page.locator("#payDeposit").waitFor();
+
+    // Denying both stores must not erase recovery access or start checkout.
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "sessionStorage", {
+        get() {
+          throw new DOMException("Storage blocked", "SecurityError");
+        },
+      });
+    });
+    await page.goto(
+      `${origin}/receipt.html#shop=${f.shop.id}&order=${fallbackId}&token=${token}`,
+    );
+    await page.locator("#payDeposit").waitFor();
+    assert.ok(
+      page.url().includes(token),
+      "Keep the private fragment when storage is unavailable",
+    );
+    let attemptedPayment = 0;
+    page.on("request", (request) => {
+      if (new URL(request.url()).pathname.endsWith("/checkout/pay"))
+        attemptedPayment++;
+    });
+    await page.locator("#payDeposit").click();
+    await page
+      .getByRole("status")
+      .filter({ hasText: "Browser storage is blocked" })
+      .waitFor();
+    assert.equal(attemptedPayment, 0);
+    await page.reload();
+    await page.locator("#payDeposit").waitFor();
     assert.deepEqual(errors, []);
     assert.deepEqual(outbound, []);
     await other.close();
     await ctx.close();
     console.log(
-      "PASS local storefront-to-checkout and receipt UI: final tax/delivery review, secret recovery, phone layout, deposit, balance, confirmed paid state and cross-browser access denial. All Square activity is simulated.",
+      "PASS local storefront-to-checkout and receipt UI: final tax/delivery review, secret recovery, phone layout, deposit, balance, confirmed paid state, cross-browser access denial, session-storage fallback and safe blocked-storage recovery. All Square activity is simulated.",
     );
   } finally {
     f.restore();

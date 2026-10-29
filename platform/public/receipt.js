@@ -15,13 +15,21 @@ let id = params.get("order"),
   busy = false;
 const root = document.querySelector("#receipt");
 const save = () => {
-  try {
-    if (id && token) localStorage.setItem(`nebula-order:${shop}:${id}`, token);
-  } catch {}
+  if (!id || !token) return false;
+  for (const storage of ["localStorage", "sessionStorage"]) {
+    try {
+      const key = `nebula-order:${shop}:${id}`;
+      window[storage].setItem(key, token);
+      if (window[storage].getItem(key) === token) return true;
+    } catch {}
+  }
+  return false;
 };
-try {
-  token ||= localStorage.getItem(`nebula-order:${shop}:${id}`);
-} catch {}
+for (const storage of ["localStorage", "sessionStorage"]) {
+  try {
+    token ||= window[storage].getItem(`nebula-order:${shop}:${id}`);
+  } catch {}
+}
 save();
 const message = document.createElement("p");
 message.className = "notice";
@@ -73,6 +81,10 @@ function render() {
   };
   const pay = (choice) =>
     run(async () => {
+      if (!save())
+        throw Error(
+          "Browser storage is blocked. Allow storage for this site before paying so your receipt can reopen after Square. Your order is saved; keep your private recovery link.",
+        );
       order = await call("pay", {
         orderId: id,
         revision: order.revision,
@@ -82,11 +94,16 @@ function render() {
         const url = new URL(order.request.url);
         if (
           url.protocol !== "https:" ||
-          ![
-            "sandbox.square.link",
-            "square.link",
-            "checkout.square.site",
-          ].includes(url.hostname)
+          url.username ||
+          url.password ||
+          url.port ||
+          !(
+            order.environment === "sandbox"
+              ? ["sandbox.square.link"]
+              : order.environment === "production"
+                ? ["square.link", "checkout.square.site"]
+                : []
+          ).includes(url.hostname)
         )
           throw Error("Unexpected checkout destination.");
         save();
@@ -126,7 +143,11 @@ function render() {
     } catch {
       message.textContent =
         "Copy the address from this browser to retain the receipt.";
-      location.hash = new URLSearchParams({ shop, order: id, token });
+      history.replaceState(
+        null,
+        "",
+        `/receipt.html#${new URLSearchParams({ shop, order: id, token })}`,
+      );
     }
   };
   root.querySelector("#downloadDesign").onclick = () => {
@@ -153,8 +174,16 @@ async function load() {
       ? await call("status", { orderId: id })
       : await call("quote", { requestId });
     id = order.id;
-    save();
-    history.replaceState(null, "", `/receipt.html#shop=${shop}&order=${id}`);
+    const stored = save();
+    history.replaceState(
+      null,
+      "",
+      `/receipt.html#${new URLSearchParams({
+        shop,
+        order: id,
+        ...(!stored ? { token } : {}),
+      })}`,
+    );
     message.textContent =
       "Your order is saved. Review the final price and terms before paying.";
     render();
@@ -163,4 +192,6 @@ async function load() {
     root.querySelector("button").onclick = load;
   }
 }
+// A second recovery link can target this same document with a different fragment.
+window.addEventListener("hashchange", () => location.reload());
 load();
