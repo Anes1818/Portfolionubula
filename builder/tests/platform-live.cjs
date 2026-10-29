@@ -65,6 +65,23 @@ const { chromium } = require("playwright");
       path: path.join(out, "login-desktop.png"),
       fullPage: true,
     });
+    await page.goto(base + "/admin/login", { waitUntil: "domcontentloaded" });
+    await page
+      .getByRole("button", {
+        name: "Open Nebula administration ↗",
+        exact: true,
+      })
+      .waitFor({ timeout: 45000 });
+    assert.equal(await page.locator('[data-action="auth-mode"]').count(), 0);
+    assert.equal(
+      await page.locator(".app-header .beta-label").textContent(),
+      "NEBULA ADMIN",
+    );
+    assert.equal((await fetch(base + "/api/admin/users")).status, 401);
+    await page.screenshot({
+      path: path.join(out, "operator-login-desktop.png"),
+      fullPage: true,
+    });
     await page.goto(base + "/dashboard/orders", {
       waitUntil: "domcontentloaded",
     });

@@ -198,13 +198,23 @@ const { chromium } = require("playwright");
     await clickSave(p);
   }
   try {
-    await page.goto(origin + "/login");
+    await page.goto(origin + "/admin/login");
     await page.getByRole("button", { name: "Continue with Google" }).waitFor();
     await page.screenshot({
       path: path.join(output, "login-desktop.png"),
       fullPage: true,
     });
+    assert.equal(await page.locator('[data-action="auth-mode"]').count(), 0);
     await page.getByRole("button", { name: "Continue with Google" }).click();
+    await page.locator(".admin-page").waitFor();
+    assert.equal(
+      await page.locator("#shopName").count(),
+      0,
+      "Operator does not need to create a flower shop",
+    );
+    await page
+      .getByRole("link", { name: "Florist workspace ↗", exact: true })
+      .click();
     await page.locator("#shopName").fill("Runtime Flower Room");
     await page.locator('[data-wizard="currency"]').selectOption("CAD");
     await page.locator('#createShopForm button[type="submit"]').click();
@@ -690,12 +700,90 @@ const { chromium } = require("playwright");
       }),
     );
     await page.reload();
+    await page.locator(".publication-checklist").waitFor();
+    assert.equal(
+      await page.locator("#grantSandboxAccess").count(),
+      0,
+      "No activation controls in florist workspace",
+    );
+    await page.goto(origin + "/admin");
+    await page
+      .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
+      .click();
     await page.locator("#grantSandboxAccess").click();
+    await page
+      .getByText("Activation audit (2 most recent)", { exact: true })
+      .waitFor();
+    await page.goto(origin + "/dashboard/billing");
     await page.locator('[data-action="publish-shop"]:enabled').waitFor();
     await page.locator('[data-action="publish-shop"]').click();
     await page.getByText("Ready to share.", { exact: true }).waitFor();
     assert.equal((await readShop()).subscription.source, "sandbox_test");
     assert.equal(await page.locator("#grantSandboxAccess").count(), 0);
+    await page.goto(origin + "/admin");
+    await page
+      .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
+      .click();
+    await page.locator("[data-admin-preview]").first().click();
+    await page.locator(".operator-tabs").waitFor();
+    assert.ok(new URL(page.url()).pathname.startsWith("/admin/shops/"));
+    assert.equal(await page.locator(".sidebar").count(), 0);
+    assert.equal(await page.locator('[data-action="save"]').count(), 0);
+    await page.locator(".operator-tabs [data-admin-orders]").click();
+    await page.locator(".requests-layout").waitFor();
+    await page.reload();
+    await page.locator(".requests-layout").waitFor();
+    assert.equal(await page.locator("#requestUpdateForm").count(), 0);
+    await page.screenshot({
+      path: path.join(output, "operator-inspection-mobile.png"),
+      fullPage: true,
+    });
+    await page.getByRole("button", { name: "Sign out", exact: true }).click();
+    await page.locator(".operator-login").waitFor();
+    assert.equal(new URL(page.url()).pathname, "/admin/login");
+    assert.equal(await page.locator(".request-list-item").count(), 0);
+    assert.equal(await page.locator('[data-action="auth-mode"]').count(), 0);
+    const floristOnly = await context({ width: 390, height: 844 }, "other");
+    const floristPage = await floristOnly.newPage();
+    let directoryRequests = 0;
+    floristPage.on("request", (r) => {
+      if (new URL(r.url()).pathname.startsWith("/api/admin/"))
+        directoryRequests++;
+    });
+    await floristPage.goto(origin + "/admin");
+    await floristPage
+      .getByRole("heading", { name: "Administrator access required." })
+      .waitFor();
+    assert.equal(await floristPage.locator(".admin-table").count(), 0);
+    await floristPage.goto(origin + `/admin/shops/${shop.id}/orders`);
+    await floristPage
+      .getByRole("heading", { name: "Administrator access required." })
+      .waitFor();
+    assert.equal(
+      directoryRequests,
+      0,
+      "Florist page never fetches another customer's admin data",
+    );
+    await floristPage.goto(origin + "/dashboard/billing");
+    await floristPage.locator(".plan-surface").waitFor();
+    assert.equal(await floristPage.locator("#grantSandboxAccess").count(), 0);
+    await floristOnly.close();
+    const switchLogin = await context();
+    const switchPage = await switchLogin.newPage();
+    await switchPage.goto(origin + "/admin/login");
+    await switchPage
+      .getByRole("link", { name: "florist sign-in", exact: true })
+      .click();
+    await switchPage
+      .getByRole("button", { name: "Continue with Google", exact: true })
+      .click();
+    await switchPage.locator(".sidebar").waitFor();
+    assert.equal(new URL(switchPage.url()).pathname, "/dashboard");
+    assert.equal(
+      await switchPage.locator(".app-header .beta-label").textContent(),
+      "FLORIST WORKSPACE",
+    );
+    await switchLogin.close();
     assert.deepEqual(errors, [], "No unhandled browser errors");
     assert.deepEqual(badRequests, [], "No unexpected outbound service");
     console.log(

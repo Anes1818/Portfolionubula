@@ -304,11 +304,17 @@ const { chromium } = require("playwright");
       )
       .waitFor();
     assert.equal(await page.locator("#requestUpdateForm").count(), 0);
+    assert.equal(
+      new URL(page.url()).pathname,
+      `/admin/shops/${shop.id}/orders`,
+    );
+    assert.equal(await page.locator(".sidebar").count(), 0);
     await page.goto(origin + "/dashboard/billing");
     await page.locator(".publication-issues li").first().waitFor();
+    assert.equal(await page.locator('[data-action="publish-shop"]').count(), 0);
     assert.equal(
-      await page.locator('[data-action="publish-shop"]').isEnabled(),
-      false,
+      await page.locator('[data-action="review-publication"]').isEnabled(),
+      true,
     );
     const other = await context("other"),
       otherPage = await other.newPage();

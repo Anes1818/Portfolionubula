@@ -19,6 +19,8 @@
       "/dashboard",
       "/dashboard/*",
       "/admin",
+      "/admin/*",
+      "/admin.html",
       "/s/*",
       "/api/*",
     ],

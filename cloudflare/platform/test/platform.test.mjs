@@ -668,6 +668,10 @@ test("draft/media mutations have owner-local rate caps and SPA routes serve the 
     "/dashboard/payments",
     "/s/test-flowers",
     "/admin",
+    "/admin/login",
+    "/admin/login/",
+    "/admin/shops/sh_" + "a".repeat(32) + "/preview",
+    "/admin/shops/sh_" + "a".repeat(32) + "/orders/",
   ]) {
     const response = await f.call(path, { token: null });
     assert.equal(response.status, 200);
@@ -681,6 +685,66 @@ test("draft/media mutations have owner-local rate caps and SPA routes serve the 
     (await f.call("/studio/missing.js", { token: null })).status,
     404,
   );
+});
+
+test("operator console bookmarks redirect locally while unknown admin pages stay absent", async () => {
+  const f = fixture();
+  for (const method of ["GET", "HEAD"]) {
+    const response = await f.call("/admin.html?source=bookmark", {
+      method,
+      token: null,
+    });
+    assert.equal(response.status, 302);
+    assert.equal(
+      response.headers.get("Location"),
+      origin + "/admin?source=bookmark",
+    );
+  }
+  for (const path of [
+    "/admin/unknown",
+    "/admin/shops/not-a-shop/preview",
+    "/admin/shops/sh_" + "a".repeat(32) + "/edit",
+  ])
+    assert.equal((await f.call(path, { token: null })).status, 404);
+  assert.equal(
+    (await f.call("/admin.html", { method: "POST", body: {}, token: null }))
+      .status,
+    404,
+  );
+  assert.equal(f.env.REGISTRY.objects.size, 0);
+  assert.equal(f.env.SHOPS.objects.size, 0);
+});
+
+test("florist credentials cannot list platform clients or grant access through operator APIs", async () => {
+  const f = fixture({
+    env: {
+      MANUAL_ACTIVATION_ENABLED: "true",
+      ENVIRONMENT: "test",
+      SANDBOX_TEST_ACCESS: "true",
+    },
+  });
+  const { shop } = await f.create();
+  for (const token of ["owner", "other"]) {
+    assert.equal((await f.call("/api/admin/users", { token })).status, 403);
+    assert.equal(
+      (
+        await f.call(`/api/admin/shops/${shop.id}/activation`, {
+          token,
+          method: "POST",
+          body: {
+            action: "test",
+            operationId: crypto.randomUUID(),
+            revision: 0,
+          },
+          headers: { "X-Platform-Admin": "verified" },
+        })
+      ).status,
+      403,
+    );
+  }
+  const current = await (await f.call(`/api/shops/${shop.id}`)).json();
+  assert.deepEqual(current.shop.subscription, { status: "inactive" });
+  assert.equal(current.shop.published, null);
 });
 
 const fixedProduct = (id = "product-1", priceCents = 2900) => ({

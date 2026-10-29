@@ -265,6 +265,13 @@ export function makeHandler({
         const target = new URL(url.pathname + url.search, env.CANONICAL_ORIGIN);
         return Response.redirect(target.href, 302);
       }
+      // Platform bookmarks lead to the operator console. The separate marketing
+      // site's legacy admin remains outside this Worker's routes.
+      if (path === "/admin.html" && ["GET", "HEAD"].includes(request.method))
+        return Response.redirect(
+          new URL("/admin" + url.search, url.origin).href,
+          302,
+        );
       if (!path.startsWith("/api/")) {
         requireValue(
           env.ASSETS?.fetch,
@@ -279,7 +286,9 @@ export function makeHandler({
             path,
           ) ||
           /^\/s\/[a-z0-9-]+\/?$/.test(path) ||
-          /^\/admin\/?$/.test(path)
+          /^\/admin(?:\/login|\/shops\/sh_[a-f0-9]{32}\/(?:preview|orders))?\/?$/.test(
+            path,
+          )
         )
           assetUrl.pathname = "/index.html";
         return decorateResponse(

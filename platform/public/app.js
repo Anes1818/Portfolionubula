@@ -30,7 +30,13 @@ function safeReturnPath(value) {
 }
 let afterLogin =
   safeReturnPath(new URLSearchParams(location.search).get("returnTo")) ||
-  (location.pathname.startsWith("/s/") ? location.pathname : "/dashboard");
+  (location.pathname.startsWith("/admin")
+    ? location.pathname === "/admin/login"
+      ? "/admin"
+      : location.pathname + location.search
+    : location.pathname.startsWith("/s/")
+      ? location.pathname
+      : "/dashboard");
 let user, auth, authApi, config, shop, draft, catalog;
 let sessionState = {},
   publicSnapshot = null,
@@ -107,6 +113,28 @@ const tabs = [
 const currency = () => draft?.currency || shop?.draft?.currency || "USD";
 const amount = (cents) => (cents == null ? "" : (cents / 100).toFixed(2));
 const route = () => location.pathname.replace(/\/$/, "") || "/dashboard";
+const operatorRoute = () => /^\/admin(?:\/|$)/.test(route());
+const adminView = () => {
+  const match = route().match(
+    /^\/admin\/shops\/(sh_[a-f0-9]{32})\/(preview|orders)$/,
+  );
+  return match ? { id: match[1], view: match[2] } : null;
+};
+const isOrdersRoute = () =>
+  route() === "/dashboard/orders" || adminView()?.view === "orders";
+function canonicalAdminBookmark() {
+  const params = new URLSearchParams(location.search),
+    id = params.get("adminShop");
+  if (
+    /^sh_[a-f0-9]{32}$/.test(id || "") &&
+    ["/dashboard/editor", "/dashboard/orders"].includes(route())
+  )
+    history.replaceState(
+      null,
+      "",
+      `/admin/shops/${id}/${isOrdersRoute() ? "orders" : "preview"}${params.get("view") === "live" ? "?view=live" : ""}`,
+    );
+}
 const studioLink = (card, order = false) =>
   "/studio/studio.html?" +
   new URLSearchParams({
@@ -240,22 +268,46 @@ function showMessage(text, error = false, id = "pageMessage") {
   announce(text);
 }
 function accountNav() {
+  const operator = operatorRoute();
+  document.body.classList.toggle("operator-workspace", operator);
+  document.querySelector(".app-header .beta-label").textContent = operator
+    ? "NEBULA ADMIN"
+    : "FLORIST WORKSPACE";
+  document.title = operator
+    ? "Nebula Admin · Customers & subscriptions"
+    : "Nebula · Your florist workspace";
+  const home = operator ? "/admin" : "/dashboard";
+  document
+    .querySelectorAll(".app-header .wordmark, .app-footer a")
+    .forEach((a) => a.setAttribute("href", home));
   $("accountNav").innerHTML = user
-    ? `<a class="plain-button" href="/dashboard" data-nav>My shop</a>${sessionState.isAdmin ? '<a class="plain-button" href="/admin" data-nav>Admin</a>' : ""}<span class="account-email">${html(user.email)}</span><button class="plain-button" data-action="signout">Sign out</button>`
-    : `<a class="plain-button" href="/login" data-nav>Sign in <span aria-hidden="true">↗</span></a>`;
+    ? `${operator ? '<a class="plain-button" href="/admin" data-nav>Customers & subscriptions</a><a class="plain-button" href="/dashboard" data-nav>Florist workspace ↗</a>' : '<a class="plain-button" href="/dashboard" data-nav>My shop</a>'}<span class="account-email">${html(user.email)}</span><button class="plain-button" data-action="signout">Sign out</button>`
+    : `<a class="plain-button" href="${operator ? "/admin/login" : "/login"}" data-nav>${operator ? "Administrator sign in" : "Florist sign in"} ↗</a>`;
 }
 async function navigate(path, replace = false) {
+  const destination = new URL(path, location.origin);
+  if (["/login", "/admin/login"].includes(destination.pathname))
+    afterLogin =
+      safeReturnPath(destination.searchParams.get("returnTo")) ||
+      (destination.pathname === "/admin/login" ? "/admin" : "/dashboard");
   if (publicSnapshot && !path.startsWith("/s/") && user?.emailVerified) {
     publicSnapshot = null;
     await loadSession();
   }
   inspector = null;
-  if (adminReadOnly && !path.includes("adminShop=")) {
+  if (adminReadOnly && !/^\/admin\/shops\//.test(path)) {
     await loadSession();
     adminReadOnly = false;
   }
   if (replace) history.replaceState(null, "", path);
   else history.pushState(null, "", path);
+  canonicalAdminBookmark();
+  const target = adminView();
+  if (target && user?.emailVerified && sessionState.isAdmin)
+    await loadAdminPreview(
+      target.id,
+      new URLSearchParams(location.search).get("view") || "draft",
+    );
   render();
   window.scrollTo({ top: 0 });
   main.focus({ preventScroll: true });
@@ -284,11 +336,21 @@ function field(
 }
 function shell(content, heading, description, eyebrow = "YOUR FLOWER SHOP") {
   const current = route();
+  if (adminReadOnly) {
+    main.innerHTML = `<section class="admin-page"><nav class="operator-tabs" aria-label="Nebula administration"><a href="/admin" data-nav>← Customers & subscriptions</a><span>Inspecting ${html(draft.name)} · READ ONLY</span><a href="/admin/shops/${shop.id}/preview" data-admin-preview data-id="${shop.id}" data-view="draft">Storefront preview</a><a href="/admin/shops/${shop.id}/orders" data-admin-orders data-id="${shop.id}">Customer requests</a></nav><div class="page-heading"><div><p class="eyebrow">NEBULA ADMIN · MERCHANT INSPECTION</p><h1>${heading}</h1><p class="subtle">${description}</p></div><span class="pill">READ ONLY</span></div>${notice()}${content}</section>`;
+    hydrateMedia();
+    return;
+  }
   main.innerHTML = `<div class="workspace"><aside class="sidebar"><div class="shop-mini"><div class="shop-monogram">${html((draft.name || "N").slice(0, 1))}</div><div><strong>${html(draft.name)}</strong><small>${adminReadOnly ? "Administrator preview" : isPublished() ? "Published shop" : "Private draft"}</small></div></div><nav class="sidebar-nav" aria-label="Shop settings">${tabs.map(([path, name, icon]) => `<a href="${path}" data-nav class="${current === path ? "active" : ""}" ${current === path ? 'aria-current="page"' : ""}><span class="nav-icon" aria-hidden="true">${icon}</span>${name}</a>`).join("")}</nav><div class="sidebar-bottom"><strong>${isPaid() ? "A space of your own." : "Free to find your finishing touches."}</strong><p>${isPaid() ? "Your paid plan lets you publish when your shop is ready. Square is optional." : "Your preview stays private. Activate the $29 monthly plan when you’re ready to publish."}</p><a href="${previewLink()}" data-nav class="plain-button">Visit my preview ↗</a></div></aside><section class="dashboard-content"><div class="page-heading"><div><p class="eyebrow">${eyebrow}</p><h1>${heading}</h1><p class="subtle">${description}</p></div>${adminReadOnly ? '<span class="pill">READ ONLY</span>' : saveControls()}</div>${notice()}${content}</section></div>`;
   hydrateMedia();
 }
 
 function renderLogin() {
+  if (operatorRoute()) {
+    loginMode = "signin";
+    main.innerHTML = `<section class="operator-login"><div><p class="eyebrow">NEBULA · PLATFORM ADMINISTRATION</p><h1>Your customers.<br><em>Your platform.</em></h1><p class="subtle">Manage florist accounts, subscription access and activation requests.</p></div><section class="auth-card"><p class="eyebrow">ADMINISTRATOR SIGN IN</p><h2>Welcome back.</h2><p class="subtle">Use your existing Nebula administrator account. Access is verified by the server.</p><div id="authMessage" class="notice" role="status" hidden></div><button class="google-button" data-action="google">Continue with Google</button><div class="divider">or use your email</div><form id="authForm"><label class="field">Administrator email<input id="email" name="email" type="email" autocomplete="email" required></label><label class="field"><span class="password-heading">Password<button class="plain-button" type="button" data-action="reset">Forgot password?</button></span><input id="password" name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Open Nebula administration ↗</button></form><p class="helper">For your own flower shop, use the separate <a href="/login" data-nav>florist sign-in</a>.</p></section></section>`;
+    return;
+  }
   const signup = loginMode === "signup";
   main.innerHTML = `<div class="login-layout"><section class="login-story"><p class="eyebrow">A LITTLE SPACE FOR YOUR FLOWER SHOP</p><h1>Your flowers.<br>Your name.<br><em>A beautiful beginning.</em></h1><p class="subtle">Bring your collection together, make it feel like you, and explore your very own bouquet studio.</p><div class="story-image"><img src="/assets/studio-pink.webp" alt="Soft pink roses and delicate white flowers, wrapped in ivory paper" width="928" height="1152"></div><div class="story-caption"><span>YOUR CRAFT. THEIR IMAGINATION.</span><span>✳</span></div></section><section class="auth-card"><p class="eyebrow">${signup ? "LET’S GET ACQUAINTED" : "WELCOME TO YOUR STUDIO"}</p><h2>${signup ? "Something lovely starts here." : "A little more you."}</h2><p class="subtle">${signup ? "Create your account and start your free private shop preview." : "Sign in to pick up where your flowers left off."}</p><div id="authMessage" class="notice" role="status" hidden></div><button class="google-button" data-action="google"><span class="google-icon" aria-hidden="true">G</span>Continue with Google</button><div class="divider">or use your email</div><form id="authForm"><label class="field">Email address<input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@yourflowershop.com" required></label><label class="field"><span class="password-heading">Password${signup ? "" : '<button class="plain-button" type="button" data-action="reset">Forgot password?</button>'}</span><input id="password" name="password" type="password" autocomplete="${signup ? "new-password" : "current-password"}" ${signup ? 'minlength="10"' : ""} required placeholder="${signup ? "At least 10 characters" : "Your password"}"></label><button type="submit" class="button">${signup ? "Create my account" : "Step into my studio"}<span aria-hidden="true">↗</span></button></form><p class="auth-bottom">${signup ? "Already have an account?" : "New around here?"} <button class="plain-button" data-action="auth-mode">${signup ? "Sign in" : "Create an account"}</button></p><p class="beta-note">Your private preview is free. Creating an account does not activate a paid subscription or open customer orders.</p></section></div>`;
   if (config?.signupMode === "private-beta") {
@@ -477,7 +539,7 @@ function renderBilling() {
             )
             .join("")}</div>`
         : ""
-    }<button class="button" data-action="${canPublish ? "publish-shop" : "review-publication"}" ${publicationState.loading || saving ? "disabled" : ""}>${canPublish ? (active ? "Publish latest changes" : "Publish my shop") : "Review publishing requirements"} ↗</button><p class="helper" role="status">${html(!paid ? (config.sandboxTestAccess ? "Test access is not active. Use the administrator test-access button on this page." : "Activate your plan before publishing. Your preview and reserved link are ready.") : dirty ? "Save your edits before publishing." : publicationState.error || (publicationState.report?.canPublish ? "Your saved draft is ready to publish." : "Review the checklist below for missing prices or shop details."))}</p><p class="helper">${!paid ? "Your public address remains locked until your subscription is verified and you publish." : !config.publishingEnabled ? "Publication setup is pending. Your active plan does not bypass the server’s publication checks." : "Publication saves a separate snapshot. Later draft edits stay private."}</p></section></div><section class="surface domain-plan"><div><span class="pill">COMING LATER</span><h3>Your own domain · $35 USD / month</h3><p class="subtle">A future option for your own website address. Domain registration and renewal are paid by you, separately.</p><p class="helper">Domain setup and verification are being tested. This plan is not available to purchase yet.</p></div><button class="button secondary" disabled>Own-domain setup preparing</button></section>`,
+    }<button class="button" data-action="${canPublish ? "publish-shop" : "review-publication"}" ${publicationState.loading || saving ? "disabled" : ""}>${canPublish ? (active ? "Publish latest changes" : "Publish my shop") : "Review publishing requirements"} ↗</button><p class="helper" role="status">${html(!paid ? (config.sandboxTestAccess ? "Test access is not active. Ask the Nebula administrator to activate this shop in the separate admin console." : "Activate your plan before publishing. Your preview and reserved link are ready.") : dirty ? "Save your edits before publishing." : publicationState.error || (publicationState.report?.canPublish ? "Your saved draft is ready to publish." : "Review the checklist below for missing prices or shop details."))}</p><p class="helper">${!paid ? "Your public address remains locked until your subscription is verified and you publish." : !config.publishingEnabled ? "Publication setup is pending. Your active plan does not bypass the server’s publication checks." : "Publication saves a separate snapshot. Later draft edits stay private."}</p></section></div><section class="surface domain-plan"><div><span class="pill">COMING LATER</span><h3>Your own domain · $35 USD / month</h3><p class="subtle">A future option for your own website address. Domain registration and renewal are paid by you, separately.</p><p class="helper">Domain setup and verification are being tested. This plan is not available to purchase yet.</p></div><button class="button secondary" disabled>Own-domain setup preparing</button></section>`,
     "A beautiful space.<br><em>A clear next step.</em>",
     "Free private preview. $29 for 30 days after manual activation.",
     "PLAN & PUBLISHING",
@@ -485,19 +547,6 @@ function renderBilling() {
   renderShopAddress();
   renderPublicationChecklist();
   mountManualPlan({
-    isAdmin: sessionState.isAdmin,
-    onAccessChange: (next) => {
-      shop = next;
-      // Discard any readiness response started before the access grant.
-      publicationState = {
-        shopId: null,
-        version: null,
-        report: null,
-        error: "",
-        loading: false,
-      };
-      renderBilling();
-    },
     shop,
     config,
     api,
@@ -763,7 +812,7 @@ async function loadMerchantRequests(more = false) {
   const params = new URLSearchParams({ status: state.status, limit: "25" });
   if (more) params.set("cursor", state.nextCursor);
   const path = requestsPath();
-  if (route() === "/dashboard/orders") renderOrders();
+  if (isOrdersRoute()) renderOrders();
   try {
     const data = await api(path + "?" + params);
     if (state !== ordersState) return;
@@ -784,8 +833,7 @@ async function loadMerchantRequests(more = false) {
     }
   } finally {
     state.loading = false;
-    if (state === ordersState && route() === "/dashboard/orders")
-      renderOrders();
+    if (state === ordersState && isOrdersRoute()) renderOrders();
   }
 }
 async function selectRequest(id, review = false) {
@@ -822,7 +870,7 @@ async function selectRequest(id, review = false) {
   } finally {
     if (state === ordersState && state.selectedId === id) {
       state.detailLoading = false;
-      if (route() === "/dashboard/orders") {
+      if (isOrdersRoute()) {
         renderOrders();
         if (matchMedia("(max-width:1150px)").matches)
           main
@@ -869,8 +917,7 @@ async function saveRequestChanges() {
     }
   } finally {
     state.busy = false;
-    if (state === ordersState && route() === "/dashboard/orders")
-      renderOrders();
+    if (state === ordersState && isOrdersRoute()) renderOrders();
   }
 }
 function renderLocked() {
@@ -1042,12 +1089,17 @@ function render() {
   if (path.startsWith("/s/")) return renderPreview();
   if (!user) return renderLogin();
   if (!user.emailVerified) return renderVerification();
-  if (path === "/admin")
-    return sessionState.isAdmin
-      ? renderAdmin()
-      : renderRestricted(
-          "This area is available only to the platform administrator.",
-        );
+  if (operatorRoute()) {
+    if (!sessionState.isAdmin) {
+      main.innerHTML = `<section class="empty-screen"><p class="eyebrow">NEBULA ADMIN</p><h1>Administrator access required.</h1><p class="subtle">This account can manage its own flower shop. Customer subscriptions and platform controls are reserved for Nebula administrators.</p><a class="button" href="/dashboard" data-nav>Open my florist workspace ↗</a></section>`;
+      return;
+    }
+    if (path === "/admin/login") history.replaceState(null, "", "/admin");
+    const target = adminView();
+    if (target && adminReadOnly)
+      return target.view === "orders" ? renderOrders() : renderEditor();
+    return renderAdmin();
+  }
   if (pageMessage && !catalog) return renderRestricted(pageMessage);
   if (!shop) return renderWizard();
   if (path === "/login") history.replaceState(null, "", "/dashboard");
@@ -1131,7 +1183,7 @@ function adminDate(value) {
 function renderAdmin() {
   const rows = adminState.users;
   const detail = adminState.detail;
-  main.innerHTML = `<section class="admin-page"><div class="page-heading"><div><p class="eyebrow">NEBULA · PLATFORM OWNER</p><h1>A little overview.<br><em>Every growing shop.</em></h1><p class="subtle">Merchant accounts, manual access and saved storefronts.</p></div><a class="button secondary small" href="/admin.html">Legacy orders & leads ↗</a></div>${notice()}<div class="admin-summary"><div class="surface"><span class="tiny-label">ACCOUNTS LOADED</span><strong>${rows.length}</strong></div><div class="surface"><span class="tiny-label">WITH A SHOP</span><strong>${rows.filter((row) => row.shopId || row.shop?.id).length}</strong></div><div class="surface"><span class="tiny-label">ACTIVE PLANS</span><strong>${rows.filter((row) => adminStatus(row) === "active").length}</strong></div><div class="surface"><span class="tiny-label">PUBLISHED</span><strong>${rows.filter((row) => row.publishedVersion || row.shop?.published).length}</strong></div></div><div class="admin-layout"><section class="surface"><form id="adminSearchForm" class="admin-search"><input id="adminSearch" type="search" value="${html(adminState.query)}" placeholder="Search email, shop or slug…" aria-label="Search accounts"><button class="button small" type="submit">Search</button></form><p class="helper">Counts reflect the loaded page${adminState.query ? " and search" : ""}. Accounts without a shop are included.</p><div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>ACCOUNT / SHOP</th><th>SUBSCRIPTION</th><th>STATUS</th><th>LAST ACTIVITY</th><th></th></tr></thead><tbody>${
+  main.innerHTML = `<section class="admin-page"><div class="page-heading"><div><p class="eyebrow">NEBULA · PLATFORM OWNER</p><h1>Customers<br><em>& subscriptions.</em></h1><p class="subtle">Manage your florist customers, activation requests and subscription access. Each florist has a separate shop workspace.</p></div><a class="button secondary small" href="https://nebulastudio.site/admin.html" target="_blank" rel="noopener noreferrer">Legacy orders & leads ↗</a></div>${notice()}<div class="admin-summary"><div class="surface"><span class="tiny-label">ACCOUNTS LOADED</span><strong>${rows.length}</strong></div><div class="surface"><span class="tiny-label">WITH A SHOP</span><strong>${rows.filter((row) => row.shopId || row.shop?.id).length}</strong></div><div class="surface"><span class="tiny-label">ACTIVE PLANS</span><strong>${rows.filter((row) => adminStatus(row) === "active").length}</strong></div><div class="surface"><span class="tiny-label">PUBLISHED</span><strong>${rows.filter((row) => row.publishedVersion || row.shop?.published).length}</strong></div></div><div class="admin-layout"><section class="surface"><form id="adminSearchForm" class="admin-search"><input id="adminSearch" type="search" value="${html(adminState.query)}" placeholder="Search email, shop or slug…" aria-label="Search accounts"><button class="button small" type="submit">Search</button></form><p class="helper">Counts reflect the loaded page${adminState.query ? " and search" : ""}. Accounts without a shop are included.</p><div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>ACCOUNT / SHOP</th><th>SUBSCRIPTION</th><th>STATUS</th><th>LAST ACTIVITY</th><th></th></tr></thead><tbody>${
     rows
       .map((row) => {
         const id = row.shopId || row.shop?.id;
@@ -1139,7 +1191,7 @@ function renderAdmin() {
       })
       .join("") ||
     `<tr><td colspan="5">${adminState.loading ? "Loading accounts…" : "No matching accounts."}</td></tr>`
-  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd>${html(detail.shop.slug)}</dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/dashboard/editor?adminShop=${encodeURIComponent(detail.shop.id)}&view=draft" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/dashboard/editor?adminShop=${encodeURIComponent(detail.shop.id)}&view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/dashboard/orders?adminShop=${encodeURIComponent(detail.shop.id)}" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Storefront previews are read only. Access changes use the separate audited controls below.</p>` : '<span class="admin-flower">✳</span><h2>Every shop has a story.</h2><p class="subtle">Choose a merchant to inspect their plan, draft and live storefront.</p>'}</aside></div></section>`;
+  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd>${html(detail.shop.slug)}</dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview?view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/orders" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Storefront previews are read only. Access changes use the separate audited controls below.</p>` : '<span class="admin-flower">✳</span><h2>Every shop has a story.</h2><p class="subtle">Choose a merchant to inspect their plan, draft and live storefront.</p>'}</aside></div></section>`;
   if (detail)
     mountActivationAdmin({
       shop: detail.shop,
@@ -1211,14 +1263,11 @@ async function loadAdminPreview(id, view = "draft") {
 }
 async function renderHistoryRoute() {
   try {
+    canonicalAdminBookmark();
     const params = new URLSearchParams(location.search);
-    const adminShop = ["/dashboard/editor", "/dashboard/orders"].includes(
-      route(),
-    )
-      ? params.get("adminShop")
-      : null;
-    if (adminShop)
-      await loadAdminPreview(adminShop, params.get("view") || "draft");
+    const target = adminView();
+    if (target && sessionState.isAdmin)
+      await loadAdminPreview(target.id, params.get("view") || "draft");
     else if (
       adminReadOnly ||
       (publicSnapshot && !route().startsWith("/s/") && user?.emailVerified)
@@ -1231,19 +1280,7 @@ async function renderHistoryRoute() {
   } catch (error) {
     pageMessage = errorText(error);
     // Preserve the current draft if the destination cannot be loaded.
-    if (adminReadOnly)
-      history.replaceState(
-        null,
-        "",
-        "/dashboard/editor?adminShop=" +
-          encodeURIComponent(shop.id) +
-          "&view=draft",
-      );
-    else if (
-      route() === "/dashboard/editor" &&
-      new URLSearchParams(location.search).has("adminShop")
-    )
-      history.replaceState(null, "", "/admin");
+    if (operatorRoute()) history.replaceState(null, "", "/admin");
     render();
   }
 }
@@ -1950,6 +1987,17 @@ document.addEventListener("click", async (event) => {
       clearTimeout(saveTimer);
       await authApi.signOut(auth);
       user = shop = draft = catalog = null;
+      adminReadOnly = false;
+      publicSnapshot = null;
+      sessionState = {};
+      adminState = {
+        users: [],
+        nextCursor: null,
+        query: "",
+        detail: null,
+        loading: false,
+      };
+      afterLogin = operatorRoute() ? "/admin" : "/dashboard";
       ordersState = emptyOrdersState();
       publicationState = {
         shopId: null,
@@ -1963,7 +2011,7 @@ document.addEventListener("click", async (event) => {
       for (const value of mediaCache.values())
         value.then((url) => URL.revokeObjectURL(url)).catch(() => {});
       mediaCache.clear();
-      await navigate("/login", true);
+      await navigate(operatorRoute() ? "/admin/login" : "/login", true);
     });
   else if (action === "send-verification")
     await authTask(button, async () => {
@@ -2266,6 +2314,7 @@ window.addEventListener("beforeunload", (event) => {
 });
 
 async function start() {
+  canonicalAdminBookmark();
   const path = route(),
     publicRoute = path.startsWith("/s/");
   if (publicRoute) {
@@ -2286,15 +2335,10 @@ async function start() {
           publicSnapshot = null;
         else publicSnapshot = displayedPublic;
       }
-      const params = new URLSearchParams(location.search);
-      if (
-        ["/dashboard/editor", "/dashboard/orders"].includes(path) &&
-        params.get("adminShop")
-      )
-        await loadAdminPreview(
-          params.get("adminShop"),
-          params.get("view") || "draft",
-        );
+      const params = new URLSearchParams(location.search),
+        target = adminView();
+      if (target && sessionState.isAdmin)
+        await loadAdminPreview(target.id, params.get("view") || "draft");
       if (path === "/dashboard/billing") {
         try {
           const status = await api(

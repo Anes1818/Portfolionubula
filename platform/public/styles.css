@@ -3427,3 +3427,63 @@ body.public-shop > .app-footer {
     flex-direction: column;
   }
 }
+
+/* Platform operations and florist tools have separate shells and navigation. */
+.operator-workspace .beta-label {
+  background: #342534;
+  color: #fff;
+}
+.operator-login {
+  max-width: 1120px;
+  margin: 48px auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 64px;
+}
+.operator-login .auth-card {
+  width: 100%;
+}
+.operator-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line, #e8ded7);
+}
+.operator-tabs span {
+  margin-right: auto;
+  font-size: 13px;
+  color: #746c70;
+}
+.operator-workspace .app-footer > span {
+  visibility: hidden;
+}
+@media (max-width: 760px) {
+  .operator-login {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 12px auto;
+    padding: 20px;
+  }
+  .operator-tabs {
+    gap: 14px;
+  }
+  .operator-tabs span {
+    flex-basis: 100%;
+  }
+  .operator-workspace .app-header {
+    flex-wrap: wrap;
+  }
+  .operator-workspace .account-nav {
+    flex-basis: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+  .operator-workspace .account-nav a {
+    white-space: nowrap;
+  }
+}

@@ -1,7 +1,10 @@
 # Nebula florist platform, v4
 
 Current private-beta app: https://app.nebulastudio.site/login
-Platform administrator: https://app.nebulastudio.site/admin
+Platform administrator sign-in: https://app.nebulastudio.site/admin/login
+Florist sign-in: https://app.nebulastudio.site/login
+
+The operator console (`/admin`) manages florist customers, activation requests and subscription access. Each florist's own workspace (`/dashboard`) manages only their shop, catalogue, orders and Square connection. Admin inspection uses `/admin/shops/:id/preview` and `/admin/shops/:id/orders`, with a read-only operator shell. Test access and payment-confirmation controls appear only in the operator console. The role is verified on the server; the sign-in page does not grant administrator access. Existing dashboard `adminShop` bookmarks map to the operator paths. Platform `/admin.html` bookmarks redirect to `/admin`; the apex website's legacy admin remains at `https://nebulastudio.site/admin.html` for historical records.
 
 This service uses the existing `nebula` Worker and existing SQLite Durable Objects. The main GitHub Pages site, Ray's existing shop and payment services are separate. The new `app` subdomain is a Worker Custom Domain; the apex domain is not moved. The old workers.dev page redirects to the branded app. Firebase must authorize `app.nebulastudio.site` (owner confirmed this on 2026-10-28).
 
@@ -19,7 +22,7 @@ This service uses the existing `nebula` Worker and existing SQLite Durable Objec
 
 The current v4 supports free shop signup, private editing and manual activation. Publication still requires an active server-owned entitlement and a complete saved draft. The operator records a verified USD 29 commercial PayPal payment for 30 days in the admin panel; PayPal collection remains external and manual. References cannot be reused across shops. Automatic subscription billing stays disabled.
 
-Square OAuth, hosted checkout, private receipts and payment/refund reconciliation are implemented. Real Square Sandbox acceptance is still outstanding because the developer application/test seller and protected credentials have not been created. The main app leaves Square connection, checkout and production approval disabled. Switching a single flag cannot start live charges. The separate invited sandbox Worker is deployed with explicitly simulated test access and isolated storage; provider credentials and real Sandbox acceptance are still pending.
+Square OAuth, hosted checkout, private receipts and payment/refund reconciliation are implemented. The developer application/test seller and required secret names have been configured, but real Square Sandbox acceptance is still outstanding. The main app leaves Square connection, checkout and production approval disabled. Switching a single flag cannot start live charges. The separate invited sandbox Worker is deployed with explicitly simulated test access and isolated storage; credential values and actual provider acceptance remain to be verified.
 
 See `docs/PLATFORM-V4-PAYMENTS.md` for exact routes/behavior, remaining account setup, isolated Sandbox instructions and required acceptance. Earlier v1–v3 notes are historical release records. Ray's existing site and payment service remain separate and unchanged.
 
