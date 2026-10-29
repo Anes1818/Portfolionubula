@@ -1,6 +1,10 @@
 import { initialize, getUser, refreshUser, token, api } from "/session.js";
 import { openOrderRequest } from "/order-ui.js";
-import { mountManualPlan, mountActivationAdmin } from "/manual-ui.js";
+import {
+  mountManualPlan,
+  mountActivationAdmin,
+  clearActivationPanels,
+} from "/manual-ui.js";
 import { mountCommerce } from "/commerce-ui.js";
 
 const $ = (id) => document.getElementById(id);
@@ -83,7 +87,11 @@ let adminState = {
   users: [],
   nextCursor: null,
   query: "",
+  filter: "",
   detail: null,
+  detailLoading: false,
+  selectionId: null,
+  feedback: null,
   loading: false,
 };
 let version = null,
@@ -1180,46 +1188,109 @@ function adminDate(value) {
         year: "numeric",
       });
 }
+async function reauthenticateAdministrator(password) {
+  if (!sessionState.isAdmin || !auth.currentUser)
+    throw Error("Sign in with your administrator account first.");
+  const current = auth.currentUser;
+  const google = (current.providerData || []).some(
+    (p) => p.providerId === "google.com",
+  );
+  if (
+    google ||
+    !(current.providerData || []).some((p) => p.providerId === "password")
+  ) {
+    await authApi.reauthenticateWithPopup(
+      current,
+      new authApi.GoogleAuthProvider(),
+    );
+  } else {
+    if (!password)
+      throw Error("Enter your administrator password to verify this session.");
+    await authApi.reauthenticateWithCredential(
+      current,
+      authApi.EmailAuthProvider.credential(current.email, password),
+    );
+  }
+  await current.getIdToken(true);
+}
 function renderAdmin() {
   const rows = adminState.users;
   const detail = adminState.detail;
-  main.innerHTML = `<section class="admin-page"><div class="page-heading"><div><p class="eyebrow">NEBULA · PLATFORM OWNER</p><h1>Customers<br><em>& subscriptions.</em></h1><p class="subtle">Manage your florist customers, activation requests and subscription access. Each florist has a separate shop workspace.</p></div><a class="button secondary small" href="https://nebulastudio.site/admin.html" target="_blank" rel="noopener noreferrer">Legacy orders & leads ↗</a></div>${notice()}<div class="admin-summary"><div class="surface"><span class="tiny-label">ACCOUNTS LOADED</span><strong>${rows.length}</strong></div><div class="surface"><span class="tiny-label">WITH A SHOP</span><strong>${rows.filter((row) => row.shopId || row.shop?.id).length}</strong></div><div class="surface"><span class="tiny-label">ACTIVE PLANS</span><strong>${rows.filter((row) => adminStatus(row) === "active").length}</strong></div><div class="surface"><span class="tiny-label">PUBLISHED</span><strong>${rows.filter((row) => row.publishedVersion || row.shop?.published).length}</strong></div></div><div class="admin-layout"><section class="surface"><form id="adminSearchForm" class="admin-search"><input id="adminSearch" type="search" value="${html(adminState.query)}" placeholder="Search email, shop or slug…" aria-label="Search accounts"><button class="button small" type="submit">Search</button></form><p class="helper">Counts reflect the loaded page${adminState.query ? " and search" : ""}. Accounts without a shop are included.</p><div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>ACCOUNT / SHOP</th><th>SUBSCRIPTION</th><th>STATUS</th><th>LAST ACTIVITY</th><th></th></tr></thead><tbody>${
+  const actorUid = user?.uid;
+  main.innerHTML = `<section class="admin-page"><div class="page-heading"><div><p class="eyebrow">NEBULA · PLATFORM OWNER</p><h1>Customers<br><em>& subscriptions.</em></h1><p class="subtle">Manage your florist customers, activation requests and subscription access. Each florist has a separate shop workspace.</p><span class="pill">${config.sandboxTestAccess ? "SANDBOX · TEST ACCESS ONLY" : "MAIN PLATFORM · VERIFIED PAYMENTS"}</span></div><a class="button secondary small" href="https://nebulastudio.site/admin.html" target="_blank" rel="noopener noreferrer">Legacy orders & leads ↗</a></div>${notice()}${adminState.feedback ? `<div class="notice admin-feedback" role="status"><strong>${html(adminState.feedback.message)}</strong><p>Shop: ${html(adminState.feedback.name)} · ${html(adminState.feedback.id)}</p></div>` : ""}<div class="admin-summary"><div class="surface"><span class="tiny-label">ACCOUNTS LOADED</span><strong>${rows.length}</strong></div><div class="surface"><span class="tiny-label">WITH A SHOP</span><strong>${rows.filter((row) => row.shopId || row.shop?.id).length}</strong></div><div class="surface"><span class="tiny-label">ACTIVE PLANS</span><strong>${rows.filter((row) => adminStatus(row) === "active").length}</strong></div><div class="surface"><span class="tiny-label">PUBLISHED</span><strong>${rows.filter((row) => row.publishedVersion || row.shop?.published).length}</strong></div></div><div class="admin-layout"><section class="surface"><form id="adminSearchForm" class="admin-search"><input id="adminSearch" type="search" value="${html(adminState.query)}" placeholder="Search email, shop or slug…" aria-label="Search accounts"><button class="button small" type="submit">Search</button><button class="button secondary small" type="button" data-action="admin-refresh" ${adminState.loading ? "disabled" : ""}>${adminState.loading ? "Refreshing…" : "Refresh list ↻"}</button></form><nav class="request-filters" aria-label="Filter florist customers">${[
+    ["", "All accounts"],
+    ["activation_requested", "Activation requests"],
+    ["active", "Active"],
+    ["suspended", "Suspended"],
+  ]
+    .map(
+      ([value, label]) =>
+        `<button class="button secondary small ${adminState.filter === value ? "selected" : ""}" data-action="admin-filter" data-status="${value}" aria-pressed="${(adminState.filter || "") === value}">${label}</button>`,
+    )
+    .join(
+      "",
+    )}</nav><p class="helper">Counts reflect the loaded page${adminState.query ? " and search" : ""}. Accounts without a shop are included.</p><div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>ACCOUNT / SHOP</th><th>SUBSCRIPTION</th><th>STATUS</th><th>LAST ACTIVITY</th><th></th></tr></thead><tbody>${
     rows
       .map((row) => {
         const id = row.shopId || row.shop?.id;
-        return `<tr><td><strong>${html(row.name || row.shop?.draft?.name || "No shop yet")}</strong><span>${html(row.email || row.uid)}</span><small>${html(row.slug || row.shop?.slug || "Account created · shop not started")}</small></td><td><span class="pill ${adminStatus(row) === "active" ? "green" : ""}">${html(adminStatus(row))}</span></td><td>${html(row.status || (row.publishedVersion ? "published" : id ? "draft" : "no shop"))}</td><td>${adminDate(row.lastSeenAt || row.lastActiveAt || row.updatedAt)}</td><td>${id ? `<button class="plain-button" data-action="admin-select" data-id="${html(id)}">Inspect ↗</button>` : "—"}</td></tr>`;
+        return `<tr class="${id === adminState.selectionId ? "selected" : ""}"><td><strong>${html(row.name || row.shop?.draft?.name || "No shop yet")}</strong><span>${html(row.email || row.uid)}</span><small>${html(row.slug || row.shop?.slug || "Account created · shop not started")}</small></td><td><span class="pill ${adminStatus(row) === "active" ? "green" : ""}">${html(adminStatus(row))}</span></td><td>${html(row.status || (row.publishedVersion ? "published" : id ? "draft" : "no shop"))}</td><td>${adminDate(row.lastSeenAt || row.lastActiveAt || row.updatedAt)}</td><td>${id ? `<button class="plain-button" data-action="admin-select" data-id="${html(id)}" aria-pressed="${id === adminState.selectionId}">Manage access ↗</button>` : "—"}</td></tr>`;
       })
       .join("") ||
     `<tr><td colspan="5">${adminState.loading ? "Loading accounts…" : "No matching accounts."}</td></tr>`
-  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd>${html(detail.shop.slug)}</dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview?view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/orders" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Storefront previews are read only. Access changes use the separate audited controls below.</p>` : '<span class="admin-flower">✳</span><h2>Every shop has a story.</h2><p class="subtle">Choose a merchant to inspect their plan, draft and live storefront.</p>'}</aside></div></section>`;
+  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd><a href="${html(location.origin + "/s/" + encodeURIComponent(detail.shop.slug))}" target="_blank" rel="noopener noreferrer">${html(location.host + "/s/" + detail.shop.slug)}</a><small>${detail.shop.published ? "Published snapshot saved" : "Reserved · not published"}</small></dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview?view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/orders" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Storefront previews are read only. Access changes use the separate audited controls below.</p>` : '<span class="admin-flower">✳</span><h2>${adminState.detailLoading ? "Loading shop…" : "Choose a florist."}</h2><p class="subtle">${adminState.detailLoading ? "Loading this florist’s access settings and saved shop." : "Select Manage access to activate, extend or suspend a subscription and review the shop."}</p>'}</aside></div></section>`;
   if (detail)
     mountActivationAdmin({
       shop: detail.shop,
       config,
       api,
-      onChange: (next) => {
-        adminState.detail.shop = next;
-        loadAdminUsers();
+      reauthenticate: reauthenticateAdministrator,
+      reauthMethod:
+        (user?.providerData || []).some((p) => p.providerId === "password") &&
+        !(user?.providerData || []).some((p) => p.providerId === "google.com")
+          ? "password"
+          : "google",
+      onChange: async (next, message) => {
+        if (!sessionState.isAdmin || user?.uid !== actorUid) return;
+        adminState.feedback = {
+          id: next.id,
+          name: next.draft.name,
+          message: message || "Shop access updated successfully.",
+        };
+        if (adminState.detail?.shop.id === next.id)
+          adminState.detail.shop = next;
+        if (route() === "/admin") renderAdmin();
+        await loadAdminUsers();
       },
     });
   if (!adminState.loaded && !adminState.loading) loadAdminUsers();
 }
 async function loadAdminUsers(more = false) {
-  adminState.loading = true;
+  const state = adminState,
+    generation = (state.generation || 0) + 1;
+  state.generation = generation;
+  state.loading = true;
+  if (route() === "/admin") renderAdmin();
   try {
-    const params = new URLSearchParams({ q: adminState.query });
+    const params = new URLSearchParams({ q: state.query });
+    if (state.filter) params.set("status", state.filter);
     if (more && adminState.nextCursor)
       params.set("cursor", adminState.nextCursor);
     const data = await api("/api/admin/users?" + params);
+    if (state !== adminState || state.generation !== generation) return;
+    pageMessage = "";
     adminState.users = more ? [...adminState.users, ...data.users] : data.users;
     adminState.nextCursor = data.nextCursor || null;
     adminState.loaded = true;
   } catch (error) {
-    pageMessage = errorText(error);
-    adminState.loaded = true;
+    if (state === adminState && state.generation === generation) {
+      pageMessage = errorText(error);
+      adminState.loaded = true;
+    }
   } finally {
-    adminState.loading = false;
-    if (route() === "/admin") renderAdmin();
+    if (state === adminState && state.generation === generation) {
+      state.loading = false;
+      if (route() === "/admin") renderAdmin();
+    }
   }
 }
 async function preserveDraftBeforeAdminPreview() {
@@ -1949,12 +2020,38 @@ document.addEventListener("click", async (event) => {
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   } else if (action === "admin-more") await loadAdminUsers(true);
-  else if (action === "admin-select")
+  else if (action === "admin-refresh") await loadAdminUsers();
+  else if (action === "admin-filter") {
+    const status = button.dataset.status;
+    if (!["", "activation_requested", "active", "suspended"].includes(status))
+      return;
+    adminState.filter = status;
+    adminState.nextCursor = null;
+    renderAdmin();
+    await loadAdminUsers();
+  } else if (action === "admin-select")
     await authTask(button, async () => {
-      adminState.detail = await api(
-        "/api/admin/shops/" + encodeURIComponent(button.dataset.id),
-      );
+      const id = button.dataset.id;
+      const state = adminState;
+      state.selectionId = id;
+      state.detail = null;
+      state.detailLoading = true;
       renderAdmin();
+      try {
+        const result = await api("/api/admin/shops/" + encodeURIComponent(id));
+        if (state === adminState && state.selectionId === id)
+          state.detail = result;
+      } finally {
+        if (state === adminState && state.selectionId === id) {
+          state.detailLoading = false;
+          if (route() === "/admin") {
+            renderAdmin();
+            main
+              .querySelector(".admin-detail")
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      }
     });
   else if (action === "auth-mode") {
     loginMode = loginMode === "signin" ? "signup" : "signin";
@@ -1987,6 +2084,7 @@ document.addEventListener("click", async (event) => {
       clearTimeout(saveTimer);
       await authApi.signOut(auth);
       user = shop = draft = catalog = null;
+      clearActivationPanels();
       adminReadOnly = false;
       publicSnapshot = null;
       sessionState = {};

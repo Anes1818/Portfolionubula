@@ -122,6 +122,7 @@ const { chromium } = require("playwright");
         export async function signInWithPopup(){sessionStorage.setItem('qaIdentity','owner');setUser('owner');listener?.(auth.currentUser);return{user:auth.currentUser};}
         export async function signOut(){sessionStorage.removeItem('qaIdentity');setUser(null);listener?.(null);}
         export const signInWithEmailAndPassword=signInWithPopup;
+        export const reauthenticateWithPopup=async()=>({user:auth.currentUser});
         export async function sendPasswordResetEmail(){throw Error('Outbound email is forbidden in this test');}
         export async function sendEmailVerification(){throw Error('Outbound email is forbidden in this test');}
       `,
@@ -656,10 +657,61 @@ const { chromium } = require("playwright");
       .click();
     await page.locator("#manualActivationForm").waitFor();
     await page
+      .locator(
+        '[data-action="admin-filter"][data-status="activation_requested"]',
+      )
+      .click();
+    await page
+      .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
+      .waitFor();
+    await page.locator('[data-action="admin-filter"][data-status=""]').click();
+    await page
+      .locator(`[data-action="admin-select"][data-id="${satinShop.id}"]`)
+      .waitFor();
+    await page
       .locator('#manualActivationForm input[name="reference"]')
       .fill("BROWSER-PAYPAL-0001");
     await page.locator('#manualActivationForm input[name="confirmed"]').check();
+    let releaseActivation, postedActivation;
+    const activationPosted = new Promise(
+      (resolve) => (postedActivation = resolve),
+    );
+    await owner.route(
+      `**/api/admin/shops/${shop.id}/activation`,
+      async (route) => {
+        if (route.request().method() !== "POST") return route.continue();
+        const response = await route.fetch();
+        await new Promise((resolve) => {
+          releaseActivation = resolve;
+          postedActivation();
+        });
+        await route.fulfill({ response });
+      },
+    );
     await page.locator('#manualActivationForm button[type="submit"]').click();
+    await activationPosted;
+    assert.equal(await page.locator("#suspendAccess").isDisabled(), true);
+    assert.equal(
+      await page.locator(".manual-admin-panel").getAttribute("aria-busy"),
+      "true",
+    );
+    await page
+      .locator(`[data-action="admin-select"][data-id="${satinShop.id}"]`)
+      .click();
+    await page
+      .locator(".admin-detail > h2")
+      .filter({ hasText: satinShop.draft.name })
+      .waitFor();
+    releaseActivation();
+    await page.locator(".admin-feedback").waitFor();
+    assert.equal(
+      await page.locator(".admin-detail > h2").textContent(),
+      satinShop.draft.name,
+    );
+    await owner.unroute(`**/api/admin/shops/${shop.id}/activation`);
+    await page
+      .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
+      .click();
     await page
       .getByText("Activation audit (1 most recent)", { exact: true })
       .waitFor();
@@ -710,7 +762,36 @@ const { chromium } = require("playwright");
     await page
       .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
       .click();
+    let requireReauth = true,
+      sandboxPosts = 0;
+    await owner.route(
+      `**/api/admin/shops/${shop.id}/activation`,
+      async (route) => {
+        if (route.request().method() !== "POST") return route.continue();
+        sandboxPosts++;
+        if (requireReauth) {
+          requireReauth = false;
+          return route.fulfill({
+            status: 401,
+            contentType: "application/json",
+            body: JSON.stringify({
+              error:
+                "Sign in again before recording a payment or changing access.",
+            }),
+          });
+        }
+        return route.continue();
+      },
+    );
     await page.locator("#grantSandboxAccess").click();
+    await page.locator("#verifyAdminSession").click();
+    await page.locator("#retryActivation").waitFor();
+    assert.equal(
+      sandboxPosts,
+      1,
+      "Reauthentication alone never activates a shop",
+    );
+    await page.locator("#retryActivation").click();
     await page
       .getByText("Activation audit (2 most recent)", { exact: true })
       .waitFor();

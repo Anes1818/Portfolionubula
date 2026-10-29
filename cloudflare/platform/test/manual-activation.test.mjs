@@ -120,6 +120,20 @@ test("same activation retry is idempotent, reused references are globally reject
     }),
   );
   assert.equal(suspended.shop.subscription.status, "suspended");
+  const suspendedList = await parse(
+    await f.call("/api/admin/users?status=suspended", { token: "admin" }),
+  );
+  assert.deepEqual(
+    suspendedList.users.map((u) => u.shopId),
+    [f.shop.id],
+  );
+  const activeList = await parse(
+    await f.call("/api/admin/users?status=active", { token: "admin" }),
+  );
+  assert.equal(
+    activeList.users.some((u) => u.shopId === f.shop.id),
+    false,
+  );
 });
 
 test("activation request is persisted once and appears in the indexed admin directory", async () => {
@@ -137,6 +151,15 @@ test("activation request is persisted once and appears in the indexed admin dire
   assert.equal(
     directory.users.find((u) => u.uid === "uid-owner").subscriptionStatus,
     "activation_requested",
+  );
+  const pending = await parse(
+    await f.call("/api/admin/users?status=activation_requested", {
+      token: "admin",
+    }),
+  );
+  assert.deepEqual(
+    pending.users.map((u) => u.shopId),
+    [f.shop.id],
   );
   await parse(
     await f.call(path, { method: "POST", token: "other", body: {} }),

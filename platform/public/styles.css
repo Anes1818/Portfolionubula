@@ -3487,3 +3487,59 @@ body.public-shop > .app-footer {
     white-space: nowrap;
   }
 }
+
+.admin-feedback {
+  border: 1px solid #7d9b79;
+  background: #edf5eb;
+  color: #254b2a;
+  padding: 18px 22px;
+}
+.admin-feedback p {
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+.admin-table tr.selected {
+  background: #f5ecef;
+}
+.manual-admin-panel {
+  padding: 20px;
+  margin: 18px 0;
+  background: #f8f5f2;
+  border: 1px solid #ded2d5;
+  border-radius: 16px;
+}
+.manual-admin-panel[aria-busy="true"] {
+  border-color: #7c3850;
+}
+.manual-admin-panel #activationResult {
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  border-left: 3px solid #7c3850;
+  background: #fff;
+}
+.manual-admin-panel #activationResult.error {
+  border-color: #b12a3c;
+  color: #8f1830;
+  background: #fff2f3;
+}
+.manual-admin-panel input[type="text"],
+.manual-admin-panel input[type="password"] {
+  width: 100%;
+}
+.manual-admin-panel .actions {
+  gap: 10px;
+  margin-top: 12px;
+}
+.admin-detail {
+  overflow-wrap: anywhere;
+}
+.admin-detail dd small {
+  display: block;
+  margin-top: 6px;
+}
+@media (min-width: 1151px) {
+  .admin-layout {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+}

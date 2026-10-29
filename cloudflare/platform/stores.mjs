@@ -345,6 +345,8 @@ export class ShopRegistry {
               "published",
               "active",
               "inactive",
+              "activation_requested",
+              "suspended",
               "expired",
               "cancelled",
               "past_due",
