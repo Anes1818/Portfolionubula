@@ -24,11 +24,11 @@ The main app configuration enables free signup, manual activation and publicatio
 
 1. Sign in to the [Square Developer Dashboard](https://developer.squareup.com/apps) and create an application called **Nebula** using truthful account information. If onboarding does not offer an eligible developer setup, stop there and ask Square support; do not enter a fictitious residency.
 2. Select **Sandbox**, then create a Sandbox test seller for Canada/CAD (and later US/USD for the second market). This is a simulated seller, not Ray's real merchant connection.
-3. Deploy the isolated sandbox config when ready. Add `nebula-payments-sandbox.aneslaidaoui06.workers.dev` in Firebase Authentication → Settings → Authorized domains.
+3. The isolated test app uses `https://sandbox.nebulastudio.site`; its personal `workers.dev` hostname is disabled. Add `sandbox.nebulastudio.site` in Firebase Authentication → Settings → Authorized domains. Authorizing the apex domain or `app.nebulastudio.site` does not authorize this separate hostname.
 4. Register this Sandbox OAuth redirect URL exactly:
-   `https://nebula-payments-sandbox.aneslaidaoui06.workers.dev/api/square/callback`
+   `https://sandbox.nebulastudio.site/api/square/callback`
 5. Add Sandbox webhook subscription URL:
-   `https://nebula-payments-sandbox.aneslaidaoui06.workers.dev/api/square/webhook`
+   `https://sandbox.nebulastudio.site/api/square/webhook`
    Subscribe to `payment.created`, `payment.updated`, `refund.created`, `refund.updated`, and `oauth.authorization.revoked`.
 6. Enter these as **secrets on the isolated sandbox Worker**, never in chat, client JavaScript or Git:
    `SQUARE_SANDBOX_APPLICATION_ID`, `SQUARE_SANDBOX_APPLICATION_SECRET`, `SQUARE_SANDBOX_WEBHOOK_SIGNATURE_KEY`, `SQUARE_TOKEN_ENCRYPTION_KEY` (32 cryptographically random bytes encoded as base64url, 43 characters). Retain the encryption key securely; replacing it makes existing ciphertext unreadable without migration.
@@ -48,4 +48,6 @@ Free Cloudflare quotas are finite. Per-store financial orders are capped at 1,00
 
 Main app Worker version: `47db8b0f-86a8-491b-bb5a-4c3c43ce5b66`. Read-only live smoke passed after upload, including Firebase SDK boot, open signup copy, private routes/source exclusion, absent Square checkout and unauthorised receipt handling. No real user/shop/payment was created by live verification.
 
-Isolated test Worker initial source version: `d6f14ecd-50d0-413c-aa3d-e9e9cb28e32c`, at `https://nebula-payments-sandbox.aneslaidaoui06.workers.dev`. Its two SQLite namespaces are separate from the main app. Provider credentials and real Sandbox acceptance remain pending. The encryption secret is generated separately on that test Worker with an ignored local private backup; its value is not recorded here.
+Isolated test Worker initial source version: `d6f14ecd-50d0-413c-aa3d-e9e9cb28e32c`. Its two SQLite namespaces are separate from the main app. The test hostname is now configured as `https://sandbox.nebulastudio.site`. All four required secret names are present; the credential values and real Sandbox acceptance still need validation through OAuth and payment tests. Existing secrets and SQLite storage are retained when the hostname changes. The encryption secret has an ignored local private backup; its value is not recorded here. Update the existing Square Sandbox OAuth redirect and webhook subscription to the branded URLs above before testing; the signature check requires the exact registered webhook URL. If Square changes the signature key on subscription replacement, update the Worker secret privately.
+
+Branded Sandbox deployment: `1399b9e8-1c8c-4a51-8f80-15a992958d29` on 29 October 2026. Cloudflare attached `sandbox.nebulastudio.site` as a Custom Domain and disabled this test Worker's `workers.dev` endpoint. The branded login responds with HTTP 200. Firebase authorized domains and Square's registered callback/subscription settings must also be updated; a successful page response does not establish authentication or payment acceptance.

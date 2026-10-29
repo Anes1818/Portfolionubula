@@ -3,8 +3,9 @@
   "account_id": "1b65e5ab35edeaa924ddf8fcff2e95aa",
   "main": "worker.mjs",
   "compatibility_date": "2026-10-01",
-  "workers_dev": true,
+  "workers_dev": false,
   "preview_urls": false,
+  "routes": [{ "pattern": "sandbox.nebulastudio.site", "custom_domain": true }],
   "observability": { "enabled": false },
   "assets": {
     "directory": "../../platform/public",
@@ -24,8 +25,8 @@
   },
   "vars": {
     "ENVIRONMENT": "test",
-    "PUBLIC_ORIGIN": "https://nebula-payments-sandbox.aneslaidaoui06.workers.dev",
-    "CANONICAL_ORIGIN": "https://nebula-payments-sandbox.aneslaidaoui06.workers.dev",
+    "PUBLIC_ORIGIN": "https://sandbox.nebulastudio.site",
+    "CANONICAL_ORIGIN": "https://sandbox.nebulastudio.site",
     "FIREBASE_PROJECT_ID": "la-flora-6ed47",
     "PUBLIC_SIGNUPS": "false",
     "BETA_ACCESS_EMAILS": "anescareer@gmail.com,aneslaidaoui06@gmail.com",
