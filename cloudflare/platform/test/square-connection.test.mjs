@@ -172,6 +172,28 @@ test("Square sandbox foundation fails closed on disabled, missing, unknown or pr
   );
 });
 
+test("explicit approved production configuration uses isolated cookies, tokens and provider host", async () => {
+  const f = fixture({
+    config: { environment: "production", liveApproved: true },
+  });
+  const begin = await f.begin();
+  assert.equal(
+    new URL(begin.start.authorizationUrl).origin,
+    "https://connect.squareup.com",
+  );
+  assert.match(begin.cookieHeader, /^__Host-nebula-square-production=/);
+  await f.finish(begin);
+  assert.ok(
+    f.calls.every((call) =>
+      call.url.startsWith("https://connect.squareup.com/"),
+    ),
+  );
+  assert.ok(
+    [...f.map.keys()].every((key) => key.startsWith("square:production:")),
+  );
+  assert.equal((await f.service.serverCredentials()).environment, "production");
+});
+
 test("owner identity, recent sign-in, paid plan and supported market gate OAuth before storage or provider access", async () => {
   const f = fixture();
   await assert.rejects(

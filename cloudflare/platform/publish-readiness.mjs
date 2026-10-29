@@ -214,7 +214,8 @@ export function publicationReport(shop, catalog, env = {}) {
       "error",
       "activation",
     );
-  const testMode = env.LEMON_TEST_MODE === "true";
+  const testMode =
+    env.BILLING_TEST_MODE === "true" || env.LEMON_TEST_MODE === "true";
   if (
     entitled(shop) &&
     (shop.subscription.testEnvironment !== testMode ||

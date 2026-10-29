@@ -12,12 +12,14 @@ const { chromium } = require("playwright");
   assert.equal(health.status, 200);
   const data = await health.json();
   assert.equal(data.stage, "private_beta");
-  assert.equal(data.signupMode, "private-beta");
-  for (const flag of ["billingEnabled", "checkoutEnabled", "publishingEnabled"])
+  assert.equal(data.signupMode, "open-beta");
+  for (const flag of ["billingEnabled", "checkoutEnabled"])
     assert.equal(data[flag], false);
+  assert.equal(data.publishingEnabled, true);
   const cfg = await (await fetch(base + "/api/config")).json();
   assert.equal(cfg.firebase.projectId, "la-flora-6ed47");
   assert.equal(cfg.squareConnectionEnabled, false);
+  assert.equal(cfg.manualActivationEnabled, true);
   assert.equal(cfg.SQUARE_SANDBOX_APPLICATION_SECRET, undefined);
   assert.equal(cfg.BETA_ACCESS_EMAILS, undefined);
   assert.equal((await fetch(base + "/api/session")).status, 401);
@@ -26,6 +28,8 @@ const { chromium } = require("playwright");
     "/.private/qa/platform/test-entry.mjs",
     "/platform/builder-adapter.js",
     "/cloudflare/platform/square-connection.mjs",
+    "/cloudflare/platform/merchant-checkout.mjs",
+    "/cloudflare/platform/manual-activation.mjs",
     "/api/shops/sh_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/readiness",
     "/api/shops/sh_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/square/status",
     "/api/shops/unpublished-preview",
@@ -84,6 +88,16 @@ const { chromium } = require("playwright");
       .getByText("This shop isn’t open to the public yet.", { exact: false })
       .waitFor();
     assert.equal(await page.locator(".flower-card").count(), 0);
+    await page.goto(
+      base +
+        "/receipt.html#shop=sh_" +
+        "a".repeat(32) +
+        "&order=" +
+        "a".repeat(24),
+      { waitUntil: "domcontentloaded" },
+    );
+    await page.getByRole("alert").waitFor();
+    assert.equal(await page.locator("#payFull").count(), 0);
     assert.deepEqual(errors, []);
     console.log(
       "PASS live public SDK boot, login/deep routes, inactive provider flags, anonymous access denial, source-file exclusion and mobile layout. No login or write occurred.",

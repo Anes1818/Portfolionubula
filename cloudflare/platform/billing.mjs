@@ -1,7 +1,10 @@
 /* Server-only subscription integration. Provider setup is closed until valid. */
 import { HttpError } from "../rays-payments/security.mjs";
-export function billingPublicConfig() {
+export function billingPublicConfig(env = {}) {
   return {
+    sandboxTestAccess:
+      env.ENVIRONMENT === "test" && env.SANDBOX_TEST_ACCESS === "true",
+    manualActivationEnabled: env.MANUAL_ACTIVATION_ENABLED === "true",
     billingEnabled: false,
     billingEnvironment: "test",
     plans: [

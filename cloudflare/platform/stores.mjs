@@ -31,6 +31,12 @@ import {
   validateDesign,
 } from "../../platform/shared/policy.mjs";
 import { handleBillingInternal, reconcileBillingForAlarm } from "./billing.mjs";
+import { activationRoutes } from "./manual-activation.mjs";
+import {
+  checkoutRoutes,
+  checkoutService,
+  checkoutLocked,
+} from "./merchant-checkout.mjs";
 
 export const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -108,6 +114,9 @@ export class ShopRegistry {
       "CREATE TABLE IF NOT EXISTS billing_resources (resource_key TEXT PRIMARY KEY, shop_id TEXT NOT NULL, owner_uid TEXT NOT NULL)",
     );
     this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS manual_payment_claims(reference TEXT PRIMARY KEY, shop_id TEXT NOT NULL, operation_id TEXT NOT NULL, fingerprint TEXT NOT NULL)",
+    );
+    this.sql.exec(
       "CREATE TABLE IF NOT EXISTS square_merchants (environment TEXT NOT NULL, merchant_id TEXT NOT NULL, shop_id TEXT NOT NULL, owner_uid TEXT NOT NULL, PRIMARY KEY(environment,merchant_id), UNIQUE(environment,shop_id))",
     );
   }
@@ -115,10 +124,61 @@ export class ShopRegistry {
   async fetch(request) {
     try {
       const url = new URL(request.url);
+      if (
+        request.method === "POST" &&
+        url.pathname === "/manual-payment-claim"
+      ) {
+        const v = await readJson(request, 4096);
+        this.state.storage.transactionSync(() => {
+          const owner = first(
+            this.sql.exec(
+              "SELECT owner_uid FROM registry WHERE id=?",
+              v.shopId,
+            ),
+          );
+          requireValue(owner?.owner_uid === v.ownerUid, "Shop not found.", 404);
+          requireValue(
+            /^[A-Z0-9-]{8,80}$/.test(v.reference || ""),
+            "Invalid payment reference.",
+          );
+          const old = first(
+            this.sql.exec(
+              "SELECT * FROM manual_payment_claims WHERE reference=?",
+              v.reference,
+            ),
+          );
+          requireValue(
+            !old ||
+              (old.shop_id === v.shopId &&
+                old.operation_id === v.operationId &&
+                old.fingerprint === v.fingerprint),
+            "This PayPal payment has already been assigned to an activation.",
+            409,
+          );
+          this.sql.exec(
+            "INSERT OR IGNORE INTO manual_payment_claims(reference,shop_id,operation_id,fingerprint) VALUES(?,?,?,?)",
+            v.reference,
+            v.shopId,
+            v.operationId,
+            v.fingerprint,
+          );
+        });
+        return json({ ok: true });
+      }
+      if (request.method === "GET" && url.pathname === "/square-owner") {
+        const row = first(
+          this.sql.exec(
+            "SELECT registry.seed FROM square_merchants JOIN registry ON registry.id=square_merchants.shop_id WHERE environment=? AND merchant_id=?",
+            url.searchParams.get("environment"),
+            url.searchParams.get("merchantId"),
+          ),
+        );
+        return json({ entry: row ? JSON.parse(row.seed) : null });
+      }
       if (request.method === "POST" && url.pathname === "/square-claim") {
         const value = await readJson(request, 4096);
         requireValue(
-          value.environment === "sandbox" &&
+          ["sandbox", "production"].includes(value.environment) &&
             /^[A-Za-z0-9_-]{1,191}$/.test(value.merchantId || ""),
           "Invalid Square merchant.",
         );
@@ -451,6 +511,12 @@ export class ShopStore {
     this.env = env;
     this.sql = state.storage.sql;
     this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS checkout_state(key TEXT PRIMARY KEY,data TEXT NOT NULL)",
+    );
+    this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS activation_history(id TEXT PRIMARY KEY,at INTEGER NOT NULL,data TEXT NOT NULL)",
+    );
+    this.sql.exec(
       "CREATE TABLE IF NOT EXISTS square_state (key TEXT PRIMARY KEY, data TEXT NOT NULL)",
     );
     this.sql.exec(
@@ -525,13 +591,30 @@ export class ShopStore {
         env: this.env,
         sql: this.sql,
       });
+    if (shop) {
+      try {
+        await checkoutLocked(this, (s) => s.maintain());
+      } catch {
+        await this.state.storage.setAlarm(Date.now() + 3600000);
+      }
+    }
     if (shop && squareSandboxConfigured(this.env, { requireEnabled: false })) {
       try {
         const result = await storedSquareService(this).refreshConnection();
         if (result.status === "connected")
-          await this.state.storage.setAlarm(Date.now() + 6 * 86400000);
+          await this.state.storage.setAlarm(
+            Math.min(
+              (await this.state.storage.getAlarm()) || Infinity,
+              Date.now() + 6 * 86400000,
+            ),
+          );
       } catch {
-        await this.state.storage.setAlarm(Date.now() + 3600000);
+        await this.state.storage.setAlarm(
+          Math.min(
+            (await this.state.storage.getAlarm()) || Infinity,
+            Date.now() + 3600000,
+          ),
+        );
       }
     }
   }
@@ -576,8 +659,35 @@ export class ShopStore {
       }
       const shop = this.shop();
       requireValue(shop, "Shop not found.", 404);
-      if (request.method === "GET" && url.pathname === "/snapshot")
-        return json({ shop: decorated(shop) });
+      if (request.method === "GET" && url.pathname === "/snapshot") {
+        const key = `square:${this.env.SQUARE_ENVIRONMENT || "sandbox"}:${shop.id}:connection`;
+        const row = first(
+          this.sql.exec("SELECT data FROM square_state WHERE key=?", key),
+        );
+        const conn = row ? JSON.parse(row.data) : null;
+        return json({
+          shop: {
+            ...decorated(shop),
+            checkoutConnectionAvailable:
+              conn?.status === "connected" && !!conn.locationId,
+          },
+        });
+      }
+      if (
+        url.pathname.startsWith("/activation") ||
+        url.pathname === "/billing/activation-request"
+      ) {
+        const result = await activationRoutes(this, request);
+        if (result) return result;
+      }
+      if (
+        url.pathname === "/commerce" ||
+        url.pathname.startsWith("/checkout/")
+      ) {
+        this.owner(request, shop);
+        const result = await checkoutRoutes(this, request);
+        if (result) return result;
+      }
       if (url.pathname.startsWith("/billing/")) {
         const result = await handleBillingInternal(request, {
           shop,
@@ -609,7 +719,12 @@ export class ShopStore {
         if (path === "/square/callback") {
           const result = await service.callback(body.callback);
           if (result.connected)
-            await this.state.storage.setAlarm(Date.now() + 6 * 86400000);
+            await this.state.storage.setAlarm(
+              Math.min(
+                (await this.state.storage.getAlarm()) || Infinity,
+                Date.now() + 6 * 86400000,
+              ),
+            );
           const { clearCookie, ...status } = result,
             response = json(status);
           response.headers.set("Set-Cookie", clearCookie);
@@ -617,6 +732,28 @@ export class ShopStore {
         }
         if (path === "/square/verify")
           return json(await service.status(actor, { verify: true }));
+        if (["/square/location", "/square/disconnect"].includes(path)) {
+          const existing = [
+            ...this.sql.exec(
+              "SELECT data FROM checkout_state WHERE key LIKE 'order:%'",
+            ),
+          ].map((r) => JSON.parse(r.data));
+          requireValue(
+            !existing.some((q) =>
+              q.requests?.some((r) =>
+                ["pending", "creating"].includes(r.status),
+              ),
+            ),
+            "Cancel all pending checkout links before changing or disconnecting Square.",
+            409,
+          );
+          if (path === "/square/location")
+            requireValue(
+              !existing.some((q) => q.requests?.length),
+              "This location has order history. Contact Nebula before changing it.",
+              409,
+            );
+        }
         if (path === "/square/location")
           return json(await service.chooseLocation(actor, body.locationId));
         if (path === "/square/disconnect")
@@ -643,6 +780,7 @@ export class ShopStore {
           customer,
           fulfillment,
           design: rawDesign,
+          accessHash,
         } = await readJson(request, 32 * 1024);
         let design = rawDesign,
           pricing = null;
@@ -754,6 +892,7 @@ export class ShopStore {
             version: 1,
             merchantNote: "",
             paymentStatus: "unpaid",
+            ...(accessHash ? { accessHash } : {}),
             kind,
             totalCents,
             currency: current.published.draft.currency,
@@ -854,6 +993,59 @@ export class ShopStore {
       }
       if (requestMatch && request.method === "PATCH") {
         const update = requestUpdate(await readJson(request, 8192));
+        if (update.status === "cancelled")
+          await checkoutLocked(this, async (service) => {
+            const beforeRow = first(
+              this.sql.exec(
+                "SELECT data FROM customer_requests WHERE id=?",
+                requestMatch[1],
+              ),
+            );
+            requireValue(beforeRow, "Request not found.", 404);
+            const before = hydrateRequest(JSON.parse(beforeRow.data));
+            requireValue(
+              before.version === update.version,
+              "This request changed. Reload before cancelling.",
+              409,
+            );
+            const id = await service.storage.get(
+              "requestQuote:" + requestMatch[1],
+            );
+            if (id) {
+              const q = await service.getOrder(id);
+              requireValue(
+                !q.paidCents || q.status === "refunded",
+                "A payment exists. Review/refund it in Square before cancelling fulfillment.",
+                409,
+              );
+              if (
+                ![
+                  "cancelled",
+                  "expired",
+                  "refunded",
+                  "review_required",
+                ].includes(q.status)
+              )
+                await service.cancel(q, "merchant_cancelled");
+            }
+            const after = hydrateRequest(
+              JSON.parse(
+                first(
+                  this.sql.exec(
+                    "SELECT data FROM customer_requests WHERE id=?",
+                    requestMatch[1],
+                  ),
+                ).data,
+              ),
+            );
+            requireValue(
+              before.status === after.status &&
+                before.merchantNote === after.merchantNote,
+              "This request changed while checkout was cancelled. Reload its current details.",
+              409,
+            );
+            update.version = after.version;
+          });
         const record = this.state.storage.transactionSync(() => {
           const row = first(
             this.sql.exec(
@@ -862,7 +1054,10 @@ export class ShopStore {
             ),
           );
           requireValue(row, "Request not found.", 404);
-          const current = hydrateRequest(JSON.parse(row.data));
+          const current = {
+            ...JSON.parse(row.data),
+            ...hydrateRequest(JSON.parse(row.data)),
+          };
           requireValue(
             update.version === current.version,
             "This request changed in another tab. Reload its latest details before saving.",
@@ -906,7 +1101,7 @@ export class ShopStore {
           }
           return next;
         });
-        return json({ request: record });
+        return json({ request: hydrateRequest(record) });
       }
       if (request.method === "PUT" && url.pathname === "/draft") {
         const { version, draft: rawDraft } = await readJson(
@@ -986,7 +1181,8 @@ export class ShopStore {
           );
           requireValue(
             current.subscription.testEnvironment ===
-              (this.env.LEMON_TEST_MODE === "true"),
+              (this.env.BILLING_TEST_MODE === "true" ||
+                this.env.LEMON_TEST_MODE === "true"),
             "Publishing is unavailable for this billing environment.",
             409,
           );

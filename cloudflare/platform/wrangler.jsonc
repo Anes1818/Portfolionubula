@@ -30,13 +30,16 @@
     "PUBLIC_ORIGIN": "https://app.nebulastudio.site",
     "CANONICAL_ORIGIN": "https://app.nebulastudio.site",
     "FIREBASE_PROJECT_ID": "la-flora-6ed47",
-    "PUBLIC_SIGNUPS": "false",
+    "PUBLIC_SIGNUPS": "true",
     "BETA_ACCESS_EMAILS": "anescareer@gmail.com,aneslaidaoui06@gmail.com",
     "BILLING_ENABLED": "false",
+    "MANUAL_ACTIVATION_ENABLED": "true",
     "CHECKOUT_ENABLED": "false",
     "SQUARE_ENVIRONMENT": "sandbox",
     "SQUARE_SANDBOX_CONNECT_ENABLED": "false",
-    "PUBLISHING_ENABLED": "false",
+    "SQUARE_PRODUCTION_CONNECT_ENABLED": "false",
+    "SQUARE_LIVE_APPROVED": "false",
+    "PUBLISHING_ENABLED": "true",
   },
   "durable_objects": {
     "bindings": [

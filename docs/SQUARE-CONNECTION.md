@@ -1,3 +1,5 @@
+> Historical v3 connection notes. For current checkout and production gates, see [PLATFORM-V4-PAYMENTS.md](PLATFORM-V4-PAYMENTS.md).
+
 # Square connection software — sandbox only
 
 The multi-shop connection lifecycle is implemented in `cloudflare/platform/square-connection.mjs` and wired through `square-storage.mjs`, the existing ShopStore SQLite object and protected Worker routes. It does not create checkout links or charge customers. Production environment is rejected by the factory even if flags are changed. The deployed sandbox-connect flag is false and no provider secrets have been entered.

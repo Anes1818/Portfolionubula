@@ -1,16 +1,41 @@
 import { createSquareConnectionService } from "./square-connection.mjs";
 import { requireValue } from "../rays-payments/security.mjs";
 
-export const clearSquareCookie = () =>
-  "__Host-nebula-square-sandbox=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0";
+export const clearSquareCookie = (env = {}) =>
+  "__Host-nebula-square-" +
+  (env.SQUARE_ENVIRONMENT || "sandbox") +
+  "=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0";
 export function squareSandboxConfigured(env, { requireEnabled = true } = {}) {
+  const production = env.SQUARE_ENVIRONMENT === "production";
+  const prefix = production ? "SQUARE_PRODUCTION_" : "SQUARE_SANDBOX_";
   return (
-    env.SQUARE_ENVIRONMENT === "sandbox" &&
-    (!requireEnabled || env.SQUARE_SANDBOX_CONNECT_ENABLED === "true") &&
-    /^[A-Za-z0-9_-]{1,191}$/.test(env.SQUARE_SANDBOX_APPLICATION_ID || "") &&
-    typeof env.SQUARE_SANDBOX_APPLICATION_SECRET === "string" &&
-    env.SQUARE_SANDBOX_APPLICATION_SECRET.length >= 2 &&
+    ["sandbox", "production"].includes(env.SQUARE_ENVIRONMENT) &&
+    (!production || env.SQUARE_LIVE_APPROVED === "true") &&
+    (!requireEnabled ||
+      env[
+        production
+          ? "SQUARE_PRODUCTION_CONNECT_ENABLED"
+          : "SQUARE_SANDBOX_CONNECT_ENABLED"
+      ] === "true") &&
+    /^[A-Za-z0-9_-]{1,191}$/.test(env[prefix + "APPLICATION_ID"] || "") &&
+    typeof env[prefix + "APPLICATION_SECRET"] === "string" &&
+    env[prefix + "APPLICATION_SECRET"].length >= 2 &&
     /^[A-Za-z0-9_-]{43}$/.test(env.SQUARE_TOKEN_ENCRYPTION_KEY || "")
+  );
+}
+
+export function squareCheckoutConfigured(env) {
+  const key =
+    env[
+      env.SQUARE_ENVIRONMENT === "production"
+        ? "SQUARE_PRODUCTION_WEBHOOK_SIGNATURE_KEY"
+        : "SQUARE_SANDBOX_WEBHOOK_SIGNATURE_KEY"
+    ];
+  return (
+    env.CHECKOUT_ENABLED === "true" &&
+    squareSandboxConfigured(env) &&
+    typeof key === "string" &&
+    key.length >= 8
   );
 }
 
@@ -52,10 +77,26 @@ export function storedSquareService(store) {
   return createSquareConnectionService(
     {
       environment: env.SQUARE_ENVIRONMENT || "sandbox",
-      enabled: env.SQUARE_SANDBOX_CONNECT_ENABLED === "true",
+      enabled:
+        env[
+          env.SQUARE_ENVIRONMENT === "production"
+            ? "SQUARE_PRODUCTION_CONNECT_ENABLED"
+            : "SQUARE_SANDBOX_CONNECT_ENABLED"
+        ] === "true",
+      liveApproved: env.SQUARE_LIVE_APPROVED === "true",
       shopId: shop.id,
-      applicationId: env.SQUARE_SANDBOX_APPLICATION_ID,
-      applicationSecret: env.SQUARE_SANDBOX_APPLICATION_SECRET,
+      applicationId:
+        env[
+          env.SQUARE_ENVIRONMENT === "production"
+            ? "SQUARE_PRODUCTION_APPLICATION_ID"
+            : "SQUARE_SANDBOX_APPLICATION_ID"
+        ],
+      applicationSecret:
+        env[
+          env.SQUARE_ENVIRONMENT === "production"
+            ? "SQUARE_PRODUCTION_APPLICATION_SECRET"
+            : "SQUARE_SANDBOX_APPLICATION_SECRET"
+        ],
       encryptionKey: env.SQUARE_TOKEN_ENCRYPTION_KEY,
       callbackUrl:
         (env.CANONICAL_ORIGIN ||

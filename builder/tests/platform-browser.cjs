@@ -48,7 +48,16 @@ const { chromium } = require("playwright");
     },
   };
   const f = fixture({
-    env: { ASSETS: assets, ENVIRONMENT: "local" },
+    env: {
+      ASSETS: assets,
+      ENVIRONMENT: "local",
+      MANUAL_ACTIVATION_ENABLED: "true",
+    },
+    verifyIdentity: async (id) => ({
+      uid: "uid-" + id,
+      email: id + "@example.test",
+      authTime: Date.now() / 1000,
+    }),
     verifyAdmin: async (actor) => actor.uid === "uid-owner",
   });
   const server = http.createServer(async (req, res) => {
@@ -590,6 +599,64 @@ const { chromium } = require("playwright");
       await page.locator('[data-action="square-connect"]').isEnabled(),
       false,
     );
+    await page.locator("#commerceSettings").waitFor();
+    await page.locator('#commerceSettings input[name="tax"]').fill("0");
+    await page.locator('#commerceSettings input[name="delivery"]').fill("5");
+    await page
+      .locator('#commerceSettings textarea[name="terms"]')
+      .fill(
+        "Pickup by arrangement. Balance due before collection. Contact the florist for cancellations.",
+      );
+    await page
+      .locator('#commerceSettings input[name="pricesApproved"]')
+      .check();
+    await page.locator('#commerceSettings button[type="submit"]').click();
+    await page
+      .getByText(
+        "Checkout rules saved. Existing paid orders keep their agreed totals.",
+        { exact: true },
+      )
+      .waitFor();
+    await page.goto(origin + "/dashboard/billing");
+    await page.locator("#requestActivation").click();
+    await page
+      .getByText(
+        "Request saved. Message @nebulaa_studio with your shop reference to arrange your invoice.",
+        { exact: true },
+      )
+      .waitFor();
+    await page.goto(origin + "/admin");
+    await page
+      .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
+      .click();
+    await page.locator("#manualActivationForm").waitFor();
+    await page
+      .locator('#manualActivationForm input[name="reference"]')
+      .fill("BROWSER-PAYPAL-0001");
+    await page.locator('#manualActivationForm input[name="confirmed"]').check();
+    await page.locator('#manualActivationForm button[type="submit"]').click();
+    await page
+      .getByText("Activation audit (1 most recent)", { exact: true })
+      .waitFor();
+    const activated = await readShop();
+    assert.equal(activated.subscription.source, "manual_paypal");
+    assert.equal(activated.subscription.revision, 1);
+    await page.screenshot({
+      path: path.join(output, "manual-activation-admin.png"),
+      fullPage: true,
+    });
+    await page.goto(origin + "/dashboard/billing");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.locator("#requestActivation").waitFor();
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+    );
+    await page.screenshot({
+      path: path.join(output, "manual-plan-mobile.png"),
+      fullPage: true,
+    });
     assert.deepEqual(errors, [], "No unhandled browser errors");
     assert.deepEqual(badRequests, [], "No unexpected outbound service");
     console.log(

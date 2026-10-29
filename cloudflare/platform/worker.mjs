@@ -3,6 +3,8 @@ import {
   requireValue,
   readJson,
   verifyFirebase,
+  hash as secureHash,
+  verifyWebhook,
 } from "../rays-payments/security.mjs";
 import { ShopRegistry, ShopStore, json } from "./stores.mjs";
 import {
@@ -28,6 +30,7 @@ import { billingPublicConfig, handleBillingWebhook } from "./billing.mjs";
 import {
   clearSquareCookie,
   squareSandboxConfigured,
+  squareCheckoutConfigured,
 } from "./square-storage.mjs";
 export { ShopRegistry, ShopStore };
 
@@ -141,8 +144,9 @@ function publicShop(shop, env) {
     shop.published &&
       entitled(shop) &&
       env.PUBLISHING_ENABLED === "true" &&
-      shop.subscription.testEnvironment === (env.LEMON_TEST_MODE === "true") &&
-      (env.LEMON_TEST_MODE !== "true" ||
+      shop.subscription.testEnvironment ===
+        (env.BILLING_TEST_MODE === "true" || env.LEMON_TEST_MODE === "true") &&
+      (!(env.BILLING_TEST_MODE === "true" || env.LEMON_TEST_MODE === "true") ||
         ["local", "test"].includes(env.ENVIRONMENT)),
     "Shop not found.",
     404,
@@ -157,7 +161,19 @@ function publicShop(shop, env) {
       catalogVersion: shop.published.catalogVersion,
     },
     readiness: [],
-    features: { requestsEnabled: true, checkoutEnabled: false },
+    checkoutSettings: shop.commerce
+      ? {
+          pickupEnabled: shop.commerce.pickupEnabled,
+          deliveryEnabled: shop.commerce.deliveryEnabled,
+        }
+      : null,
+    features: {
+      requestsEnabled: true,
+      checkoutEnabled:
+        squareCheckoutConfigured(env) &&
+        shop.commerce?.enabled === true &&
+        shop.checkoutConnectionAvailable === true,
+    },
   };
 }
 
@@ -183,7 +199,12 @@ export async function updateRegistrySummary(env, shop) {
     name: shop.draft.name,
     preset: shop.draft.preset,
     status: shop.published && entitled(shop) ? "published" : "draft",
-    subscriptionStatus: shop.subscription?.status || "inactive",
+    subscriptionStatus:
+      !entitled(shop) && shop.activationRequest?.status === "pending"
+        ? "activation_requested"
+        : shop.subscription?.status === "active" && !entitled(shop)
+          ? "expired"
+          : shop.subscription?.status || "inactive",
     publishedVersion: shop.published?.version || 0,
     version: shop.version,
     revision: shop.summaryRevision || shop.version,
@@ -211,7 +232,10 @@ function decorateResponse(response, origin, env) {
       "Access-Control-Allow-Methods",
       "GET, POST, PUT, PATCH, OPTIONS",
     );
-    headers.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
+    headers.set(
+      "Access-Control-Allow-Headers",
+      "Authorization, Content-Type, X-Order-Token",
+    );
     headers.set("Vary", "Origin");
   }
   return new Response(response.body, {
@@ -263,6 +287,93 @@ export function makeHandler({
           null,
           env,
         );
+      }
+      if (request.method === "POST" && path === "/api/square/webhook") {
+        const environment = env.SQUARE_ENVIRONMENT || "sandbox";
+        const key =
+          env[
+            environment === "production"
+              ? "SQUARE_PRODUCTION_WEBHOOK_SIGNATURE_KEY"
+              : "SQUARE_SANDBOX_WEBHOOK_SIGNATURE_KEY"
+          ];
+        requireValue(
+          squareSandboxConfigured(env, { requireEnabled: false }) && key,
+          "Square webhook is not configured.",
+          503,
+        );
+        const reader = request.body?.getReader();
+        requireValue(reader, "Missing webhook.");
+        const chunks = [];
+        let size = 0;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          size += value.byteLength;
+          if (size > 128 * 1024) {
+            await reader.cancel();
+            throw new HttpError(413, "Webhook too large.");
+          }
+          chunks.push(value);
+        }
+        const bytes = new Uint8Array(size);
+        let offset = 0;
+        for (const chunk of chunks) {
+          bytes.set(chunk, offset);
+          offset += chunk.length;
+        }
+        const raw = new TextDecoder().decode(bytes);
+        requireValue(
+          await verifyWebhook(
+            raw,
+            request.headers.get("x-square-hmacsha256-signature"),
+            key,
+            (env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN || PUBLIC_ORIGIN) +
+              "/api/square/webhook",
+          ),
+          "Invalid webhook signature.",
+          403,
+        );
+        let event;
+        try {
+          event = JSON.parse(raw);
+        } catch {
+          throw new HttpError(400, "Invalid webhook.");
+        }
+        requireValue(
+          /^[A-Za-z0-9_-]{1,128}$/.test(event.event_id || "") &&
+            /^[A-Za-z0-9_-]{1,191}$/.test(event.merchant_id || ""),
+          "Invalid webhook identifiers.",
+        );
+        if (
+          ![
+            "payment.created",
+            "payment.updated",
+            "refund.created",
+            "refund.updated",
+            "oauth.authorization.revoked",
+          ].includes(event.type)
+        )
+          return decorateResponse(json({ received: true }), null, env);
+        const result = await responseData(
+          await registryStub(env).fetch(
+            internal(
+              "/square-owner?" +
+                new URLSearchParams({
+                  environment,
+                  merchantId: event.merchant_id,
+                }),
+            ),
+          ),
+        );
+        if (!result.entry)
+          return decorateResponse(json({ received: true }), null, env);
+        const entry = result.entry;
+        const data = await responseData(
+          await shopStub(env, entry.id).fetch(
+            internal("/checkout/event", "POST", { event }, entry.ownerUid),
+          ),
+        );
+        return decorateResponse(json(data), null, env);
       }
       if (request.method === "POST" && path === "/api/billing/webhook")
         return decorateResponse(
@@ -327,7 +438,10 @@ export function makeHandler({
               ),
             ),
           );
-          result = "sandbox_connected";
+          result =
+            env.SQUARE_ENVIRONMENT === "production"
+              ? "connected"
+              : "sandbox_connected";
         } catch {}
         return decorateResponse(
           new Response(null, {
@@ -337,7 +451,7 @@ export function makeHandler({
                 "/dashboard/payments?square=" + result,
                 env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN || PUBLIC_ORIGIN,
               ).href,
-              "Set-Cookie": clearSquareCookie(),
+              "Set-Cookie": clearSquareCookie(env),
               "Cache-Control": "no-store",
               "Referrer-Policy": "no-referrer",
             },
@@ -365,16 +479,15 @@ export function makeHandler({
             storageConfigured: Boolean(env.REGISTRY && env.SHOPS),
             draftPersistence: "durable-object-sqlite",
             billingEnabled: billingPublicConfig(env).billingEnabled,
-            checkoutEnabled: false,
+            checkoutEnabled: squareCheckoutConfigured(env),
             squareConnectionEnabled: squareSandboxConfigured(env),
-            squareEnvironment: "sandbox",
-            publishingEnabled:
-              env.PUBLISHING_ENABLED === "true" &&
-              billingPublicConfig(env).billingEnabled,
+            squareEnvironment: env.SQUARE_ENVIRONMENT || "sandbox",
+            publishingEnabled: env.PUBLISHING_ENABLED === "true",
             providers: {
-              billing: billingPublicConfig(env).billingEnabled
-                ? "test"
-                : "pending_setup",
+              billing:
+                env.MANUAL_ACTIVATION_ENABLED === "true"
+                  ? "manual_review"
+                  : "pending_setup",
               square: "pending_setup",
             },
           }),
@@ -390,16 +503,14 @@ export function makeHandler({
               env.PUBLIC_SIGNUPS === "true" ? "open-beta" : "private-beta",
             ...billingPublicConfig(env),
             squareConnectionEnabled: squareSandboxConfigured(env),
-            squareEnvironment: "sandbox",
+            squareEnvironment: env.SQUARE_ENVIRONMENT || "sandbox",
             branding: {
               name: "Nebula",
               hostedOrigin:
                 env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN || PUBLIC_ORIGIN,
             },
-            checkoutEnabled: false,
-            publishingEnabled:
-              env.PUBLISHING_ENABLED === "true" &&
-              billingPublicConfig(env).billingEnabled,
+            checkoutEnabled: squareCheckoutConfigured(env),
+            publishingEnabled: env.PUBLISHING_ENABLED === "true",
           }),
           origin,
           env,
@@ -491,6 +602,38 @@ export function makeHandler({
           env,
         );
       }
+      const activationAdmin = path.match(
+        /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})\/activation$/,
+      );
+      if (activationAdmin) {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        requireValue(
+          ["GET", "POST"].includes(request.method),
+          "Not found.",
+          404,
+        );
+        if (request.method === "POST")
+          requireValue(
+            Number.isFinite(user.authTime) &&
+              Date.now() / 1000 - user.authTime < 600 &&
+              user.authTime <= Date.now() / 1000 + 60,
+            "Sign in again before recording a payment or changing access.",
+            401,
+          );
+        const entry = await registryLookup(env, "id", activationAdmin[1]);
+        requireValue(entry, "Shop not found.", 404);
+        const body =
+          request.method === "POST" ? await readJson(request, 4096) : undefined;
+        const call = internal("/activation", request.method, body);
+        call.headers.set("X-Platform-Admin", "verified");
+        call.headers.set("X-Admin-Uid", user.uid);
+        const data = await responseData(
+          await shopStub(env, entry.id).fetch(call),
+        );
+        if (data.shop) await updateRegistrySummary(env, data.shop);
+        return decorateResponse(json(data), origin, env);
+      }
       const adminReadiness = path.match(
         /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})\/readiness$/,
       );
@@ -569,6 +712,89 @@ export function makeHandler({
           env,
         );
       }
+      const commerceRoute = path.match(
+        /^\/api\/shops\/(sh_[a-f0-9]{32})\/(commerce|checkout\/(quote|status|pay|cancel|merchant))$/,
+      );
+      if (commerceRoute) {
+        const privateRoute =
+          commerceRoute[2] === "commerce" || commerceRoute[3] === "merchant";
+        const actor = privateRoute ? await authenticate() : null;
+        const entry = await registryLookup(env, "id", commerceRoute[1]);
+        requireValue(entry, "Shop not found.", 404);
+        if (privateRoute)
+          requireValue(actor.uid === entry.ownerUid, "Shop not found.", 404);
+        if (commerceRoute[2] === "commerce") {
+          requireValue(
+            ["GET", "PUT"].includes(request.method),
+            "Not found.",
+            404,
+          );
+          const body =
+            request.method === "PUT"
+              ? await readJson(request, 8192)
+              : undefined;
+          const data = await responseData(
+            await shopStub(env, entry.id).fetch(
+              internal("/commerce", request.method, body, entry.ownerUid),
+            ),
+          );
+          return decorateResponse(json(data), origin, env);
+        }
+        if (commerceRoute[3] === "merchant") {
+          requireValue(request.method === "GET", "Not found.", 404);
+          const data = await responseData(
+            await shopStub(env, entry.id).fetch(
+              internal(
+                "/checkout/merchant",
+                "POST",
+                { cursor: url.searchParams.get("cursor") || undefined },
+                entry.ownerUid,
+              ),
+            ),
+          );
+          return decorateResponse(json(data), origin, env);
+        }
+        requireValue(request.method === "POST", "Not found.", 404);
+        const token = request.headers.get("X-Order-Token");
+        requireValue(
+          /^[A-Za-z0-9_-]{43}$/.test(token || ""),
+          "This order link is not authorised.",
+          403,
+        );
+        const body = await readJson(request, 4096);
+        object(
+          body,
+          "Payment request",
+          commerceRoute[3] === "quote"
+            ? ["requestId"]
+            : commerceRoute[3] === "pay"
+              ? ["orderId", "revision", "choice"]
+              : ["orderId"],
+        );
+        if (commerceRoute[3] === "quote")
+          requireValue(
+            /^rq_[a-f0-9]{32}$/.test(body.requestId || ""),
+            "Invalid request reference.",
+          );
+        const ipBucket = (
+          await secureHash(
+            entry.id +
+              ":" +
+              (request.headers.get("CF-Connecting-IP") || "unknown"),
+          )
+        ).slice(0, 3);
+        const data = await responseData(
+          await shopStub(env, entry.id).fetch(
+            internal(
+              "/checkout/" + commerceRoute[3],
+              "POST",
+              { ...body, token, ipBucket },
+              entry.ownerUid,
+            ),
+          ),
+        );
+        return decorateResponse(json(data), origin, env);
+      }
       const publicMatch = path.match(
         /^\/api\/public\/shops\/([a-z0-9-]{3,48})$/,
       );
@@ -585,7 +811,7 @@ export function makeHandler({
         );
       }
       const match = path.match(
-        /^\/api\/shops\/(?:resolve\/([a-z0-9-]{3,48})|(sh_[a-f0-9]{32}|[a-z0-9-]{3,48}))(?:\/(draft|readiness|media(?:\/(img_[a-f0-9]{64}|slot-[1-5]))?|publish|billing\/(?:checkout|status|portal)|square\/(?:connect|status|verify|location|disconnect)|products(?:\/([a-zA-Z0-9_-]{1,80}))?|requests(?:\/(rq_[a-f0-9]{32}))?))?$/,
+        /^\/api\/shops\/(?:resolve\/([a-z0-9-]{3,48})|(sh_[a-f0-9]{32}|[a-z0-9-]{3,48}))(?:\/(draft|readiness|media(?:\/(img_[a-f0-9]{64}|slot-[1-5]))?|publish|billing\/(?:checkout|status|portal|activation-request)|square\/(?:connect|status|verify|location|disconnect)|products(?:\/([a-zA-Z0-9_-]{1,80}))?|requests(?:\/(rq_[a-f0-9]{32}))?))?$/,
       );
       if (!match) throw new HttpError(404, "Not found.");
       const value = match[1] || match[2],
@@ -703,6 +929,7 @@ export function makeHandler({
             "customer",
             "fulfillment",
             "publishedVersion",
+            "accessToken",
           ]);
           if (body.publishedVersion !== undefined)
             requireValue(
@@ -791,6 +1018,14 @@ export function makeHandler({
             ]
               .map((part) => part.toString(16).padStart(2, "0"))
               .join("");
+          const accessHash =
+            body.accessToken === undefined
+              ? null
+              : (requireValue(
+                  /^[A-Za-z0-9_-]{43}$/.test(body.accessToken),
+                  "Invalid request access token.",
+                ),
+                await secureHash(entry.id + ":" + body.accessToken));
           const fingerprint = await hash(
             JSON.stringify({
               kind: body.kind,
@@ -799,6 +1034,7 @@ export function makeHandler({
               design,
               customer,
               fulfillment: body.fulfillment,
+              accessHash,
             }),
           );
           // A fixed 4096-bucket hash space bounds rate-limit rows per shop and
@@ -826,6 +1062,7 @@ export function makeHandler({
                   customer,
                   fulfillment: body.fulfillment,
                   fingerprint,
+                  accessHash,
                   ipBucket,
                 },
                 entry.ownerUid,
@@ -970,16 +1207,26 @@ export function makeHandler({
         let body;
         if (request.method === "POST") {
           const input = await readJson(request, 4096);
-          object(input, "Billing request", ["planId"]);
+          object(
+            input,
+            "Billing request",
+            operation === "billing/activation-request" ? [] : ["planId"],
+          );
           body = {
-            actor: { uid: user.uid, email: user.email },
-            planId: input.planId || "shop",
+            ...(operation === "billing/activation-request"
+              ? {}
+              : {
+                  actor: { uid: user.uid, email: user.email },
+                  planId: input.planId || "shop",
+                }),
           };
         }
         const result = await shopStub(env, entry.id).fetch(
           internal("/" + operation, request.method, body, user.uid),
         );
-        return decorateResponse(json(await responseData(result)), origin, env);
+        const data = await responseData(result);
+        if (data.shop) await updateRegistrySummary(env, data.shop);
+        return decorateResponse(json(data), origin, env);
       }
       if (operation === "publish" && request.method === "POST") {
         requireValue(

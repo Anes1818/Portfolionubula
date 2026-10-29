@@ -95,6 +95,13 @@ export async function openOrderRequest({
     root.id = "nebula-order-modal";
     root.className = "nb-order-overlay";
     const requestKey = crypto.randomUUID();
+    const accessToken = btoa(
+      String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))),
+    )
+      .replaceAll("+", "-")
+      .replaceAll("/", "_")
+      .replace(/=+$/, "");
+    const online = !preview && shop.features?.checkoutEnabled === true;
     const item = shop.draft?.products?.find((row) => row.id === productId);
     const title =
       kind === "product"
@@ -152,6 +159,25 @@ export async function openOrderRequest({
       submit.disabled = true;
       submit.textContent = "Preview only · requests are closed";
     }
+    if (online) {
+      const fulfillment = root.querySelector('[name="fulfillment"]');
+      for (const option of [...fulfillment.options])
+        if (
+          shop.checkoutSettings &&
+          !shop.checkoutSettings[option.value + "Enabled"]
+        )
+          option.remove();
+      root.querySelector('button[type="submit"]').textContent =
+        "Review final price & payment options";
+      const notes = root.querySelectorAll(
+        ".nb-order-dialog > p.nb-order-muted,.nb-order-form > p.nb-order-muted",
+      );
+      notes.forEach(
+        (n) =>
+          (n.textContent =
+            "First save your request. Then review the florist’s final tax, delivery and terms before choosing a 50% deposit or full payment on Square."),
+      );
+    }
     document.body.append(root);
     root.querySelector(".nb-order-close").onclick = close;
     root.addEventListener("click", (event) => {
@@ -173,6 +199,7 @@ export async function openOrderRequest({
       try {
         const body = {
           requestKey,
+          accessToken,
           kind,
           publishedVersion: shop.published?.version ?? shop.version,
           ...(kind === "product"
@@ -206,6 +233,21 @@ export async function openOrderRequest({
             "The saved request receipt was incomplete. Please try again using this same form.",
           );
         receipt = data;
+        if (online) {
+          const fragment = new URLSearchParams({
+            shop: shop.id,
+            request: data.request.id,
+            token: accessToken,
+          });
+          try {
+            localStorage.setItem(
+              `nebula-request:${shop.id}:${data.request.id}`,
+              accessToken,
+            );
+          } catch {}
+          location.assign("/receipt.html#" + fragment);
+          return;
+        }
         const request = data.request;
         const summary =
           typeof request.summary === "string"
@@ -230,7 +272,9 @@ export async function openOrderRequest({
         submitting = false;
         if (button.isConnected) {
           button.disabled = false;
-          button.textContent = "Send unpaid request ↗";
+          button.textContent = online
+            ? "Review final price & payment options"
+            : "Send unpaid request ↗";
         }
       }
     };

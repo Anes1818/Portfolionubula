@@ -1,4 +1,4 @@
-# Nebula florist platform, v2
+# Nebula florist platform, v4
 
 Current private-beta app: https://app.nebulastudio.site/login
 Platform administrator: https://app.nebulastudio.site/admin
@@ -15,13 +15,13 @@ This service uses the existing `nebula` Worker and existing SQLite Durable Objec
 - Protected administrator directory of verified users who have opened a platform session, including those without shops. Indexed pagination and read-only draft/live inspection; role comes from the existing Firebase `/adminUids/:uid` rule, not an email address.
 - Tested publication and persisted unpaid product/design request paths behind closed server gates. Optional Square is not required for publication. No request is labelled paid.
 
-## Release gates
+## Release gates and manual activation
 
-**Public beta access, live publication, subscriptions and card checkout are disabled in production. Square Sandbox connection is implemented but disabled until secure provider configuration and real Sandbox acceptance.** Existing invited owners can sign in and edit their private previews. Only server-owned verified billing entitlements may permit public access. Return URLs, saved drafts and browser flags never activate a shop.
+The current v4 supports free shop signup, private editing and manual activation. Publication still requires an active server-owned entitlement and a complete saved draft. The operator records a verified USD 29 commercial PayPal payment for 30 days in the admin panel; PayPal collection remains external and manual. References cannot be reused across shops. Automatic subscription billing stays disabled.
 
-The user's payout onboarding is unresolved. `billing.mjs` deliberately returns disabled status/503 on checkout and webhook actions. `lemon.mjs` is a disconnected test-only adapter, not proof of a functioning subscription integration. There is no live subscription webhook ledger or automatic entitlement activation yet. Switching a config flag does not make billing operational. The proposed plans are $29 USD/month hosted and $35/month own-domain connection; the second tier remains unavailable until domain provisioning is implemented and tested. Merchant domain purchase/renewal is separate.
+Square OAuth, hosted checkout, private receipts and payment/refund reconciliation are implemented. Real Square Sandbox acceptance is still outstanding because the developer application/test seller and protected credentials have not been created. The main app leaves Square connection, checkout and production approval disabled. Switching a single flag cannot start live charges. The separate invited sandbox Worker is deployed with explicitly simulated test access and isolated storage; provider credentials and real Sandbox acceptance are still pending.
 
-Before accepting subscriptions: confirm a supported payout account with the provider, complete merchant activation, implement persistent checkout/webhook reconciliation, test real provider sandbox flows, and agree activation/cancellation policy. Before customer card payments: complete real Square Sandbox acceptance, the generic checkout/payment reconciliation ledger, full merchant-approved pricing/fulfillment/taxes and webhook testing. The sandbox OAuth lifecycle and encrypted SQLite token storage now exist; production connection is still rejected by the module. Existing Ray payment code is not automatically used for all shops.
+See `docs/PLATFORM-V4-PAYMENTS.md` for exact routes/behavior, remaining account setup, isolated Sandbox instructions and required acceptance. Earlier v1–v3 notes are historical release records. Ray's existing site and payment service remain separate and unchanged.
 
 ## Data and isolation
 
@@ -72,7 +72,7 @@ The last two additionally require Miniflare/esbuild and Playwright with Edge res
 
 From `cloudflare/platform`, `npm run check` builds and performs a Wrangler dry run. `npm run deploy` builds and deploys to the existing `nebula` Worker only. Review account, route, flags and binding preservation before deployment. Do not replace the apex domain or deploy over a Ray payment Worker. Read-only live smoke: `node builder/tests/platform-live.cjs`; optional `PLATFORM_BASE` overrides the branded origin.
 
-See `docs/PLATFORM-V3-2026-10-29.md` and `docs/SQUARE-CONNECTION.md` for the current release and sandbox connection boundary. `docs/PLATFORM-V2-2026-10-28.md` records the earlier release. Earlier beta notes are historical, not current specifications.
+See `docs/PLATFORM-V4-PAYMENTS.md` for current payment/activation behavior. `docs/PLATFORM-V3-2026-10-29.md` and `docs/SQUARE-CONNECTION.md` describe the previous release. `docs/PLATFORM-V2-2026-10-28.md` records the earlier release. Earlier beta notes are historical, not current specifications.
 
 ## Request management and review
 
@@ -81,3 +81,16 @@ Requests use independent optimistic versions. Owners can change requested → ac
 New browser requests include the reviewed published version; a changed shop returns409 before insertion. Lost-response retries still return the original request first. Review shows contents and an estimate before submission. Owner review cannot send a request. Order consumes its URL action once; Customise opens the editor. Merchants may explicitly render the saved design into an immutable collection cover, preserving the previous photo until both upload and versioned draft save succeed.
 
 Generic folded notes use explicit merchant per-note pricing in shop currency. No exchange rate, assembly fee or deposit policy is inferred from Ray's separate implementation. Customer-supplied cash/payment-plan metadata can remain in private imported artwork but is blocked from public quotes until supported by an approved commerce policy. Ray's existing original service is unchanged.
+
+## V4 routes
+
+- Owner `POST /api/shops/:id/billing/activation-request` with `{}` saves an activation/renewal request.
+- Platform admin `GET/POST /api/admin/shops/:id/activation` reads audited history or records a revisioned manual grant/suspension. A fresh sign-in is required for writes. Main app grants accept only USD 29/30 days; test grants exist only in the isolated test environment.
+- Owner `GET/PUT /api/shops/:id/commerce` manages versioned exact checkout rules.
+- Public `POST /api/shops/:id/checkout/quote` with `{requestId}` and `X-Order-Token` creates/replays a server-priced final order from a saved request.
+- Customer `POST /api/shops/:id/checkout/status|pay|cancel` requires the same private header; `pay` accepts only order ID, revision and deposit/full choice. `full` collects the remaining balance after a deposit. Client amounts are rejected.
+- Owner `GET /api/shops/:id/checkout/merchant?cursor=` pages financial orders.
+- `POST /api/square/webhook` verifies the raw signature against the exact configured URL before merchant lookup. Provider event data never constitutes browser authorization.
+- `/receipt.html` is a standalone private receipt/recovery view. Customer secrets use fragments/local storage, not URL queries or provider redirects.
+
+Run `node builder/tests/platform-checkout-ui.cjs` for the storefront-to-payment receipt browser flow with locally simulated Square responses. Run the existing browser regression for manual admin controls and checkout rule editing. The real workerd test also verifies activation/audit persistence and idempotency across restart.

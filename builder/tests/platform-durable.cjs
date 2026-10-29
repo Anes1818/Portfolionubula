@@ -30,8 +30,8 @@ const {
     export {ShopRegistry,ShopStore};
     export default {fetch:makeHandler({verifyIdentity:async token=>{
       if(!['owner','other'].includes(token)) throw new HttpError(401,'Test identity required');
-      return {uid:'uid-'+token,email:token+'@example.test'};
-    }})};`,
+      return {uid:'uid-'+token,email:token+'@example.test',authTime:Date.now()/1000};
+    },verifyAdmin:async u=>u.uid==='uid-owner'})};`,
   );
   await build({
     entryPoints: [source],
@@ -57,6 +57,7 @@ const {
     bindings: {
       PUBLIC_ORIGIN: "https://platform.example.test",
       PUBLIC_SIGNUPS: "false",
+      MANUAL_ACTIVATION_ENABLED: "true",
       BETA_ACCESS_EMAILS: "owner@example.test,other@example.test",
     },
     serviceBindings: {
@@ -210,11 +211,39 @@ const {
       }),
       409,
     );
+    const activation = {
+      operationId: crypto.randomUUID(),
+      revision: 0,
+      action: "extend",
+      paymentReference: "LOCAL-WORKERD-PAYPAL-0001",
+      amountCents: 2900,
+      currency: "USD",
+      confirmed: true,
+    };
+    const activated = await data(
+      await call("/api/admin/shops/" + id + "/activation", {
+        method: "POST",
+        body: activation,
+      }),
+    );
+    const paidUntil = activated.shop.subscription.paidUntil;
     await mf.dispose();
     mf = new Miniflare(runtimeOptions);
     await mf.ready;
     const restored = (await data(await call("/api/session"))).shop;
     assert.equal(restored.id, id);
+    assert.equal(restored.subscription.paidUntil, paidUntil);
+    const retried = await data(
+      await call("/api/admin/shops/" + id + "/activation", {
+        method: "POST",
+        body: activation,
+      }),
+    );
+    assert.equal(retried.shop.subscription.paidUntil, paidUntil);
+    const audit = await data(
+      await call("/api/admin/shops/" + id + "/activation"),
+    );
+    assert.equal(audit.history.length, 1);
     assert.equal(restored.version, 2);
     assert.equal(restored.draft.tagline, draft.tagline);
     assert.deepEqual(restored.draft.collection, shop.draft.collection);

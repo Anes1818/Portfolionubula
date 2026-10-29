@@ -187,8 +187,9 @@ export function requestCursor(record, status) {
 }
 
 export function hydrateRequest(record) {
+  const { accessHash, ...safe } = record;
   return {
-    ...record,
+    ...safe,
     version: record.version ?? 1,
     merchantNote: record.merchantNote ?? "",
     updatedAt: record.updatedAt ?? record.createdAt,

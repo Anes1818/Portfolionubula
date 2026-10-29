@@ -1,5 +1,5 @@
-/* Server-only, sandbox Square connection lifecycle. No checkout or charge API.
- * Production is deliberately closed until real Sandbox acceptance is complete.
+/* Server-only Square connection lifecycle. Checkout is a separate service.
+ * Production requires explicit server launch approval and separate credentials.
  */
 import {
   HttpError,
@@ -11,7 +11,6 @@ import {
   unb64,
 } from "../rays-payments/security.mjs";
 
-const API = "https://connect.squareupsandbox.com";
 const VERSION = "2026-09-16";
 const SCOPES = Object.freeze([
   "MERCHANT_PROFILE_READ",
@@ -20,7 +19,6 @@ const SCOPES = Object.freeze([
   "PAYMENTS_READ",
   "PAYMENTS_WRITE",
 ]);
-const COOKIE = "__Host-nebula-square-sandbox";
 const TEN_MINUTES = 10 * 60000,
   SIX_DAYS = 6 * 86400000;
 const tokenString = (value) =>
@@ -82,6 +80,7 @@ export function createSquareConnectionService(
           "applicationSecret",
           "encryptionKey",
           "callbackUrl",
+          "liveApproved",
         ].includes(key),
       ),
     "Invalid Square server configuration.",
@@ -124,7 +123,12 @@ export function createSquareConnectionService(
   const put = (key, value) => repository.put(prefix + key, clone(value));
   const remove = (key) => repository.delete(prefix + key);
   const locked = (operation) => repository.withLock(operation);
-  const supported = c.environment === "sandbox";
+  const supported = c.environment === "sandbox" || c.liveApproved === true;
+  const API =
+    c.environment === "production"
+      ? "https://connect.squareup.com"
+      : "https://connect.squareupsandbox.com";
+  const COOKIE = "__Host-nebula-square-" + c.environment;
   const configured = () => {
     try {
       return (
@@ -663,13 +667,33 @@ export function createSquareConnectionService(
         );
       });
     },
+    async recordRevocation(event) {
+      return locked(async () => {
+        const record = await read("connection");
+        requireValue(
+          record && record.merchantId === event.merchant_id,
+          "Square merchant mismatch.",
+          403,
+        );
+        const at = Date.parse(
+          event.data?.object?.revocation?.revoked_at || event.created_at,
+        );
+        if (Number.isFinite(at) && at < record.connectedAt) return;
+        await put("connection", {
+          ...record,
+          status: "revoked",
+          encryptedTokens: null,
+        });
+        await remove("oauth");
+      });
+    },
     // Server-only: the caller must separately authorize a persisted quote/order
     // and all checkout gates. This method never charges or returns to a browser.
-    async serverCredentials() {
-      assertConfigured();
+    async serverCredentials({ maintenance = false } = {}) {
+      assertConfigured(!maintenance);
       return locked(async () => {
         const ctx = await context();
-        paid(ctx);
+        if (!maintenance) paid(ctx);
         const { record, value } = await refreshRecord(
           await read("connection"),
           ctx,
