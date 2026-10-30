@@ -495,7 +495,9 @@ export function createSquareConnectionService(
         for (const [key, value] of Object.entries({
           client_id: c.applicationId,
           scope: SCOPES.join(" "),
-          session: "false",
+          // Sandbox cannot start its own seller login. It reuses the test
+          // seller session launched from Square Developer Console.
+          session: c.environment === "production" ? "false" : "true",
           state,
           redirect_uri: c.callbackUrl,
         }))

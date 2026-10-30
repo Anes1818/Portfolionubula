@@ -24,6 +24,8 @@ The main app configuration enables free signup, manual activation and publicatio
 
 ## Next human setup: real Square Sandbox acceptance
 
+Sandbox OAuth session fix (30 October 2026): authorization now uses `session=true` for Sandbox and `session=false` only for production, as required by [Square's OAuth walkthrough](https://developer.squareup.com/docs/oauth-api/walkthrough). Before connecting in Sandbox, launch the Canadian test seller's Square Dashboard from Developer Console → Sandbox test accounts in the same browser profile, keep that tab open, then begin a fresh authorization from the florist's Square page. Sandbox cannot initiate a seller sign-in on its authorization page. The Square settings page now displays these steps. An old authorization URL is not reusable after restarting the connection, and the single-use browser-bound state/cookie protections remain intact. The fix is covered at both service and HTTP route levels; real provider acceptance is still a separate test.
+
 1. Sign in to the [Square Developer Dashboard](https://developer.squareup.com/apps) and create an application called **Nebula** using truthful account information. If onboarding does not offer an eligible developer setup, stop there and ask Square support; do not enter a fictitious residency.
 2. Select **Sandbox**, then create a Sandbox test seller for Canada/CAD (and later US/USD for the second market). This is a simulated seller, not Ray's real merchant connection.
 3. The isolated test app uses `https://sandbox.nebulastudio.site`; its personal `workers.dev` hostname is disabled. Add `sandbox.nebulastudio.site` in Firebase Authentication → Settings → Authorized domains. Authorizing the apex domain or `app.nebulastudio.site` does not authorize this separate hostname.

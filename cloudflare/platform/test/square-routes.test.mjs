@@ -91,6 +91,10 @@ test("Square API uses durable SQLite ownership, header-only cookie, private call
     );
     const started = await parsed(response),
       cookie = response.headers.get("Set-Cookie").split(";")[0];
+    assert.equal(
+      new URL(started.authorizationUrl).searchParams.get("session"),
+      "true",
+    );
     assert.ok(!JSON.stringify(started).includes(cookie));
     assert.ok(!JSON.stringify(started).includes("fixture-app-secret"));
     const state = new URL(started.authorizationUrl).searchParams.get("state");

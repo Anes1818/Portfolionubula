@@ -181,6 +181,10 @@ test("explicit approved production configuration uses isolated cookies, tokens a
     new URL(begin.start.authorizationUrl).origin,
     "https://connect.squareup.com",
   );
+  assert.equal(
+    new URL(begin.start.authorizationUrl).searchParams.get("session"),
+    "false",
+  );
   assert.match(begin.cookieHeader, /^__Host-nebula-square-production=/);
   await f.finish(begin);
   assert.ok(
@@ -228,7 +232,7 @@ test("OAuth uses the exact sandbox origin, fixed scopes, secure browser cookie a
   assert.equal(url.pathname, "/oauth2/authorize");
   assert.equal(url.searchParams.get("redirect_uri"), defaults.callbackUrl);
   assert.equal(url.searchParams.get("client_id"), defaults.applicationId);
-  assert.equal(url.searchParams.get("session"), "false");
+  assert.equal(url.searchParams.get("session"), "true");
   assert.equal(
     url.searchParams.get("scope"),
     "MERCHANT_PROFILE_READ ORDERS_READ ORDERS_WRITE PAYMENTS_READ PAYMENTS_WRITE",
