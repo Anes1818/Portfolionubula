@@ -8,7 +8,15 @@ import {
 } from "../rays-payments/security.mjs";
 import { ShopRegistry, ShopStore, json } from "./stores.mjs";
 import {
+  humanCheckEnabled,
+  humanCheckConfig,
+  hasHumanProof,
+  verifyHumanRequest,
+} from "./human-check.mjs";
+import { orderPreview } from "./order-preview.mjs";
+import {
   createInput,
+  normalizeEmail,
   object,
   readImage,
   validateDraft,
@@ -163,8 +171,14 @@ function publicShop(shop, env) {
     readiness: [],
     checkoutSettings: shop.commerce
       ? {
+          paymentOptions: shop.commerce.paymentOptions || "full_and_deposit",
           pickupEnabled: shop.commerce.pickupEnabled,
           deliveryEnabled: shop.commerce.deliveryEnabled,
+          taxBps: shop.commerce.taxBps,
+          deliveryCents: shop.commerce.deliveryCents,
+          deliveryNote: shop.commerce.deliveryNote || "",
+          fulfillmentRules: shop.commerce.fulfillmentRules || null,
+          terms: shop.commerce.terms,
         }
       : null,
     features: {
@@ -279,8 +293,9 @@ export function makeHandler({
           503,
         );
         const assetUrl = new URL(url);
-        if (
-          path === "/" ||
+        if (path === "/") assetUrl.pathname = "/welcome.html";
+        else if (/^\/demo\/?$/.test(path)) assetUrl.pathname = "/try.html";
+        else if (
           /^\/login\/?$/.test(path) ||
           /^\/dashboard(?:\/(shop|prices|collection|products|editor|billing|payments|orders))?\/?$/.test(
             path,
@@ -497,7 +512,11 @@ export function makeHandler({
                 env.MANUAL_ACTIVATION_ENABLED === "true"
                   ? "manual_review"
                   : "pending_setup",
-              square: "pending_setup",
+              square: squareCheckoutConfigured(env)
+                ? "checkout_configured"
+                : squareSandboxConfigured(env)
+                  ? "connection_configured"
+                  : "pending_setup",
             },
           }),
           origin,
@@ -507,6 +526,7 @@ export function makeHandler({
         return decorateResponse(
           json({
             firebase: publicFirebase,
+            humanCheck: humanCheckConfig(env),
             stage: "private_beta",
             signupMode:
               env.PUBLIC_SIGNUPS === "true" ? "open-beta" : "private-beta",
@@ -526,6 +546,12 @@ export function makeHandler({
         );
       if (request.method === "GET" && path === "/api/catalog")
         return decorateResponse(json(await loadCatalog(env)), origin, env);
+      if (request.method === "POST" && path === "/api/human-check")
+        return decorateResponse(
+          await verifyHumanRequest(request, env),
+          origin,
+          env,
+        );
 
       const authenticate = async () => {
         const header = request.headers.get("Authorization");
@@ -537,6 +563,14 @@ export function makeHandler({
         const user = await verifyAuth(
           header.slice(7),
           env.FIREBASE_PROJECT_ID || "la-flora-6ed47",
+        );
+        requireValue(
+          typeof user?.uid === "string" &&
+            !user.uid.startsWith("pending:") &&
+            typeof user?.email === "string" &&
+            user.emailVerified !== false,
+          "Sign in with a verified email address to continue.",
+          401,
         );
         const admin =
           path === "/api/session" ||
@@ -552,18 +586,69 @@ export function makeHandler({
           .split(",")
           .map((email) => email.trim().toLowerCase())
           .filter(Boolean);
+        let reservation = null;
+        if (
+          env.PUBLIC_SIGNUPS !== "true" &&
+          !invited.includes(user.email.toLowerCase()) &&
+          !admin &&
+          (!env.REGISTRY?.objects || env.REGISTRY.objects.size > 0)
+        ) {
+          reservation = await registryLookup(
+            env,
+            "reservation",
+            user.email.toLowerCase(),
+          );
+        }
         requireValue(
           env.PUBLIC_SIGNUPS === "true" ||
             invited.includes(user.email.toLowerCase()) ||
-            admin,
+            admin ||
+            Boolean(
+              reservation &&
+                (reservation.status === "pending" ||
+                  reservation.claimedByUid === user.uid),
+            ),
           "Private beta access is limited to invited accounts.",
           403,
         );
-        await responseData(
+        // New shop owners must pass a server-verified challenge before any
+        // registry record is written. Existing owners and pre-provisioned
+        // email reservations keep normal access.
+        if (
+          humanCheckEnabled(env) &&
+          !admin &&
+          !(await hasHumanProof(request, env)) &&
+          !(await registryLookup(env, "owner", user.uid))
+        ) {
+          const emailReservation =
+            reservation ||
+            (await registryLookup(
+              env,
+              "reservation",
+              user.email.toLowerCase(),
+            ));
+          if (
+            !emailReservation ||
+            (emailReservation.status !== "pending" &&
+              emailReservation.claimedByUid !== user.uid)
+          ) {
+            const error = new HttpError(
+              403,
+              "Complete the human verification to create your shop.",
+            );
+            error.code = "human_verification_required";
+            throw error;
+          }
+        }
+        const sessionData = await responseData(
           await registryStub(env).fetch(
             internal("/session", "POST", { uid: user.uid, email: user.email }),
           ),
         );
+        if (sessionData.claimedEntry) {
+          const claimedShop = await ensureShop(env, sessionData.claimedEntry);
+          await updateRegistrySummary(env, claimedShop);
+        }
         return { ...user, isAdmin: admin, token: header.slice(7) };
       };
 
@@ -610,6 +695,209 @@ export function makeHandler({
           origin,
           env,
         );
+      }
+      if (path === "/api/admin/reservations") {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        requireValue(
+          ["GET", "POST"].includes(request.method),
+          "Not found.",
+          404,
+        );
+        if (request.method === "GET") {
+          return decorateResponse(
+            json(
+              await responseData(
+                await registryStub(env).fetch(internal("/reservations")),
+              ),
+            ),
+            origin,
+            env,
+          );
+        }
+        requireValue(
+          Number.isFinite(user.authTime) &&
+            Date.now() / 1000 - user.authTime < 600 &&
+            user.authTime <= Date.now() / 1000 + 60,
+          "Sign in again before creating or changing a reservation.",
+          401,
+        );
+        const body = await readJson(request, 2 * 1024 * 1024);
+        object(body, "Reservation", [
+          "operationId",
+          "email",
+          "input",
+          "draft",
+          "media",
+        ]);
+        requireValue(
+          /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(
+            body.operationId || "",
+          ),
+          "A valid reservation operation ID is required.",
+        );
+        const email = normalizeEmail(body.email, "Owner email");
+        const input = createInput(body.input);
+        const mediaList = [];
+        const mediaIds = new Set();
+        if (body.media !== undefined) {
+          requireValue(
+            Array.isArray(body.media) && body.media.length <= 18,
+            "Seed media may include at most 18 images.",
+          );
+          for (const item of body.media) {
+            object(item, "Seed image", ["id", "kind", "mime", "base64"]);
+            requireValue(
+              /^img_[a-f0-9]{64}$/.test(item.id || "") &&
+                ["logo", "cover", "hero"].includes(item.kind) &&
+                typeof item.mime === "string" &&
+                typeof item.base64 === "string" &&
+                item.base64.length > 0 &&
+                item.base64.length <= 360000 &&
+                /^[A-Za-z0-9+/]+={0,2}$/.test(item.base64),
+              "Each seed image requires a valid ID, kind, MIME type, and base64 payload.",
+            );
+            requireValue(
+              !mediaIds.has(item.id),
+              "Duplicate seed image IDs are not allowed.",
+            );
+            let decoded;
+            try {
+              decoded = Uint8Array.from(atob(item.base64), (c) =>
+                c.charCodeAt(0),
+              );
+            } catch {
+              throw new HttpError(400, "Invalid base64 image payload.");
+            }
+            const image = await readImage(
+              new Request("https://internal/media", {
+                method: "POST",
+                headers: { "Content-Type": item.mime },
+                body: decoded,
+              }),
+              item.kind,
+            );
+            const digest = [
+              ...new Uint8Array(
+                await crypto.subtle.digest("SHA-256", image.bytes),
+              ),
+            ]
+              .map((b) => b.toString(16).padStart(2, "0"))
+              .join("");
+            requireValue(
+              "img_" + digest === item.id,
+              "Seed image ID must match its SHA-256 content digest.",
+            );
+            mediaIds.add(item.id);
+            mediaList.push({
+              id: item.id,
+              kind: item.kind,
+              mime: image.mime,
+              base64: item.base64,
+            });
+          }
+        }
+        let draft;
+        if (body.draft !== undefined) {
+          const catalog = await loadCatalog(env);
+          draft = validateDraft(body.draft, catalog);
+          requireValue(
+            draft.preset === input.preset,
+            "Seed draft preset must match the reservation input.",
+          );
+          for (const refId of mediaReferences(draft)) {
+            requireValue(
+              mediaIds.has(refId),
+              "Every image referenced in the seed draft must be included in the seed media array.",
+            );
+          }
+        }
+        const fingerprint = [
+          ...new Uint8Array(
+            await crypto.subtle.digest(
+              "SHA-256",
+              new TextEncoder().encode(
+                JSON.stringify({
+                  email,
+                  input,
+                  draft: draft || null,
+                  mediaIds: [...mediaIds].sort(),
+                }),
+              ),
+            ),
+          ),
+        ]
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+        const reserved = await responseData(
+          await registryStub(env).fetch(
+            internal("/reserve", "POST", {
+              operationId: body.operationId.toLowerCase(),
+              fingerprint,
+              actorUid: user.uid,
+              email,
+              input,
+            }),
+          ),
+        );
+        let shop = await ensureShop(env, reserved.entry);
+        if (
+          (draft || mediaList.length > 0) &&
+          shop.ownerUid.startsWith("pending:")
+        ) {
+          const seeded = await responseData(
+            await shopStub(env, reserved.entry.id).fetch(
+              internal(
+                "/seed",
+                "POST",
+                {
+                  operationId: body.operationId.toLowerCase(),
+                  actorUid: user.uid,
+                  draft,
+                  media: mediaList,
+                },
+                reserved.entry.ownerUid,
+              ),
+            ),
+          );
+          shop = seeded.shop;
+        }
+        await updateRegistrySummary(env, shop);
+        return decorateResponse(
+          json(
+            {
+              reservation: reserved.reservation,
+              shop,
+              replayed: reserved.replayed,
+            },
+            reserved.replayed ? 200 : 201,
+          ),
+          origin,
+          env,
+        );
+      }
+      if (
+        path === "/api/admin/reservations/cancel" &&
+        request.method === "POST"
+      ) {
+        const user = await authenticate();
+        requireValue(user.isAdmin, "Administrator access is required.", 403);
+        requireValue(
+          Number.isFinite(user.authTime) &&
+            Date.now() / 1000 - user.authTime < 600 &&
+            user.authTime <= Date.now() / 1000 + 60,
+          "Sign in again before creating or changing a reservation.",
+          401,
+        );
+        const body = await readJson(request, 4096);
+        object(body, "Cancel reservation", ["email"]);
+        const email = normalizeEmail(body.email, "Owner email");
+        const data = await responseData(
+          await registryStub(env).fetch(
+            internal("/reserve/cancel", "POST", { email }),
+          ),
+        );
+        return decorateResponse(json(data), origin, env);
       }
       const activationAdmin = path.match(
         /^\/api\/admin\/shops\/(sh_[a-f0-9]{32})\/activation$/,
@@ -721,6 +1009,31 @@ export function makeHandler({
           env,
         );
       }
+      const notificationRoute = path.match(
+        /^\/api\/shops\/(sh_[a-f0-9]{32})\/notifications$/,
+      );
+      if (notificationRoute) {
+        const actor = await authenticate(),
+          entry = await registryLookup(env, "id", notificationRoute[1]);
+        requireValue(entry?.ownerUid === actor.uid, "Shop not found.", 404);
+        requireValue(
+          ["GET", "PUT", "PATCH", "POST"].includes(request.method),
+          "Not found.",
+          404,
+        );
+        const body =
+          request.method === "GET" ? undefined : await readJson(request, 4096);
+        if (request.method === "PUT") {
+          object(body, "Notification settings", ["enabled"]);
+          body.actorEmail = actor.email;
+        }
+        const data = await responseData(
+          await shopStub(env, entry.id).fetch(
+            internal("/notifications", request.method, body, actor.uid),
+          ),
+        );
+        return decorateResponse(json(data), origin, env);
+      }
       const commerceRoute = path.match(
         /^\/api\/shops\/(sh_[a-f0-9]{32})\/(commerce|checkout\/(quote|status|pay|cancel|merchant))$/,
       );
@@ -740,7 +1053,7 @@ export function makeHandler({
           );
           const body =
             request.method === "PUT"
-              ? await readJson(request, 8192)
+              ? await readJson(request, 16384)
               : undefined;
           const data = await responseData(
             await shopStub(env, entry.id).fetch(
@@ -928,7 +1241,7 @@ export function makeHandler({
         }
         if (!requestId && request.method === "POST") {
           const profile = publicShop(shop, env);
-          const body = await readJson(request, 32 * 1024);
+          const body = await readJson(request, 160 * 1024);
           object(body, "Customer request", [
             "requestKey",
             "kind",
@@ -939,6 +1252,8 @@ export function makeHandler({
             "fulfillment",
             "publishedVersion",
             "accessToken",
+            "preview",
+            "asListed",
           ]);
           if (body.publishedVersion !== undefined)
             requireValue(
@@ -958,6 +1273,11 @@ export function makeHandler({
             "Choose a fixed product or bouquet design to request.",
           );
           let design, pricing, card;
+          requireValue(
+            body.asListed === undefined || typeof body.asListed === "boolean",
+            "Choose a valid bouquet order.",
+          );
+          const preview = await orderPreview(body.preview);
           if (body.kind === "product") {
             const product = profile.draft.products.find(
               (item) =>
@@ -967,7 +1287,9 @@ export function makeHandler({
             );
             requireValue(product, "This product is unavailable.", 409);
             requireValue(
-              body.design === undefined && body.cardId === undefined,
+              body.design === undefined &&
+                body.cardId === undefined &&
+                !body.asListed,
               "Fixed products cannot contain a custom design.",
             );
           } else {
@@ -986,7 +1308,14 @@ export function makeHandler({
                 "The open builder is unavailable.",
                 409,
               );
-            const raw = boundedDesign(body.design);
+            if (body.asListed)
+              requireValue(
+                card && body.design === undefined && body.preview === undefined,
+                "Choose a saved bouquet to order as listed.",
+              );
+            const raw = boundedDesign(
+              body.asListed ? card.design : body.design,
+            );
             requireValue(
               raw && raw.items?.length > 0,
               "Add at least one flower before requesting a bouquet.",
@@ -995,13 +1324,61 @@ export function makeHandler({
             // Authoritative semantic validation and pricing execute inside the
             // shop Durable Object rather than the edge request's free CPU budget.
           }
-          object(body.customer, "Customer", ["name", "phone", "note", "date"]);
+          object(body.customer, "Customer", [
+            "name",
+            "phone",
+            "note",
+            "date",
+            "address",
+            "postalCode",
+            "country",
+            "recipient",
+          ]);
+          const address = text(
+            body.customer.address ?? "",
+            "Delivery address",
+            200,
+          );
           const customer = {
             name: text(body.customer.name, "Name", 80, true),
             phone: text(body.customer.phone, "Phone", 40, true),
             note: multilineText(body.customer.note ?? "", "Note", 1000),
             date: body.customer.date ?? null,
+            ...(address ? { address } : {}),
+            ...(body.customer.postalCode
+              ? {
+                  postalCode: text(body.customer.postalCode, "Postal code", 20),
+                }
+              : {}),
+            ...(body.customer.country
+              ? { country: text(body.customer.country, "Delivery country", 2) }
+              : {}),
           };
+          if (body.customer.recipient !== undefined) {
+            object(body.customer.recipient, "Recipient", [
+              "name",
+              "phone",
+              "message",
+            ]);
+            customer.recipient = {
+              name: text(
+                body.customer.recipient.name,
+                "Recipient name",
+                80,
+                true,
+              ),
+              phone: text(
+                body.customer.recipient.phone || "",
+                "Recipient phone",
+                40,
+              ),
+              message: multilineText(
+                body.customer.recipient.message || "",
+                "Gift message",
+                500,
+              ),
+            };
+          }
           requireValue(
             customer.date === null ||
               (typeof customer.date === "string" &&
@@ -1041,6 +1418,8 @@ export function makeHandler({
               productId: body.productId,
               cardId: card?.id || null,
               design,
+              ...(preview ? { preview } : {}),
+              ...(body.asListed ? { asListed: true } : {}),
               customer,
               fulfillment: body.fulfillment,
               accessHash,
@@ -1066,6 +1445,8 @@ export function makeHandler({
                   productId: body.productId,
                   cardId: card?.id || null,
                   design,
+                  preview,
+                  asListed: body.asListed === true,
                   pricing,
                   publishedVersion: body.publishedVersion ?? profile.version,
                   customer,
@@ -1088,11 +1469,18 @@ export function makeHandler({
               "Unpaid request. Tax and delivery charges are confirmed by the florist.",
           };
           const phone = profile.draft.phone.replace(/\D/g, "");
-          const whatsappUrl = /^\d{8,15}$/.test(phone)
-            ? `https://wa.me/${phone}?text=${encodeURIComponent(`Request ${receipt.id}: ${receipt.summary}. ${customer.name}, ${customer.phone}. ${body.fulfillment}. This is an unpaid request.`)}`
-            : null;
+          const message = `Request ${receipt.id}: ${receipt.summary}. ${new Intl.NumberFormat("en", { style: "currency", currency: receipt.currency }).format(receipt.totalCents / 100)} before confirmed tax/delivery. ${customer.name}, ${customer.phone}. ${body.fulfillment}${customer.address ? " (" + customer.address + ")" : ""}${customer.date ? ". Date: " + customer.date : ""}${customer.note ? ". " + customer.note : ""}. This is an unpaid request. View saved bouquet (florist sign-in): ${new URL("/dashboard/orders?request=" + receipt.id, env.CANONICAL_ORIGIN || env.PUBLIC_ORIGIN).href}`;
+          const channel = profile.draft.requestChannel || "whatsapp";
+          const whatsappUrl =
+            channel !== "sms" && /^\d{8,15}$/.test(phone)
+              ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+              : null;
+          const smsUrl =
+            channel !== "whatsapp" && /^\d{8,15}$/.test(phone)
+              ? `sms:+${phone}?body=${encodeURIComponent(message)}`
+              : null;
           return decorateResponse(
-            json({ request: receipt, whatsappUrl }, 201),
+            json({ request: receipt, whatsappUrl, smsUrl }, 201),
             origin,
             env,
           );
@@ -1219,11 +1607,13 @@ export function makeHandler({
           object(
             input,
             "Billing request",
-            operation === "billing/activation-request" ? [] : ["planId"],
+            operation === "billing/activation-request"
+              ? ["customDomainInterest"]
+              : ["planId"],
           );
           body = {
             ...(operation === "billing/activation-request"
-              ? {}
+              ? input
               : {
                   actor: { uid: user.uid, email: user.email },
                   planId: input.planId || "shop",
@@ -1309,6 +1699,9 @@ export function makeHandler({
       return decorateResponse(
         json(
           {
+            ...(error.code === "human_verification_required"
+              ? { code: error.code }
+              : {}),
             error:
               error instanceof HttpError
                 ? error.message

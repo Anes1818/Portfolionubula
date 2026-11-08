@@ -15,6 +15,8 @@
     "run_worker_first": [
       "/",
       "/index.html",
+      "/demo",
+      "/demo/",
       "/login",
       "/dashboard",
       "/dashboard/*",
@@ -31,7 +33,7 @@
     "CANONICAL_ORIGIN": "https://sandbox.nebulastudio.site",
     "FIREBASE_PROJECT_ID": "la-flora-6ed47",
     "PUBLIC_SIGNUPS": "false",
-    "BETA_ACCESS_EMAILS": "anescareer@gmail.com,aneslaidaoui06@gmail.com",
+    "BETA_ACCESS_EMAILS": "anescareer@gmail.com,aneslaidaoui06@gmail.com,raysbouquetz@gmail.com",
     "BILLING_ENABLED": "false",
     "BILLING_TEST_MODE": "true",
     "MANUAL_ACTIVATION_ENABLED": "true",
@@ -42,6 +44,10 @@
     "SQUARE_SANDBOX_CONNECT_ENABLED": "true",
     "SQUARE_PRODUCTION_CONNECT_ENABLED": "false",
     "SQUARE_LIVE_APPROVED": "false",
+    "MERCHANT_EMAIL_ENABLED": "true",
+    "NOTIFICATIONS_TEST_RECIPIENT": "anescareer@gmail.com",
+    "RESEND_FROM": "orders@notify.nebulastudio.site",
+    "RESEND_REPLY_TO": "anescareer@gmail.com",
   },
   "durable_objects": {
     "bindings": [

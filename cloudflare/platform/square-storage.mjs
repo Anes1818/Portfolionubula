@@ -108,12 +108,19 @@ export function storedSquareService(store) {
       getContext: async () => {
         const current = store.shop(),
           currency =
-            current.published?.draft.currency || current.draft.currency;
+            current.draft.currency || current.published?.draft.currency,
+          countryMap = {
+            CAD: "CA",
+            USD: "US",
+            GBP: "GB",
+            AUD: "AU",
+            EUR: "EU",
+          };
         return {
           shopId: current.id,
           ownerUid: current.ownerUid,
           currency,
-          country: currency === "CAD" ? "CA" : "US",
+          country: countryMap[currency] || "US",
           subscription: current.subscription,
         };
       },

@@ -1,6 +1,6 @@
 {
   "id": "raysbouquetz",
-  "name": "Ray's Bouquetz",
+  "name": "raysbouquetz",
   "byline": "Handmade in Winnipeg",
   "currency": "CAD",
   "demo": true,
@@ -12,7 +12,7 @@
   "publicBaseUrl": "https://nebulastudio.site/shops/raysbouquetz/",
   "logo": "assets/shop/logo.webp",
   "studio": {
-    "name": "Ray's Bouquetz",
+    "name": "raysbouquetz",
     "site": "nebulastudio.site/shops/raysbouquetz/",
     "phone": "+12044815706",
     "instagram": "@raysbouquetz",

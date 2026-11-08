@@ -53,10 +53,10 @@ NebulaDetails.nodes=(s,f)=>(s.finishes.decorations||[]).map(d=>{
  const m=detailArt(s,d.id),h=detailHeight(s,f,d),a=detailFrame(s,f,d);
  return {uid:'detail-'+d.id,detailId:d.id,url:m.url,x:a.center.x+d.x*a.radius,y:a.center.y+d.y*a.radius,w:h*m.width/m.height,h,d:h,rot:d.rotation*Math.PI/180,bright:1,tucked:s.mode!=='classic'&&d.layer==='tucked',grounded:s.mode==='classic'&&!bowIds.includes(d.id),z:500};
 });
-function valid(o,mode){return o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).every(k=>['v','breath','sprays','edge','wrap','thistles','buds','positions','placements','breathStems'].includes(k))&&o.v===1&&(o.placements===undefined||g.NebulaFillerOptions.validPlacements(o.placements))&&(o.breathStems===undefined||Number.isInteger(o.breathStems)&&o.breathStems>=0&&o.breathStems<=24)&&(o.buds===undefined||Number.isInteger(o.buds)&&o.buds>=0&&o.buds<=10)&&(o.positions===undefined||g.NebulaFillerOptions.validPositions(o.positions))&&(o.thistles===undefined||typeof o.thistles==='boolean')&&(o.breath===undefined||Number.isInteger(o.breath)&&o.breath>=0&&o.breath<=3)&&(o.sprays===undefined||Number.isInteger(o.sprays)&&o.sprays>=0&&o.sprays<=8)&&(o.edge===undefined||typeof o.edge==='boolean')&&(o.wrap===undefined||wraps[mode].includes(o.wrap));}
+function valid(o,mode){return o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).every(k=>['v','breath','sprays','edge','wrap','thistles','buds','whiteBuds','referenceFillers','positions','placements','breathStems'].includes(k))&&o.v===1&&(o.placements===undefined||g.NebulaFillerOptions.validPlacements(o.placements))&&(o.breathStems===undefined||Number.isInteger(o.breathStems)&&o.breathStems>=0&&o.breathStems<=24)&&(o.buds===undefined||Number.isInteger(o.buds)&&o.buds>=0&&o.buds<=10)&&(o.whiteBuds===undefined||!!g.NebulaReferenceFlowers&&Number.isInteger(o.whiteBuds)&&o.whiteBuds>=0&&o.whiteBuds+(o.buds||0)<=10)&&(o.referenceFillers===undefined||g.NebulaReferenceFlowers?.validFillers(o.referenceFillers))&&(o.positions===undefined||g.NebulaFillerOptions.validPositions(o.positions))&&(o.thistles===undefined||typeof o.thistles==='boolean')&&(o.breath===undefined||Number.isInteger(o.breath)&&o.breath>=0&&o.breath<=3)&&(o.sprays===undefined||Number.isInteger(o.sprays)&&o.sprays>=0&&o.sprays<=8)&&(o.edge===undefined||typeof o.edge==='boolean')&&(o.wrap===undefined||wraps[mode].includes(o.wrap));}
 function level(s){const o=s.finishes.studio;if(o?.breath!==undefined)return o.breath;return s.finishes.fillerCount?Math.min(3,Math.ceil(s.finishes.fillerCount/4)):0;}
 function breathCount(s){if(s.finishes.studio?.breathStems!==undefined)return s.finishes.studio.breathStems;const n=s.items.filter(i=>cat[i.id]?.kind!=='greenery').length;return Math.min(8,Math.ceil(Math.sqrt(n)*.75))*(s.finishes.studio?.breath||0);}
-function extras(s){const o=s.finishes.studio||{},out=[],count=breathCount(s);if(count)out.push({id:'filler',quantity:count,totalCents:count*C.extrasCents.filler});if(o.buds)out.push({id:'lily_bud',quantity:o.buds,totalCents:o.buds*cat.lily_bud.priceCents});if(s.mode!=='dome'&&s.finishes.greeneryCount)out.push({id:'interiorGreenery',quantity:s.finishes.greeneryCount,totalCents:s.finishes.greeneryCount*cat.eucalyptus.priceCents});if(o.sprays)out.push({id:'whiteSprays',quantity:o.sprays,totalCents:o.sprays*cat.white_flower_spray.priceCents});if(o.edge)out.push({id:'breathBorder',quantity:8,totalCents:8*C.extrasCents.filler});return out;}
+function extras(s){const o=s.finishes.studio||{},out=[],count=breathCount(s);if(count)out.push({id:'filler',quantity:count,totalCents:count*C.extrasCents.filler});if(o.buds)out.push({id:'lily_bud',quantity:o.buds,totalCents:o.buds*cat.lily_bud.priceCents});if(o.whiteBuds)out.push({id:'whiteLilyBud',quantity:o.whiteBuds,totalCents:o.whiteBuds*C.extrasCents.whiteLilyBud});if(s.mode!=='dome'&&s.finishes.greeneryCount)out.push({id:'interiorGreenery',quantity:s.finishes.greeneryCount,totalCents:s.finishes.greeneryCount*cat.eucalyptus.priceCents});if(o.sprays)out.push({id:'whiteSprays',quantity:o.sprays,totalCents:o.sprays*cat.white_flower_spray.priceCents});if(s.items.length)for(const [id,quantity] of Object.entries(o.referenceFillers||{}))out.push({id,quantity,totalCents:quantity*cat[id].priceCents});if(o.edge)out.push({id:'breathBorder',quantity:8,totalCents:8*C.extrasCents.filler});return out;}
 function style(s){return s.finishes.studio?.wrap||(s.mode==='classic'?(g.NebulaSunflower?.active(s)?'yellow-upright':'fan'):s.mode==='heart'?'heart':s.finishes.roseArtwork==='lily-mixed-v1'?'peach':g.NebulaRoseArt?.reference(s)?'gingham':s.finishes.paper==='cocoa'?'cocoa':s.finishes.paper==='ivory'?'ruffle':'round');}
 function paper(s,f){
  if(!s.finishes.collar)return null;if(s.mode==='classic'&&g.NebulaClassicWrapping)return NebulaClassicWrapping.layout(s,f);const k=style(s),classic=s.mode==='classic';let m,w,h,x=f.center.x,y=f.center.y,front=null;
@@ -71,7 +71,7 @@ function paper(s,f){
  if(front&&s.finishes.paper!=='ivory'){front.paperTone=s.finishes.paper;front.paperTint=s.finishes.tint;}
  return {back:{uid:'paper',url:m.url,x,y,w,h,d:w,rot:0,bright:1,untinted:['gingham','peach','yellow-upright','kraft-upright'].includes(k)&&s.finishes.paper==='ivory'},front};
 }
-function assets(s){const o=s.finishes.studio,urls=[];if(NebulaMidnightArt.active(s)&&s.items.some(n=>n.id==='lily'))urls.push(NebulaMidnightArt.lily.url);if(NebulaMidnightArt.thistleCount(s))urls.push(NebulaMidnightArt.thistle.url);if(s.finishes.greeneryCount)urls.push(silverTip.url);if(o?.buds)urls.push('assets/client/celebration/lily-bud.png');if(o?.breath||o?.edge||s.finishes.fillerCount)urls.push(airy.url,wide.url,tuft.url);if(o?.sprays)urls.push(spray.url);if(s.mode==='classic'&&s.items.some(i=>i.id==='rose_pink'))urls.push(salmon.url);if(s.finishes.initial)urls.push('assets/client/lettering-oct20/white-florets.png');for(const d of s.finishes.decorations||[])urls.push(detailArt(s,d.id).url);if(o?.wrap||s.mode==='classic'){const p=paper(s,s.frames[s.mode]);if(p){urls.push(p.back.url);if(p.front)urls.push(p.front.url);}}return urls;}
+function assets(s){const o=s.finishes.studio,urls=[];if(NebulaMidnightArt.active(s)&&s.items.some(n=>n.id==='lily'))urls.push(NebulaMidnightArt.lily.url);if(NebulaMidnightArt.thistleCount(s))urls.push(NebulaMidnightArt.thistle.url);if(s.finishes.greeneryCount)urls.push(silverTip.url);if(o?.buds)urls.push('assets/client/celebration/lily-bud.png');if(o?.whiteBuds)urls.push(g.NebulaReferenceFlowers.whiteBud.url);for(const m of g.NebulaReferenceFlowers?.fillerArt(o?.referenceFillers)||[])urls.push(m.url);if(o?.breath||o?.edge||s.finishes.fillerCount)urls.push(airy.url,wide.url,tuft.url);if(o?.sprays)urls.push(spray.url);if(s.mode==='classic'&&s.items.some(i=>i.id==='rose_pink'))urls.push(salmon.url);if(s.finishes.initial)urls.push('assets/client/lettering-oct20/white-florets.png');for(const d of s.finishes.decorations||[])urls.push(detailArt(s,d.id).url);if(o?.wrap||s.mode==='classic'){const p=paper(s,s.frames[s.mode]);if(p){urls.push(p.back.url);if(p.front)urls.push(p.front.url);}}return urls;}
 function borderScatter(s,sc,count){
  const f=sc.frame,flowers=sc.nodes.filter(n=>!n.decorative),out=[];
  if(!flowers.length)return out;
@@ -91,17 +91,32 @@ function complete(s,sc){
  const f=sc.frame,o=s.finishes.studio||{};
  sc.classicPaper=s.mode==='classic';
  if(s.mode==='classic')sc.nodes=classicFlowers(s,sc.nodes);
+ const isCalla=node=>meta.flowers[node.id]?.tuckedCalla;
+ const hasFocal=sc.nodes.some(node=>meta.flowers[node.id]?.focal||isCalla(node));
+ if(hasFocal){
+  const top=Math.max(...sc.nodes.map(node=>node.z??node.y));
+  sc.nodes=sc.nodes.map(node=>meta.flowers[node.id]?.focal?{...node,z:top+1+(node.z??node.y)*.001}:node).sort((a,b)=>(a.z??a.y)-(b.z??b.y));
+  sc.nodes=sc.nodes.map(node=>{
+   if(!isCalla(node))return node;
+   const lean=Math.max(-.22,Math.min(.22,(node.x-f.center.x)/f.radius*.23));
+   const neighbours=sc.nodes.filter(other=>other.uid!==node.uid&&!other.decorative&&!isCalla(other)&&
+    Math.hypot(other.x-node.x,other.y-node.y)<(Math.max(other.w,other.h)+node.h)*.58);
+   return {...node,rot:lean,w:node.w*.86,h:node.h*.94,flowerCup:[.47,.43],
+    z:top+3+node.y*.001,tuck:[.10,.34],occlude:neighbours.map(other=>other.uid)};
+  }).sort((a,b)=>(a.z??a.y)-(b.z??b.y));
+ }
  // Fillers fit around the authored flowers without changing their size.
  let paperFront=null;
  if(o.wrap||s.mode==='classic'){const p=paper(s,f);sc.collar=p?.back||null;sc.finishes=sc.finishes.filter(n=>!['sunflower-front-paper','paper-front'].includes(n.uid));if(p?.front)paperFront={...p.front,z:10000};}
  if(s.mode==='classic'){const ribbon=sc.finishes.find(n=>n.uid==='ribbon');if(ribbon)ribbon.y=neckY(s)+ribbon.h*(s.finishes.ribbon==='blush'?.3:.08);}
  const fillerCount=o.breath!==undefined?breathCount(s):(s.finishes.fillerCount||0),greenCount=s.finishes.greeneryCount||0;
- const packed=NebulaInfill.nodes(sc,{mode:s.mode,breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:NebulaMidnightArt.thistleCount(s)},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle});
+ const reference=g.NebulaReferenceFlowers?.fillerArt(o.referenceFillers)||[];
+ const packed=NebulaInfill.nodes(sc,{mode:s.mode,breath:fillerCount,level:level(s),sprays:o.sprays||0,greenery:greenCount,thistles:NebulaMidnightArt.thistleCount(s)},{airy,wide,tuft,spray,greens:[silverTip],thistle:NebulaMidnightArt.thistle,reference});
  const added=g.NebulaFillerOptions?NebulaFillerOptions.compose(s,sc,packed.all):[...packed.all];
  sc.filler=(sc.filler||[]).filter(n=>!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url);
  if(s.mode==='dome')sc.greenery=packed.greenery;
  if(o.edge)borderScatter(s,sc,16).forEach((p,i)=>{const m=i%2?airy:wide,w=f.unit*.62;added.push({...p,uid:'breath-edge-'+i,url:m.url,w,h:w*m.height/m.width,d:w,bright:1,softDetail:true,infill:true,infillKind:'breath-border'});});
- if(o.buds||o.breath!==undefined||fillerCount||greenCount||o.sprays||o.edge||NebulaMidnightArt.thistleCount(s)||s.mode==='classic'){
+ if(hasFocal||reference.length||o.buds||o.whiteBuds||o.breath!==undefined||fillerCount||greenCount||o.sprays||o.edge||NebulaMidnightArt.thistleCount(s)||s.mode==='classic'){
   const old=(sc.layeredFlowers||[]).filter(n=>!sc.nodes.some(f=>f.uid===n.uid)&&!n.parentFiller&&!n.uid.startsWith('filler-')&&n.url!==NebulaMidnightArt.thistle.url&&!(s.mode==='dome'&&n.uid.startsWith('greenery-'))).map(n=>paperFront&&n.parentFlower?{...n,z:-1000,clipBottom:Math.max(...sc.nodes.map(f=>f.y+f.h*.38))}:n);
   sc.layeredFlowers=[...sc.nodes,...old,...(!sc.layeredFlowers?[...(s.mode==='dome'?[]:sc.greenery||[]),...(sc.filler||[])]:[]),...(paperFront?[paperFront]:[]),...added].sort((a,b)=>(a.z??a.y)-(b.z??b.y));
  }

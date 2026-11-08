@@ -90,6 +90,7 @@ Generic folded notes use explicit merchant per-note pricing in shop currency. No
 
 - Owner `POST /api/shops/:id/billing/activation-request` with `{}` saves an activation/renewal request.
 - Platform admin `GET/POST /api/admin/shops/:id/activation` reads audited history or records a revisioned manual grant/suspension. A fresh sign-in is required for writes. Main app grants accept only USD 29/30 days; test grants exist only in the isolated test environment.
+- Platform admin `GET/POST /api/admin/reservations` and `POST /api/admin/reservations/cancel` manage pre-provisioned email reservations (`pending:<32 hex>` placeholder owner) that are atomically claimed when the verified owner signs in with the reserved email (`docs/RAYSBOUQUETZ-PLATFORM-MIGRATION.md`).
 - Owner `GET/PUT /api/shops/:id/commerce` manages versioned exact checkout rules.
 - Public `POST /api/shops/:id/checkout/quote` with `{requestId}` and `X-Order-Token` creates/replays a server-priced final order from a saved request.
 - Customer `POST /api/shops/:id/checkout/status|pay|cancel` requires the same private header; `pay` accepts only order ID, revision and deposit/full choice. `full` collects the remaining balance after a deposit. Client amounts are rejected.

@@ -192,7 +192,7 @@ function finishNodes(s,f,nodes){
 }
 function scene(s){if(g.NebulaPhoto?.active(s))return NebulaPhoto.scene(s);const sc=G.nodes(s);if(g.NebulaRoseArt)NebulaRoseArt.apply(s,sc);sc.finishes=finishNodes(s,sc.frame,sc.nodes);sc.collar=collarNode(s,sc.frame);sc.filler=g.NebulaSpooky?NebulaSpooky.filler(s,sc.frame,sc.nodes):NebulaDetails.filler(s,sc.frame,sc.nodes);sc.greenery=NebulaRomance.greenery(s,sc.frame,sc.nodes);g.NebulaRoseArt?.complete(s,sc);g.NebulaSunflower?.complete(s,sc);g.NebulaCustomization?.complete(s,sc);g.NebulaGift?.complete(s,sc);return sc;}
 const stemCanvas=makeCanvas();
-const sprigCanvas=makeCanvas();
+const sprigCanvas=makeCanvas(),budMaskCanvas=makeCanvas();
 const footprintCache=new Map();
 function footprint(n){
  const im=decoded(n.url);if(!im)return null;
@@ -203,6 +203,23 @@ function footprint(n){
 }
 function tuckedSprig(ctx,n,flowers){
  // Botanical tips sit above the canopy, with their bases behind real petals.
+ if(n.infillKind==='bud'||n.tuck&&n.occlude?.length){
+  const c=sprigCanvas.getContext('2d'),m=budMaskCanvas.getContext('2d');
+  c.clearRect(0,0,720,820);m.clearRect(0,0,720,820);nodeDraw(c,n,{shadow:false});
+  // Protect the crown. Only lower petals tuck beneath the neighbouring flowers.
+  for(const flower of flowers)if(n.infillKind==='bud'||n.occlude.includes(flower.uid))nodeDraw(m,flower,{shadow:false,alpha:true});
+  m.save();m.globalCompositeOperation='destination-in';m.translate(n.x,n.y);m.rotate(n.rot||0);
+  const [start,end]=n.tuck||[.05,.25],tuck=m.createLinearGradient(0,n.h*start,0,n.h*end);
+  tuck.addColorStop(0,'transparent');tuck.addColorStop(1,'black');m.fillStyle=tuck;
+  m.fillRect(-2000,-2000,4000,4000);m.restore();
+  c.save();c.globalCompositeOperation='destination-out';c.drawImage(budMaskCanvas,0,0);c.restore();
+  if(n.infillKind!=='bud'){ctx.drawImage(sprigCanvas,0,0);return;}
+  // The stem disappears into the canopy even when a narrow gap exposes it.
+  c.save();c.globalCompositeOperation='destination-in';c.translate(n.x,n.y);c.rotate(n.rot||0);
+  const stem=c.createLinearGradient(0,n.h*.25,0,n.h*.40);
+  stem.addColorStop(0,'black');stem.addColorStop(1,'transparent');c.fillStyle=stem;
+  c.fillRect(-2000,-2000,4000,4000);c.restore();ctx.drawImage(sprigCanvas,0,0);return;
+ }
  if(n.infill){
   if(!n.occlude?.length){nodeDraw(ctx,n,{shadow:false});return;}
   const c=sprigCanvas.getContext('2d');c.clearRect(0,0,720,820);nodeDraw(c,n,{shadow:false});
@@ -252,7 +269,7 @@ function drawArt(ctx,s,opts={}){if(g.NebulaShop?.hostAllowed===false)return {nod
  if(opts.guides&&sc.slots?.length){for(const p of sc.slots)if(!p.uid){ctx.save();ctx.strokeStyle='#557363';ctx.lineWidth=1.5;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(p.x,p.y,p.near*.32,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(p.x-5,p.y);ctx.lineTo(p.x+5,p.y);ctx.moveTo(p.x,p.y-5);ctx.lineTo(p.x,p.y+5);ctx.stroke();ctx.restore();}}
  const garden=s.template?.layout==='garden';
  const stems=sc.layeredFlowers&&!opts.alphaOnly?sc.layeredFlowers:garden&&!opts.alphaOnly?[...sc.nodes,...(sc.greenery||[]),...(sc.filler||[]).map(n=>({...n,z:n.y+f.unit*.20}))].sort((a,b)=>a.z-b.z):sc.nodes;
- for(const n of stems){if((n.infill||n.protectCenters)&&!opts.alphaOnly)tuckedSprig(ctx,n,sc.nodes);else nodeDraw(ctx,n,{shadow:!opts.alphaOnly&&!n.softDetail,alpha:opts.alphaOnly});}
+ for(const n of stems){if((n.infill||n.protectCenters||(n.tuck&&n.occlude?.length))&&!opts.alphaOnly)tuckedSprig(ctx,n,sc.nodes);else nodeDraw(ctx,n,{shadow:!opts.alphaOnly&&!n.softDetail,alpha:opts.alphaOnly});}
  if(!opts.alphaOnly){
   // Sprigs emerge through petal gaps. Keep flower centres clear, using the
   // same deterministic geometry in preview, gallery and exported artwork.

@@ -1,3 +1,21 @@
+import {
+  applyPresentation,
+  presentationControls,
+  fulfillmentSummary,
+} from "/shop-presentation.mjs";
+import { icon } from "/icons.js";
+import { bouquetSlots, nextBouquetSlot } from "/bouquet-slots.mjs";
+import { readTrial } from "/launch-demo.mjs";
+import {
+  mainNavigation,
+  activeNavigation,
+  subNavigation,
+  setupProgress,
+  setupFooter,
+  localeFields,
+} from "/shop-flow.js";
+import { ensureHuman } from "/human-check.js";
+import { mountWorkspaceHome } from "/workspace-home.js";
 import { initialize, getUser, refreshUser, token, api } from "/session.js";
 import {
   storefrontHomeDefaults,
@@ -11,7 +29,9 @@ import {
   clearActivationPanels,
 } from "/manual-ui.js";
 import { mountCommerce } from "/commerce-ui.js";
+import { mountNotifications } from "/merchant-notifications.js";
 
+const iconMarkup = icon;
 const $ = (id) => document.getElementById(id);
 const html = (value = "") =>
   String(value ?? "").replace(
@@ -90,6 +110,7 @@ let editorMode = true,
   adminReadOnly = false;
 let adminState = {
   users: [],
+  reservations: [],
   nextCursor: null,
   query: "",
   filter: "",
@@ -105,25 +126,49 @@ let version = null,
   conflict = false,
   editRevision = 0;
 let saveTimer,
-  loginMode = "signin",
+  loginMode =
+    new URLSearchParams(location.search).get("mode") === "signup"
+      ? "signup"
+      : "signin",
   wizardStep = 1,
   pageMessage = "";
-let wizard = { name: "", slug: "", currency: "USD", preset: "fresh" };
+let wizard = {
+  name: "",
+  slug: "",
+  currency: "USD",
+  preset: readTrial()?.preset || "fresh",
+  country: "",
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+};
+const suggestedSlugSuffix = crypto.randomUUID().slice(0, 8);
+let verificationSentAt = 0;
+async function sendVerification() {
+  if (Date.now() - verificationSentAt < 60000)
+    throw Error(
+      "Please wait a minute before requesting another verification email.",
+    );
+  await authApi.sendEmailVerification(user, {
+    url: location.origin + "/dashboard",
+  });
+  verificationSentAt = Date.now();
+}
 let slugEdited = false;
 const mediaCache = new Map();
 const uploadJobs = new Set();
-const tabs = [
-  ["/dashboard", "Your overview", "◈"],
-  ["/dashboard/editor", "Edit storefront", "✎"],
-  ["/dashboard/shop", "Shop & brand", "✳"],
-  ["/dashboard/prices", "Flowers & prices", "❀"],
-  ["/dashboard/collection", "Your collection", "▦"],
-  ["/dashboard/products", "Fixed products", "▧"],
-  ["/dashboard/billing", "Plan & publishing", "◇"],
-  ["/dashboard/orders", "Customer requests", "▤"],
-  ["/dashboard/payments", "Square payments", "□"],
-];
+const tabs = mainNavigation;
 const currency = () => draft?.currency || shop?.draft?.currency || "USD";
+const CURRENCY_MARKETS = [
+  ["USD", "USD · United States"],
+  ["CAD", "CAD · Canada"],
+  ["GBP", "GBP · United Kingdom"],
+  ["EUR", "EUR · Eurozone"],
+  ["AUD", "AUD · Australia"],
+];
+const currencyOptions = (selected = currency()) =>
+  CURRENCY_MARKETS.map(
+    ([code, label]) =>
+      `<option value="${code}" ${selected === code ? "selected" : ""}>${label}</option>`,
+  ).join("");
 const amount = (cents) => (cents == null ? "" : (cents / 100).toFixed(2));
 const route = () => location.pathname.replace(/\/$/, "") || "/dashboard";
 const operatorRoute = () => /^\/admin(?:\/|$)/.test(route());
@@ -154,20 +199,44 @@ const studioLink = (card, order = false) =>
     shop: shop.id,
     ...(card ? { card: card.id } : { blank: "1" }),
     ...(!user || publicSnapshot ? { slug: shop.slug } : {}),
+    ...(user && !publicSnapshot ? { onboarding: "1" } : {}),
     ...(order ? { action: "order" } : {}),
   });
+const buildSlotLink = (number = nextBouquetSlot(draft.collection)) =>
+  studioLink(null) + "&slot=" + number;
+const trialStudioLink = () => {
+  const pending = readTrial(),
+    next = nextBouquetSlot(draft.collection);
+  return next && pending && [pending.preset, "mixed"].includes(draft.preset)
+    ? buildSlotLink(next) + "&trial=1&flowers=" + pending.preset
+    : null;
+};
 const previewLink = () => "/s/" + encodeURIComponent(shop.slug);
 const recipeFor = (card) =>
   catalog?.recipes.find((recipe) => recipe.id === card.recipeId);
+const cardFlowerType = (card) =>
+  card.design?.flowerType ||
+  recipeFor(card)?.preset ||
+  catalog?.flowers.find((row) =>
+    card.design?.items?.some((item) => item.id === row.id),
+  )?.preset ||
+  draft.preset;
 const matchingRecipes = () =>
   (catalog?.recipes || []).filter(
-    (recipe) => recipe.preset === (draft?.preset || wizard.preset),
+    (recipe) =>
+      (draft?.preset || wizard.preset) === "mixed" ||
+      recipe.preset === (draft?.preset || wizard.preset),
   );
 const matchingFlowers = () =>
-  (catalog?.flowers || []).filter((item) => item.preset === draft?.preset);
+  (catalog?.flowers || []).filter(
+    (item) => draft?.preset === "mixed" || item.preset === draft?.preset,
+  );
 const matchingExtras = () =>
   (catalog?.extras || []).filter(
-    (item) => !item.preset || item.preset === draft?.preset,
+    (item) =>
+      !item.preset ||
+      draft?.preset === "mixed" ||
+      item.preset === draft?.preset,
   );
 const presetReady = () =>
   catalog?.presets?.find((item) => item.id === draft?.preset)?.available ===
@@ -209,7 +278,9 @@ function normalizeDraft(value) {
   result.enabledModes ||= [
     ...new Set(
       (catalog?.recipes || [])
-        .filter((item) => item.preset === result.preset)
+        .filter(
+          (item) => result.preset === "mixed" || item.preset === result.preset,
+        )
         .map((item) => item.mode),
     ),
   ];
@@ -291,11 +362,13 @@ function accountNav() {
     ? "Nebula Admin · Customers & subscriptions"
     : "Nebula · Your florist workspace";
   const home = operator ? "/admin" : "/dashboard";
+  const floristHome = shop && !publicSnapshot ? previewLink() : "/dashboard";
+  const floristNav = `<a class="plain-button" href="${html(floristHome)}" data-nav>My shop</a>`;
   document
     .querySelectorAll(".app-header .wordmark, .app-footer a")
     .forEach((a) => a.setAttribute("href", home));
   $("accountNav").innerHTML = user
-    ? `${operator ? '<a class="plain-button" href="/admin" data-nav>Customers & subscriptions</a><a class="plain-button" href="/dashboard" data-nav>Florist workspace ↗</a>' : '<a class="plain-button" href="/dashboard" data-nav>My shop</a>'}<span class="account-email">${html(user.email)}</span><button class="plain-button" data-action="signout">Sign out</button>`
+    ? `${operator ? '<a class="plain-button" href="/admin" data-nav>Customers & subscriptions</a><a class="plain-button" href="/dashboard" data-nav>Florist workspace ↗</a>' : floristNav}<span class="account-email">${html(user.email)}</span><button class="plain-button" data-action="signout">Sign out</button>`
     : `<a class="plain-button" href="${operator ? "/admin/login" : "/login"}" data-nav>${operator ? "Administrator sign in" : "Florist sign in"} ↗</a>`;
 }
 async function navigate(path, replace = false) {
@@ -350,12 +423,14 @@ function field(
 }
 function shell(content, heading, description, eyebrow = "YOUR FLOWER SHOP") {
   const current = route();
+  const activePage = activeNavigation(current);
+  const setup = new URLSearchParams(location.search).get("setup") === "1";
   if (adminReadOnly) {
     main.innerHTML = `<section class="admin-page"><nav class="operator-tabs" aria-label="Nebula administration"><a href="/admin" data-nav>← Customers & subscriptions</a><span>Inspecting ${html(draft.name)} · READ ONLY</span><a href="/admin/shops/${shop.id}/preview" data-admin-preview data-id="${shop.id}" data-view="draft">Storefront preview</a><a href="/admin/shops/${shop.id}/orders" data-admin-orders data-id="${shop.id}">Customer requests</a></nav><div class="page-heading"><div><p class="eyebrow">NEBULA ADMIN · MERCHANT INSPECTION</p><h1>${heading}</h1><p class="subtle">${description}</p></div><span class="pill">READ ONLY</span></div>${notice()}${content}</section>`;
     hydrateMedia();
     return;
   }
-  main.innerHTML = `<div class="workspace"><aside class="sidebar"><div class="shop-mini"><div class="shop-monogram">${html((draft.name || "N").slice(0, 1))}</div><div><strong>${html(draft.name)}</strong><small>${adminReadOnly ? "Administrator preview" : isPublished() ? "Published shop" : "Private draft"}</small></div></div><nav class="sidebar-nav" aria-label="Shop settings">${tabs.map(([path, name, icon]) => `<a href="${path}" data-nav class="${current === path ? "active" : ""}" ${current === path ? 'aria-current="page"' : ""}><span class="nav-icon" aria-hidden="true">${icon}</span>${name}</a>`).join("")}</nav><div class="sidebar-bottom"><strong>${isPaid() ? "A space of your own." : "Free to find your finishing touches."}</strong><p>${isPaid() ? "Your paid plan lets you publish when your shop is ready. Square is optional." : "Your preview stays private. Activate the $29 monthly plan when you’re ready to publish."}</p><a href="${previewLink()}" data-nav class="plain-button">Visit my preview ↗</a></div></aside><section class="dashboard-content"><div class="page-heading"><div><p class="eyebrow">${eyebrow}</p><h1>${heading}</h1><p class="subtle">${description}</p></div>${adminReadOnly ? '<span class="pill">READ ONLY</span>' : saveControls()}</div>${notice()}${content}</section></div>`;
+  main.innerHTML = `<div class="workspace ${setup ? "guided-setup" : ""}"><aside class="sidebar"><div class="shop-mini"><div class="shop-monogram">${html((draft.name || "N").slice(0, 1))}</div><div><strong>${html(draft.name)}</strong><small>${adminReadOnly ? "Administrator preview" : isPublished() ? "Published shop" : "Private draft"}</small></div></div><label class="mobile-workspace-nav">Go to<select id="workspacePage">${tabs.map(([path, name]) => `<option value="${path}" ${activePage === path ? "selected" : ""}>${name}</option>`).join("")}</select></label><nav class="sidebar-nav" aria-label="Shop settings">${tabs.map(([path, name, icon]) => `<a href="${path}" data-nav class="${activePage === path ? "active" : ""}" ${activePage === path ? 'aria-current="page"' : ""}><span class="nav-icon" aria-hidden="true">${icon ? iconMarkup(icon) : ""}</span>${name}</a>`).join("")}</nav><div class="sidebar-bottom"><strong>${isPaid() ? "A space of your own." : "Free to find your finishing touches."}</strong><p>${isPaid() ? "Your paid plan lets you publish when your shop is ready. Square is optional." : "Your preview stays private. Activate the $29 monthly plan when you’re ready to publish."}</p><a href="${previewLink()}" data-nav class="plain-button">Visit my preview ↗</a></div></aside><section class="dashboard-content"><div class="page-heading"><div><p class="eyebrow">${eyebrow}</p><h1>${heading}</h1><p class="subtle">${description}</p></div>${adminReadOnly ? '<span class="pill">READ ONLY</span>' : ["/dashboard", "/dashboard/billing"].includes(current) && !dirty ? "" : saveControls()}</div>${notice()}${setup ? setupProgress(current) : ""}${subNavigation(current, setup)}${content}${setup ? setupFooter(current).replace('href="/s/"', 'href="' + previewLink() + '" data-nav') : ""}</section></div>`;
   hydrateMedia();
 }
 
@@ -366,7 +441,7 @@ function renderLogin() {
     return;
   }
   const signup = loginMode === "signup";
-  main.innerHTML = `<div class="login-layout"><section class="login-story"><p class="eyebrow">A LITTLE SPACE FOR YOUR FLOWER SHOP</p><h1>Your flowers.<br>Your name.<br><em>A beautiful beginning.</em></h1><p class="subtle">Bring your collection together, make it feel like you, and explore your very own bouquet studio.</p><div class="story-image"><img src="/assets/studio-pink.webp" alt="Soft pink roses and delicate white flowers, wrapped in ivory paper" width="928" height="1152"></div><div class="story-caption"><span>YOUR CRAFT. THEIR IMAGINATION.</span><span>✳</span></div></section><section class="auth-card"><p class="eyebrow">${signup ? "LET’S GET ACQUAINTED" : "WELCOME TO YOUR STUDIO"}</p><h2>${signup ? "Something lovely starts here." : "A little more you."}</h2><p class="subtle">${signup ? "Create your account and start your free private shop preview." : "Sign in to pick up where your flowers left off."}</p><div id="authMessage" class="notice" role="status" hidden></div><button class="google-button" data-action="google"><span class="google-icon" aria-hidden="true">G</span>Continue with Google</button><div class="divider">or use your email</div><form id="authForm"><label class="field">Email address<input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@yourflowershop.com" required></label><label class="field"><span class="password-heading">Password${signup ? "" : '<button class="plain-button" type="button" data-action="reset">Forgot password?</button>'}</span><input id="password" name="password" type="password" autocomplete="${signup ? "new-password" : "current-password"}" ${signup ? 'minlength="10"' : ""} required placeholder="${signup ? "At least 10 characters" : "Your password"}"></label><button type="submit" class="button">${signup ? "Create my account" : "Step into my studio"}<span aria-hidden="true">↗</span></button></form><p class="auth-bottom">${signup ? "Already have an account?" : "New around here?"} <button class="plain-button" data-action="auth-mode">${signup ? "Sign in" : "Create an account"}</button></p><p class="beta-note">Your private preview is free. Creating an account does not activate a paid subscription or open customer orders.</p></section></div>`;
+  main.innerHTML = `<div class="login-layout"><section class="login-story"><p class="eyebrow">A LITTLE SPACE FOR YOUR FLOWER SHOP</p><h1>Your bouquet.<br>Your name.<br><em>Your shop.</em></h1><p class="subtle">Start with one bouquet. Add its photo and your prices, then let customers make it their own.</p><div class="story-image"><img src="/assets/studio-pink.webp" alt="Soft pink roses and delicate white flowers, wrapped in ivory paper" width="928" height="1152"></div><div class="story-caption"><span>YOUR CRAFT. THEIR IMAGINATION.</span><span>✳</span></div></section><section class="auth-card"><p class="eyebrow">${signup ? "LET’S GET ACQUAINTED" : "WELCOME TO YOUR STUDIO"}</p><h2>${signup ? "Something lovely starts here." : "A little more you."}</h2><p class="subtle">${signup ? "Create your account and start your free private shop preview." : "Sign in to pick up where your flowers left off."}</p><div id="authMessage" class="notice" role="status" hidden></div><button class="google-button" data-action="google"><span class="google-icon" aria-hidden="true">G</span>Continue with Google</button><div class="divider">or use your email</div><form id="authForm"><label class="field">Email address<input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@yourflowershop.com" required></label><label class="field"><span class="password-heading">Password${signup ? "" : '<button class="plain-button" type="button" data-action="reset">Forgot password?</button>'}</span><input id="password" name="password" type="password" autocomplete="${signup ? "new-password" : "current-password"}" ${signup ? 'minlength="10"' : ""} required placeholder="${signup ? "At least 10 characters" : "Your password"}"></label><button type="submit" class="button">${signup ? "Create my account" : "Step into my studio"}<span aria-hidden="true">↗</span></button></form><p class="auth-bottom">${signup ? "Already have an account?" : "New around here?"} <button class="plain-button" data-action="auth-mode">${signup ? "Sign in" : "Create an account"}</button></p><p class="beta-note">Your private preview is free. Creating an account does not activate a paid subscription or open customer orders.</p></section></div>`;
   if (config?.signupMode === "private-beta") {
     main.querySelector(".auth-card > .subtle").textContent = signup
       ? "Create an account using your invited email address. Access is limited to invited shops during this beta."
@@ -377,59 +452,49 @@ function renderLogin() {
       main.querySelector('[data-action="auth-mode"]').textContent =
         "Invited? Create an account";
   }
+  const demoLink = document.createElement("p");
+  demoLink.className = "helper login-demo-link";
+  demoLink.innerHTML =
+    '<a href="/demo">Try the bouquet builder without an account ↗</a>';
+  main.querySelector(".auth-card").append(demoLink);
+  if (readTrial()) {
+    const saved = document.createElement("p");
+    saved.className = "trial-resume";
+    saved.textContent =
+      "Your trial bouquet is kept in this tab. Create your shop to continue it with your own photo and prices.";
+    main.querySelector(".auth-card > .subtle").after(saved);
+  }
 }
 function renderVerification() {
-  main.innerHTML = `<section class="setup-form"><div class="auth-card"><div class="verification-icon" aria-hidden="true">✉</div><p class="eyebrow">ONE LITTLE STEP FIRST</p><h1>Check your inbox.</h1><p class="subtle">Verify <strong>${html(user.email)}</strong> before opening your shop. Follow the link in your verification email, then come back here.</p><div id="authMessage" class="notice" role="status" hidden></div><div class="actions"><button class="button" data-action="check-verification">I’ve verified my email <span aria-hidden="true">↗</span></button><button class="button secondary" data-action="send-verification">Send verification email</button></div><p class="helper">Email is sent only when you request it. Check your spam folder if it hasn’t arrived.</p></div></section>`;
+  main.innerHTML = `<section class="setup-form"><div class="auth-card"><div class="verification-icon">${icon("mail")}</div><p class="eyebrow">ONE LITTLE STEP FIRST</p><h1>Check your inbox.</h1><p class="subtle">Verify <strong>${html(user.email)}</strong> before opening your shop. Follow the link in your verification email, then come back here.</p><div id="authMessage" class="notice" role="status" hidden></div><div class="actions"><button class="button" data-action="check-verification">I’ve verified my email <span aria-hidden="true">↗</span></button><button class="button secondary" data-action="send-verification">Send verification email</button></div><p class="helper">We send a verification email when you register. If it hasn’t arrived, check Spam or request another email here.</p></div></section>`;
 }
 function renderRestricted(message) {
   main.innerHTML = `<section class="empty-screen"><div class="lock-icon" aria-hidden="true">✧</div><p class="eyebrow">A SMALL, PRIVATE BETA</p><h1>Your invitation<br>comes <em>first.</em></h1><p class="subtle" style="max-width:430px">${html(message)}</p><p class="helper">Signed in as ${html(user?.email || "your account")}. Shop access is limited to the invited beta accounts.</p><div class="actions" style="margin-top:24px"><button class="button" data-action="retry-session">Check access again</button><button class="button secondary" data-action="signout">Use another account</button></div></section>`;
 }
 function renderWizard() {
-  main.innerHTML = `<section class="setup-form"><p class="eyebrow">YOUR SHOP, TAKING SHAPE</p><h1>Make a little<br><em>room for your flowers.</em></h1><p class="subtle">Start with the essentials. Your shop stays private while you find your finishing touches.</p><div class="step-indicator"><i class="active"></i><i class="${wizardStep === 2 ? "active" : ""}"></i><span>STEP ${wizardStep} OF 2 · ${wizardStep === 1 ? "YOUR SHOP" : "YOUR FLOWERS"}</span></div><div id="pageMessage" class="notice" role="status" hidden></div><form id="createShopForm" class="surface">${wizardStep === 1 ? `<h2>First, a name.</h2><p class="subtle">A familiar name, in a new creative space.</p><div class="form-grid"><label class="field full">Shop name<input id="shopName" data-wizard="name" value="${html(wizard.name)}" maxlength="80" placeholder="The Little Flower Room" required></label><label class="field full">Your shop link<input id="shopSlug" data-wizard="slug" value="${html(wizard.slug)}" minlength="3" maxlength="48" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="the-little-flower-room" required><span class="helper">${html(location.host)}/s/<span id="slugPreview">${html(wizard.slug || "your-shop-name")}</span> · Choose carefully; this becomes your shop address.</span></label><label class="field">Your shop currency<select data-wizard="currency"><option value="USD" ${wizard.currency === "USD" ? "selected" : ""}>USD · US dollar</option><option value="CAD" ${wizard.currency === "CAD" ? "selected" : ""}>CAD · Canadian dollar</option></select></label></div><div class="form-footer"><span class="helper">One account. One thoughtfully made shop.</span><button class="button" type="submit">Choose my flowers <span aria-hidden="true">→</span></button></div>` : `<h2>What do you make?</h2><p class="subtle">Choose the collection that feels closest to your craft.</p><div class="preset-grid"><label class="preset-option"><input type="radio" name="preset" value="fresh" data-wizard="preset" ${wizard.preset === "fresh" ? "checked" : ""}><span class="preset-symbol" aria-hidden="true">❀</span><strong>Fresh flowers</strong><span>Real flower artwork and ready-to-edit recipes. Your bouquet studio is ready to explore.</span><span class="pill green" style="display:inline-flex;margin-top:14px">Ready for the beta</span></label><label class="preset-option"><input type="radio" name="preset" value="satin" data-wizard="preset" ${wizard.preset === "satin" ? "checked" : ""}><span class="preset-symbol" aria-hidden="true">✿</span><strong>Satin & eternal</strong><span>Satin flower artwork, ready-to-edit recipes and a studio for lasting little moments.</span><span class="pill green" style="display:inline-flex;margin-top:14px">Satin & eternal collection</span></label></div><p class="helper">Start with a free private preview. Activate your $29 monthly plan when you are ready to publish.</p><div class="form-footer"><button class="plain-button" type="button" data-action="wizard-back">← Back to my shop</button><button class="button" type="submit">Create my private shop <span aria-hidden="true">↗</span></button></div>`}</form></section>`;
+  main.innerHTML = `<section class="setup-form"><p class="eyebrow">YOUR SHOP STARTS HERE</p><h1>Your flowers.<br><em>Your own little shop.</em></h1><p class="subtle">Give your shop a name and see your storefront. Then build the first bouquet customers can customise.</p><div id="pageMessage" class="notice" role="status" hidden></div><form id="createShopForm" class="surface"><div class="form-grid"><label class="field full">Shop name<input id="shopName" data-wizard="name" value="${html(wizard.name)}" maxlength="80" placeholder="The Little Flower Room" required></label><label class="field">What do you make?<select data-wizard="preset"><option value="fresh" ${wizard.preset === "fresh" ? "selected" : ""}>Fresh flowers</option><option value="satin" ${wizard.preset === "satin" ? "selected" : ""}>Satin & eternal flowers</option><option value="mixed" ${wizard.preset === "mixed" ? "selected" : ""}>Fresh + satin</option></select></label></div><details class="setup-details"><summary>My link, currency &amp; location · ${html(wizard.currency)}</summary><div class="form-grid"><label class="field full">Your shop link<input id="shopSlug" data-wizard="slug" value="${html(wizard.slug)}" minlength="3" maxlength="48" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required><span class="helper">${html(location.host)}/s/<span id="slugPreview">${html(wizard.slug || "your-shop-name")}</span></span></label>${localeFields(wizard, "data-wizard")}<label class="field">Shop currency<select data-wizard="currency">${currencyOptions(wizard.currency)}</select></label></div></details><p class="helper">Your preview is private. Confirm your location and currency before opening orders. Start with one bouquet; your logo and other details can come later.</p><div class="form-footer"><span class="helper">You can add your logo and colours later.</span><button class="button" type="submit">See my shop →</button></div></form></section>`;
 }
 function renderOverview() {
-  const priced = matchingFlowers().filter(
-    (item) =>
-      !draft.disabledFlowers.includes(item.id) &&
-      Number.isInteger(draft.flowerPrices[item.id]),
-  ).length;
-  const checks = [
-    [
-      !!(draft.name && draft.phone),
-      "Your shop identity",
-      "Add your name, colour and contact details.",
-      "/dashboard/shop",
-    ],
-    [
-      priced > 0,
-      "Your flower library",
-      "Choose the flowers and prices you offer.",
-      "/dashboard/prices",
-    ],
-    [
-      draft.collection.length + draft.products.length > 0,
-      "Your first collection",
-      "Add recipes to customise and products ready to order.",
-      "/dashboard/collection",
-    ],
-    [
-      isPublished(),
-      "Your opening day",
-      "Activate your plan, then publish when you’re ready.",
-      "/dashboard/billing",
-    ],
-  ];
+  const next = nextBouquetSlot(draft.collection);
   shell(
-    `<section class="surface welcome-card"><div class="welcome-copy"><p class="eyebrow">YOUR BUSINESS, IN BLOOM</p><h2>A lovely shop.<br><em>Made your own.</em></h2><p>Set the scene, curate your flowers and invite a little imagination. Your next chapter starts here.</p><div class="actions"><a class="button" href="/dashboard/editor" data-nav>Edit my storefront ↗</a><a class="plain-button" href="${previewLink()}" data-nav>Preview my shop</a></div></div><div class="welcome-art"><img src="/assets/studio-pink.webp" alt="Blush rose bouquet in ivory wrapping"></div></section><div class="stats-grid"><div class="surface stat"><span class="label">CUSTOMISABLE BOUQUETS</span><strong>${draft.collection.length}<span class="stat-limit"> / 6</span></strong><p>Recipes with a personal touch</p></div><div class="surface stat"><span class="label">FIXED PRODUCTS</span><strong>${draft.products.length}<span class="stat-limit"> / 10</span></strong><p>Exactly as you make them</p></div><div class="surface stat"><span class="label">YOUR SHOP STATUS</span><strong class="status-word">${isPublished() ? "Live" : isPaid() ? "Ready" : "Private"}</strong><p>${isPublished() ? "Your published shop is open" : isPaid() ? "Your plan is active; publish when ready" : "Free preview · activate to publish"}</p></div></div><div class="overview-grid"><section class="surface"><div class="section-heading"><div><h2>A few finishing touches.</h2><p class="subtle">A clear path to your opening day.</p></div><span class="pill">${checks.filter((item) => item[0]).length} of 4</span></div><ol class="checklist">${checks.map(([done, title, note, path]) => `<li><span class="check-circle ${done ? "done" : ""}">${done ? "✓" : "○"}</span><div><strong>${title}</strong><p>${note}</p></div><a href="${path}" data-nav aria-label="${title}">↗</a></li>`).join("")}</ol></section><section class="surface draft-card"><p class="tiny-label">A LITTLE ROOM TO CREATE</p><h3>Start with a blank canvas.</h3><p class="subtle">Open your independent bouquet builder. This entry is separate from every product and collection card.</p><a class="button secondary" href="${studioLink(null)}" data-studio ${!presetReady() ? 'aria-disabled="true"' : ""}>Open Builder ✳</a><p class="helper">${presetReady() ? "Your offered flowers, your prices and your imagination." : "The matching studio is being prepared for this preset."}</p><div class="preview-link"><span>${html(location.host + previewLink())}</span><a href="${previewLink()}" data-nav aria-label="Preview shop">↗</a></div></section></div>`,
-    "Welcome to<br><em>your little flower shop.</em>",
-    "Everything you need to make a beautiful beginning.",
+    `<section class="surface builder-home"><p class="eyebrow">YOUR FLOWERS. THEIR IMAGINATION.</p><h2>Turn your bouquets into designs customers can customise.</h2><p>Build a recipe, add its name, photo and prices, then see it in your shop.</p><div class="actions">${next ? `<a class="button" href="${buildSlotLink(next)}" data-studio>${draft.collection.length ? "Build next bouquet" : "Build my first bouquet"} →</a>` : ""}<a class="button secondary" href="/dashboard/collection" data-nav>My bouquets · ${draft.collection.length}/6 ↗</a><a class="plain-button" href="${previewLink()}" data-nav>Preview my shop ↗</a></div></section><section class="surface" id="workspaceStatus"></section><div class="overview-shortcuts"><a class="surface shortcut-card" href="/dashboard/collection" data-nav>${icon("bouquet")}<strong>Your bouquet builder</strong><span>${draft.collection.length} / 6 signature bouquets · start with one</span></a><a class="surface shortcut-card" href="/dashboard/prices" data-nav>${icon("flower")}<strong>Flowers & prices</strong><span>${draft.preset === "mixed" ? "Fresh + satin" : draft.preset === "satin" ? "Satin flowers" : "Fresh flowers"}</span></a></div>`,
+    "Your bouquet<br><em>builder.</em>",
+    "Create your signature bouquets. Let customers make them their own.",
   );
-  renderShopAddress();
+  mountWorkspaceHome({ shop, config, api });
 }
 
 function renderBrand() {
+  if (new URLSearchParams(location.search).get("setup") === "1") {
+    shell(
+      `<section class="surface"><h2>The essentials.</h2><p class="subtle">Set the details customers need. Your colours, logo and full website editor remain available whenever you want.</p><div class="form-grid">${field("Shop name", "name", { max: 80, required: true })}${localeFields(draft)}<label class="field">Shop currency<select data-path="currency">${currencyOptions()}</select></label>${field("City / service area", "city", { max: 80 })}${field("Phone or WhatsApp · include country code", "phone", { type: "tel", max: 40 })}</div><p class="helper">Flower collection: ${draft.preset === "mixed" ? "Fresh + satin" : draft.preset === "satin" ? "Satin & eternal" : "Fresh"} · <a href="/dashboard/shop" data-nav>Edit full shop settings</a></p></section>`,
+      "Make it <em>your shop.</em>",
+      "A few essentials, then your first bouquet.",
+    );
+    return;
+  }
   shell(
-    `<section class="surface"><div class="section-heading"><div><h2>A name they’ll remember.</h2><p class="subtle">The familiar details that make this space yours.</p></div><a class="button secondary small" href="/dashboard/editor" data-nav>Edit on the page ↗</a></div><div class="form-grid">${field("Shop name", "name", { max: 80, required: true })}${field("A little introduction", "tagline", { max: 160 })}${field("City or neighbourhood", "city", { max: 80 })}${field("Phone or WhatsApp", "phone", { type: "tel", max: 40 })}${field("Instagram", "instagram", { max: 120 })}<label class="field">Your permanent shop link<input value="${html(location.host + previewLink())}" disabled></label></div></section><section class="surface"><h2>Your signature.</h2><div class="media-row"><div class="logo-preview">${draft.logoMediaId ? `<img data-media-id="${html(draft.logoMediaId)}" alt="Your shop logo">` : "✳"}</div><div>${uploadField("logo", null, 1, "Choose a logo")}${draft.logoMediaId ? '<button class="plain-button" data-action="remove-logo">Remove logo</button>' : ""}<p class="helper">PNG, JPEG or WebP · automatically resized to 80 KB.</p></div></div><div class="colour-fields">${[
+    `<section class="surface">${presentationControls(draft.home)}</section><section class="surface"><div class="section-heading"><div><h2>A name they’ll remember.</h2><p class="subtle">The familiar details that make this space yours.</p></div><a class="button secondary small" href="/dashboard/editor" data-nav>Edit on the page ↗</a></div><div class="form-grid">${field("Shop name", "name", { max: 80, required: true })}${field("A little introduction", "tagline", { max: 160 })}${field("City or neighbourhood", "city", { max: 80 })}${field("Phone or WhatsApp", "phone", { type: "tel", max: 40 })}${field("Instagram", "instagram", { max: 120 })}${localeFields(draft)}<label class="field">Requests without online payment<select data-path="requestChannel"><option value="whatsapp" ${draft.requestChannel !== "sms" && draft.requestChannel !== "both" ? "selected" : ""}>WhatsApp</option><option value="sms" ${draft.requestChannel === "sms" ? "selected" : ""}>SMS</option><option value="both" ${draft.requestChannel === "both" ? "selected" : ""}>WhatsApp + SMS</option></select><span class="helper">Uses your phone number above, including its country code. Customers review and send the message themselves.</span></label><label class="field">Your permanent shop link<input value="${html(location.host + previewLink())}" disabled></label></div></section><section class="surface"><h2>Your signature.</h2><div class="media-row"><div class="logo-preview">${draft.logoMediaId ? `<img data-media-id="${html(draft.logoMediaId)}" alt="Your shop logo">` : "✳"}</div><div>${uploadField("logo", null, 1, "Choose a logo")}${draft.logoMediaId ? '<button class="plain-button" data-action="remove-logo">Remove logo</button>' : ""}<p class="helper">PNG, JPEG or WebP · automatically resized to 80 KB.</p></div></div><div class="colour-fields">${[
       ["primary", "Signature colour"],
       ["background", "Paper colour"],
     ]
@@ -439,7 +504,7 @@ function renderBrand() {
       )
       .join(
         "",
-      )}</div></section><section class="surface"><h2>Made for your craft.</h2><label class="field">Flower preset<select data-preset ${shop.published ? "disabled" : ""}>${(catalog.presets || []).map((item) => `<option value="${html(item.id)}" ${draft.preset === item.id ? "selected" : ""}>${html(item.name)}${item.available ? "" : " · studio preparing"}</option>`).join("")}</select></label><p class="helper">${shop.published ? "Your preset is fixed after your first publication to keep saved customer designs consistent." : "You can change your preset before publishing. Existing recipes and pricing will never be silently removed. Remove incompatible items first, then choose your new preset."} Your currency is ${currency()}.</p><div class="mode-options"><span class="tiny-label">BUILDER MODES</span>${[...new Set(matchingRecipes().map((item) => item.mode))].map((mode) => `<label class="toggle-line"><input type="checkbox" data-mode="${html(mode)}" ${draft.enabledModes.includes(mode) ? "checked" : ""}>${html(mode.charAt(0).toUpperCase() + mode.slice(1))}</label>`).join("") || '<p class="helper">Matching modes will appear when the library is available.</p>'}</div></section>`,
+      )}</div></section><section class="surface"><h2>Made for your craft.</h2><div class="form-grid"><label class="field">Flower collections<select data-preset>${(catalog.presets || []).map((item) => `<option value="${html(item.id)}" ${draft.preset === item.id ? "selected" : ""}>${html(item.name)}${item.available ? "" : " · studio preparing"}</option>`).join("")}</select></label><label class="field">Shop currency &amp; market<select data-path="currency">${currencyOptions()}</select></label></div><p class="helper">${shop.published ? "Add Fresh + satin to offer both collections without changing existing bouquets." : "You can change your preset before publishing. Existing recipes and pricing will never be silently removed. Remove incompatible items first, then choose your new preset."} Currency: ${currency()}. Use the same currency as your Square account if you connect it.</p><div class="mode-options"><span class="tiny-label">BUILDER MODES</span>${[...new Set(matchingRecipes().map((item) => item.mode))].map((mode) => `<label class="toggle-line"><input type="checkbox" data-mode="${html(mode)}" ${draft.enabledModes.includes(mode) ? "checked" : ""}>${html(mode.charAt(0).toUpperCase() + mode.slice(1))}</label>`).join("") || '<p class="helper">Matching modes will appear when the library is available.</p>'}</div></section>`,
     "The details that<br>make it <em>you.</em>",
     "Your name, your colours, your way of saying hello.",
     "SHOP & BRAND",
@@ -452,17 +517,54 @@ function priceRows(items, extras = false) {
         extras ? draft.disabledExtras : draft.disabledFlowers
       ).includes(item.id);
       const value = (extras ? draft.extrasCents : draft.flowerPrices)[item.id];
-      return `<tr data-price-row data-search="${html((item.en || item.label || item.id).toLowerCase())}" class="${disabled ? "unavailable" : ""}"><td><input type="checkbox" data-${extras ? "extra" : "flower"}-enabled="${html(item.id)}" aria-label="Offer ${html(item.en || item.label || item.id)}" ${disabled ? "" : "checked"}></td><td><div class="asset-name">${item.image ? `<img src="${html(item.image)}" alt="" loading="lazy">` : ""}<div>${html(item.en || item.label || item.id)}<small>${html((item.group || item.family || (extras ? "Finishing touch" : "Flower")).replaceAll("_", " "))}</small></div></div></td><td><input class="price-input" type="number" min="0" max="10000" step="0.01" inputmode="decimal" data-${extras ? "extra" : "flower"}-price="${html(item.id)}" aria-label="${html(item.en || item.label || item.id)} price in ${currency()}" value="${amount(value)}" placeholder="Set price"></td></tr>`;
+      return `<tr data-price-row data-collection="${html(item.preset || "shared")}" data-search="${html((item.en || item.label || item.id).toLowerCase())}" class="${disabled ? "unavailable" : ""}"><td><label class="availability-hit"><input type="checkbox" data-${extras ? "extra" : "flower"}-enabled="${html(item.id)}" aria-label="Offer ${html(item.en || item.label || item.id)}" ${disabled ? "" : "checked"}></label></td><td><div class="asset-name">${item.image ? `<img src="${html(item.image)}" alt="" loading="lazy">` : ""}<div>${html(item.en || item.label || item.id)}<small>${html((item.group || item.family || (extras ? "Finishing touch" : "Flower")).replaceAll("_", " "))}</small></div></div></td><td><input class="price-input" type="number" min="0" max="10000" step="0.01" inputmode="decimal" data-${extras ? "extra" : "flower"}-price="${html(item.id)}" aria-label="${html(item.en || item.label || item.id)} price in ${currency()}" value="${amount(value)}" placeholder="Set price"></td></tr>`;
     })
     .join("");
 }
-function renderPrices() {
-  const flowers = matchingFlowers(),
-    extras = matchingExtras();
-  const priceGroup = (item) => item.group || item.family || "flowers";
+async function renderPrices() {
+  const currentLocation = location.href;
+  const pricingDraft = draft;
+  const usedCard = draft.collection.find(
+    (card) => card.id === new URLSearchParams(location.search).get("used"),
+  );
+  const usedDesign =
+    usedCard && (usedCard.design || recipeFor(usedCard)?.design);
+  const usedIds = new Set((usedDesign?.items || []).map((item) => item.id));
+  let usedExtras = null;
+  if (usedDesign) {
+    try {
+      const { validateDesign } = await import("/policy.mjs");
+      if (location.href !== currentLocation || draft !== pricingDraft) return;
+      const result = validateDesign(
+        usedDesign,
+        { ...draft, disabledFlowers: [], disabledExtras: [] },
+        catalog,
+        { allowUnpriced: true },
+      );
+      usedExtras = new Set(
+        (result.pricing?.extraLines || []).map((line) => line.id),
+      );
+    } catch {
+      if (location.href !== currentLocation || draft !== pricingDraft) return;
+      pageMessage =
+        "The bouquet’s extra list could not load. All finishing touches are shown below; check the items you use.";
+    }
+  }
+  const flowers = matchingFlowers().filter(
+      (item) => !usedDesign || usedIds.has(item.id),
+    ),
+    extras = matchingExtras().filter(
+      (item) => !usedExtras || usedExtras.has(item.id),
+    );
+  const priceGroup = (item) =>
+    (draft.preset === "mixed"
+      ? item.preset === "satin"
+        ? "Satin · "
+        : "Fresh · "
+      : "") + (item.group || item.family || "flowers");
   const groups = [...new Set(flowers.map(priceGroup))];
   shell(
-    `${!presetReady() ? '<div class="notice">Your matching studio is preparing. You can save brand details and products now. We only show assets belonging to your chosen preset.</div>' : ""}${flowers.length ? `<section class="surface"><div class="section-heading"><div><h2>Your flowers. Your prices.</h2><p class="subtle">Choose what you offer. Enter a price per stem in ${currency()}.</p></div><span class="pill">${currency()}</span></div><div class="price-toolbar"><input id="flowerSearch" type="search" placeholder="Find a flower…" aria-label="Search flowers"><button class="plain-button" data-action="sample-prices">Use sample prices</button><button class="plain-button" data-action="disable-unpriced">Turn off unpriced items</button></div>${groups.map((group) => `<h3 class="catalogue-group">${html(group.replaceAll("_", " "))}</h3>${group === "money" ? `<p class="helper">Price each folded note in ${currency()}, including cash and any styling. No automatic exchange rate, fixed assembly fee or customer-supplied-cash adjustment is added.</p>` : ""}<table class="price-table"><thead><tr><th>OFFER</th><th>FLOWER</th><th>${group === "money" ? "PER NOTE" : "PER ITEM"} · ${currency()}</th></tr></thead><tbody>${priceRows(flowers.filter((item) => priceGroup(item) === group))}</tbody></table>`).join("")}<p id="noFlowers" class="helper" hidden>No flowers match your search.</p></section>` : '<section class="surface"><h2>A library, taking shape.</h2><p class="subtle">Matching flowers are not available in this preset yet.</p></section>'}${extras.length ? `<section class="surface"><h2>The finishing touches.</h2><p class="subtle">Toggle availability and set your own prices for extras.</p><table class="price-table"><thead><tr><th>OFFER</th><th>EXTRA</th><th>PRICE · ${currency()}</th></tr></thead><tbody>${priceRows(extras, true)}</tbody></table></section>` : ""}`,
+    `<section class="surface"><h2>Your build-your-own bouquet section</h2><p class="subtle">This is the heart of your shop. Choose the flowers and extras customers can use, and set your prices before opening orders.</p><label class="toggle-line"><input type="checkbox" data-open-builder ${draft.home.sections.includes("builder") ? "checked" : ""}> Show the independent bouquet builder in my shop</label><a class="plain-button" href="/dashboard/collection" data-nav>My customisable recipes ↗</a></section>${!presetReady() ? '<div class="notice">Your matching studio is preparing. You can save brand details and products now. We only show assets belonging to your chosen preset.</div>' : ""}${flowers.length ? `<section class="surface"><div class="section-heading"><div><h2>Your flowers. Your prices.</h2><p class="subtle">Choose what you offer. Enter a price per stem in ${currency()}.</p></div><span class="pill">${currency()}</span></div><div class="price-toolbar">${draft.preset === "mixed" ? '<select id="flowerTypeFilter" aria-label="Filter flower collection"><option value="">Fresh + satin</option><option value="fresh">Fresh flowers</option><option value="satin">Satin flowers</option></select>' : ""}<input id="flowerSearch" type="search" placeholder="Find a flower…" aria-label="Search flowers"><button class="plain-button" data-action="sample-prices">Use sample prices</button><button class="plain-button" data-action="disable-unpriced">Turn off unpriced items</button></div>${groups.map((group) => `<section data-price-group><h3 class="catalogue-group">${html(group.replaceAll("_", " "))}</h3>${group === "money" ? `<p class="helper">Price each folded note in ${currency()}, including cash and any styling. No automatic exchange rate, fixed assembly fee or customer-supplied-cash adjustment is added.</p>` : ""}<table class="price-table"><thead><tr><th>OFFER</th><th>FLOWER</th><th>${group === "money" ? "PER NOTE" : "PER ITEM"} · ${currency()}</th></tr></thead><tbody>${priceRows(flowers.filter((item) => priceGroup(item) === group))}</tbody></table></section>`).join("")}<p id="noFlowers" class="helper" hidden>No flowers match your search.</p></section>` : '<section class="surface"><h2>A library, taking shape.</h2><p class="subtle">Matching flowers are not available in this preset yet.</p></section>'}${extras.length ? `<section class="surface" data-price-group><h2>The finishing touches.</h2><p class="subtle">Toggle availability and set your own prices for extras.</p><table class="price-table"><thead><tr><th>OFFER</th><th>EXTRA</th><th>PRICE · ${currency()}</th></tr></thead><tbody>${priceRows(extras, true)}</tbody></table></section>` : ""}`,
     "Every stem,<br><em>thoughtfully priced.</em>",
     "Your catalogue is shared. What you offer is entirely yours.",
     "FLOWERS & PRICES",
@@ -485,7 +587,7 @@ function recipeSelect(card) {
   return `<label class="field">Editable recipe<select data-card-recipe="${html(card.id)}">${card.design ? '<option value="__design" selected>My saved studio design</option>' : ""}${matchingRecipes()
     .map(
       (recipe) =>
-        `<option value="${html(recipe.id)}" ${card.recipeId === recipe.id && !card.design ? "selected" : ""}>${html(recipe.name)} · ${html(recipe.mode)}</option>`,
+        `<option value="${html(recipe.id)}" ${card.recipeId === recipe.id && !card.design ? "selected" : ""}>${html(recipe.name)} · ${draft.preset === "mixed" ? (recipe.preset === "satin" ? "Satin · " : "Fresh · ") : ""}${html(recipe.mode)}</option>`,
     )
     .join("")}</select></label>`;
 }
@@ -493,14 +595,31 @@ function availability(kind, item) {
   return `<label class="toggle-line"><input type="checkbox" data-item-kind="${kind}" data-item-id="${html(item.id)}" data-item-key="available" ${item.available !== false ? "checked" : ""}>Available in my shop</label>`;
 }
 function renderCollection() {
+  const inspirationOpen = $("recipeInspiration")?.open === true;
+  const slots = bouquetSlots(draft.collection);
+  const next = nextBouquetSlot(draft.collection);
   const recipes = matchingRecipes();
+  const cards = slots
+    .map((card, index) =>
+      card
+        ? `<article class="surface collection-editor" id="bouquet-slot-${index + 1}" data-bouquet-slot="${index + 1}">${cover(card)}<div class="collection-body"><p class="tiny-label">BOUQUET ${index + 1} OF 6 · ${card.available === false ? "HIDDEN" : "IN YOUR COLLECTION"}</p><h2>${html(card.title)}</h2><p class="helper">Recipe saved · ${card.cover ? "Photo added" : "Add your photo & prices"}</p><div class="bouquet-actions"><a class="button small" href="${studioLink(card)}" data-studio>Edit recipe ↗</a><button class="button secondary small" data-action="finish-bouquet" data-id="${html(card.id)}">Name, photo & prices</button><a class="plain-button" href="${studioLink(card)}&try=1" data-studio>Try customer customisation ↗</a></div>${availability("collection", card)}<button class="plain-button danger" data-action="remove-card" data-id="${html(card.id)}">Remove bouquet</button></div></article>`
+        : `<article class="surface bouquet-empty-slot" id="bouquet-slot-${index + 1}" data-bouquet-slot="${index + 1}"><span class="bouquet-slot-number" aria-hidden="true">${index + 1}</span><h2>Bouquet ${index + 1}</h2><p>Build its recipe, then add your name, photo and prices.</p><a class="button secondary small" href="${buildSlotLink(index + 1)}" data-studio>Build bouquet ${index + 1} →</a></article>`,
+    )
+    .join("");
   shell(
-    `<div class="collection-intro"><div><span class="pill">${draft.collection.length} / 6 CARDS</span><p class="subtle">Custom Order and Customise begin with the same saved recipe. Add only the starting points you want to offer.</p></div><a class="button secondary small" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>Open blank Builder ↗</a></div><div class="collection-grid">${draft.collection.map((card, index) => `<article class="surface collection-editor">${cover(card)}<div class="collection-body"><div class="item-heading"><p class="tiny-label">CUSTOMISABLE ${String(index + 1).padStart(2, "0")}</p><button class="plain-button danger" data-action="remove-card" data-id="${html(card.id)}">Remove</button></div>${itemField("Bouquet name", "collection", card, "title", "text", 80)}${itemField("Category", "collection", card, "category", "text", 40)}${recipeSelect(card)}${availability("collection", card)}<div class="collection-actions">${uploadField("cover", card.id, index + 2)}${presetReady() ? `<a href="${studioLink(card)}" data-studio>Edit recipe ↗</a>` : ""}</div><p class="helper">${card.cover ? "Your cover photo. Check that it represents the saved recipe." : card.design ? "Starting recipe preview. Upload a photo of your saved design for an accurate cover." : "Library recipe preview. Your own photo is optional."}</p>${card.cover ? `<button class="plain-button" data-action="remove-cover" data-card="${html(card.id)}">Use recipe preview</button>` : ""}</div></article>`).join("")}</div><section class="surface recipe-library"><div class="section-heading"><div><p class="eyebrow">THE SHARED RECIPE LIBRARY</p><h2>Choose your next starting point.</h2><p class="subtle">Every card stays yours to name, customise, hide or remove.</p></div></div>${recipes.length ? `<div class="recipe-picker">${recipes.map((recipe) => `<article><img src="${html(recipe.cover)}" alt="${html(recipe.name)} library recipe" loading="lazy"><strong>${html(recipe.name)}</strong><small>${html(recipe.mode)}</small><button class="button secondary small" data-action="add-card" data-recipe="${html(recipe.id)}" ${draft.collection.length >= 6 ? "disabled" : ""}>Add to collection +</button></article>`).join("")}</div>` : '<p class="subtle">No compatible recipes yet. We will never substitute another preset or add cards automatically.</p>'}</section>`,
-    "Your signature<br><em>starting points.</em>",
-    "Up to six customisable bouquets, each with its own recipe.",
-    "YOUR COLLECTION",
+    `<section class="surface builder-workspace-intro"><div><p class="eyebrow">YOUR SHOP’S BOUQUET BUILDER</p><p>Build up to six signature bouquets for your customers to order or customise.</p><ol class="bouquet-steps"><li>Build the recipe</li><li>Name, photo & prices</li><li>See it in your shop</li></ol><p class="helper">Start with one. Add more later. Changes stay private until published.</p></div><div class="actions">${next ? `<a class="button" href="${buildSlotLink(next)}" data-studio>${draft.collection.length ? "Build next bouquet" : "Build my first bouquet"} →</a>` : '<span class="pill">All six bouquets saved</span>'}<a class="plain-button" href="${previewLink()}" data-nav>Preview my shop ↗</a></div></section><details class="surface builder-visibility"><summary>Customer builder · ${draft.home.sections.includes("builder") ? "shown in your shop" : "hidden in your shop"}</summary><label class="toggle-line"><input type="checkbox" data-open-builder ${draft.home.sections.includes("builder") ? "checked" : ""}> Show “Design your bouquet” in my shop</label><p class="helper">Customers can start from scratch with your offered, priced flowers. Your six cards are additional starting points. <a href="/dashboard/prices" data-nav>Choose flowers & prices</a>.</p></details><div class="section-heading"><h2>Your six bouquet slots</h2><span class="pill">${draft.collection.length} / 6 SAVED</span></div><nav class="bouquet-slot-nav" aria-label="Jump to bouquet slot">${slots.map((card, index) => `<a href="#bouquet-slot-${index + 1}" aria-label="Bouquet ${index + 1}: ${html(card?.title || "empty slot")}">${index + 1}<span>${card ? "Saved" : "Build"}</span></a>`).join("")}</nav><div class="bouquet-slot-grid">${cards}</div><details class="surface recipe-library" id="recipeInspiration" ${inspirationOpen ? "open" : ""}><summary>Need a starting point? Explore the recipe library</summary><p class="helper">Optional inspiration. Edit the recipe in your builder and add your own photo.</p><div class="recipe-picker">${recipes.map((recipe) => `<article><img src="${html(recipe.cover)}" alt="${html(recipe.name)} library recipe" loading="lazy"><strong>${html(recipe.name)}</strong><small>${html(recipe.mode)}</small><button class="button secondary small" data-action="add-card" data-recipe="${html(recipe.id)}" ${!next ? "disabled" : ""}>Add to collection +</button></article>`).join("")}</div></details><p class="helper">Also selling gifts? <a href="/dashboard/products" data-nav>Manage your ten fixed products</a>.</p>`,
+    "Your bouquet<br><em>builder.</em>",
+    "Turn the bouquets you make into designs your customers can customise.",
+    "BUILDER & SIGNATURE BOUQUETS",
   );
+  if (trialStudioLink() && !adminReadOnly) {
+    const resume = document.createElement("section");
+    resume.className = "surface trial-resume";
+    resume.innerHTML = `<p>Your demo bouquet is still in this tab. Keep building it with your own photo and prices.</p><a class="button secondary small" href="${trialStudioLink()}" data-studio>Continue my demo bouquet →</a>`;
+    main.querySelector(".builder-workspace-intro").after(resume);
+  }
 }
+
 function renderProducts() {
   shell(
     `<div class="collection-intro"><div><span class="pill">${draft.products.length} / 10 PRODUCTS</span><p class="subtle">Offer bouquets, gifts and arrangements exactly as photographed. These products have a fixed price and do not open a custom recipe.</p></div><button class="button" data-action="add-product" ${draft.products.length >= 10 ? "disabled" : ""}>Add product +</button></div>${draft.products.length ? `<div class="collection-grid">${draft.products.map((item, index) => `<article class="surface collection-editor">${productCover(item)}<div class="collection-body"><div class="item-heading"><p class="tiny-label">PRODUCT ${String(index + 1).padStart(2, "0")}</p><button class="plain-button danger" data-action="remove-product" data-id="${html(item.id)}">Remove</button></div>${itemField("Product name", "products", item, "title", "text", 80)}${itemField("Description", "products", item, "description", "textarea", 400)}<div class="form-grid">${itemField("Fixed price · " + currency(), "products", item, "priceCents", "number")}${itemField("Category", "products", item, "category", "text", 40)}</div>${availability("products", item)}<div class="collection-actions">${uploadField("product", item.id, index + 8)}${item.cover ? `<button class="plain-button" data-action="remove-product-cover" data-id="${html(item.id)}">Remove photo</button>` : ""}</div></div></article>`).join("")}</div>` : '<section class="surface product-empty"><span aria-hidden="true">❀</span><h2>Your first little favourite.</h2><p class="subtle">Add a photo, a name and a price. A beautiful collection starts with one.</p><button class="button secondary" data-action="add-product">Create my first product +</button></section>'}`,
@@ -516,8 +635,8 @@ function productCover(item, className = "cover-preview") {
 function renderShopAddress() {
   const section = document.createElement("section");
   section.className = "surface shop-address";
-  section.innerHTML = `<p class="eyebrow">YOUR SHOP LINK</p><h2>${isPublished() ? "Ready to share." : "Your address is reserved."}</h2><label class="field">Shop address<input id="shopAddress" type="url" readonly value="${html(location.origin + previewLink())}"></label><p class="helper">${isPublished() ? "Customers can open this published shop without signing in." : "Only you can preview this draft. Customers can open this same address after activation and publication."}</p><div class="actions"><button class="button secondary" data-action="copy-shop-link">Copy shop link</button><a class="plain-button" href="${previewLink()}" data-nav>${isPublished() ? "Open shop" : "Open private preview"} ↗</a></div><p id="shopLinkStatus" class="helper" role="status"></p>`;
-  main.querySelector(".dashboard-content .page-heading").after(section);
+  section.innerHTML = `<p class="eyebrow">YOUR SHOP LINK</p><h2>${isPublished() ? "Ready to share." : "Your address is reserved."}</h2><label class="field">Shop address<input id="shopAddress" type="url" readonly value="${html(location.origin + previewLink())}"></label><p class="helper">${isPublished() ? "Customers can open this published shop without signing in." : "Only you can preview this draft. Customers can open this same address after activation and publication."}</p><div class="actions"><button class="button secondary" data-action="copy-shop-link">Copy shop link</button><a class="plain-button" href="${previewLink()}${isPublished() ? "?view=live" : ""}" ${isPublished() ? "" : "data-nav"}>${isPublished() ? "Open customer shop" : "Open private preview"} ↗</a></div><p id="shopLinkStatus" class="helper" role="status"></p>`;
+  main.querySelector(".dashboard-content .activation-grid").after(section);
 }
 function renderBilling() {
   const paid = isPaid(),
@@ -527,7 +646,12 @@ function renderBilling() {
     config.billingEnvironment === "test" ||
     config.billingMode === "test" ||
     config.providers?.billing === "test";
-  const readiness = shop.readiness || [];
+  const readiness = (shop.readiness || []).filter(
+    ({ code }) =>
+      code !== "square_setup_pending" &&
+      code !== "square_not_connected" &&
+      !(config.manualActivationEnabled && code === "billing_setup_pending"),
+  );
   const canPublish =
     paid &&
     config.publishingEnabled === true &&
@@ -538,24 +662,18 @@ function renderBilling() {
     !dirty &&
     !saving;
   shell(
-    `<div class="activation-grid"><section class="surface plan-surface"><p class="eyebrow">YOUR OWN NEBULA SHOP</p><h2>Make a beautiful<br>beginning.</h2><div class="plan-price"><strong>$29</strong><span>USD / month</span></div><p class="helper">${paid ? "Your subscription is active." : "Start with a free private preview. Activate only when you’re ready to publish."}</p><ul class="feature-list"><li>A branded public storefront</li><li>Six customisable bouquet cards</li><li>Ten fixed products with your own photos</li><li>Your flower library, prices and bouquet builder</li><li>Optional Square connection for customer payments</li></ul>${paid ? `<button class="button light" data-action="billing-portal" ${config.billingPortalEnabled === false ? "disabled" : ""}>Manage subscription ↗</button>` : `<button class="button light" data-action="billing-checkout" ${!billingReady ? "disabled" : ""}>${billingReady ? (test ? "Test checkout · $29 / month" : "Activate my shop · $29 / month") : "Activation setup pending"}</button>`}<p class="helper">${billingReady ? (test ? "Test environment. This checkout does not represent a live paid launch." : "Secure subscription checkout. Your plan activates after the provider confirms payment.") : "Your free preview is ready. Secure billing is being connected; activation is unavailable until setup is complete."}</p></section><section class="surface"><span class="pill ${paid ? "green" : ""}">${active ? "PUBLISHED" : paid ? "PLAN ACTIVE" : "FREE PRIVATE PREVIEW"}</span><h2 style="margin-top:24px">Your opening day,<br>on your terms.</h2><p class="subtle">Saving edits updates your private draft. Publish a complete version when you want your customers to see it.</p><ol class="checklist"><li><span class="check-circle ${paid ? "done" : ""}">${paid ? "✓" : "○"}</span><div><strong>${paid ? "Plan active" : "Activate your plan"}</strong><p>Hosted storefront · $29 USD per 30 days.</p></div></li><li><span class="check-circle ${active ? "done" : ""}">${active ? "✓" : "○"}</span><div><strong>${active ? "Your shop is published" : "Publish your chosen draft"}</strong><p>Square is optional and never required to publish.</p></div></li></ol>${
+    `<div class="activation-grid"><section class="surface plan-surface"><p class="eyebrow">YOUR OWN NEBULA SHOP</p><h2>Make a beautiful<br>beginning.</h2><div class="plan-price"><strong>$29</strong><span>USD / month</span></div><p class="helper">${paid ? "Your subscription is active." : "Start with a free private preview. Activate only when you’re ready to publish."}</p><ul class="feature-list"><li>A branded public storefront</li><li>Six customisable bouquet cards</li><li>Ten fixed products with your own photos</li><li>Your flower library, prices and bouquet builder</li><li>Optional Square connection for customer payments</li></ul>${paid ? `<button class="button light" data-action="billing-portal" ${config.billingPortalEnabled === false ? "disabled" : ""}>Manage subscription ↗</button>` : `<button class="button light" data-action="billing-checkout" ${!billingReady ? "disabled" : ""}>${billingReady ? (test ? "Test checkout · $29 / month" : "Activate my shop · $29 / month") : "Activation setup pending"}</button>`}<p class="helper">${billingReady ? (test ? "Test environment. This checkout does not represent a live paid launch." : "Secure subscription checkout. Your plan activates after the provider confirms payment.") : "Your free preview is ready. Secure billing is being connected; activation is unavailable until setup is complete."}</p></section><section class="surface"><span class="pill ${paid ? "green" : ""}">${active ? "PUBLISHED" : paid ? "PLAN ACTIVE" : "FREE PRIVATE PREVIEW"}</span><h2 style="margin-top:24px">${active ? "Your shop is live" : "Publish your shop"}</h2><p class="subtle">Publishing makes your saved shop and bouquet builder available to customers.</p><ol class="checklist"><li><span class="check-circle ${paid ? "done" : ""}">${paid ? "✓" : "○"}</span><div><strong>${paid ? "Plan active" : "Activate your plan"}</strong><p>${config.sandboxTestAccess ? "Test access is managed by the Nebula administrator." : "Hosted storefront · $29 USD per 30 days."}</p></div></li><li><span class="check-circle ${active ? "done" : ""}">${active ? "✓" : "○"}</span><div><strong>${active ? "Your shop is published" : "Publish your chosen draft"}</strong><p>Square is optional and never required to publish.</p></div></li></ol>${
       readiness.length
         ? `<div class="readiness-list">${readiness
-            .filter(
-              (item) =>
-                !["square_setup_pending", "square_not_connected"].includes(
-                  item.code,
-                ),
-            )
             .map(
               (item) =>
                 `<p class="helper">○ ${html(item.message || item.code)}</p>`,
             )
             .join("")}</div>`
         : ""
-    }<button class="button" data-action="${canPublish ? "publish-shop" : "review-publication"}" ${publicationState.loading || saving ? "disabled" : ""}>${canPublish ? (active ? "Publish latest changes" : "Publish my shop") : "Review publishing requirements"} ↗</button><p class="helper" role="status">${html(!paid ? (config.sandboxTestAccess ? "Test access is not active. Ask the Nebula administrator to activate this shop in the separate admin console." : "Activate your plan before publishing. Your preview and reserved link are ready.") : dirty ? "Save your edits before publishing." : publicationState.error || (publicationState.report?.canPublish ? "Your saved draft is ready to publish." : "Review the checklist below for missing prices or shop details."))}</p><p class="helper">${!paid ? "Your public address remains locked until your subscription is verified and you publish." : !config.publishingEnabled ? "Publication setup is pending. Your active plan does not bypass the server’s publication checks." : "Publication saves a separate snapshot. Later draft edits stay private."}</p></section></div><section class="surface domain-plan"><div><span class="pill">COMING LATER</span><h3>Your own domain · $35 USD / month</h3><p class="subtle">A future option for your own website address. Domain registration and renewal are paid by you, separately.</p><p class="helper">Domain setup and verification are being tested. This plan is not available to purchase yet.</p></div><button class="button secondary" disabled>Own-domain setup preparing</button></section>`,
-    "A beautiful space.<br><em>A clear next step.</em>",
-    "Free private preview. $29 for 30 days after manual activation.",
+    }<button class="button" data-action="${canPublish ? "publish-shop" : "review-publication"}" ${publicationState.loading || saving ? "disabled" : ""}>${canPublish ? (active ? "Publish latest changes" : "Publish my shop") : "Review publishing requirements"} ↗</button><p class="helper" role="status">${html(!paid ? (config.sandboxTestAccess ? "Test access is not active. Ask the Nebula administrator to activate this shop in the separate admin console." : "Once your plan is active, you can publish your saved draft and share your shop link.") : dirty ? "Save your edits before publishing." : publicationState.error || (publicationState.report?.canPublish ? "Your saved draft is ready to publish." : "Review the checklist below for missing prices or shop details."))}</p><p class="helper">${!paid ? "Your public address remains locked until your subscription is verified and you publish." : !config.publishingEnabled ? "Publication setup is pending. Your active plan does not bypass the server’s publication checks." : "Publication saves a separate snapshot. Later draft edits stay private."}</p></section></div><details class="surface domain-plan"><summary>Custom domain · future option</summary><div><span class="pill">COMING LATER</span><h3>Your own domain · $35 USD / month</h3><p class="subtle">A future option for your own website address. Domain registration and renewal are paid by you, separately.</p><p class="helper">Domain setup and verification are being tested. This plan is not available to purchase yet.</p></div><button class="button secondary" disabled>Own-domain setup preparing</button></details>`,
+    "Activate &amp; publish",
+    "Review your saved shop, activate access and open your public link.",
     "PLAN & PUBLISHING",
   );
   renderShopAddress();
@@ -565,9 +683,13 @@ function renderBilling() {
     config,
     api,
     onChange: (next) => {
-      shop = next;
+      if (shop?.id !== next.id) return;
+      shop.activationRequest = next.activationRequest;
+      if (route() === "/dashboard/billing") renderBilling();
     },
   });
+  if (config.manualActivationEnabled)
+    main.querySelector(".domain-plan")?.remove();
 }
 function renderPublicationChecklist() {
   if (
@@ -586,14 +708,18 @@ function renderPublicationChecklist() {
   const section = document.createElement("section");
   section.className = "surface publication-checklist";
   const checks = report?.checks || [];
+  const priceChecks = checks.filter((c) =>
+    ["unpriced_flower", "unpriced_extra"].includes(c.code),
+  );
+  const otherChecks = checks.filter((c) => !priceChecks.includes(c));
   section.innerHTML = `<div class="section-heading"><div><p class="eyebrow">YOUR SAVED DRAFT</p><h2>${report?.contentReady ? "Your content is ready." : "A few details before opening."}</h2><p class="subtle">${dirty || saving ? "Save your current edits to check the latest version." : "Checks use the saved catalogue, recipes and product prices."}</p></div><button class="button secondary small" data-action="refresh-readiness" ${state.loading || dirty || saving ? "disabled" : ""}>${state.loading ? "Checking…" : "Check saved draft ↻"}</button></div>${state.error ? `<div class="notice error">${html(state.error)}</div>` : ""}${
     report
-      ? `<div class="publication-summary"><span class="pill ${report.contentReady ? "green" : ""}">${report.contentReady ? "CONTENT READY" : "CONTENT NEEDS ATTENTION"}</span><span class="helper">Draft version ${html(report.draftVersion)} · ${report.canPublish ? "Eligible to publish" : "Publication is not enabled"}</span></div>${
+      ? `<div class="publication-summary"><span class="pill ${report.contentReady ? "green" : ""}">${report.contentReady ? "CONTENT READY" : "CONTENT NEEDS ATTENTION"}</span><span class="helper">Draft version ${html(report.draftVersion)} · ${report.canPublish ? "Ready to publish" : !config.publishingEnabled ? "Publishing unavailable" : !isPaid() ? "Activation required to publish" : "Review the details below"}</span></div>${
           checks.length
-            ? `<ul class="publication-issues">${checks
+            ? `${config.sandboxTestAccess ? '<div class="notice"><strong>Just testing Square?</strong><p>Prepare a smaller test catalogue in one step. Fill missing prices from available samples and hide unpriced items or incomplete bouquets. Your entered prices, artwork and products are kept. This saves a draft; it does not publish or approve checkout rules.</p><button class="button secondary small" data-action="sandbox-test-catalog">Prepare test catalogue</button></div>' : ""}<ul class="publication-issues">${priceChecks.length ? `<li><span aria-hidden="true">!</span><div><strong>${priceChecks.length} catalogue items need a price or need to be turned off.</strong><small>You only need to price the items you want to offer.</small></div><a href="/dashboard/prices" data-nav>Choose items ↗</a></li>` : ""}${otherChecks
                 .map((check) => {
                   const href = safeReturnPath(check.href);
-                  return `<li class="${check.severity === "warning" ? "warning" : ""}"><span aria-hidden="true">${check.severity === "warning" ? "○" : "!"}</span><div><strong>${html(check.message || check.code)}</strong>${check.path ? `<small>${html(check.path)}</small>` : ""}</div>${href ? `<a href="${html(href)}" data-nav>Review ↗</a>` : ""}</li>`;
+                  return `<li class="${check.severity === "warning" ? "warning" : ""}"><span aria-hidden="true">${check.severity === "warning" ? "○" : "!"}</span><div><strong>${html(check.message || check.code)}</strong></div>${href ? `<a href="${html(href)}" data-nav>Review ↗</a>` : ""}</li>`;
                 })
                 .join("")}</ul>`
             : '<p class="helper">All available catalogue items and saved products passed the content check.</p>'
@@ -611,6 +737,7 @@ async function loadPublicationReadiness() {
   if (state.loading || !shop || adminReadOnly) return;
   state.loading = true;
   state.error = "";
+  const previousRequest = shop.activationRequest;
   if (route() === "/dashboard/billing") renderBilling();
   try {
     const [report, current] = await Promise.all([
@@ -620,6 +747,8 @@ async function loadPublicationReadiness() {
     if (state === publicationState && shop?.id === state.shopId) {
       shop.subscription = current.shop.subscription;
       shop.published = current.shop.published;
+      if (shop.activationRequest === previousRequest)
+        shop.activationRequest = current.shop.activationRequest;
     }
     if (
       state === publicationState &&
@@ -654,6 +783,11 @@ async function loadSquareStatus() {
   }
 }
 function renderPayments() {
+  const retainedCommerce = main.querySelector(".commerce-panel");
+  const squareExpanded = main.querySelector(".optional-square")?.open;
+  const activeField = document.activeElement;
+  const activePath = activeField?.dataset?.path;
+  const selection = activeField?.selectionStart;
   if (squareState.shopId !== shop.id)
     squareState = {
       shopId: shop.id,
@@ -661,7 +795,20 @@ function renderPayments() {
       loading: false,
       data: null,
       error: "",
+      callbackOutcome: "",
     };
+  const squareParam = new URLSearchParams(location.search).get("square");
+  if (squareParam) {
+    squareState.callbackOutcome = squareParam;
+    squareState.loaded = false;
+    const cleanUrl = new URL(location.href);
+    cleanUrl.searchParams.delete("square");
+    history.replaceState(
+      null,
+      "",
+      cleanUrl.pathname + cleanUrl.search + cleanUrl.hash,
+    );
+  }
   if (!squareState.loaded && !squareState.loading)
     queueMicrotask(loadSquareStatus);
   const paid = isPaid(),
@@ -687,19 +834,66 @@ function renderPayments() {
     ? "CHECKING CONNECTION"
     : labels[connection?.status] || "SETUP PENDING";
   const choices = connection?.locations || [];
+  const alertError =
+    squareState.error ||
+    (!connected && connection?.lastError) ||
+    (!connected &&
+    !squareState.loading &&
+    squareState.callbackOutcome === "connection_failed"
+      ? "Square authorization could not be completed. Confirm that your shop currency matches your Square seller account and start a fresh connection."
+      : "");
+  const callbackSuccess =
+    connected &&
+    ["sandbox_connected", "connected"].includes(squareState.callbackOutcome)
+      ? "Square account connected. Confirm your location and approve your online order rules below so customers can pay via Square."
+      : "";
+  const marketLabel =
+    CURRENCY_MARKETS.find(([code]) => code === currency())?.[1] || currency();
   const sandboxHelp =
     config.squareEnvironment === "sandbox"
-      ? `<div class="notice square-sandbox-help"><strong>Before connecting the Sandbox seller</strong><ol><li>Open <a href="https://developer.squareup.com/apps" target="_blank" rel="noopener noreferrer">Square Developer Console ↗</a> in this same browser profile.</li><li>Choose Sandbox test accounts and open the Canadian test seller’s Square Dashboard. Leave that tab open.</li><li>Return here and click Connect Square Sandbox to start a fresh authorization.</li></ol><p>If Square shows a blank page, reopen the test seller dashboard and start again here. An old authorization link can expire. No real money is charged.</p><a href="https://developer.squareup.com/docs/oauth-api/walkthrough" target="_blank" rel="noopener noreferrer">Square’s Sandbox authorization instructions ↗</a></div>`
+      ? `<div class="notice square-sandbox-help"><strong>Before connecting the Sandbox seller</strong><ol><li>Open <a href="https://developer.squareup.com/apps" target="_blank" rel="noopener noreferrer">Square Developer Console ↗</a> in this same browser profile.</li><li>Under <strong>Sandbox test accounts</strong>, click <strong>Square Dashboard</strong> next to your test seller (${html(marketLabel)}—or change your shop currency below to match). Leave that tab open.</li><li>Return here and click <strong>Connect Square Sandbox ↗</strong> to authorize.</li></ol><p>Your shop currency (currently <strong>${currency()}</strong>) must match the test seller’s country and currency. No real money is charged in Sandbox.</p><a href="https://developer.squareup.com/docs/oauth-api/walkthrough" target="_blank" rel="noopener noreferrer">Square’s Sandbox authorization instructions ↗</a></div>`
       : "";
+  const currencyField = !connected
+    ? `<label class="field" style="max-width:320px;margin:14px 0">Shop currency &amp; Square market<select data-path="currency">${currencyOptions()}</select></label>`
+    : "";
   shell(
-    `<div class="activation-grid"><section class="surface"><div class="connection-mark" aria-hidden="true">□</div><span class="pill ${connected ? "green" : ""}">${html(stateLabel)}</span><h2 style="margin-top:23px">Your sales.<br>Your Square account.</h2><p class="subtle">Connect your own Square merchant account. ${config.squareEnvironment === "production" ? "Live connections require completed platform launch approval." : "Sandbox testing only: no real money is charged."} Checkout also needs your approved order rules below.</p>${!connected ? sandboxHelp : ""}${squareState.error ? `<div class="notice" role="alert">${html(squareState.error)}</div>` : ""}<div class="actions">${!connected ? `<button class="button" data-action="square-connect" ${!paid || !ready || squareState.loading ? "disabled" : ""}>${!paid ? "Activate your plan first" : ready ? (config.squareEnvironment === "production" ? "Connect Square ↗" : "Connect Square Sandbox ↗") : "Square setup pending"}</button>` : ""}<button class="button secondary small" data-action="square-refresh" ${squareState.loading ? "disabled" : ""}>Refresh status</button>${manage && connection?.merchantId && connection.status !== "revoked" ? '<button class="button secondary small" data-action="square-disconnect">Disconnect Square</button>' : ""}</div><p class="helper">${!paid ? "You can keep editing your private shop. A paid plan is required to begin a merchant connection. Existing connections can still be inspected or disconnected after plan expiry." : !ready ? "Sandbox configuration must be completed securely on the server before connecting." : "Your Square authorization returns here. Status comes from the server, never the return URL."}</p>${connection?.verifiedAt ? `<p class="helper">Last provider check: ${html(new Date(connection.verifiedAt).toLocaleString())}</p>` : ""}${choices.length ? `<label class="field">Square location<select id="squareLocation"><option value="">Choose a matching location</option>${choices.map((item) => `<option value="${html(item.id)}" ${item.id === connection.locationId ? "selected" : ""}>${html(item.name)} · ${html(item.currency)}</option>`).join("")}</select></label><button class="button secondary small" data-action="square-location" ${!paid || !ready ? "disabled" : ""}>Use this location</button>` : ""}</section><section class="surface"><p class="eyebrow">YOUR CUSTOMER REQUESTS</p><h2>Every bouquet,<br>in one place.</h2><p class="subtle">View saved requests, the bouquet contents and customer details. Accept, fulfill or cancel a request without changing its recorded price.</p><div class="notice">A Square connection is separate from a payment. Payment status comes from verified Square records. Accepting or fulfilling a request never records a payment or issues a refund.</div><a class="button secondary small" href="/dashboard/orders" data-nav>Open requests ↗</a></section></div>`,
-    "Your merchant account.<br><em>Your connection.</em>",
+    `<div class="activation-grid"><section class="surface"><details class="optional-square" ${connected || squareExpanded ? "open" : ""}><summary>Accept online payments with Square · optional</summary><div class="connection-mark">${icon("square")}</div><span class="pill ${connected ? "green" : ""}">${html(stateLabel)}</span><h2 style="margin-top:23px">Accept payments<br>with Square.</h2><p class="subtle">Let customers pay a deposit or the full price. Payments go to your Square account.${config.squareEnvironment === "sandbox" ? " Sandbox only · no real money." : ""}</p>${!connected && sandboxHelp ? `<details class="setup-details"><summary>Sandbox testing instructions</summary>${sandboxHelp}</details>` : ""}${currencyField}${callbackSuccess ? `<div class="notice" role="status">${html(callbackSuccess)}</div>` : ""}${alertError ? `<div class="notice error" role="alert">${html(alertError)}</div>` : ""}<div class="actions">${!connected ? `<button class="button" data-action="square-connect" ${!paid || !ready || squareState.loading ? "disabled" : ""}>${!paid ? "Activate your plan first" : ready ? (config.squareEnvironment === "production" ? "Connect Square ↗" : "Connect Square Sandbox ↗") : "Square setup pending"}</button>` : ""}<button class="button secondary small" data-action="square-refresh" ${squareState.loading ? "disabled" : ""}>Refresh status</button>${manage && connection?.merchantId && connection.status !== "revoked" ? '<button class="button secondary small" data-action="square-disconnect">Disconnect Square</button>' : ""}</div><details class="setup-details"><summary>Connection details</summary><p class="helper">${!paid ? "You can keep editing your private shop. A paid plan is required to begin a merchant connection. Existing connections can still be inspected or disconnected after plan expiry." : !ready ? "Sandbox configuration must be completed securely on the server before connecting." : "Your Square authorization returns here. Status comes from the server, never the return URL."}</p>${connection?.verifiedAt ? `<p class="helper">Last provider check: ${html(new Date(connection.verifiedAt).toLocaleString())}</p>` : ""}</details>${choices.length ? `<label class="field">Square location<select id="squareLocation"><option value="">Choose a matching location</option>${choices.map((item) => `<option value="${html(item.id)}" ${item.id === connection.locationId ? "selected" : ""}>${html(item.name)} · ${html(item.currency)}</option>`).join("")}</select></label><button class="button secondary small" data-action="square-location" ${!paid || !ready ? "disabled" : ""}>Use this location</button>` : ""}</details></section><section class="surface request-channel-panel"><div class="connection-mark">${icon("message")}</div><p class="eyebrow">MESSAGE REQUESTS</p><h2>Receive requests<br>by message.</h2><p class="subtle">When online checkout is off, customers save their bouquet and send you a ready-made message. You confirm the details and arrange payment.</p><label class="field">How customers contact you<select data-path="requestChannel"><option value="whatsapp" ${draft.requestChannel !== "sms" && draft.requestChannel !== "both" ? "selected" : ""}>WhatsApp</option><option value="sms" ${draft.requestChannel === "sms" ? "selected" : ""}>SMS</option><option value="both" ${draft.requestChannel === "both" ? "selected" : ""}>WhatsApp + SMS</option></select></label>${field("Your number · include country code", "phone", { type: "tel", max: 40 })}<p class="helper">Save and publish changes to update these options for customers. They open their messaging app and send the message. Requests are also saved in your orders; no payment is recorded.</p><a class="button secondary small" href="/dashboard/orders" data-nav>Open requests ↗</a></section></div>`,
+    "How customers<br><em>order & pay.</em>",
     config.checkoutEnabled
-      ? "Connection status, approved checkout rules and saved payments."
-      : "Prepare your connection and checkout rules. Customer card checkout is not enabled yet.",
-    "SQUARE PAYMENTS",
+      ? "Choose online payments or message requests. Your orders stay together."
+      : "Message requests are available after publishing. Online payments are optional.",
+    "RECEIVE ORDERS",
   );
-  if (!adminReadOnly) mountCommerce({ shop, api });
+  if (!adminReadOnly && retainedCommerce?.dataset.shopId === shop.id) {
+    const content = main.querySelector(".dashboard-content");
+    const next = content.querySelector(".setup-next");
+    if (next) next.before(retainedCommerce);
+    else content.append(retainedCommerce);
+    retainedCommerce.updateSquare?.(connection);
+    if (retainedCommerce.contains(activeField))
+      activeField.focus({ preventScroll: true });
+  } else if (!adminReadOnly)
+    mountCommerce({
+      shop: { ...shop, draft },
+      api,
+      square: connection,
+      config,
+    });
+  if (activePath && route() === "/dashboard/payments") {
+    const field = [...main.querySelectorAll("[data-path]")].find(
+      (node) => node.dataset.path === activePath,
+    );
+    if (field) {
+      field.focus({ preventScroll: true });
+      if (
+        Number.isInteger(selection) &&
+        typeof field.setSelectionRange === "function"
+      )
+        try {
+          field.setSelectionRange(selection, selection);
+        } catch {}
+    }
+  }
 }
 const requestStatuses = ["requested", "accepted", "fulfilled", "cancelled"];
 const requestStatusLabel = (status) =>
@@ -759,8 +953,11 @@ function requestEdit(request) {
   return edit;
 }
 function requestContents(request) {
+  const preview = request.preview
+    ? `<img class="request-photo" src="${html(request.preview)}" alt="Customer’s saved bouquet preview">`
+    : "";
   if (request.kind === "product")
-    return `<section class="request-contents"><h3>The product they chose</h3>${request.product?.cover ? `<img class="request-photo" data-media-id="${html(request.product.cover)}" alt="Saved product photo">` : ""}<strong>${html(request.product?.title || request.summary)}</strong>${request.product?.description ? `<p class="request-multiline">${html(request.product.description)}</p>` : ""}</section>`;
+    return `<section class="request-contents"><h3>The product they chose</h3>${preview || (request.product?.cover ? `<img class="request-photo" data-media-id="${html(request.product.cover)}" alt="Saved product photo">` : "")}<strong>${html(request.product?.title || request.summary)}</strong>${request.product?.description ? `<p class="request-multiline">${html(request.product.description)}</p>` : ""}</section>`;
   const lines = [
     ...(request.pricing?.lines || []),
     ...(request.pricing?.extraLines || []),
@@ -779,7 +976,7 @@ function requestContents(request) {
           return counts;
         }, {}),
       ).map(([id, quantity]) => ({ id, quantity }));
-  return `<section class="request-contents"><h3>The bouquet they created</h3><p class="helper">${html(request.design?.mode || "Custom")} · ${request.design?.items?.length || 0} pieces · saved with the request</p><ul class="request-pick-list">${contents.map((line) => `<li><span>${html(line.quantity || 1)} × ${html(itemName(line.id))}</span>${Number.isSafeInteger(line.totalCents) ? `<strong>${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency || currency() }).format(line.totalCents / 100))}</strong>` : ""}</li>`).join("")}</ul>${request.design?.finishes?.message ? `<p class="request-multiline"><strong>Bouquet message</strong><br>${html(request.design.finishes.message)}</p>` : ""}<button class="plain-button" data-action="orders-download" data-id="${html(request.id)}">Download saved bouquet details ↓</button></section>`;
+  return `<section class="request-contents"><h3>The bouquet they created</h3>${preview}<p class="helper">${html(request.design?.mode || "Custom")} · ${request.design?.items?.length || 0} pieces · saved with the request</p><ul class="request-pick-list">${contents.map((line) => `<li><span>${html(line.quantity || 1)} × ${html(itemName(line.id))}</span>${Number.isSafeInteger(line.totalCents) ? `<strong>${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency || currency() }).format(line.totalCents / 100))}</strong>` : ""}</li>`).join("")}</ul>${request.design?.finishes?.message ? `<p class="request-multiline"><strong>Bouquet message</strong><br>${html(request.design.finishes.message)}</p>` : ""}<button class="plain-button" data-action="orders-download" data-id="${html(request.id)}">Download saved bouquet details ↓</button></section>`;
 }
 function requestDetailMarkup() {
   const state = ordersState,
@@ -791,7 +988,7 @@ function requestDetailMarkup() {
   const edit = requestEdit(request);
   const customer = request.customer || {};
   const phone = customer.phone?.replace(/[^\d+]/g, "") || "";
-  return `<aside class="surface request-detail"><div class="request-detail-heading"><div><p class="eyebrow">SAVED CUSTOMER REQUEST</p><h2>${html(request.summary || "A personal bouquet")}</h2></div><button class="plain-button" data-action="orders-close" aria-label="Close request details">×</button></div><div class="request-status-line"><span class="pill request-status-${html(request.status)}">${html(requestStatusLabel(request.status))}</span><span class="pill">${html(request.checkout?.status || request.paymentStatus || "unpaid")}</span></div><p class="request-id">${html(request.id)}</p><dl class="request-facts"><div><dt>Saved total</dt><dd class="request-total">${html(requestMoney(request))}</dd></div><div><dt>Received</dt><dd>${html(requestDate(request.createdAt))}</dd></div><div><dt>Customer</dt><dd>${html(customer.name || "—")}</dd></div><div><dt>Contact</dt><dd>${phone && /^\+?\d{5,15}$/.test(phone) ? `<a href="tel:${html(phone)}">${html(customer.phone)}</a>` : html(customer.phone || "—")}</dd></div><div><dt>Fulfillment</dt><dd>${html(request.fulfillment === "delivery" ? "Delivery · confirm details" : "Pickup")}</dd></div><div><dt>Preferred date</dt><dd>${html(customer.date || "To be confirmed")}</dd></div></dl>${customer.note ? `<div class="request-customer-note"><strong>From the customer</strong><p class="request-multiline">${html(customer.note)}</p></div>` : ""}${request.checkout ? `<p class="helper">Final checkout total: ${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency }).format(request.checkout.totalCents / 100))} · Paid: ${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency }).format(request.checkout.paidCents / 100))} · Remaining: ${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency }).format(request.checkout.balanceCents / 100))}</p>` : ""}${requestContents(request)}<section class="request-progress"><h3>Fulfillment progress</h3>${
+  return `<aside class="surface request-detail"><div class="request-detail-heading"><div><p class="eyebrow">SAVED CUSTOMER REQUEST</p><h2>${html(request.summary || "A personal bouquet")}</h2></div><button class="plain-button" data-action="orders-close" aria-label="Close request details">×</button></div><div class="request-status-line"><span class="pill request-status-${html(request.status)}">${html(requestStatusLabel(request.status))}</span><span class="pill">${html(request.checkout?.status || request.paymentStatus || "unpaid")}</span></div><p class="request-id">${html(request.reference || request.id)}</p><dl class="request-facts"><div><dt>Saved total</dt><dd class="request-total">${html(requestMoney(request))}</dd></div><div><dt>Received</dt><dd>${html(requestDate(request.createdAt))}</dd></div><div><dt>Customer</dt><dd>${html(customer.name || "—")}</dd></div><div><dt>Contact</dt><dd>${phone && /^\+?\d{5,15}$/.test(phone) ? `<a href="tel:${html(phone)}">${html(customer.phone)}</a>` : html(customer.phone || "—")}</dd></div><div><dt>Fulfillment</dt><dd>${html(request.fulfillment === "delivery" ? "Delivery · confirm details" : "Pickup")}</dd></div>${customer.address ? `<div><dt>Delivery address</dt><dd>${html(customer.address)}</dd></div>` : ""}${customer.recipient ? `<div><dt>Gift recipient</dt><dd>${html(customer.recipient.name)}${customer.recipient.phone ? " · " + html(customer.recipient.phone) : ""}</dd></div><div><dt>Gift card message</dt><dd class="request-multiline">${html(customer.recipient.message || "—")}</dd></div>` : ""}${customer.postalCode ? `<div><dt>Postal code / country</dt><dd>${html(customer.postalCode)} · ${html(customer.country || "")}</dd></div>` : ""}<div><dt>Preferred date</dt><dd>${html(customer.date || "To be confirmed")}</dd></div></dl>${customer.note ? `<div class="request-customer-note"><strong>From the customer</strong><p class="request-multiline">${html(customer.note)}</p></div>` : ""}${request.checkout ? `<p class="helper">Final checkout total: ${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency }).format(request.checkout.totalCents / 100))} · Paid: ${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency }).format(request.checkout.paidCents / 100))} · Remaining: ${html(new Intl.NumberFormat("en", { style: "currency", currency: request.currency }).format(request.checkout.balanceCents / 100))}</p>` : ""}${requestContents(request)}<section class="request-progress"><h3>Fulfillment progress</h3>${
     adminReadOnly
       ? `<p class="helper">Administrator view · request changes are available only to this shop’s owner.</p><strong>${html(requestStatusLabel(request.status))}</strong><p class="request-multiline">${html(request.merchantNote || "No internal note saved.")}</p>`
       : `<form id="requestUpdateForm" data-request-id="${html(request.id)}"><label class="field">Request status<select id="requestStatus" ${state.busy ? "disabled" : ""}>${requestTransitions(
@@ -803,7 +1000,7 @@ function requestDetailMarkup() {
           )
           .join(
             "",
-          )}</select></label><label class="field">Internal note<textarea id="requestMerchantNote" maxlength="1000" placeholder="Preparation details, pickup arrangement…" ${state.busy ? "disabled" : ""}>${html(edit.merchantNote)}</textarea><span class="helper">Private to the shop owner and platform administrator.</span></label>${edit.conflict ? '<div class="notice error">This request changed in another window. Your note is kept. Load the latest status, review it, then save again.<button class="plain-button" type="button" data-action="orders-review">Review latest request ↻</button></div>' : ""}<button class="button small" type="submit" ${state.busy || edit.conflict ? "disabled" : ""}>${state.busy ? "Saving request…" : "Save request changes"}</button><p class="helper">Fulfillment status does not record or confirm a payment. This remains an unpaid request.</p></form>`
+          )}</select></label><label class="field">Internal note<textarea id="requestMerchantNote" maxlength="1000" placeholder="Preparation details, pickup arrangement…" ${state.busy ? "disabled" : ""}>${html(edit.merchantNote)}</textarea><span class="helper">Private to the shop owner and platform administrator.</span></label>${edit.conflict ? '<div class="notice error">This request changed in another window. Your note is kept. Load the latest status, review it, then save again.<button class="plain-button" type="button" data-action="orders-review">Review latest request ↻</button></div>' : ""}<button class="button small" type="submit" ${state.busy || edit.conflict ? "disabled" : ""}>${state.busy ? "Saving request…" : "Save request changes"}</button><p class="helper">Fulfillment progress and payment status are tracked separately. Payments shown above are confirmed by Square.</p></form>`
   }<p class="helper">Last updated ${html(requestDate(request.updatedAt || request.createdAt))}</p></section></aside>`;
 }
 function renderOrders() {
@@ -820,6 +1017,21 @@ function renderOrders() {
     "Saved customer details, exact bouquet contents and fulfillment progress.",
     "CUSTOMER REQUESTS",
   );
+  if (!adminReadOnly)
+    mountNotifications({
+      container: main.querySelector(".dashboard-content"),
+      shop,
+      api,
+      onOpen: selectRequest,
+    });
+  const target = new URLSearchParams(location.search).get("request");
+  if (
+    /^rq_[a-f0-9]{32}$/.test(target || "") &&
+    state.linkedRequest !== target
+  ) {
+    state.linkedRequest = target;
+    selectRequest(target);
+  }
   if (!state.loaded && !state.loading) loadMerchantRequests();
 }
 async function loadMerchantRequests(more = false) {
@@ -857,6 +1069,12 @@ async function loadMerchantRequests(more = false) {
 async function selectRequest(id, review = false) {
   const state = ordersContext(),
     path = requestsPath();
+  if (!adminReadOnly) {
+    const url = new URL(location.href);
+    url.searchParams.set("request", id);
+    history.replaceState(null, "", url.pathname + url.search);
+    state.linkedRequest = id;
+  }
   state.selectedId = id;
   state.detailLoading = true;
   state.error = "";
@@ -964,7 +1182,19 @@ function storefrontMarkup(editing = false, publicView = false) {
   const ordersOpen = publicView && shop.features?.requestsEnabled === true;
   const ownerReview =
     !publicView && !adminReadOnly && user?.uid === shop.ownerUid;
-  const visibleSections = new Set(draft.home.sections);
+  const cards = bouquetSlots(draft.collection).filter(
+    (item) => item && (editing || item.available !== false),
+  );
+  const products = draft.products.filter(
+    (item) => editing || item.available !== false,
+  );
+  const displayedSections = draft.home.sections.filter(
+    (key) =>
+      editing ||
+      ((key !== "custom" || cards.length) &&
+        (key !== "products" || products.length)),
+  );
+  const visibleSections = new Set(displayedSections);
   const builderVisible = visibleSections.has("builder");
   const navigationNames = {
     custom: home.navCustom || "Bouquets",
@@ -972,7 +1202,7 @@ function storefrontMarkup(editing = false, publicView = false) {
     about: home.navAbout || "Our story",
     contact: home.navContact || "Say hello",
   };
-  const sectionNavigation = draft.home.sections
+  const sectionNavigation = displayedSections
     .filter((key) => navigationNames[key])
     .map((key) => `<a href="#${key}">${html(navigationNames[key])}</a>`)
     .join("");
@@ -989,35 +1219,38 @@ function storefrontMarkup(editing = false, publicView = false) {
     contact: "Say hello ↓",
     about: "Our story ↓",
   };
-  const heroPrimary =
-    heroTarget === "builder"
-      ? `<a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? html(home.heroButtonLabel || home.builderButtonLabel) : "Matching studio preparing"}</a>`
-      : heroTarget
-        ? `<a class="button" href="#${heroTarget}">${html(home.heroButtonLabel || heroLabels[heroTarget])}</a>`
-        : "";
-  const heroBuilder =
-    builderVisible && heroTarget !== "builder"
-      ? `<a class="plain-button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${html(home.builderButtonLabel)}</a>`
+  const builderIsPrimary =
+    heroTarget === "builder" ||
+    (builderVisible && home.heroButtonTarget === "auto");
+  const heroPrimary = builderIsPrimary
+    ? `<a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? html(home.builderButtonLabel || "Design your bouquet") : "Matching studio preparing"}</a>`
+    : heroTarget
+      ? `<a class="button" href="#${heroTarget}">${html(home.heroButtonLabel || heroLabels[heroTarget])}</a>`
       : "";
-  const cards = draft.collection.filter(
-    (item) => editing || item.available !== false,
-  );
-  const products = draft.products.filter(
-    (item) => editing || item.available !== false,
-  );
+  const heroBuilder =
+    builderVisible && heroTarget && heroTarget !== "builder"
+      ? builderIsPrimary
+        ? `<a class="plain-button" href="#${heroTarget}">${html(heroLabels[heroTarget] || "Explore the bouquets ↓")}</a>`
+        : `<a class="plain-button" href="${studioLink(null)}" data-studio>${html(home.builderButtonLabel)}</a>`
+      : "";
+
   const sections = {
-    custom: `<section id="custom" class="flower-section"><div class="store-section-heading"><div><p class="eyebrow">A LITTLE IMAGINATION</p><h2 ${edit("section-custom")}>${html(home.customTitle)}</h2></div><p ${edit("section-custom")}>${html(home.customDescription)}</p></div>${cards.length ? `<div class="flower-grid">${cards.map((card) => `<article class="flower-card ${card.available === false ? "item-hidden" : ""}" ${edit("collection:" + card.id)}><div class="photo-wrap">${cover(card, "flower-photo")}<span class="photo-caption">${card.cover ? "Florist photo" : card.design ? "Starting recipe preview" : "Library recipe preview"}</span>${card.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(card.category || "CUSTOMISABLE BOUQUET")}</span><h3>${html(card.title)}</h3><p>${html(recipeFor(card)?.description || recipeFor(card)?.name || "Your florist’s saved bouquet design, ready for your personal touch.")}</p><div class="card-actions">${presetReady() ? `<a class="button small" href="${studioLink(card, true)}" data-studio>Custom Order ↗</a><a class="plain-button" href="${studioLink(card)}" data-studio>Customise ✳</a>` : '<button class="button small" disabled>Studio preparing</button>'}</div></div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>✿</span><p>Your signature bouquets belong here.</p><button class="button secondary small" data-action="inspect" data-target="add-card">Choose a recipe +</button></div>' : ""}</section>`,
-    products: `<section id="products" class="flower-section fixed-section"><div class="store-section-heading"><div><p class="eyebrow">FROM OUR FLOWER SHOP</p><h2 ${edit("section-products")}>${html(home.productsTitle)}</h2></div><p ${edit("section-products")}>${html(home.productsDescription)}</p></div>${products.length ? `<div class="flower-grid">${products.map((item) => `<article class="flower-card ${item.available === false ? "item-hidden" : ""}" ${edit("products:" + item.id)}><div class="photo-wrap">${productCover(item, "flower-photo")}${item.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(item.category || "FROM THE COLLECTION")}</span><h3>${html(item.title)}</h3><p>${html(item.description || "Thoughtfully made by your local florist.")}</p><div class="fixed-price">${formatMoney(item.priceCents)}</div>${ordersOpen && item.available !== false && item.priceCents !== null ? `<button class="button secondary small" data-action="product-request" data-id="${html(item.id)}">Request this product ↗</button>` : ownerReview && item.available !== false && Number.isSafeInteger(item.priceCents) ? `<button class="button secondary small" data-action="product-preview" data-id="${html(item.id)}">Preview order ↗</button>` : `<button class="button secondary small" disabled>${!ordersOpen ? "Preview only" : "Contact florist to order"}</button>`}</div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>❀</span><p>A photo, a name, a little something lovely.</p><button class="button secondary small" data-action="add-product">Add your first product +</button></div>' : ""}</section>`,
-    builder: `<section id="builder" class="independent-builder"><div><p class="eyebrow">SOMETHING ENTIRELY YOURS</p><h2 ${edit("section-builder")}>${html(home.builderTitle)}</h2><p ${edit("section-builder")}>${html(home.builderDescription)}</p><a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? html(home.builderButtonLabel) : "Matching studio preparing"}</a><p class="helper">Start fresh with a blank bouquet.</p></div><div class="builder-decoration" aria-hidden="true"><span>✳</span><i>made by you</i></div></section>`,
+    custom: `<section id="custom" class="flower-section"><div class="store-section-heading"><div><p class="eyebrow">A LITTLE IMAGINATION</p><h2 ${edit("section-custom")}>${html(home.customTitle)}</h2></div><p ${edit("section-custom")}>${html(home.customDescription)}</p></div>${cards.length ? `<div class="flower-grid">${cards.map((card) => `<article class="flower-card ${card.available === false ? "item-hidden" : ""}" data-bouquet-card="${html(card.id)}" ${edit("collection:" + card.id)}><div class="photo-wrap">${cover(card, "flower-photo")}<span class="photo-caption">${card.cover ? "Florist photo" : card.design ? "Starting recipe preview" : "Library recipe preview"}</span>${card.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(card.category || "CUSTOMISABLE BOUQUET")}${draft.preset === "mixed" ? " · " + (cardFlowerType(card) === "satin" ? "SATIN" : "FRESH") : ""}</span><h3>${html(card.title)}</h3><p>${html(recipeFor(card)?.description || recipeFor(card)?.name || "Your florist’s saved bouquet design, ready for your personal touch.")}</p><div class="card-actions">${presetReady() ? `<button class="button small" data-action="collection-order" data-id="${html(card.id)}">Order ↗</button><a class="plain-button" href="${studioLink(card)}" data-studio>Customise ✳</a>` : '<button class="button small" disabled>Studio preparing</button>'}</div></div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>✿</span><p>Your signature bouquets belong here.</p><button class="button secondary small" data-action="inspect" data-target="add-card">Build a bouquet →</button></div>' : ""}</section>`,
+    products: `<section id="products" class="flower-section fixed-section"><div class="store-section-heading"><div><p class="eyebrow">FROM OUR FLOWER SHOP</p><h2 ${edit("section-products")}>${html(home.productsTitle)}</h2></div><p ${edit("section-products")}>${html(home.productsDescription)}</p></div>${products.length ? `<div class="flower-grid">${products.map((item) => `<article class="flower-card ${item.available === false ? "item-hidden" : ""}" ${edit("products:" + item.id)}><div class="photo-wrap">${productCover(item, "flower-photo")}${item.available === false ? '<span class="hidden-pill">Hidden</span>' : ""}</div><div class="flower-card-body"><span class="tiny-label">${html(item.category || "FROM THE COLLECTION")}</span><h3>${html(item.title)}</h3><p>${html(item.description || "Thoughtfully made by your local florist.")}</p><div class="fixed-price">${formatMoney(item.priceCents)}</div>${ordersOpen && item.available !== false && item.priceCents !== null ? `<button class="button secondary small" data-action="product-request" data-id="${html(item.id)}">Order ↗</button>` : ownerReview && item.available !== false && Number.isSafeInteger(item.priceCents) ? `<button class="button secondary small" data-action="product-preview" data-id="${html(item.id)}">Preview order ↗</button>` : `<button class="button secondary small" disabled>${!ordersOpen ? "Preview only" : "Contact florist to order"}</button>`}</div></article>`).join("")}</div>` : editing ? '<div class="empty-collection"><span>❀</span><p>A photo, a name, a little something lovely.</p><button class="button secondary small" data-action="add-product">Add your first product +</button></div>' : ""}</section>`,
+    builder: `<section id="builder" class="independent-builder"><div><p class="eyebrow">SOMETHING ENTIRELY YOURS</p><h2 ${edit("section-builder")}>${html(home.builderTitle)}</h2><p ${edit("section-builder")}>${html(home.builderDescription)}</p><a class="button" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${presetReady() ? html(home.builderButtonLabel) : "Matching studio preparing"}</a><p class="helper">Choose flowers, wrapping and finishing touches. Review your design before ordering.</p></div><div class="builder-decoration" aria-hidden="true">${cards[0] ? cover(cards[0], "builder-photo") : "<span>✳</span><i>made by you</i>"}</div></section>`,
     about: `<section id="about" class="store-about" ${edit("about")}><p class="eyebrow">A NOTE FROM YOUR FLORIST</p><h2>${html(home.aboutTitle)}</h2><p>${html(draft.home.about || (editing ? "Tell your story here. A few warm words about your flowers, your craft and the people you make them for." : "Thoughtfully chosen flowers, made with care for your everyday joys and once-in-a-lifetime moments."))}</p><span class="about-signature">${html(draft.name)}</span></section>`,
     contact: `<section id="contact" class="store-contact" ${edit("contact")}><span aria-hidden="true">✳</span><div><p class="eyebrow">LET’S MAKE SOMETHING LOVELY</p><h2>${html(home.contactTitle)}</h2><div class="contact-details">${draft.city ? `<span>${html(draft.city)}</span>` : ""}${draft.phone ? `<a href="tel:${html(draft.phone.replace(/[^+\d]/g, ""))}">${html(draft.phone)}</a>` : ""}${instagramContact(draft.instagram)}${home.contactDetails ? `<p class="contact-extra">${html(home.contactDetails)}</p>` : ""}${!draft.phone && !draft.city && editing ? "<span>Add your contact details</span>" : ""}</div></div></section>`,
   };
-  return `<div class="storefront floral-store hero-layout-${html(home.heroLayout)} ${home.motionEnabled && !editing && !adminReadOnly ? "store-motion" : ""} ${editing && editorMode && !adminReadOnly ? "is-editing" : ""}" style="--shop-primary:${html(draft.theme.primary)};--shop-background:${html(draft.theme.background)}">${home.announcementEnabled ? `<div class="store-announcement" ${edit("header")}>${html(home.announcementText || (draft.city ? draft.city + " · " : "") + (draft.preset === "satin" ? "Satin & eternal flowers" : "Thoughtful flowers. Beautiful moments."))}</div>` : ""}<header class="store-header"><div class="store-brand" ${edit("brand")}>${draft.logoMediaId ? `<img data-media-id="${html(draft.logoMediaId)}" alt="${html(draft.name)} logo">` : '<span aria-hidden="true">✳</span>'}${html(draft.name)}</div>${sectionNavigation ? `<nav aria-label="Shop sections">${sectionNavigation}</nav>` : ""}${builderVisible ? `<a class="store-builder-nav" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${html(home.builderButtonLabel)} ↗</a>` : ""}</header><section class="floral-hero"><div class="hero-copy">${home.heroEyebrow ? `<p class="eyebrow" ${edit("hero-copy")}>${html(home.heroEyebrow)}</p>` : ""}<h1 ${edit("headline")}>${html(draft.home.headline)}</h1><p class="hero-description" ${edit("description")}>${html(draft.home.description)}</p>${heroPrimary || heroBuilder ? `<div class="actions">${heroPrimary}${heroBuilder}</div>` : ""}${home.heroNote ? `<div class="hero-footnote" ${edit("hero-copy")}><span>❀</span> ${html(home.heroNote)}</div>` : ""}</div><div class="hero-photo" ${edit("hero")}><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="${draft.home.heroMediaId ? html(draft.name) + " flowers" : "Floral inspiration: blush roses wrapped in ivory paper"}">${home.heroStamp ? `<div class="hero-stamp" ${edit("hero-copy")}>${html(home.heroStamp)}<span>✳</span></div>` : ""}${editing && editorMode ? '<span class="edit-photo-label">Change hero photo ↗</span>' : ""}</div></section>${home.ribbonEnabled && home.ribbonText ? `<div class="floral-ribbon" ${edit("footer")}><span class="ribbon-copy">${html(home.ribbonText)}</span></div>` : ""}${draft.home.sections.map((key) => sections[key] || "").join("")}<footer class="store-bottom"><strong>${html(draft.name)}</strong><span ${edit("footer")}>${html(home.footerText)}</span><span>Made with Nebula ✳</span></footer></div>`;
+  return `<div class="storefront floral-store hero-layout-${html(home.heroLayout)} ${home.motionEnabled && !editing && !adminReadOnly ? "store-motion" : ""} ${editing && editorMode && !adminReadOnly ? "is-editing" : ""}" style="--shop-primary:${html(draft.theme.primary)};--shop-background:${html(draft.theme.background)}">${home.announcementEnabled ? `<div class="store-announcement" ${edit("header")}>${html(home.announcementText || (draft.city ? draft.city + " · " : "") + (draft.preset === "satin" ? "Satin & eternal flowers" : "Thoughtful flowers. Beautiful moments."))}</div>` : ""}<header class="store-header"><div class="store-brand" ${edit("brand")}>${draft.logoMediaId ? `<img data-media-id="${html(draft.logoMediaId)}" alt="${html(draft.name)} logo">` : '<span aria-hidden="true">✳</span>'}${html(draft.name)}</div>${sectionNavigation ? `<nav aria-label="Shop sections">${sectionNavigation}</nav>` : ""}${builderVisible ? `<a class="store-builder-nav" href="${studioLink(null)}" data-studio ${presetReady() ? "" : 'aria-disabled="true"'}>${html(home.builderButtonLabel)} ↗</a>` : ""}</header><section class="floral-hero"><div class="hero-copy">${home.heroEyebrow ? `<p class="eyebrow" ${edit("hero-copy")}>${html(home.heroEyebrow)}</p>` : ""}<h1 ${edit("headline")}>${html(draft.home.headline)}</h1><p class="hero-description" ${edit("description")}>${html(draft.home.description)}</p>${heroPrimary || heroBuilder ? `<div class="actions">${heroPrimary}${heroBuilder}</div>` : ""}${home.heroNote ? `<div class="hero-footnote" ${edit("hero-copy")}><span>❀</span> ${html(home.heroNote)}</div>` : ""}</div><div class="hero-photo" ${edit("hero")}><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="${draft.home.heroMediaId ? html(draft.name) + " flowers" : "Floral inspiration: blush roses wrapped in ivory paper"}">${home.heroStamp ? `<div class="hero-stamp" ${edit("hero-copy")}>${html(home.heroStamp)}<span>✳</span></div>` : ""}${editing && editorMode ? '<span class="edit-photo-label">Change hero photo ↗</span>' : ""}</div></section>${home.ribbonEnabled && home.ribbonText ? `<div class="floral-ribbon" ${edit("footer")}><span class="ribbon-copy">${html(home.ribbonText)}</span></div>` : ""}${fulfillmentSummary(shop.checkoutSettings || shop.commerce, currency())}${displayedSections.map((key) => sections[key] || "").join("")}<footer class="store-bottom"><strong>${html(draft.name)}</strong><span ${edit("footer")}>${html(home.footerText)}</span><span>Made with Nebula ✳</span></footer></div>`;
 }
 function renderPreview() {
   document.body.classList.add("public-shop");
   const slug = decodeURIComponent(route().split("/")[2] || "");
-  const owner = user?.emailVerified && shop?.slug === slug && !publicSnapshot;
+  const owner =
+    user?.emailVerified &&
+    shop?.slug === slug &&
+    !publicSnapshot &&
+    new URLSearchParams(location.search).get("view") !== "live";
   if (!owner && (!publicSnapshot || publicSnapshot.slug !== slug))
     return renderLocked();
   if (!owner) {
@@ -1025,8 +1258,93 @@ function renderPreview() {
     draft = normalizeDraft(shop.draft);
   }
   document.title = `${draft.name} · ${draft.tagline || "Your flower shop"}`;
-  main.innerHTML = `${owner ? `<div class="preview-banner"><span>✧ OWNER PREVIEW · Private draft${!isPaid() ? " · Orders closed" : ""}</span><a href="/dashboard/editor" data-nav>Edit my storefront ↗</a></div>` : ""}${storefrontMarkup(false, !owner)}`;
+  main.innerHTML = `${owner ? `<div class="preview-banner"><span>✧ OWNER PREVIEW · Private draft · Requests closed here</span><a href="/dashboard/editor" data-nav>Edit my storefront ↗</a>${shop.published ? `<a href="${previewLink()}?view=live">Open customer shop ↗</a>` : '<a href="#ownerJourney">Next step ↓</a>'}<a href="/dashboard" data-nav>Dashboard ↗</a></div>` : ""}${storefrontMarkup(false, !owner)}`;
   hydrateMedia();
+  if (owner && !adminReadOnly) {
+    const slot = document.createElement("section");
+    slot.id = "ownerJourney";
+    slot.className = "owner-journey";
+    slot.innerHTML =
+      '<p class="helper" role="status">Preparing your next step…</p>';
+    const hero = main.querySelector(".floral-hero");
+    if (hero) hero.after(slot);
+    else main.append(slot);
+    const snapshot = shop;
+    const ownerStudio =
+      (!draft.collection.length && trialStudioLink()) || buildSlotLink();
+    import("/owner-onboarding.js")
+      .then(({ mountOwnerJourney, welcomeToShop }) => {
+        if (!slot.isConnected || shop.id !== snapshot.id) return;
+        mountOwnerJourney({
+          slot,
+          shop: snapshot,
+          catalog,
+          config,
+          api,
+          studioUrl: ownerStudio,
+          onChange: (next) => {
+            if (shop.id !== next.id) return;
+            shop = next;
+            draft = normalizeDraft(next.draft);
+            version = next.version;
+            dirty = conflict = false;
+            render();
+          },
+        });
+        const params = new URLSearchParams(location.search);
+        if (params.get("welcome") === "1" && !draft.collection.length) {
+          params.delete("welcome");
+          history.replaceState(
+            null,
+            "",
+            location.pathname + (params.size ? "?" + params : ""),
+          );
+          setTimeout(() => {
+            if (
+              slot.isConnected &&
+              shop.id === snapshot.id &&
+              !document.getElementById("ownerJourneyDialog")
+            )
+              welcomeToShop(snapshot, ownerStudio);
+          }, 900);
+        }
+        const created = params.get("created");
+        if (created) {
+          const cards = main.querySelectorAll("#custom [data-bouquet-card]");
+          const bouquet =
+            created === "1"
+              ? cards[0]
+              : Array.from(cards).find(
+                  (card) => card.dataset.bouquetCard === created,
+                );
+          if (bouquet) {
+            bouquet.classList.add("bouquet-just-created");
+            const feedback = document.createElement("div");
+            feedback.className = "bouquet-saved-note";
+            feedback.innerHTML =
+              '<span role="status">Bouquet saved to your preview</span><a href="#ownerJourney">Next step ↑</a>';
+            bouquet.prepend(feedback);
+          }
+          const destination = bouquet || slot;
+          requestAnimationFrame(() => {
+            if (destination.isConnected)
+              destination.scrollIntoView({ block: "start" });
+          });
+          params.delete("created");
+          history.replaceState(
+            null,
+            "",
+            location.pathname + (params.size ? "?" + params : ""),
+          );
+        }
+      })
+      .catch((error) => {
+        if (slot.isConnected)
+          slot.textContent =
+            "Your preview is saved. Reopen this page to load setup: " +
+            error.message;
+      });
+  }
 }
 function renderEditor() {
   const readOnly = adminReadOnly;
@@ -1048,7 +1366,7 @@ function renderEditor() {
             )
             .join("")}</nav>`
         : ""
-    }<div class="store-preview-frame ${mobilePreview ? "mobile-frame" : ""}" data-store-mount>${storefrontMarkup(!readOnly, false)}</div>${!readOnly ? inspectorMarkup() : ""}`,
+    }<details class="surface presentation-picker" ${readOnly ? "hidden" : ""}><summary>Choose your page style</summary>${readOnly ? "" : presentationControls(draft.home)}</details><div class="store-preview-frame ${mobilePreview ? "mobile-frame" : ""}" data-store-mount>${storefrontMarkup(!readOnly, false)}</div>${!readOnly ? inspectorMarkup() : ""}`,
     "Your shop,<br><em>your finishing touches.</em>",
     readOnly
       ? "A read-only view of this merchant’s storefront."
@@ -1103,7 +1421,7 @@ function inspectorMarkup() {
     content =
       kind === "brand"
         ? `${field("Shop name", "name", { max: 80, required: true })}${uploadField("logo", null, 1, "Change logo")}<label class="field">Signature colour<input type="color" data-path="theme.primary" value="${html(draft.theme.primary)}"></label>`
-        : `${field("City or neighbourhood", "city", { max: 80 })}${field("Phone or WhatsApp", "phone", { max: 40 })}${field("Instagram", "instagram", { max: 120 })}${storefrontControls("contact", draft.home, html)}`;
+        : `${field("City or neighbourhood", "city", { max: 80 })}${field("Phone or WhatsApp", "phone", { max: 40 })}${field("Instagram", "instagram", { max: 120 })}${localeFields(draft)}<label class="field">Requests without online payment<select data-path="requestChannel"><option value="whatsapp" ${draft.requestChannel !== "sms" && draft.requestChannel !== "both" ? "selected" : ""}>WhatsApp</option><option value="sms" ${draft.requestChannel === "sms" ? "selected" : ""}>SMS</option><option value="both" ${draft.requestChannel === "both" ? "selected" : ""}>WhatsApp + SMS</option></select><span class="helper">Uses your phone number above, including its country code. Customers review and send the message themselves.</span></label>${storefrontControls("contact", draft.home, html)}`;
   } else if (kind === "hero" || kind === "hero-look") {
     title = "Your first impression";
     content = `<div class="inspector-photo"><img ${draft.home.heroMediaId ? `data-media-id="${html(draft.home.heroMediaId)}"` : 'src="/assets/studio-pink.webp"'} alt="Hero image preview"></div>${storefrontControls("hero-look", draft.home, html)}${uploadField("hero", null, 18, "Choose hero photo")}<p class="helper">Landscape or portrait · resized to 250 KB. Our default photo is floral inspiration; replace it with your own work.</p>${draft.home.heroMediaId ? '<button class="plain-button" data-action="remove-hero">Use default inspiration photo</button>' : ""}`;
@@ -1113,7 +1431,7 @@ function inspectorMarkup() {
     const index = (
       kind === "collection" ? draft.collection : draft.products
     ).indexOf(item);
-    content = `${itemField("Name", kind, item, "title", "text", 80)}${kind === "products" ? itemField("Description", kind, item, "description", "textarea", 400) : recipeSelect(item)}${itemField("Category", kind, item, "category", "text", 40)}${kind === "products" ? itemField("Price · " + currency(), kind, item, "priceCents", "number") : ""}${availability(kind, item)}${uploadField(kind === "collection" ? "cover" : "product", item.id, index + (kind === "collection" ? 2 : 8))}<p class="helper">${kind === "collection" ? "Custom Order and Customise open this same recipe. Your photo should represent it." : "Customers see your fixed price and product photo."}</p>${kind === "collection" && presetReady() ? `<a class="button secondary small" href="${studioLink(item)}" data-studio>Edit recipe in Builder ↗</a>` : ""}<button class="plain-button danger" data-action="${kind === "collection" ? "remove-card" : "remove-product"}" data-id="${html(item.id)}">Remove ${kind === "collection" ? "bouquet" : "product"}</button>`;
+    content = `${itemField("Name", kind, item, "title", "text", 80)}${kind === "products" ? itemField("Description", kind, item, "description", "textarea", 400) : recipeSelect(item)}${itemField("Category", kind, item, "category", "text", 40)}${kind === "products" ? itemField("Price · " + currency(), kind, item, "priceCents", "number") : ""}${availability(kind, item)}${uploadField(kind === "collection" ? "cover" : "product", item.id, index + (kind === "collection" ? 2 : 8))}<p class="helper">${kind === "collection" ? "Order opens checkout with your photo. Customise opens this recipe in the builder." : "Customers see your fixed price and product photo."}</p>${kind === "collection" && presetReady() ? `<a class="button secondary small" href="${studioLink(item)}" data-studio>Edit recipe in Builder ↗</a>` : ""}<button class="plain-button danger" data-action="${kind === "collection" ? "remove-card" : "remove-product"}" data-id="${html(item.id)}">Remove ${kind === "collection" ? "bouquet" : "product"}</button>`;
   } else if (kind === "sections") {
     title = "Your page, your order";
     const all = ["custom", "products", "builder", "about", "contact"];
@@ -1128,7 +1446,7 @@ function inspectorMarkup() {
       ...draft.home.sections,
       ...all.filter((key) => !draft.home.sections.includes(key)),
     ];
-    content = `<p class="subtle">Choose which sections appear, then arrange your page.</p><div class="section-sort">${order.map((key) => `<div><label class="toggle-line"><input type="checkbox" data-section="${key}" ${draft.home.sections.includes(key) ? "checked" : ""}>${names[key]}</label><button data-action="move-section" data-section="${key}" data-direction="-1" aria-label="Move ${names[key]} up">↑</button><button data-action="move-section" data-section="${key}" data-direction="1" aria-label="Move ${names[key]} down">↓</button></div>`).join("")}</div><div class="editor-customization">${[
+    content = `${presentationControls(draft.home)}<p class="subtle">Choose which sections appear, then arrange your page.</p><div class="section-sort">${order.map((key) => `<div><label class="toggle-line"><input type="checkbox" data-section="${key}" ${draft.home.sections.includes(key) ? "checked" : ""}>${names[key]}</label><button data-action="move-section" data-section="${key}" data-direction="-1" aria-label="Move ${names[key]} up">↑</button><button data-action="move-section" data-section="${key}" data-direction="1" aria-label="Move ${names[key]} down">↓</button></div>`).join("")}</div><div class="editor-customization">${[
       ["section-custom", "Bouquet section text"],
       ["section-products", "Product section text"],
       ["section-builder", "Builder section text"],
@@ -1195,6 +1513,13 @@ function render() {
     case "/dashboard/products":
       return renderProducts();
     case "/dashboard/billing":
+      if (
+        isPaid() &&
+        new URLSearchParams(location.search).get("setup") === "1"
+      ) {
+        history.replaceState(null, "", previewLink());
+        return renderPreview();
+      }
       return renderBilling();
     case "/dashboard/payments":
       return renderPayments();
@@ -1287,6 +1612,7 @@ async function reauthenticateAdministrator(password) {
 }
 function renderAdmin() {
   const rows = adminState.users;
+  const reservations = adminState.reservations || [];
   const detail = adminState.detail;
   const actorUid = user?.uid;
   main.innerHTML = `<section class="admin-page"><div class="page-heading"><div><p class="eyebrow">NEBULA · PLATFORM OWNER</p><h1>Customers<br><em>& subscriptions.</em></h1><p class="subtle">Manage your florist customers, activation requests and subscription access. Each florist has a separate shop workspace.</p><span class="pill">${config.sandboxTestAccess ? "SANDBOX · TEST ACCESS ONLY" : "MAIN PLATFORM · VERIFIED PAYMENTS"}</span></div><a class="button secondary small" href="https://nebulastudio.site/admin.html" target="_blank" rel="noopener noreferrer">Legacy orders & leads ↗</a></div>${notice()}${adminState.feedback ? `<div class="notice admin-feedback" role="status"><strong>${html(adminState.feedback.message)}</strong><p>Shop: ${html(adminState.feedback.name)} · ${html(adminState.feedback.id)}</p></div>` : ""}<div class="admin-summary"><div class="surface"><span class="tiny-label">ACCOUNTS LOADED</span><strong>${rows.length}</strong></div><div class="surface"><span class="tiny-label">WITH A SHOP</span><strong>${rows.filter((row) => row.shopId || row.shop?.id).length}</strong></div><div class="surface"><span class="tiny-label">ACTIVE PLANS</span><strong>${rows.filter((row) => adminStatus(row) === "active").length}</strong></div><div class="surface"><span class="tiny-label">PUBLISHED</span><strong>${rows.filter((row) => row.publishedVersion || row.shop?.published).length}</strong></div></div><div class="admin-layout"><section class="surface"><form id="adminSearchForm" class="admin-search"><input id="adminSearch" type="search" value="${html(adminState.query)}" placeholder="Search email, shop or slug…" aria-label="Search accounts"><button class="button small" type="submit">Search</button><button class="button secondary small" type="button" data-action="admin-refresh" ${adminState.loading ? "disabled" : ""}>${adminState.loading ? "Refreshing…" : "Refresh list ↻"}</button></form><nav class="request-filters" aria-label="Filter florist customers">${[
@@ -1308,8 +1634,19 @@ function renderAdmin() {
         return `<tr class="${id === adminState.selectionId ? "selected" : ""}"><td><strong>${html(row.name || row.shop?.draft?.name || "No shop yet")}</strong><span>${html(row.email || row.uid)}</span><small>${html(row.slug || row.shop?.slug || "Account created · shop not started")}</small></td><td><span class="pill ${adminStatus(row) === "active" ? "green" : ""}">${html(adminStatus(row))}</span></td><td>${html(row.status || (row.publishedVersion ? "published" : id ? "draft" : "no shop"))}</td><td>${adminDate(row.lastSeenAt || row.lastActiveAt || row.updatedAt)}</td><td>${id ? `<button class="plain-button" data-action="admin-select" data-id="${html(id)}" aria-pressed="${id === adminState.selectionId}">Manage access ↗</button>` : "—"}</td></tr>`;
       })
       .join("") ||
-    `<tr><td colspan="5">${adminState.loading ? "Loading accounts…" : "No matching accounts."}</td></tr>`
-  }</tbody></table></div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd><a href="${html(location.origin + "/s/" + encodeURIComponent(detail.shop.slug))}" target="_blank" rel="noopener noreferrer">${html(location.host + "/s/" + detail.shop.slug)}</a><small>${detail.shop.published ? "Published snapshot saved" : "Reserved · not published"}</small></dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview?view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/orders" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Storefront previews are read only. Access changes use the separate audited controls below.</p>` : '<span class="admin-flower">✳</span><h2>${adminState.detailLoading ? "Loading shop…" : "Choose a florist."}</h2><p class="subtle">${adminState.detailLoading ? "Loading this florist’s access settings and saved shop." : "Select Manage access to activate, extend or suspend a subscription and review the shop."}</p>'}</aside></div></section>`;
+    (adminState.loading
+      ? ""
+      : '<tr><td colspan="5">No matching accounts.</td></tr>')
+  }</tbody></table>${adminState.loading && !rows.length ? '<p class="subtle">Loading accounts…</p>' : ""}</div>${adminState.nextCursor ? '<button class="button secondary small" data-action="admin-more">Load more accounts ↓</button>' : ""}</section><aside class="surface admin-detail">${detail ? `<p class="eyebrow">MERCHANT DETAIL</p><h2>${html(detail.shop.draft?.name || detail.shop.slug)}</h2><p class="subtle">${html(detail.user?.email || detail.shop.ownerUid || "")}</p><dl><dt>Shop address</dt><dd><a href="${html(location.origin + "/s/" + encodeURIComponent(detail.shop.slug))}" target="_blank" rel="noopener noreferrer">${html(location.host + "/s/" + detail.shop.slug)}</a><small>${detail.shop.published ? "Published snapshot saved" : "Reserved · not published"}</small></dd><dt>Draft version</dt><dd>${html(detail.shop.version)}</dd><dt>Published version</dt><dd>${html(detail.shop.published?.version || "Not published")}</dd><dt>Subscription</dt><dd>${html(detail.shop.subscription?.status || (detail.shop.subscription?.active ? "active" : "inactive"))}</dd><dt>Customisable / fixed</dt><dd>${detail.shop.draft?.collection?.length || 0} / ${detail.shop.draft?.products?.length || 0}</dd><dt>Last updated</dt><dd>${adminDate(detail.shop.updatedAt)}</dd></dl><a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview" data-admin-preview data-id="${html(detail.shop.id)}" data-view="draft">Preview private draft ↗</a>${detail.shop.published ? `<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/preview?view=live" data-admin-preview data-id="${html(detail.shop.id)}" data-view="live">Preview published version ↗</a>` : ""}<a class="button secondary small" href="/admin/shops/${encodeURIComponent(detail.shop.id)}/orders" data-admin-orders data-id="${html(detail.shop.id)}">View saved customer requests ↗</a><p class="helper">Storefront previews are read only. Access changes use the separate audited controls below.</p>` : `<span class="admin-flower">✳</span><h2>${adminState.detailLoading ? "Loading shop…" : "Choose a florist."}</h2><p class="subtle">${adminState.detailLoading ? "Loading this florist’s access settings and saved shop." : "Select Manage access to activate, extend or suspend a subscription and review the shop."}</p>`}</aside></div><details class="surface admin-reservations" ${reservations.length ? "open" : ""}><summary><strong>Pre-provisioned email reservations (${reservations.length})</strong> · Seed a shop before the owner signs in</summary><p class="helper">When the verified owner signs in with the reserved email, their pre-provisioned shop is claimed automatically.</p>${
+    reservations.length
+      ? `<div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>RESERVED EMAIL</th><th>SHOP / SLUG</th><th>PRESET</th><th>STATUS</th><th>ACTIONS</th></tr></thead><tbody>${reservations
+          .map(
+            (r) =>
+              `<tr><td><strong>${html(r.email)}</strong><small>Created ${adminDate(r.createdAt)}</small></td><td><strong>${html(r.name)}</strong><small>/s/${html(r.slug)}</small></td><td>${html(r.preset)}</td><td><span class="pill ${r.status === "claimed" ? "green" : ""}">${html(r.conflictUid ? "conflict" : r.status)}</span>${r.claimedByUid ? `<small>Claimed by ${html(r.claimedByUid)}</small>` : r.conflictUid ? `<small>UID ${html(r.conflictUid)} already owns a shop</small>` : ""}</td><td><button class="plain-button" type="button" data-action="admin-select" data-id="${html(r.shopId)}">Manage access ↗</button>${r.status === "pending" ? ` · <button class="plain-button danger" type="button" data-action="admin-cancel-reservation" data-email="${html(r.email)}">Cancel</button>` : ""}</td></tr>`,
+          )
+          .join("")}</tbody></table></div>`
+      : '<p class="subtle">No pre-provisioned email reservations yet.</p>'
+  }<form id="adminReserveForm" class="admin-reserve-form"><p class="tiny-label">CREATE OR IMPORT RESERVATION</p><div class="field-grid"><label class="field">Import seed bundle (.json)<input id="adminReserveSeedFile" type="file" accept="application/json,.json"><span class="helper">Optional: select a generated seed bundle (such as raysbouquetz) to populate draft & photos automatically.</span></label><label class="field">Owner email<input id="adminReserveEmail" type="email" placeholder="raysbouquetz@gmail.com"></label><label class="field">Shop name<input id="adminReserveName" type="text" maxlength="80" placeholder="raysbouquetz"></label><label class="field">Shop slug<input id="adminReserveSlug" type="text" maxlength="48" placeholder="raysbouquetz"></label><label class="field">Preset<select id="adminReservePreset"><option value="satin">Satin & eternal</option><option value="fresh">Fresh flowers</option></select></label></div><button class="button small" type="submit">Reserve & pre-provision shop</button></form></details></section>`;
   if (detail)
     mountActivationAdmin({
       shop: detail.shop,
@@ -1347,10 +1684,16 @@ async function loadAdminUsers(more = false) {
     if (state.filter) params.set("status", state.filter);
     if (more && adminState.nextCursor)
       params.set("cursor", adminState.nextCursor);
-    const data = await api("/api/admin/users?" + params);
+    const [data, resData] = await Promise.all([
+      api("/api/admin/users?" + params),
+      more
+        ? Promise.resolve(null)
+        : api("/api/admin/reservations").catch(() => ({ reservations: [] })),
+    ]);
     if (state !== adminState || state.generation !== generation) return;
     pageMessage = "";
     adminState.users = more ? [...adminState.users, ...data.users] : data.users;
+    if (resData?.reservations) adminState.reservations = resData.reservations;
     adminState.nextCursor = data.nextCursor || null;
     adminState.loaded = true;
   } catch (error) {
@@ -1428,9 +1771,11 @@ async function renderHistoryRoute() {
   }
 }
 async function loadSession() {
-  const session = await api("/api/session");
+  const [session] = await Promise.all([
+    api("/api/session"),
+    catalog ? Promise.resolve() : loadCatalog(),
+  ]);
   sessionState = session;
-  await loadCatalog();
   shop = session.shop;
   draft = shop ? normalizeDraft(shop.draft) : null;
   version = shop?.version ?? null;
@@ -1526,8 +1871,9 @@ function seedCollection() {
   const recipe = matchingRecipes()[0];
   if (recipe) addCard(recipe.id);
 }
-function addCard(recipeId) {
+async function addCard(recipeId) {
   if (draft.collection.length >= 6) return;
+  const collectionDraft = draft;
   const recipe = matchingRecipes().find((item) => item.id === recipeId);
   if (!recipe) return;
   const item = {
@@ -1540,6 +1886,28 @@ function addCard(recipeId) {
     category: "",
   };
   draft.collection.push(item);
+  if (!draft.home.sections.includes("custom"))
+    draft.home.sections.unshift("custom");
+  const used = new Set((recipe.design?.items || []).map((item) => item.id));
+  try {
+    const { validateDesign } = await import("/policy.mjs");
+    if (draft !== collectionDraft || !draft.collection.includes(item)) return;
+    const result = validateDesign(
+      recipe.design,
+      { ...draft, disabledFlowers: [], disabledExtras: [] },
+      catalog,
+      { allowUnpriced: true },
+    );
+    const extras = new Set(
+      (result.pricing?.extraLines || []).map((line) => line.id),
+    );
+    draft.disabledExtras = draft.disabledExtras.filter((id) => !extras.has(id));
+  } catch {
+    if (draft !== collectionDraft || !draft.collection.includes(item)) return;
+    pageMessage =
+      "The bouquet was added. Review flower and extra availability before publishing.";
+  }
+  draft.disabledFlowers = draft.disabledFlowers.filter((id) => !used.has(id));
   changed();
   if (route() === "/dashboard/editor") inspector = "collection:" + item.id;
   render();
@@ -1553,6 +1921,10 @@ async function useSamplePrices() {
       Number.isSafeInteger(item.priceCents)
     )
       draft.flowerPrices[item.id] = item.priceCents;
+    if (Number.isSafeInteger(draft.flowerPrices[item.id]))
+      draft.disabledFlowers = draft.disabledFlowers.filter(
+        (id) => id !== item.id,
+      );
   }
   for (const item of matchingExtras()) {
     if (
@@ -1560,11 +1932,15 @@ async function useSamplePrices() {
       Number.isSafeInteger(item.priceCents)
     )
       draft.extrasCents[item.id] = item.priceCents;
+    if (Number.isSafeInteger(draft.extrasCents[item.id]))
+      draft.disabledExtras = draft.disabledExtras.filter(
+        (id) => id !== item.id,
+      );
   }
   changed();
   if (await saveDraft(false)) {
     pageMessage =
-      "Sample prices saved for design previews. Replace them with your own approved prices before launch. These amounts cannot be charged in this beta.";
+      "Sample prices saved for design previews. Review them before approving online checkout.";
     render();
   }
 }
@@ -1576,9 +1952,9 @@ async function createShop(button) {
     draft = normalizeDraft(shop.draft);
     version = shop.version;
     dirty = conflict = false;
-    await navigate("/dashboard");
+    await navigate(previewLink() + "?welcome=1");
     announce(
-      "Your private shop is created. Start with your own favourite recipes and products.",
+      "Your shop preview is ready. Build your first bouquet when you want.",
     );
   } catch (error) {
     showMessage(errorText(error), true);
@@ -1792,6 +2168,17 @@ document.addEventListener("click", async (event) => {
     const target = new URL(link.href);
     afterLogin =
       safeReturnPath(target.searchParams.get("returnTo")) || afterLogin;
+    if (link.closest(".setup-next")) {
+      if (saving || uploadJobs.size)
+        return showMessage(
+          "Your changes are still saving. Please try Continue in a moment.",
+          true,
+        );
+      if (dirty && !(await saveDraft(false))) return;
+    }
+    const commercePanel = main.querySelector(".commerce-panel");
+    if (commercePanel?.saveIfNeeded && !(await commercePanel.saveIfNeeded()))
+      return;
     await navigate(link.getAttribute("href"));
     return;
   }
@@ -1824,6 +2211,15 @@ document.addEventListener("click", async (event) => {
     !action.startsWith("admin-")
   )
     return;
+  if (action === "shop-presentation") {
+    if (adminReadOnly) return;
+    draft = applyPresentation(draft, button.dataset.style);
+    changed();
+    pageMessage =
+      "Page style updated in your draft. Preview it, then save and publish when ready. Your saved products are kept.";
+    render();
+    return;
+  }
   if (action === "toggle-edit") {
     editorMode = !editorMode;
     inspector = null;
@@ -1832,11 +2228,42 @@ document.addEventListener("click", async (event) => {
     mobilePreview = !mobilePreview;
     renderEditor();
   } else if (action === "inspect") {
+    if (button.dataset.target === "add-card") {
+      await navigate("/dashboard/collection");
+      return;
+    }
     inspector = button.dataset.target;
     renderEditor();
   } else if (action === "close-inspector") {
     inspector = null;
     renderEditor();
+  } else if (action === "finish-bouquet") {
+    if (saving || uploadJobs.size)
+      return showMessage("Wait for your changes to finish saving.");
+    if (dirty && !(await saveDraft(false))) return;
+    button.disabled = true;
+    try {
+      const { finishBouquet } = await import("/owner-onboarding.js");
+      const completed = await finishBouquet({
+        shop,
+        cardId: button.dataset.id,
+        catalog,
+        api,
+      });
+      if (completed) {
+        shop = completed;
+        draft = normalizeDraft(completed.draft);
+        version = completed.version;
+        dirty = conflict = false;
+        await navigate(
+          previewLink() + "?created=" + encodeURIComponent(button.dataset.id),
+        );
+      }
+    } catch (error) {
+      showMessage(error.message, true);
+    } finally {
+      if (button.isConnected) button.disabled = false;
+    }
   } else if (action === "add-card") addCard(button.dataset.recipe);
   else if (action === "remove-card" || action === "remove-product") {
     const kind = action === "remove-card" ? "collection" : "products";
@@ -1864,6 +2291,8 @@ document.addEventListener("click", async (event) => {
       category: "",
     };
     draft.products.push(item);
+    if (!draft.home.sections.includes("products"))
+      draft.home.sections.unshift("products");
     if (route() === "/dashboard/editor") inspector = "products:" + item.id;
     changed();
     render();
@@ -1956,7 +2385,7 @@ document.addEventListener("click", async (event) => {
             url.origin !==
               (config.squareEnvironment === "production"
                 ? "https://connect.squareup.com"
-                : "https://connect.squareupsandbox.com") ||
+                : "https://app.squareupsandbox.com") ||
             url.searchParams.get("session") !==
               (config.squareEnvironment === "production" ? "false" : "true") ||
             url.pathname !== "/oauth2/authorize" ||
@@ -1977,7 +2406,25 @@ document.addEventListener("click", async (event) => {
         throw error;
       }
     });
-  else if (action === "disable-unpriced") {
+  else if (action === "sandbox-test-catalog") {
+    if (!config.sandboxTestAccess) return;
+    if (
+      !confirm(
+        "Prepare this Sandbox catalogue with sample prices for testing only? Missing catalogue prices use available samples; other unpriced items and incomplete bouquets are hidden. Your existing prices and saved designs are kept. Nothing is published or charged.",
+      )
+    )
+      return;
+    await authTask(button, async () => {
+      const { prepareTestCatalog } = await import("/test-catalog.mjs");
+      const result = prepareTestCatalog(draft, catalog);
+      draft = result.draft;
+      changed();
+      if (await saveDraft(false)) {
+        pageMessage = `Test catalogue saved: ${result.samplePrices} sample prices filled, ${result.hidden} incomplete items hidden. Review and publish when ready. Checkout rules still need your approval.`;
+        await loadPublicationReadiness();
+      }
+    });
+  } else if (action === "disable-unpriced") {
     for (const item of matchingFlowers())
       if (
         !Number.isSafeInteger(draft.flowerPrices[item.id]) &&
@@ -2025,10 +2472,30 @@ document.addEventListener("click", async (event) => {
       shop = data.shop;
       draft = normalizeDraft(shop.draft);
       version = shop.version;
-      pageMessage = "Your chosen storefront version is published.";
+      pageMessage = "Your shop is live. Share your public link with customers.";
       renderBilling();
+      main.querySelector(".shop-address")?.scrollIntoView({ block: "start" });
+      document.getElementById("shopAddress")?.focus({ preventScroll: true });
     });
-  else if (action === "product-request") {
+  else if (action === "collection-order") {
+    const card = draft.collection.find((item) => item.id === button.dataset.id);
+    if (!card || card.available === false) return;
+    button.disabled = true;
+    try {
+      await openOrderRequest({
+        shop: { ...shop, draft },
+        kind: "design",
+        cardId: card.id,
+        design: clone(card.design || recipeFor(card)?.design),
+        asListed: true,
+        preview: !publicSnapshot,
+      });
+    } catch (error) {
+      showMessage(error.message, true);
+    } finally {
+      button.disabled = false;
+    }
+  } else if (action === "product-request") {
     if (!publicSnapshot) return;
     await openOrderRequest({
       shop,
@@ -2130,6 +2597,35 @@ document.addEventListener("click", async (event) => {
         }
       }
     });
+  else if (action === "admin-cancel-reservation")
+    await authTask(button, async () => {
+      const email = button.dataset.email;
+      if (
+        !email ||
+        !confirm(`Cancel the pending reservation for ${email}?`)
+      )
+        return;
+      try {
+        await api("/api/admin/reservations/cancel", {
+          method: "POST",
+          body: { email },
+        });
+      } catch (error) {
+        if (error.status === 401) {
+          await reauthenticateAdministrator();
+          await api("/api/admin/reservations/cancel", {
+            method: "POST",
+            body: { email },
+          });
+        } else throw error;
+      }
+      adminState.feedback = {
+        id: email,
+        name: email,
+        message: "Pending reservation cancelled.",
+      };
+      await loadAdminUsers();
+    });
   else if (action === "auth-mode") {
     loginMode = loginMode === "signin" ? "signup" : "signin";
     renderLogin();
@@ -2190,7 +2686,7 @@ document.addEventListener("click", async (event) => {
     });
   else if (action === "send-verification")
     await authTask(button, async () => {
-      await authApi.sendEmailVerification(user);
+      await sendVerification();
       showMessage(
         "Verification email sent. Check your inbox, then return here.",
         false,
@@ -2269,12 +2765,70 @@ document.addEventListener("submit", async (event) => {
     await loadAdminUsers();
     return;
   }
+  if (event.target.id === "adminReserveForm") {
+    event.preventDefault();
+    await authTask(event.submitter, async () => {
+      const file = $("adminReserveSeedFile")?.files?.[0];
+      let payload;
+      if (file) {
+        const parsed = JSON.parse(await file.text());
+        payload = {
+          operationId: parsed.operationId || crypto.randomUUID(),
+          email: ($("adminReserveEmail")?.value.trim() || parsed.email || ""),
+          input: parsed.input,
+          ...(parsed.draft ? { draft: parsed.draft } : {}),
+          ...(parsed.media ? { media: parsed.media } : {}),
+        };
+      } else {
+        const email = $("adminReserveEmail")?.value.trim() || "";
+        const name = $("adminReserveName")?.value.trim() || "";
+        const slug = $("adminReserveSlug")?.value.trim() || "";
+        const preset = $("adminReservePreset")?.value || "satin";
+        payload = {
+          operationId: crypto.randomUUID(),
+          email,
+          input: {
+            name,
+            slug,
+            preset,
+            currency: "CAD",
+            country: "CA",
+            timeZone: "America/Winnipeg",
+          },
+        };
+      }
+      let result;
+      try {
+        result = await api("/api/admin/reservations", {
+          method: "POST",
+          body: payload,
+        });
+      } catch (error) {
+        if (error.status === 401) {
+          await reauthenticateAdministrator();
+          result = await api("/api/admin/reservations", {
+            method: "POST",
+            body: payload,
+          });
+        } else throw error;
+      }
+      adminState.feedback = {
+        id: result.shop.id,
+        name: result.shop.draft?.name || result.reservation.name,
+        message: `Pre-provisioned shop reserved for ${result.reservation.email}.`,
+      };
+      adminState.selectionId = result.shop.id;
+      await loadAdminUsers();
+    });
+    return;
+  }
   if (event.target.id === "authForm") {
     event.preventDefault();
     await authTask(event.submitter, async () => {
       const email = $("email").value.trim(),
         password = $("password").value;
       if (loginMode === "signup") {
+        await ensureHuman(config);
         const result = await authApi.createUserWithEmailAndPassword(
           auth,
           email,
@@ -2282,7 +2836,7 @@ document.addEventListener("submit", async (event) => {
         );
         user = result.user;
         try {
-          await authApi.sendEmailVerification(user);
+          await sendVerification();
         } catch (error) {
           pageMessage = errorText(error);
         }
@@ -2293,10 +2847,7 @@ document.addEventListener("submit", async (event) => {
     });
   } else if (event.target.id === "createShopForm") {
     event.preventDefault();
-    if (wizardStep === 1) {
-      wizardStep = 2;
-      renderWizard();
-    } else await createShop(event.submitter);
+    await createShop(event.submitter);
   }
 });
 document.addEventListener("input", (event) => {
@@ -2311,12 +2862,24 @@ document.addEventListener("input", (event) => {
       edit.merchantNote !== (ordersState.detail.merchantNote || "");
     return;
   }
-  if (input.id === "flowerSearch") {
-    const query = input.value.trim().toLowerCase();
+  if (input.id === "flowerSearch" || input.id === "flowerTypeFilter") {
+    const query = $("flowerSearch").value.trim().toLowerCase();
+    const type = $("flowerTypeFilter")?.value || "";
     let shown = 0;
     document.querySelectorAll("[data-price-row]").forEach((row) => {
-      row.hidden = !row.dataset.search.includes(query);
+      row.hidden =
+        !row.dataset.search.includes(query) ||
+        !!(
+          type &&
+          row.dataset.collection !== "shared" &&
+          row.dataset.collection !== type
+        );
       if (!row.hidden) shown++;
+    });
+    document.querySelectorAll("[data-price-group]").forEach((group) => {
+      group.hidden = ![...group.querySelectorAll("[data-price-row]")].some(
+        (row) => !row.hidden,
+      );
     });
     $("noFlowers").hidden = shown > 0;
     return;
@@ -2324,6 +2887,22 @@ document.addEventListener("input", (event) => {
   if (input.dataset.wizard) {
     if (input.type === "radio" && !input.checked) return;
     wizard[input.dataset.wizard] = input.value;
+    if (input.dataset.wizard === "country") {
+      const suggestion = {
+        CA: ["CAD", "America/Toronto"],
+        US: ["USD", "America/New_York"],
+        GB: ["GBP", "Europe/London"],
+        AU: ["AUD", "Australia/Sydney"],
+        FR: ["EUR", "Europe/Paris"],
+        IE: ["EUR", "Europe/Dublin"],
+        ES: ["EUR", "Europe/Madrid"],
+      }[input.value];
+      if (suggestion) {
+        [wizard.currency, wizard.timeZone] = suggestion;
+        main.querySelector('[data-wizard="currency"]').value = wizard.currency;
+        main.querySelector('[data-wizard="timeZone"]').value = wizard.timeZone;
+      }
+    }
     if (input.id === "shopSlug") slugEdited = true;
     if (input.id === "shopName" && !slugEdited) {
       wizard.slug = input.value
@@ -2333,6 +2912,8 @@ document.addEventListener("input", (event) => {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "")
         .slice(0, 48);
+      if (input.value.trim() && wizard.slug.length < 3)
+        wizard.slug = (wizard.slug || "shop") + "-" + suggestedSlugSuffix;
       $("shopSlug").value = wizard.slug;
     }
     if ($("slugPreview"))
@@ -2353,6 +2934,14 @@ document.addEventListener("input", (event) => {
     } else item[key] = input.type === "checkbox" ? input.checked : input.value;
     changed();
     refreshCanvas();
+    return;
+  }
+  if (input.hasAttribute("data-open-builder")) {
+    draft.home.sections = draft.home.sections.filter(
+      (key) => key !== "builder",
+    );
+    if (input.checked) draft.home.sections.push("builder");
+    changed();
     return;
   }
   if (input.dataset.section) {
@@ -2384,6 +2973,11 @@ document.addEventListener("input", (event) => {
       if (label) label.textContent = input.value.toUpperCase();
     }
     changed();
+    if (input.dataset.path === "currency") {
+      if (route() === "/dashboard/payments") renderPayments();
+      else if (route() === "/dashboard/shop") renderBrand();
+      return;
+    }
     refreshCanvas();
   } else if (input.dataset.flowerPrice || input.dataset.extraPrice) {
     const key = input.dataset.flowerPrice || input.dataset.extraPrice;
@@ -2426,12 +3020,41 @@ document.addEventListener("input", (event) => {
     render();
   }
 });
-document.addEventListener("change", (event) => {
+document.addEventListener("change", async (event) => {
   if (adminReadOnly) return;
+  if (event.target.id === "workspacePage") {
+    const panel = main.querySelector(".commerce-panel");
+    if (panel?.saveIfNeeded && !(await panel.saveIfNeeded())) {
+      event.target.value = activeNavigation(route());
+      return;
+    }
+    navigate(event.target.value).catch((error) =>
+      showMessage(error.message, true),
+    );
+    return;
+  }
   if (event.target.matches("input[data-upload]")) uploadMedia(event.target);
   if (event.target.matches("[data-preset]")) {
     const next = event.target.value;
     if (next === draft.preset) return;
+    if (next === "mixed") {
+      draft.preset = next;
+      for (const row of catalog.flowers)
+        if (
+          !(row.id in draft.flowerPrices) &&
+          !draft.disabledFlowers.includes(row.id)
+        )
+          draft.disabledFlowers.push(row.id);
+      for (const row of catalog.extras)
+        if (
+          !(row.id in draft.extrasCents) &&
+          !draft.disabledExtras.includes(row.id)
+        )
+          draft.disabledExtras.push(row.id);
+      changed();
+      render();
+      return;
+    }
     const incompatible =
       draft.collection.length ||
       Object.values(draft.flowerPrices).some((value) => value !== null) ||
@@ -2478,6 +3101,7 @@ document.addEventListener("keydown", (event) => {
 window.addEventListener("popstate", renderHistoryRoute);
 window.addEventListener("beforeunload", (event) => {
   if (
+    main.querySelector(".commerce-panel")?.hasUnsaved?.() ||
     dirty ||
     saving ||
     uploadJobs.size ||
@@ -2494,11 +3118,15 @@ async function start() {
   const path = route(),
     publicRoute = path.startsWith("/s/");
   if (publicRoute) {
-    renderLocked();
+    main.innerHTML =
+      '<section class="empty-screen" role="status" aria-busy="true"><p class="eyebrow">YOUR FLOWER SHOP</p><h1>Opening the shop...</h1></section>';
     try {
       await Promise.all([loadCatalog(), loadPublicShop()]);
       if (publicSnapshot) renderPreview();
-    } catch {}
+      else renderLocked();
+    } catch {
+      renderLocked();
+    }
   }
   try {
     ({ auth, authApi, config } = await initialize());
@@ -2507,7 +3135,10 @@ async function start() {
     if (user?.emailVerified) {
       await loadSession();
       if (publicRoute) {
-        if (shop?.slug === decodeURIComponent(path.split("/")[2] || ""))
+        if (
+          shop?.slug === decodeURIComponent(path.split("/")[2] || "") &&
+          new URLSearchParams(location.search).get("view") !== "live"
+        )
           publicSnapshot = null;
         else publicSnapshot = displayedPublic;
       }
@@ -2541,4 +3172,24 @@ async function start() {
       location.reload();
   }
 }
+let checkingVerification = false;
+document.addEventListener("visibilitychange", async () => {
+  if (
+    document.visibilityState !== "visible" ||
+    !user ||
+    user.emailVerified ||
+    checkingVerification ||
+    !document.querySelector('[data-action="check-verification"]')
+  )
+    return;
+  checkingVerification = true;
+  try {
+    user = await refreshUser();
+    if (user?.emailVerified) await signedIn();
+  } catch {
+    // Manual recheck remains available after a transient connection failure.
+  } finally {
+    checkingVerification = false;
+  }
+});
 start();

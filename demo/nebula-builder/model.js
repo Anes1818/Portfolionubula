@@ -185,7 +185,7 @@ function validateV4(raw){
  for(const it of raw.items){
   if(it&&typeof it.id==='string')it.id=live(it.id);
   if(!it||typeof it.uid!=='string'||!/^b\d{1,8}$/.test(it.uid)||used.has(it.uid)||!Object.hasOwn(CAT,it.id)||!it.anchors||typeof it.anchors!=='object')return null;
-  if(raw.mode==='classic'&&['rose_ivory','mum_rust','rose_caramel'].includes(it.id))return null;
+  if(raw.mode==='classic'&&(CAT[it.id].headOnly||!CAT[it.id].classic))return null;
   if(+it.uid.slice(1)>=raw.nextId)return null;used.add(it.uid);
   const anchors={};for(const mode of ['classic','dome','heart'])if(it.anchors[mode]){
    const a=it.anchors[mode];if(!Number.isFinite(a.x)||!Number.isFinite(a.y)||a.x<0||a.x>720||a.y<0||a.y>820||typeof a.manual!=='boolean')return null;

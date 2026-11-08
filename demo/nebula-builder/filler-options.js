@@ -1,14 +1,27 @@
 /* Optional, separately priced fillers; stored offsets never occupy flower slots. */
 (function(g){'use strict';
-const allowed=/^(greenery-(?:[0-9]|1[01])|spray-accent-[0-7]|air-(?:[0-9]|1[0-9]|2[0-3]))$/;
+const allowed=/^(greenery-(?:[0-9]|1[01])|spray-accent-[0-7]|air-(?:[0-9]|1[0-9]|2[0-3])|bud-(?:option|white)-[0-9])$/;
+const references=g.NebulaReferenceFlowers;
+function referenceId(uid){
+ const id=/^ref-([a-z_]+)-(?:[0-9]|1[01])$/.exec(uid)?.[1];
+ return id&&references&&Object.hasOwn(references.fillers,id)?id:null;
+}
+const validId=id=>allowed.test(id)||!!referenceId(id);
+const buds=[
+ {key:'buds',prefix:'bud-option-',url:'assets/client/celebration/lily-bud.png',control:'bud',label:'Closed lily buds',es:'Capullos de lirio'},
+ ...(g.NebulaReferenceFlowers?[{key:'whiteBuds',prefix:'bud-white-',control:'whiteBud',...g.NebulaReferenceFlowers.whiteBud}]:[]),
+];
+const budCount=o=>buds.reduce((sum,b)=>sum+(o[b.key]||0),0);
 let selected=null;
-function validPositions(p){return p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).length<=44&&Object.entries(p).every(([id,a])=>allowed.test(id)&&Array.isArray(a)&&a.length===2&&a.every(v=>Number.isFinite(v)&&Math.abs(v)<=220));}
-function validPlacements(p){return p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).length<=44&&Object.entries(p).every(([id,a])=>allowed.test(id)&&Array.isArray(a)&&a.length===3&&a.every(Number.isFinite)&&Math.abs(a[0])<=2000&&Math.abs(a[1])<=2000&&Math.abs(a[2])<=Math.PI*2);}
+const maxPlacements=54+(references?.maxFillers||0);
+function validPositions(p){return p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).length<=maxPlacements&&Object.entries(p).every(([id,a])=>validId(id)&&Array.isArray(a)&&a.length===2&&a.every(v=>Number.isFinite(v)&&Math.abs(v)<=220));}
+function validPlacements(p){return p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).length<=maxPlacements&&Object.entries(p).every(([id,a])=>validId(id)&&Array.isArray(a)&&a.length===3&&a.every(Number.isFinite)&&Math.abs(a[0])<=2000&&Math.abs(a[1])<=2000&&Math.abs(a[2])<=Math.PI*2);}
 function transform(n,x,y,rotation,flowers){
  const turn=rotation-(n.rot||0),cs=Math.cos(turn),sn=Math.sin(turn);
  const point=p=>p?{x:x+(p.x-n.x)*cs-(p.y-n.y)*sn,y:y+(p.x-n.x)*sn+(p.y-n.y)*cs}:undefined;
  const base=point(n.base),crown=point(n.crown);
- const occlude=base?flowers.filter(f=>NebulaInfill.alphaAt({...NebulaInfill.shape(f),mask:NebulaRenderer.footprint(f)},base)>.4).map(f=>f.uid):[];
+ // Keep the bud tip visible, but re-evaluate neighbouring petals after moves.
+ const occlude=n.infillKind==='bud'?flowers.map(f=>f.uid):base?flowers.filter(f=>NebulaInfill.alphaAt({...NebulaInfill.shape(f),mask:NebulaRenderer.footprint(f)},base)>.4).map(f=>f.uid):[];
  return {...n,x,y,rot:rotation,base,crown,occlude};
 }
 function compose(s,sc,all){
@@ -17,7 +30,8 @@ function compose(s,sc,all){
  if(a){if(parent){const t=a[2]-parent.rot,c=Math.cos(t),sn=Math.sin(t);return transform(n,a[0]+(n.x-parent.x)*c-(n.y-parent.y)*sn,a[1]+(n.x-parent.x)*sn+(n.y-parent.y)*c,n.rot+t,sc.nodes);}return transform(n,a[0],a[1],a[2],sc.nodes);}
  const offset=positions[n.uid];return offset?transform(n,n.x+offset[0],n.y+offset[1],n.rot,sc.nodes):{...n};
  });
- if(o.buds&&sc.nodes.length){
+ const totalBuds=budCount(o);
+ if(totalBuds&&sc.nodes.length){
   const {points,flowers}=NebulaInfill.pockets(sc),chosen=[],unit=sc.frame.unit;
   // Anchor the stem in a gap, then let the closed head rise above it.
   // Unlike airy filler, a bud must retain one continuous, readable silhouette.
@@ -27,57 +41,107 @@ function compose(s,sc,all){
    const lily=[...lilies].sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
    const fan=Math.max(-.65,Math.min(.65,(p.x-sc.frame.center.x)/unit*.18));
    const angle=fan+Math.sin(p.x*.07+p.y*.03)*.08;
-   const h=Math.min(unit*1.20,p.local*1.02),w=h*2/3;
-   const x=p.x+Math.sin(angle)*h*.38,y=p.y-Math.cos(angle)*h*.38;
+   const h=unit*.94,w=h*2/3;
+   const x=p.x+Math.sin(angle)*h*.12,y=p.y-Math.cos(angle)*h*.12;
    const crown={x:x+Math.sin(angle)*h*.12,y:y-Math.cos(angle)*h*.12};
    const occluders=masked.filter(f=>NebulaInfill.alphaAt(f,p)>.4);
    const sample=[];for(const v of [-.32,-.18,0,.15])for(const u of [-.12,0,.12])sample.push({x:x+u*w*Math.cos(angle)-v*h*Math.sin(angle),y:y+u*w*Math.sin(angle)+v*h*Math.cos(angle)});
    const hidden=sample.filter(q=>occluders.some(f=>NebulaInfill.alphaAt(f,q)>.5)).length/sample.length;
    const core=sample.reduce((sum,q)=>sum+flowers.reduce((v,f)=>v+Math.max(0,-NebulaInfill.clearance(q,f)/unit),0),0)/sample.length;
-   const crowd=out.filter(n=>n.infillKind==='spray'||n.infillKind==='greenery').reduce((v,n)=>v+Math.max(0,1-Math.hypot(n.x-x,n.y-y)/(unit*.5)),0);
+   const crowd=out.filter(n=>['spray','greenery','reference'].includes(n.infillKind)).reduce((v,n)=>v+Math.max(0,1-Math.hypot(n.x-x,n.y-y)/(unit*.5)),0);
    const nearLily=lily?Math.hypot(lily.x-x,lily.y-y):unit*4;
    return {x,y,h,w,angle,crown,base:{x:p.x,y:p.y},occlude:occluders.map(f=>f.uid),hidden,score:p.quality-core*4-hidden*12-crowd*.25+Math.max(0,1-nearLily/(unit*2))*.6};
   }).sort((a,b)=>b.score-a.score||a.y-b.y||a.x-b.x);
-  for(const spacing of [.65,.42,0]){for(const p of candidates){if(chosen.includes(p))continue;if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>unit*spacing))chosen.push(p);if(chosen.length>=o.buds)break;}if(chosen.length>=o.buds)break;}
+  for(const spacing of [.65,.42,0]){for(const p of candidates){if(chosen.includes(p))continue;if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>unit*spacing))chosen.push(p);if(chosen.length>=totalBuds)break;}if(chosen.length>=totalBuds)break;}
+  const varieties=buds.flatMap(b=>Array.from({length:o[b.key]||0},(_,i)=>({uid:b.prefix+i,url:b.url})));
   chosen.forEach((p,i)=>{
-   out.push({uid:'bud-option-'+i,url:'assets/client/celebration/lily-bud.png',x:p.x,y:p.y,w:p.w,h:p.h,d:p.w,rot:p.angle,bright:1,z:Math.max(...sc.nodes.map(n=>n.z??n.y))+5,softDetail:true,infill:true,infillKind:'bud',base:p.base,crown:p.crown,occlude:p.occlude});
+   const node={...varieties[i],x:p.x,y:p.y,w:p.w,h:p.h,d:p.w,rot:p.angle,bright:1,z:Math.max(...sc.nodes.map(n=>n.z??n.y),...out.map(n=>n.z??n.y))+5,softDetail:true,infill:true,infillKind:'bud',base:p.base,crown:p.crown,occlude:sc.nodes.map(f=>f.uid)};
+   const a=placements[node.uid],offset=positions[node.uid];
+   out.push(a?transform(node,a[0],a[1],a[2],sc.nodes):offset?transform(node,node.x+offset[0],node.y+offset[1],node.rot,sc.nodes):node);
   });
  }
  return out;
 }
 const alpha=new Map();
-function hit(sc,p){
+function alphaSample(n){
+ let sample=alpha.get(n.url);if(sample)return sample;
+ const im=NebulaRenderer.decoded(n.url);if(!im)return null;
+ const cv=document.createElement('canvas');cv.width=cv.height=128;const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0,128,128);sample=ctx.getImageData(0,0,128,128).data;alpha.set(n.url,sample);return sample;
+}
+// Same lower-head tuck and stem fade as the renderer; hidden stem is not a handle.
+function budVisibility(n,p,flowers){
+ const y=(-(p.x-n.x)*Math.sin(n.rot||0)+(p.y-n.y)*Math.cos(n.rot||0))/n.h;
+ const stem=1-Math.max(0,Math.min(1,(y-.25)/.15));
+ const tuck=Math.max(0,Math.min(1,(y-.05)/.20));
+ const covered=flowers.some(f=>NebulaInfill.alphaAt({...NebulaInfill.shape(f),mask:NebulaRenderer.footprint(f)},p)>.5);
+ return stem*(covered?1-tuck:1);
+}
+function visiblePixel(n,p,flowers){
+ if(n.infillKind==='bud')return budVisibility(n,p,flowers)>=.35;
+ if(n.tuck){
+  const y=(-(p.x-n.x)*Math.sin(n.rot||0)+(p.y-n.y)*Math.cos(n.rot||0))/n.h;
+  if(y<n.tuck[0]+.65*(n.tuck[1]-n.tuck[0]))return true;
+ }
+ return !(n.occlude||[]).some(id=>{const f=flowers.find(f=>f.uid===id);return f&&NebulaInfill.alphaAt({...NebulaInfill.shape(f),mask:NebulaRenderer.footprint(f)},p)>.5;});
+}
+function hit(sc,p,tolerance=0){
  for(const n of [...(sc.layeredFlowers||[])].reverse()){
-  if(!allowed.test(n.uid)&&!allowed.test(n.parentFiller||''))continue;
+  if(!validId(n.uid)&&!validId(n.parentFiller||''))continue;
   const dx=p.x-n.x,dy=p.y-n.y,c=Math.cos(n.rot||0),sn=Math.sin(n.rot||0),x=(dx*c+dy*sn)/n.w+.5,y=(-dx*sn+dy*c)/n.h+.5;
   if(x<0||x>1||y<0||y>1)continue;
-  let sample=alpha.get(n.url);if(!sample){const im=NebulaRenderer.decoded(n.url);if(!im)continue;const cv=document.createElement('canvas');cv.width=cv.height=128;const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0,128,128);sample=ctx.getImageData(0,0,128,128).data;alpha.set(n.url,sample);}
-  if((n.occlude||[]).some(id=>{const f=sc.nodes.find(f=>f.uid===id);return f&&NebulaInfill.alphaAt({...NebulaInfill.shape(f),mask:NebulaRenderer.footprint(f)},p)>.5;}))continue;
+  const sample=alphaSample(n);if(!sample)continue;
+  if(!visiblePixel(n,p,sc.nodes))continue;
   if(sample[(Math.min(127,Math.floor(y*128))*128+Math.min(127,Math.floor(x*128)))*4+3]>80)return n.parentFiller?sc.layeredFlowers.find(p=>p.uid===n.parentFiller):n;
- }return null;
+ }
+ // A small screen-sized halo helps fingers catch narrow tips. Match actual
+ // opaque pixels rather than making the whole transparent image box clickable.
+ let nearest=null,best=tolerance*tolerance;
+ if(tolerance>0)for(const n of [...(sc.layeredFlowers||[])].reverse()){
+  if(n.infillKind!=='bud'&&n.infillKind!=='reference')continue;
+  const dx=p.x-n.x,dy=p.y-n.y,c=Math.cos(n.rot||0),sn=Math.sin(n.rot||0),x=dx*c+dy*sn,y=-dx*sn+dy*c;
+  if(Math.abs(x)>n.w/2+tolerance||Math.abs(y)>n.h/2+tolerance)continue;
+  const sample=alphaSample(n);if(!sample)continue;
+  const left=Math.max(0,Math.floor(((x-tolerance)/n.w+.5)*128)),right=Math.min(127,Math.ceil(((x+tolerance)/n.w+.5)*128));
+  const top=Math.max(0,Math.floor(((y-tolerance)/n.h+.5)*128)),bottom=Math.min(127,Math.ceil(((y+tolerance)/n.h+.5)*128));
+  for(let iy=top;iy<=bottom;iy++)for(let ix=left;ix<=right;ix++){
+   if(sample[(iy*128+ix)*4+3]<=80)continue;
+   const lx=((ix+.5)/128-.5)*n.w,ly=((iy+.5)/128-.5)*n.h;
+   if(!visiblePixel(n,{x:n.x+lx*c-ly*sn,y:n.y+lx*sn+ly*c},sc.nodes))continue;
+   const distance=(((ix+.5)/128-.5)*n.w-x)**2+(((iy+.5)/128-.5)*n.h-y)**2;
+   if(distance<best){best=distance;nearest=n;}
+  }
+ }
+ return nearest;
 }
 function move(s,id,before,dx,dy){
- if(!allowed.test(id))return;const previous=JSON.parse(before),sc=NebulaRenderer.scene(previous),n=sc.layeredFlowers.find(n=>n.uid===id);if(!n)return;
+ if(!validId(id))return;const previous=JSON.parse(before),sc=NebulaRenderer.scene(previous),n=sc.layeredFlowers.find(n=>n.uid===id);if(!n)return;
  const o=s.finishes.studio||(s.finishes.studio={v:1}),xs=sc.nodes.map(f=>f.x),ys=sc.nodes.map(f=>f.y),margin=sc.frame.unit*.55;
  const x=Math.max(Math.min(...xs)-margin,Math.min(Math.max(...xs)+margin,n.x+dx)),y=Math.max(Math.min(...ys)-margin,Math.min(Math.max(...ys)+margin,n.y+dy));
  o.placements={...o.placements,[id]:[x,y,n.rot]};
  // Retain legacy offsets so existing readers and undo remain compatible.
  const old=previous.finishes.studio?.positions?.[id]||[0,0];o.positions={...o.positions,[id]:[Math.max(-220,Math.min(220,Math.round(old[0]+dx))),Math.max(-220,Math.min(220,Math.round(old[1]+dy)))]};
 }
-function settle(s,id){const sc=NebulaRenderer.scene(s),n=sc.layeredFlowers.find(n=>n.uid===id);if(!n?.crown)return;
+function settle(s,id){if(buds.some(b=>id.startsWith(b.prefix)))return;const sc=NebulaRenderer.scene(s),n=sc.layeredFlowers.find(n=>n.uid===id);if(!n?.crown)return;
  const p=[...NebulaInfill.pockets(sc).points].sort((a,b)=>Math.hypot(a.x-n.crown.x,a.y-n.crown.y)-Math.hypot(b.x-n.crown.x,b.y-n.crown.y))[0];
  if(p&&Math.hypot(p.x-n.crown.x,p.y-n.crown.y)<sc.frame.unit*.3){const a=s.finishes.studio.placements[id];a[0]+=p.x-n.crown.x;a[1]+=p.y-n.crown.y;}
 }
 function select(id){selected=id;const box=document.getElementById('fillerSelection');if(box)box.hidden=!id;}
+function setReferenceCount(o,id,count){
+ const counts={...o.referenceFillers};
+ if(count>0)counts[id]=count;else delete counts[id];
+ if(Object.keys(counts).length)o.referenceFillers=counts;else delete o.referenceFillers;
+}
 function editSelected(action){const s=NebulaApp.state,sc=NebulaRenderer.scene(s),n=sc.layeredFlowers.find(n=>n.uid===selected);if(!n)return;const o=s.finishes.studio||(s.finishes.studio={v:1});
  if(action==='reset'){delete o.placements?.[selected];delete o.positions?.[selected];}
  else if(action==='remove'){
-  const prefix=selected.startsWith('greenery-')?'greenery-':selected.startsWith('spray-accent-')?'spray-accent-':'air-';
+  const bud=buds.find(b=>selected.startsWith(b.prefix));
+  const ref=referenceId(selected);
+  const prefix=ref?`ref-${ref}-`:bud?.prefix||(selected.startsWith('greenery-')?'greenery-':selected.startsWith('spray-accent-')?'spray-accent-':'air-');
   const siblings=sc.layeredFlowers.filter(a=>a.uid.startsWith(prefix)&&a.uid!==selected);
   const placements={...o.placements};for(const key of Object.keys(placements))if(key.startsWith(prefix))delete placements[key];
   for(const key of Object.keys(o.positions||{}))if(key.startsWith(prefix))delete o.positions[key];
   siblings.forEach((a,i)=>placements[prefix+i]=[a.x,a.y,a.rot]);o.placements=placements;
-  if(prefix==='greenery-')s.finishes.greeneryCount=Math.max(0,s.finishes.greeneryCount-1);else if(prefix==='spray-accent-')o.sprays=Math.max(0,(o.sprays||0)-1);else{o.breathStems=siblings.length;if(!siblings.length)o.breath=0;}
+  if(ref)setReferenceCount(o,ref,(o.referenceFillers?.[ref]||0)-1);else if(bud)o[bud.key]=Math.max(0,(o[bud.key]||0)-1);else if(prefix==='greenery-')s.finishes.greeneryCount=Math.max(0,s.finishes.greeneryCount-1);else if(prefix==='spray-accent-')o.sprays=Math.max(0,(o.sprays||0)-1);else{o.breathStems=siblings.length;if(!siblings.length)o.breath=0;}
   select(null);
  }else{o.placements={...o.placements,[selected]:[n.x,n.y,Math.atan2(Math.sin(n.rot+action),Math.cos(n.rot+action))]};}
  NebulaApp.setState(s);
@@ -90,12 +154,58 @@ function densityControls(host,key){
  densities[key].forEach((count,i)=>{const button=document.createElement('button');button.type='button';button.dataset.level=i;
  button.onclick=()=>{const s=NebulaApp.state;if(key==='greenery')s.finishes.greeneryCount=count;else(s.finishes.studio||(s.finishes.studio={v:1})).buds=count;NebulaApp.setState(s);};group.append(button);});host.append(group);
 }
+function buildReferenceControls(host){
+ if(!references)return;
+ const row=document.createElement('div');row.id='gapFillerOptions';row.className='gap-filler-options';
+ row.innerHTML='<select id="gapFillerType" aria-label="Gap filler"></select><span class="stepper"><button id="gapFillerLess" type="button">−</button><output id="gapFillerCount"></output><button id="gapFillerMore" type="button">+</button></span>';
+ const input=row.querySelector('select');
+ for(const id of Object.keys(references.fillers)){const option=document.createElement('option');option.value=id;input.append(option);}
+ input.onchange=()=>renderReferenceControls(NebulaApp.state,document.documentElement.lang,NebulaApp.ready);
+ for(const [selector,delta] of [['#gapFillerLess',-1],['#gapFillerMore',1]])row.querySelector(selector).onclick=()=>{
+  const id=input.value,s=NebulaApp.state,o=s.finishes.studio||(s.finishes.studio={v:1});
+  const count=o.referenceFillers?.[id]||0;
+  if(!id||input.selectedOptions[0]?.disabled||delta<0&&!count||delta>0&&(!s.items.length||references.fillerCount(o.referenceFillers)>=references.maxFillers))return;
+  setReferenceCount(o,id,count+delta);
+  if(delta<0){const uid=`ref-${id}-${count-1}`;delete o.positions?.[uid];delete o.placements?.[uid];}
+  if(delta>0&&NebulaApp.brush)NebulaApp.stopBrush();
+  NebulaApp.setState(s);
+ };
+ host.append(row);
+}
+function renderReferenceControls(s,lang,ready){
+ const row=document.getElementById('gapFillerOptions');if(!row)return;
+ const {CAT}=g.NebulaConfig,input=row.querySelector('select'),es=lang==='es';
+ const options=Array.from(input.options);
+ for(const option of options){
+  const flower=CAT[option.value];option.hidden=option.disabled=flower.top===false;
+  option.textContent=(es?flower.es:flower.en)+' · '+NebulaModel.money(flower.priceCents,lang);
+ }
+ const first=options.find(option=>!option.disabled);
+ row.hidden=!first;if(!first)return;
+ if(!input.value||input.selectedOptions[0]?.disabled)input.value=first.value;
+ const counts=s.finishes.studio?.referenceFillers,count=counts?.[input.value]||0;
+ const less=row.querySelector('#gapFillerLess'),more=row.querySelector('#gapFillerMore');
+ input.setAttribute('aria-label',es?'Relleno entre flores':'Filler between flowers');
+ less.setAttribute('aria-label',(es?'Quitar: ':'Remove: ')+CAT[input.value][es?'es':'en']);
+ more.setAttribute('aria-label',(es?'Añadir: ':'Add: ')+CAT[input.value][es?'es':'en']);
+ less.disabled=!ready||!count;more.disabled=!ready||!s.items.length||references.fillerCount(counts)>=references.maxFillers;
+ row.querySelector('output').textContent=count;
+}
 function buildControls(host){
- const row=document.createElement('div');row.className='toggle-row';row.innerHTML='<span id="budOptionLabel"></span><span class="stepper"><button type="button" id="budLess">−</button><output id="budOptionCount"></output><button type="button" id="budMore">+</button></span>';host.append(row);
- for(const [id,delta]of [['budLess',-1],['budMore',1]])document.getElementById(id).onclick=()=>{const s=NebulaApp.state,o=s.finishes.studio||(s.finishes.studio={v:1});o.buds=Math.max(0,Math.min(10,(o.buds||0)+delta));NebulaApp.setState(s);};
+ for(const {key,control,prefix} of buds){
+  const row=document.createElement('div');row.className='toggle-row';row.innerHTML=`<span id="${control}OptionLabel"></span><span class="stepper"><button type="button" id="${control}Less">−</button><output id="${control}OptionCount"></output><button type="button" id="${control}More">+</button></span>`;host.append(row);
+  for(const [suffix,delta] of [['Less',-1],['More',1]])document.getElementById(control+suffix).onclick=()=>{
+   const s=NebulaApp.state,o=s.finishes.studio||(s.finishes.studio={v:1}),n=o[key]||0;
+   if(delta>0&&budCount(o)>=10||delta<0&&!n)return;
+   o[key]=n+delta;
+   if(delta<0){delete o.placements?.[prefix+o[key]];delete o.positions?.[prefix+o[key]];}
+   NebulaApp.setState(s);
+  };
+ }
+ buildReferenceControls(host);
  const reset=document.createElement('button');reset.id='resetFillerPositions';reset.type='button';reset.className='text-button';reset.onclick=()=>{const s=NebulaApp.state;if(s.finishes.studio){delete s.finishes.studio.positions;delete s.finishes.studio.placements;}select(null);NebulaApp.setState(s);};host.append(reset);
  const box=document.createElement('div');box.id='fillerSelection';box.className='custom-segments';box.hidden=true;
- for(const [action,en,es] of [[-.26,'Rotate left','Girar izquierda'],[.26,'Rotate right','Girar derecha'],['remove','Remove sprig','Quitar rama'],['reset','Auto position','Posición automática']]){const b=document.createElement('button');b.type='button';b.dataset.en=en;b.dataset.es=es;b.textContent=en;b.onclick=()=>editSelected(action);box.append(b);}host.append(box);
+ for(const [action,en,es] of [[-.26,'Rotate left','Girar izquierda'],[.26,'Rotate right','Girar derecha'],['remove','Remove','Quitar'],['reset','Auto position','Posición automática']]){const b=document.createElement('button');b.type='button';b.dataset.en=en;b.dataset.es=es;b.textContent=en;b.onclick=()=>editSelected(action);box.append(b);}host.append(box);
  const hint=document.createElement('p');hint.id='fillerDragHint';hint.className='helper';host.append(hint);
 }
 function renderControls(s,lang,ready){const es=lang==='es',$=id=>document.getElementById(id),n=s.finishes.studio?.buds||0;
@@ -104,14 +214,19 @@ function renderControls(s,lang,ready){const es=lang==='es',$=id=>document.getEle
  const group=$(key+'Density');group.setAttribute('aria-label',key==='buds'?(es?'Cantidad de capullos':'Lily bud density'):(es?'Cantidad de eucalipto':'Eucalyptus density'));
  for(const button of group.children){const i=+button.dataset.level;button.textContent=(es?['Ninguno','Ligero','Medio','Abundante']:['None','Light','Medium','Full'])[i];button.setAttribute('aria-pressed',String(i===active));button.disabled=!ready;}
  }
- $('budOptionLabel').textContent=es?'Capullos de lirio':'Closed lily buds';$('budOptionCount').textContent=n;
- $('budLess').disabled=!ready||!n;$('budMore').disabled=!ready||n>=10;
- $('budLess').setAttribute('aria-label',es?'Menos capullos':'Fewer lily buds');$('budMore').setAttribute('aria-label',es?'Más capullos':'More lily buds');
+ for(const {key,control,label,es:spanish} of buds){
+  const count=s.finishes.studio?.[key]||0, title=es?spanish:label;
+  $(control+'OptionLabel').textContent=title;$(control+'OptionCount').textContent=count;
+  $(control+'Less').disabled=!ready||!count;$(control+'More').disabled=!ready||budCount(s.finishes.studio||{})>=10;
+  $(control+'Less').setAttribute('aria-label',(es?'Quitar: ':'Remove: ')+title);
+  $(control+'More').setAttribute('aria-label',(es?'Añadir: ':'Add: ')+title);
+ }
+ renderReferenceControls(s,lang,ready);
  if(selected&&!NebulaRenderer.scene(s).layeredFlowers.some(n=>n.uid===selected))selected=null;
  $('fillerSelection').hidden=!selected;for(const b of $('fillerSelection').children)b.textContent=es?b.dataset.es:b.dataset.en;
- $('fillerDragHint').textContent=es?'Arrastra el eucalipto y las ramas blancas entre las flores. Los capullos se colocan automáticamente.':'Drag a leafy or flowering sprig to adjust it. Tap to rotate or remove it. Lily buds arrange automatically.';
+ $('fillerDragHint').textContent=es?'Arrastra el eucalipto y las ramas blancas entre las flores. También puedes mover y girar los capullos.':'Drag lily buds or filler sprigs to place them. Tap to rotate or remove.';
  $('resetFillerPositions').textContent=es?'Restablecer posiciones del relleno':'Reset filler positions';$('resetFillerPositions').disabled=!ready||!Object.keys(s.finishes.studio?.positions||{}).length&&!Object.keys(s.finishes.studio?.placements||{}).length;
 }
 document.addEventListener('DOMContentLoaded',()=>{NebulaI18n.en.lily_bud='Closed lily buds';NebulaI18n.es.lily_bud='Capullos de lirio';});
-g.NebulaFillerOptions={validPositions,validPlacements,compose,hit,move,settle,select,editSelected,buildControls,renderControls};
+g.NebulaFillerOptions={validPositions,validPlacements,compose,hit,move,settle,select,editSelected,buildControls,renderControls,budCount};
 })(window);

@@ -10,6 +10,11 @@
       "id": "satin",
       "name": "Satin and eternal flowers",
       "available": true
+    },
+    {
+      "id": "mixed",
+      "name": "Fresh + satin flowers",
+      "available": true
     }
   ],
   "flowers": [
@@ -522,10 +527,11 @@
       "en": "Ivory rose",
       "family": "rose",
       "priceCents": 400,
-      "classic": false,
+      "classic": true,
       "preset": "fresh",
       "runtimeId": "rose_ivory",
       "modes": [
+        "classic",
         "dome",
         "heart"
       ],
@@ -536,10 +542,11 @@
       "en": "Rust chrysanthemum",
       "family": "accents",
       "priceCents": 350,
-      "classic": false,
+      "classic": true,
       "preset": "fresh",
       "runtimeId": "mum_rust",
       "modes": [
+        "classic",
         "dome",
         "heart"
       ],
@@ -550,10 +557,11 @@
       "en": "Caramel rose",
       "family": "rose",
       "priceCents": 400,
-      "classic": false,
+      "classic": true,
       "preset": "fresh",
       "runtimeId": "rose_caramel",
       "modes": [
+        "classic",
         "dome",
         "heart"
       ],
@@ -645,6 +653,321 @@
       "image": "/studio/assets/client/celebration/lily-bud.png"
     },
     {
+      "id": "gerbera_blush",
+      "en": "Blush pink gerbera",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "gerbera_blush",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/gerbera_blush.webp"
+    },
+    {
+      "id": "gerbera_peach",
+      "en": "Peach bicolor gerbera",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "gerbera_peach",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/gerbera_peach.webp"
+    },
+    {
+      "id": "calla_peach",
+      "en": "Peach calla lily",
+      "family": "accents",
+      "priceCents": 550,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "calla_peach",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/calla_peach_upright.webp"
+    },
+    {
+      "id": "calla_black",
+      "en": "Black calla lily",
+      "family": "accents",
+      "priceCents": 550,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "calla_black",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/calla_black_upright.webp"
+    },
+    {
+      "id": "mum_white",
+      "en": "White chrysanthemum",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "mum_white",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/mum_white.webp"
+    },
+    {
+      "id": "chamomile_spray",
+      "en": "Chamomile daisy spray",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "runtimeId": "chamomile_spray",
+      "optional": true,
+      "modes": [
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/chamomile_spray.webp"
+    },
+    {
+      "id": "ranunculus_coral",
+      "en": "Coral ranunculus",
+      "family": "accents",
+      "priceCents": 500,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "ranunculus_coral",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/ranunculus_coral.webp"
+    },
+    {
+      "id": "hydrangea_lime",
+      "en": "Lime hydrangea",
+      "family": "accents",
+      "priceCents": 650,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "hydrangea_lime",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/hydrangea_lime.webp"
+    },
+    {
+      "id": "mum_button_lime",
+      "en": "Lime button mum",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "mum_button_lime",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/mum_button_lime.webp"
+    },
+    {
+      "id": "mum_button_gold",
+      "en": "Golden button mum spray",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "runtimeId": "mum_button_gold",
+      "optional": true,
+      "modes": [
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/mum_button_gold.webp"
+    },
+    {
+      "id": "mum_magenta",
+      "en": "Magenta chrysanthemum",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "mum_magenta",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/mum_magenta.webp"
+    },
+    {
+      "id": "carnation_picotee",
+      "en": "Burgundy picotee carnation",
+      "family": "carnation",
+      "priceCents": 350,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "carnation_picotee",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/carnation_picotee.webp"
+    },
+    {
+      "id": "hypericum_green",
+      "en": "Green hypericum berries",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "runtimeId": "hypericum_green",
+      "optional": true,
+      "modes": [
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/hypericum_green.webp"
+    },
+    {
+      "id": "rose_white_cupped",
+      "en": "Cupped white rose",
+      "family": "rose",
+      "priceCents": 500,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "rose_white_cupped",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/rose_white_cupped.webp"
+    },
+    {
+      "id": "mum_red_daisy",
+      "en": "Red daisy mum",
+      "family": "accents",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "mum_red_daisy",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/mum_red_daisy.webp"
+    },
+    {
+      "id": "alstroemeria_fuchsia",
+      "en": "Fuchsia alstroemeria",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "alstroemeria_fuchsia",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/alstroemeria_fuchsia.webp"
+    },
+    {
+      "id": "spray_rose_yellow",
+      "en": "Golden spray rose",
+      "family": "accents",
+      "priceCents": 450,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "spray_rose_yellow",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/spray_rose_yellow.webp"
+    },
+    {
+      "id": "stock_purple",
+      "en": "Purple stock",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "runtimeId": "stock_purple",
+      "optional": true,
+      "modes": [
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/stock_purple.webp"
+    },
+    {
+      "id": "rose_fuchsia",
+      "en": "Hot pink rose",
+      "family": "rose",
+      "priceCents": 400,
+      "classic": true,
+      "preset": "fresh",
+      "runtimeId": "rose_fuchsia",
+      "optional": true,
+      "modes": [
+        "classic",
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/rose_fuchsia.webp"
+    },
+    {
+      "id": "bupleurum_lime",
+      "en": "Lime bupleurum",
+      "family": "accents",
+      "priceCents": 350,
+      "classic": false,
+      "preset": "fresh",
+      "runtimeId": "bupleurum_lime",
+      "optional": true,
+      "modes": [
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/assets/reference-flowers/bupleurum_lime.webp"
+    },
+    {
       "id": "peony_apricot",
       "en": "Apricot peony",
       "family": "accents",
@@ -670,7 +993,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-red-v1.png"
+      "image": "/studio/satin/art/satin-rose-red-v1-311444b95cdf.webp"
     },
     {
       "id": "satin_rose_pink",
@@ -684,7 +1007,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-pink-v1.png"
+      "image": "/studio/satin/art/satin-rose-pink-v1-7c0e7bd7da85.webp"
     },
     {
       "id": "satin_rose_ivory",
@@ -698,7 +1021,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-ivory-v1.png"
+      "image": "/studio/satin/art/satin-rose-ivory-v1-d9331833bdfd.webp"
     },
     {
       "id": "satin_rose_violet",
@@ -712,7 +1035,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-purple-v1.png"
+      "image": "/studio/satin/art/satin-rose-purple-v1-541995b6a7aa.webp"
     },
     {
       "id": "satin_rose_lilac",
@@ -726,7 +1049,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-lilac-v1.png"
+      "image": "/studio/satin/art/satin-rose-lilac-v1-a845981166f1.webp"
     },
     {
       "id": "satin_rose_blue",
@@ -740,7 +1063,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-blue-v1.png"
+      "image": "/studio/satin/art/satin-rose-blue-v1-9079170a2f88.webp"
     },
     {
       "id": "satin_rose_peach",
@@ -754,7 +1077,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-peach-v1.png"
+      "image": "/studio/satin/art/satin-rose-peach-v1-3b88894a5fd8.webp"
     },
     {
       "id": "satin_rose_black",
@@ -768,7 +1091,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-black-v1.png"
+      "image": "/studio/satin/art/satin-rose-black-v1-97ddb1350b04.webp"
     },
     {
       "id": "satin_rose_red_glitter",
@@ -782,7 +1105,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-rose-red-glitter-v1.png"
+      "image": "/studio/satin/art/satin-rose-red-glitter-v1-0d75b9793aac.webp"
     },
     {
       "id": "satin_foam_rose_black",
@@ -796,7 +1119,22 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/foam-rose-black-v1.png"
+      "image": "/studio/satin/art/foam-rose-black-v1-f7f7ecd2b041.webp"
+    },
+    {
+      "id": "satin_foam_rose_white",
+      "runtimeId": "foam_rose_white",
+      "en": "White foam rose",
+      "family": "foam",
+      "preset": "satin",
+      "optional": true,
+      "priceCents": 600,
+      "classic": false,
+      "modes": [
+        "dome",
+        "heart"
+      ],
+      "image": "/studio/satin/art/foam-rose-white-v1-69d0f6724df5.webp"
     },
     {
       "id": "satin_satin_dahlia_pink",
@@ -810,7 +1148,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-dahlia-pink-v1.png"
+      "image": "/studio/satin/art/satin-dahlia-pink-v1-0004ff8d5665.webp"
     },
     {
       "id": "satin_satin_dahlia_blue",
@@ -824,7 +1162,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-dahlia-blue-v1.png"
+      "image": "/studio/satin/art/satin-dahlia-blue-v1-02e3d3bd0bea.webp"
     },
     {
       "id": "satin_satin_dahlia_ivory",
@@ -838,7 +1176,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-dahlia-ivory-v1.png"
+      "image": "/studio/satin/art/satin-dahlia-ivory-v1-84f9a6556195.webp"
     },
     {
       "id": "satin_satin_plumeria_purple",
@@ -852,7 +1190,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-plumeria-purple-v1.png"
+      "image": "/studio/satin/art/satin-plumeria-purple-v1-17196174ad97.webp"
     },
     {
       "id": "satin_satin_plumeria_lilac",
@@ -866,7 +1204,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-plumeria-lilac-v1.png"
+      "image": "/studio/satin/art/satin-plumeria-lilac-v1-d25e5dbc7228.webp"
     },
     {
       "id": "satin_satin_plumeria_ivory",
@@ -880,7 +1218,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-plumeria-ivory-v1.png"
+      "image": "/studio/satin/art/satin-plumeria-ivory-v1-772bdb2e95f1.webp"
     },
     {
       "id": "satin_sunflower",
@@ -894,7 +1232,7 @@
         "dome",
         "heart"
       ],
-      "image": "/studio/satin/art/satin-sunflower-yellow-v1.png"
+      "image": "/studio/satin/art/satin-sunflower-yellow-v1-b33a0d53b49c.webp"
     },
     {
       "id": "satin_cash_cad_5",
@@ -1106,7 +1444,7 @@
     },
     {
       "id": "filler",
-      "label": "Babyâ€™s breath",
+      "label": "Baby’s breath",
       "priceCents": 200,
       "preset": "fresh"
     },
@@ -1181,6 +1519,14 @@
       "label": "Chocolate gift box",
       "priceCents": 1500,
       "preset": "fresh"
+    },
+    {
+      "id": "whiteLilyBud",
+      "label": "Barely open white lily bud",
+      "priceCents": 500,
+      "preset": "fresh",
+      "optional": true,
+      "image": "/studio/assets/reference-flowers/lily_bud_white.webp"
     },
     {
       "id": "pumpkin_plush",
@@ -8125,7 +8471,7 @@
       "description": "Pastel satin cloud with triangular paper wrapping.",
       "mode": "dome",
       "preset": "satin",
-      "cover": "/studio/satin/art/satin-rose-pink-v1.png",
+      "cover": "/studio/satin/art/satin-rose-pink-v1-7c0e7bd7da85.webp",
       "counts": {
         "satin_rose_pink": 12,
         "satin_rose_blue": 10,
@@ -8582,7 +8928,7 @@
       "description": "Ruby satin celebration with triangular paper wrapping.",
       "mode": "dome",
       "preset": "satin",
-      "cover": "/studio/satin/art/satin-rose-red-glitter-v1.png",
+      "cover": "/studio/satin/art/satin-rose-red-glitter-v1-0d75b9793aac.webp",
       "counts": {
         "satin_rose_red_glitter": 18
       },
@@ -8891,7 +9237,7 @@
       "description": "Ivory keepsake with triangular paper wrapping.",
       "mode": "dome",
       "preset": "satin",
-      "cover": "/studio/satin/art/satin-rose-ivory-v1.png",
+      "cover": "/studio/satin/art/satin-rose-ivory-v1-d9331833bdfd.webp",
       "counts": {
         "satin_rose_ivory": 30
       },
@@ -9344,7 +9690,7 @@
       "description": "Purple promise with triangular paper wrapping.",
       "mode": "dome",
       "preset": "satin",
-      "cover": "/studio/satin/art/satin-rose-purple-v1.png",
+      "cover": "/studio/satin/art/satin-rose-purple-v1-541995b6a7aa.webp",
       "counts": {
         "satin_rose_violet": 17,
         "satin_rose_lilac": 13
@@ -9799,7 +10145,7 @@
       "description": "Pink satin heart with triangular paper wrapping.",
       "mode": "heart",
       "preset": "satin",
-      "cover": "/studio/satin/art/satin-rose-pink-v1.png",
+      "cover": "/studio/satin/art/satin-rose-pink-v1-7c0e7bd7da85.webp",
       "counts": {
         "satin_rose_pink": 41
       },
@@ -10384,7 +10730,7 @@
       "description": "Ruby satin heart with triangular paper wrapping.",
       "mode": "heart",
       "preset": "satin",
-      "cover": "/studio/satin/art/satin-rose-red-v1.png",
+      "cover": "/studio/satin/art/satin-rose-red-v1-311444b95cdf.webp",
       "counts": {
         "satin_rose_red": 41
       },
@@ -10961,6 +11307,3441 @@
           "overrides": {}
         }
       }
+    },
+    {
+      "id": "satin-aqua-keepsake",
+      "name": "Aqua Keepsake",
+      "en": "Aqua Keepsake",
+      "description": "Cupped white foam roses, aqua triangle wrap and a personal message.",
+      "mode": "dome",
+      "preset": "satin",
+      "counts": {
+        "satin_foam_rose_white": 24
+      },
+      "design": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 31,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "satin_foam_rose_white",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 382.3455168721099,
+                "y": 388.74908701409885,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "satin_foam_rose_white",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 342.8097640248015,
+                "y": 401.38533675640593,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "satin_foam_rose_white",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 367.3619667730993,
+                "y": 340.2251525995807,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "satin_foam_rose_white",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 390.76938184009833,
+                "y": 441.93884785504997,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "satin_foam_rose_white",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 299.23698956172296,
+                "y": 374.06721070399203,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "satin_foam_rose_white",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 414.3018204937309,
+                "y": 351.99746016154927,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "satin_foam_rose_white",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 342.59467524450986,
+                "y": 453.87352780243975,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "satin_foam_rose_white",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 324.3301268080098,
+                "y": 334.3680876153852,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "satin_foam_rose_white",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 427.13649050572656,
+                "y": 404.69766206566504,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "satin_foam_rose_white",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 300.60767080730864,
+                "y": 425.0087651278955,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "satin_foam_rose_white",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 410.32246823850454,
+                "y": 294.21933201751784,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "satin_foam_rose_white",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 405.883463137647,
+                "y": 491.29186928346144,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "satin_foam_rose_white",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 253.27171257849977,
+                "y": 355.4348269530993,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "satin_foam_rose_white",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 467.78788493307775,
+                "y": 365.63798222003004,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "satin_foam_rose_white",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 307.26343699048215,
+                "y": 487.8572726597151,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "satin_foam_rose_white",
+            "slot": 15,
+            "anchors": {
+              "dome": {
+                "x": 320.2303679980446,
+                "y": 284.78214707254506,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "satin_foam_rose_white",
+            "slot": 16,
+            "anchors": {
+              "dome": {
+                "x": 445.34524109593497,
+                "y": 458.55599406727003,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "satin_foam_rose_white",
+            "slot": 17,
+            "anchors": {
+              "dome": {
+                "x": 251.25716927064582,
+                "y": 405.80704707417374,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "satin_foam_rose_white",
+            "slot": 18,
+            "anchors": {
+              "dome": {
+                "x": 449.262117765016,
+                "y": 320.8951681628721,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "satin_foam_rose_white",
+            "slot": 19,
+            "anchors": {
+              "dome": {
+                "x": 357.00563953093405,
+                "y": 499.05063327529456,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "satin_foam_rose_white",
+            "slot": 20,
+            "anchors": {
+              "dome": {
+                "x": 279.19453267843346,
+                "y": 314.13187576162375,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "satin_foam_rose_white",
+            "slot": 21,
+            "anchors": {
+              "dome": {
+                "x": 470.7543921831792,
+                "y": 414.63873195006823,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "satin_foam_rose_white",
+            "slot": 22,
+            "anchors": {
+              "dome": {
+                "x": 268.3793656608986,
+                "y": 456.5095138943375,
+                "manual": false
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "satin_foam_rose_white",
+            "slot": 23,
+            "anchors": {
+              "dome": {
+                "x": 366.2972803514569,
+                "y": 283.8057991589833,
+                "manual": false
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 121.87112631206553,
+            "unit": 77.20827552265402,
+            "scale": 1,
+            "capacity": 24,
+            "rings": 0,
+            "top": 252.92248894992167,
+            "tip": 529.9339434843562,
+            "halfWidth": 149.35852994450624
+          }
+        },
+        "finishes": {
+          "paper": "custom",
+          "tint": "#a5d4d5",
+          "ribbon": "none",
+          "sash": "blank_champagne",
+          "sashText": "Will you be my girlfriend?",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": 0,
+          "crown": false,
+          "greenRim": false,
+          "bow": false,
+          "pumpkin": false,
+          "pumpkinPosition": "right",
+          "pumpkinScale": 1,
+          "fillerCount": 0,
+          "fillerPattern": "scatter",
+          "greeneryCount": 0,
+          "initial": "",
+          "initialScale": 1,
+          "initialOffset": 0,
+          "decorations": [],
+          "spookyMask": false,
+          "spookyBow": false,
+          "ghostCount": 0,
+          "thistleCount": 0,
+          "studio": {
+            "v": 1
+          }
+        },
+        "title": "Aqua Keepsake",
+        "note": "",
+        "template": {
+          "capacity": 24,
+          "palette": [
+            "satin_foam_rose_white"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "satin_foam_rose_white",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "satin_foam_rose_white",
+            "fill": "satin_foam_rose_white",
+            "center": "satin_foam_rose_white",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {}
+        }
+      },
+      "cover": "/studio/assets/catalog/thumbs/satin-aqua-keepsake.webp"
+    },
+    {
+      "id": "blush-and-ivory",
+      "name": "Blush & Ivory",
+      "en": "Blush & Ivory",
+      "description": "Blush and ivory roses, pink gerberas, white mums and chamomile.",
+      "mode": "dome",
+      "preset": "fresh",
+      "counts": {
+        "rose_pink": 30,
+        "rose_cream": 7,
+        "gerbera_blush": 7,
+        "rose_ivory": 10,
+        "mum_white": 7
+      },
+      "design": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 62,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "rose_pink",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 379.1167752154464,
+                "y": 390.16749510994856,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_cream",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 340.03458289414846,
+                "y": 409.1502742374361,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "gerbera_blush",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 360.71848423204966,
+                "y": 353.01324129378605,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "rose_ivory",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 389.8457675360313,
+                "y": 432.09710430036966,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_pink",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 309.15965096032306,
+                "y": 376.8157420597745,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "rose_pink",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 414.54527518737933,
+                "y": 359.66532190120444,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_cream",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 343.2623532421128,
+                "y": 451.4253420921258,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_pink",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 324.67185936877183,
+                "y": 329.518056104432,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_ivory",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 429.9067065351592,
+                "y": 408.93879051275377,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_pink",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 290.65542928985565,
+                "y": 423.5389017777726,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_pink",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 389.4287216309577,
+                "y": 315.2261224315116,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_cream",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 388.04112404238566,
+                "y": 475.45914562899543,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "mum_white",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 275.01528016466136,
+                "y": 343.47412793952384,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "rose_ivory",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 459.8358832522051,
+                "y": 366.74355776413165,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "rose_pink",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 303.37708168829425,
+                "y": 473.7316030589768,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "rose_pink",
+            "slot": 15,
+            "anchors": {
+              "dome": {
+                "x": 346.7428466410725,
+                "y": 290.20336812709616,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "mum_white",
+            "slot": 16,
+            "anchors": {
+              "dome": {
+                "x": 438.7791537313326,
+                "y": 456.6537484755852,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "rose_pink",
+            "slot": 17,
+            "anchors": {
+              "dome": {
+                "x": 251.0417863189408,
+                "y": 391.1078185342431,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "mum_white",
+            "slot": 18,
+            "anchors": {
+              "dome": {
+                "x": 441.05224177249954,
+                "y": 314.2514682495431,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "mum_white",
+            "slot": 19,
+            "anchors": {
+              "dome": {
+                "x": 350.1002414062868,
+                "y": 504.9574771279323,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "rose_pink",
+            "slot": 20,
+            "anchors": {
+              "dome": {
+                "x": 289.82834665455897,
+                "y": 295.3551116603581,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "gerbera_blush",
+            "slot": 21,
+            "anchors": {
+              "dome": {
+                "x": 481.50591557465646,
+                "y": 412.5777204687881,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "mum_white",
+            "slot": 22,
+            "anchors": {
+              "dome": {
+                "x": 253.10311186596408,
+                "y": 456.03381537344876,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "rose_ivory",
+            "slot": 23,
+            "anchors": {
+              "dome": {
+                "x": 392.6178961991675,
+                "y": 266.65254054646977,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b25",
+            "id": "gerbera_blush",
+            "slot": 24,
+            "anchors": {
+              "dome": {
+                "x": 422.587959769652,
+                "y": 508.60049576931044,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b26",
+            "id": "gerbera_blush",
+            "slot": 25,
+            "anchors": {
+              "dome": {
+                "x": 226.32891132477812,
+                "y": 348.9254974235262,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b27",
+            "id": "mum_white",
+            "slot": 26,
+            "anchors": {
+              "dome": {
+                "x": 490.0749392795225,
+                "y": 328.4734629456139,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b28",
+            "id": "rose_pink",
+            "slot": 27,
+            "anchors": {
+              "dome": {
+                "x": 311.4454665784426,
+                "y": 524.6726368342139,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b29",
+            "id": "gerbera_blush",
+            "slot": 28,
+            "anchors": {
+              "dome": {
+                "x": 310.92596302887,
+                "y": 257.57565908310335,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b30",
+            "id": "rose_pink",
+            "slot": 29,
+            "anchors": {
+              "dome": {
+                "x": 488.53845436609345,
+                "y": 455.7951245533748,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b31",
+            "id": "rose_pink",
+            "slot": 30,
+            "anchors": {
+              "dome": {
+                "x": 218.72026754579284,
+                "y": 424.2328100904105,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b32",
+            "id": "gerbera_blush",
+            "slot": 31,
+            "anchors": {
+              "dome": {
+                "x": 440.0100632137996,
+                "y": 269.67386382161595,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b33",
+            "id": "rose_pink",
+            "slot": 32,
+            "anchors": {
+              "dome": {
+                "x": 381.43534178371385,
+                "y": 536.7102075083393,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b34",
+            "id": "rose_ivory",
+            "slot": 33,
+            "anchors": {
+              "dome": {
+                "x": 245.15945927290227,
+                "y": 297.2154634918138,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b35",
+            "id": "rose_pink",
+            "slot": 34,
+            "anchors": {
+              "dome": {
+                "x": 510.6173552229306,
+                "y": 378.27365043381326,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b36",
+            "id": "gerbera_blush",
+            "slot": 35,
+            "anchors": {
+              "dome": {
+                "x": 262.8990967840928,
+                "y": 503.8009632735266,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b37",
+            "id": "mum_white",
+            "slot": 36,
+            "anchors": {
+              "dome": {
+                "x": 358.1142021150514,
+                "y": 238.2313671886,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b38",
+            "id": "rose_pink",
+            "slot": 37,
+            "anchors": {
+              "dome": {
+                "x": 468.4911190394861,
+                "y": 499.7459365715164,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b39",
+            "id": "rose_ivory",
+            "slot": 38,
+            "anchors": {
+              "dome": {
+                "x": 176.4286586426463,
+                "y": 388.4544769400223,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b40",
+            "id": "rose_pink",
+            "slot": 39,
+            "anchors": {
+              "dome": {
+                "x": 497.80680597239177,
+                "y": 270.2246554005435,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b41",
+            "id": "rose_pink",
+            "slot": 40,
+            "anchors": {
+              "dome": {
+                "x": 327.30114783102425,
+                "y": 572.9972899350855,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b42",
+            "id": "rose_cream",
+            "slot": 41,
+            "anchors": {
+              "dome": {
+                "x": 264.76565635376164,
+                "y": 232.26764766167463,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b43",
+            "id": "rose_pink",
+            "slot": 42,
+            "anchors": {
+              "dome": {
+                "x": 537.6924301218976,
+                "y": 446.9456138847401,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b44",
+            "id": "rose_ivory",
+            "slot": 43,
+            "anchors": {
+              "dome": {
+                "x": 200.89944042563144,
+                "y": 483.5777414648949,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b45",
+            "id": "rose_pink",
+            "slot": 44,
+            "anchors": {
+              "dome": {
+                "x": 421.40604444815983,
+                "y": 214.38202642493437,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b46",
+            "id": "rose_pink",
+            "slot": 45,
+            "anchors": {
+              "dome": {
+                "x": 431.26494786158247,
+                "y": 564.0355897295766,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b47",
+            "id": "rose_cream",
+            "slot": 46,
+            "anchors": {
+              "dome": {
+                "x": 193.58953406086903,
+                "y": 299.5918737166768,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b48",
+            "id": "rose_pink",
+            "slot": 47,
+            "anchors": {
+              "dome": {
+                "x": 546.7155683022771,
+                "y": 348.0051489977579,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b49",
+            "id": "rose_ivory",
+            "slot": 48,
+            "anchors": {
+              "dome": {
+                "x": 272.8612533346019,
+                "y": 559.2921117481767,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b50",
+            "id": "rose_pink",
+            "slot": 49,
+            "anchors": {
+              "dome": {
+                "x": 312.77442914711685,
+                "y": 206.66296883855173,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b51",
+            "id": "rose_pink",
+            "slot": 50,
+            "anchors": {
+              "dome": {
+                "x": 518.5851257020788,
+                "y": 497.13089593202653,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b52",
+            "id": "rose_cream",
+            "slot": 51,
+            "anchors": {
+              "dome": {
+                "x": 174.94230508257124,
+                "y": 438.78442896038354,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b53",
+            "id": "rose_pink",
+            "slot": 52,
+            "anchors": {
+              "dome": {
+                "x": 468.88270333583324,
+                "y": 232.61249137423968,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b54",
+            "id": "rose_ivory",
+            "slot": 53,
+            "anchors": {
+              "dome": {
+                "x": 381.1375010483562,
+                "y": 580.2090350287641,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b55",
+            "id": "rose_pink",
+            "slot": 54,
+            "anchors": {
+              "dome": {
+                "x": 222.74954305789893,
+                "y": 256.62615313965296,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b56",
+            "id": "rose_pink",
+            "slot": 55,
+            "anchors": {
+              "dome": {
+                "x": 551.1197313053328,
+                "y": 399.97593418784686,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b57",
+            "id": "rose_cream",
+            "slot": 56,
+            "anchors": {
+              "dome": {
+                "x": 226.43002704210116,
+                "y": 527.0595975521926,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b58",
+            "id": "rose_pink",
+            "slot": 57,
+            "anchors": {
+              "dome": {
+                "x": 372.37696022912303,
+                "y": 199.02072936407586,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b59",
+            "id": "rose_ivory",
+            "slot": 58,
+            "anchors": {
+              "dome": {
+                "x": 477.43499168880356,
+                "y": 541.1135125797607,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b60",
+            "id": "rose_pink",
+            "slot": 59,
+            "anchors": {
+              "dome": {
+                "x": 176.16055770365304,
+                "y": 343.27684028201367,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b61",
+            "id": "rose_pink",
+            "slot": 60,
+            "anchors": {
+              "dome": {
+                "x": 530.0357034818824,
+                "y": 302.16987704344126,
+                "manual": true
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 194.29432754016702,
+            "unit": 74.8743569807919,
+            "scale": 1,
+            "capacity": 61,
+            "rings": 0,
+            "top": 169.0709865717591,
+            "tip": 610.1587778210809,
+            "halfWidth": 228.55690979572873
+          }
+        },
+        "finishes": {
+          "paper": "custom",
+          "tint": "#edc5bc",
+          "ribbon": "none",
+          "sash": "none",
+          "sashText": "",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": 0,
+          "crown": false,
+          "greenRim": false,
+          "bow": false,
+          "pumpkin": false,
+          "pumpkinPosition": "right",
+          "pumpkinScale": 1,
+          "fillerCount": 0,
+          "fillerPattern": "scatter",
+          "greeneryCount": 0,
+          "initial": "",
+          "initialScale": 1,
+          "initialOffset": 0,
+          "decorations": [],
+          "spookyMask": false,
+          "spookyBow": false,
+          "ghostCount": 0,
+          "thistleCount": 0,
+          "studio": {
+            "v": 1,
+            "wrap": "ruffle",
+            "referenceFillers": {
+              "chamomile_spray": 8
+            }
+          }
+        },
+        "title": "Blush & Ivory",
+        "note": "",
+        "template": {
+          "capacity": 61,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_red",
+            "fill": "rose_red",
+            "center": "rose_red",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {
+            "0": "rose_pink",
+            "1": "rose_cream",
+            "2": "gerbera_blush",
+            "3": "rose_ivory",
+            "4": "rose_pink",
+            "5": "rose_pink",
+            "6": "rose_cream",
+            "7": "rose_pink",
+            "8": "rose_ivory",
+            "9": "rose_pink",
+            "10": "rose_pink",
+            "11": "rose_cream",
+            "12": "mum_white",
+            "13": "rose_ivory",
+            "14": "rose_pink",
+            "15": "rose_pink",
+            "16": "mum_white",
+            "17": "rose_pink",
+            "18": "mum_white",
+            "19": "mum_white",
+            "20": "rose_pink",
+            "21": "gerbera_blush",
+            "22": "mum_white",
+            "23": "rose_ivory",
+            "24": "gerbera_blush",
+            "25": "gerbera_blush",
+            "26": "mum_white",
+            "27": "rose_pink",
+            "28": "gerbera_blush",
+            "29": "rose_pink",
+            "30": "rose_pink",
+            "31": "gerbera_blush",
+            "32": "rose_pink",
+            "33": "rose_ivory",
+            "34": "rose_pink",
+            "35": "gerbera_blush",
+            "36": "mum_white",
+            "37": "rose_pink",
+            "38": "rose_ivory",
+            "39": "rose_pink",
+            "40": "rose_pink",
+            "41": "rose_cream",
+            "42": "rose_pink",
+            "43": "rose_ivory",
+            "44": "rose_pink",
+            "45": "rose_pink",
+            "46": "rose_cream",
+            "47": "rose_pink",
+            "48": "rose_ivory",
+            "49": "rose_pink",
+            "50": "rose_pink",
+            "51": "rose_cream",
+            "52": "rose_pink",
+            "53": "rose_ivory",
+            "54": "rose_pink",
+            "55": "rose_pink",
+            "56": "rose_cream",
+            "57": "rose_pink",
+            "58": "rose_ivory",
+            "59": "rose_pink",
+            "60": "rose_pink"
+          }
+        }
+      },
+      "cover": "/studio/assets/catalog/thumbs/blush-and-ivory.webp"
+    },
+    {
+      "id": "golden-autumn-mix",
+      "name": "Golden Autumn Mix",
+      "en": "Golden Autumn Mix",
+      "description": "Sunflowers and warm callas over autumn roses, ranunculus and chamomile.",
+      "mode": "dome",
+      "preset": "fresh",
+      "counts": {
+        "ranunculus_coral": 5,
+        "rose_orange": 5,
+        "rose_ivory": 8,
+        "gerbera_peach": 5,
+        "spray_rose_yellow": 9,
+        "calla_peach": 3,
+        "mum_rust": 4,
+        "sunflower": 4,
+        "rose_cream": 3
+      },
+      "design": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 47,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "ranunculus_coral",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 380.79396163726005,
+                "y": 388.82197951250896,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_orange",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 340.73419517216917,
+                "y": 406.381819787412,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "rose_ivory",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 359.61334327547667,
+                "y": 350.2798092080662,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "gerbera_peach",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 389.9227567639313,
+                "y": 431.15817034594573,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "spray_rose_yellow",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 306.20039161922784,
+                "y": 377.7931513414974,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "calla_peach",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 411.77294485131495,
+                "y": 359.06746203814,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "calla_peach",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 342.19850779744337,
+                "y": 454.70769057831757,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "calla_peach",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 325.6930033513916,
+                "y": 330.88001943653177,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_orange",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 432.2146385263737,
+                "y": 408.7062383721919,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_ivory",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 295.0297041145382,
+                "y": 425.86858125364597,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_orange",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 388.65165384952064,
+                "y": 313.606004730558,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_ivory",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 387.2902650936235,
+                "y": 475.1649097131727,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "mum_rust",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 278.41543112559435,
+                "y": 344.8314644534204,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "spray_rose_yellow",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 462.0508465108771,
+                "y": 362.17132733963024,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "sunflower",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 298.6752785718705,
+                "y": 481.4467276466036,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "spray_rose_yellow",
+            "slot": 15,
+            "anchors": {
+              "dome": {
+                "x": 341.9163624222972,
+                "y": 283.7099591537836,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "sunflower",
+            "slot": 16,
+            "anchors": {
+              "dome": {
+                "x": 444.8145194923926,
+                "y": 458.55671081950936,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "gerbera_peach",
+            "slot": 17,
+            "anchors": {
+              "dome": {
+                "x": 250.21867187498387,
+                "y": 396.5260757621076,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "rose_ivory",
+            "slot": 18,
+            "anchors": {
+              "dome": {
+                "x": 440.4757268627561,
+                "y": 312.02955307134476,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "spray_rose_yellow",
+            "slot": 19,
+            "anchors": {
+              "dome": {
+                "x": 346.78337014356885,
+                "y": 504.69569685277645,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "ranunculus_coral",
+            "slot": 20,
+            "anchors": {
+              "dome": {
+                "x": 288.19901794307657,
+                "y": 297.2850934351738,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "gerbera_peach",
+            "slot": 21,
+            "anchors": {
+              "dome": {
+                "x": 479.2079180971714,
+                "y": 413.6154719319208,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "ranunculus_coral",
+            "slot": 22,
+            "anchors": {
+              "dome": {
+                "x": 256.15592443515516,
+                "y": 450.88697195654635,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "rose_cream",
+            "slot": 23,
+            "anchors": {
+              "dome": {
+                "x": 393.65085190396263,
+                "y": 270.0192466933919,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b25",
+            "id": "ranunculus_coral",
+            "slot": 24,
+            "anchors": {
+              "dome": {
+                "x": 416.74982505729963,
+                "y": 502.4484794522591,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b26",
+            "id": "sunflower",
+            "slot": 25,
+            "anchors": {
+              "dome": {
+                "x": 237.57123822748838,
+                "y": 346.0535612888586,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b27",
+            "id": "ranunculus_coral",
+            "slot": 26,
+            "anchors": {
+              "dome": {
+                "x": 506.5931137533403,
+                "y": 330.5452517096718,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b28",
+            "id": "rose_ivory",
+            "slot": 27,
+            "anchors": {
+              "dome": {
+                "x": 284.2152819934431,
+                "y": 531.4460599528685,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b29",
+            "id": "spray_rose_yellow",
+            "slot": 28,
+            "anchors": {
+              "dome": {
+                "x": 308.97988249721345,
+                "y": 239.60844107565694,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b30",
+            "id": "mum_rust",
+            "slot": 29,
+            "anchors": {
+              "dome": {
+                "x": 498.137767122723,
+                "y": 473.0381500366506,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b31",
+            "id": "mum_rust",
+            "slot": 30,
+            "anchors": {
+              "dome": {
+                "x": 201.21848561716928,
+                "y": 413.2131880248538,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b32",
+            "id": "gerbera_peach",
+            "slot": 31,
+            "anchors": {
+              "dome": {
+                "x": 449.84496253467483,
+                "y": 258.1149063262518,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b33",
+            "id": "mum_rust",
+            "slot": 32,
+            "anchors": {
+              "dome": {
+                "x": 375.85022181227464,
+                "y": 545.5820134899841,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b34",
+            "id": "rose_orange",
+            "slot": 33,
+            "anchors": {
+              "dome": {
+                "x": 226.0592016090372,
+                "y": 300.57199644098637,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b35",
+            "id": "rose_ivory",
+            "slot": 34,
+            "anchors": {
+              "dome": {
+                "x": 521.1844801558036,
+                "y": 377.80544176503594,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b36",
+            "id": "gerbera_peach",
+            "slot": 35,
+            "anchors": {
+              "dome": {
+                "x": 244.28418753358756,
+                "y": 502.90376356078866,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b37",
+            "id": "sunflower",
+            "slot": 36,
+            "anchors": {
+              "dome": {
+                "x": 357.53532184154153,
+                "y": 229.74078148637082,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b38",
+            "id": "spray_rose_yellow",
+            "slot": 37,
+            "anchors": {
+              "dome": {
+                "x": 466.01424374201076,
+                "y": 511.05870538709723,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b39",
+            "id": "spray_rose_yellow",
+            "slot": 38,
+            "anchors": {
+              "dome": {
+                "x": 197.35881064866626,
+                "y": 359.5912750695797,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b40",
+            "id": "rose_cream",
+            "slot": 39,
+            "anchors": {
+              "dome": {
+                "x": 486.4688429555252,
+                "y": 288.58284490370426,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b41",
+            "id": "spray_rose_yellow",
+            "slot": 40,
+            "anchors": {
+              "dome": {
+                "x": 326.0054532297943,
+                "y": 548.5683132893323,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b42",
+            "id": "rose_cream",
+            "slot": 41,
+            "anchors": {
+              "dome": {
+                "x": 262.1227488359639,
+                "y": 258.94057174960517,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b43",
+            "id": "rose_orange",
+            "slot": 42,
+            "anchors": {
+              "dome": {
+                "x": 520.7380233751701,
+                "y": 428.61662508769183,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b44",
+            "id": "rose_ivory",
+            "slot": 43,
+            "anchors": {
+              "dome": {
+                "x": 212.9053896367048,
+                "y": 461.2793266077641,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b45",
+            "id": "spray_rose_yellow",
+            "slot": 44,
+            "anchors": {
+              "dome": {
+                "x": 409.7336707101554,
+                "y": 231.42392083479896,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b46",
+            "id": "rose_ivory",
+            "slot": 45,
+            "anchors": {
+              "dome": {
+                "x": 422.91720710058826,
+                "y": 543.8220918346126,
+                "manual": true
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 168.7229343374177,
+            "unit": 76.51223028924052,
+            "scale": 1,
+            "capacity": 46,
+            "rings": 0,
+            "top": 199.13588937067462,
+            "tip": 579.1732054050285,
+            "halfWidth": 200.897304495954
+          }
+        },
+        "finishes": {
+          "paper": "custom",
+          "tint": "#f3d079",
+          "ribbon": "none",
+          "sash": "blank_cocoa",
+          "sashText": "Still falling for you",
+          "sashPlacement": "diagonal",
+          "sashOffset": -45,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": 0,
+          "crown": false,
+          "greenRim": false,
+          "bow": false,
+          "pumpkin": false,
+          "pumpkinPosition": "right",
+          "pumpkinScale": 1,
+          "fillerCount": 0,
+          "fillerPattern": "scatter",
+          "greeneryCount": 0,
+          "initial": "",
+          "initialScale": 1,
+          "initialOffset": 0,
+          "decorations": [
+            {
+              "id": "pumpkin_plush",
+              "x": -0.66,
+              "y": 0.45,
+              "scale": 0.88,
+              "rotation": -10,
+              "layer": "tucked"
+            },
+            {
+              "id": "satin_cocoa",
+              "x": 0.34,
+              "y": -0.63,
+              "scale": 0.7,
+              "rotation": 12,
+              "layer": "front"
+            }
+          ],
+          "spookyMask": false,
+          "spookyBow": false,
+          "ghostCount": 0,
+          "thistleCount": 0,
+          "studio": {
+            "v": 1,
+            "wrap": "ruffle",
+            "referenceFillers": {
+              "chamomile_spray": 6
+            }
+          }
+        },
+        "title": "Golden Autumn Mix",
+        "note": "",
+        "template": {
+          "capacity": 46,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_red",
+            "fill": "rose_red",
+            "center": "rose_red",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {
+            "0": "ranunculus_coral",
+            "1": "rose_orange",
+            "2": "rose_ivory",
+            "3": "gerbera_peach",
+            "4": "spray_rose_yellow",
+            "5": "calla_peach",
+            "6": "calla_peach",
+            "7": "calla_peach",
+            "8": "rose_orange",
+            "9": "rose_ivory",
+            "10": "rose_orange",
+            "11": "rose_ivory",
+            "12": "mum_rust",
+            "13": "spray_rose_yellow",
+            "14": "sunflower",
+            "15": "spray_rose_yellow",
+            "16": "sunflower",
+            "17": "gerbera_peach",
+            "18": "rose_ivory",
+            "19": "spray_rose_yellow",
+            "20": "ranunculus_coral",
+            "21": "gerbera_peach",
+            "22": "ranunculus_coral",
+            "23": "rose_cream",
+            "24": "ranunculus_coral",
+            "25": "sunflower",
+            "26": "ranunculus_coral",
+            "27": "rose_ivory",
+            "28": "spray_rose_yellow",
+            "29": "mum_rust",
+            "30": "mum_rust",
+            "31": "gerbera_peach",
+            "32": "mum_rust",
+            "33": "rose_orange",
+            "34": "rose_ivory",
+            "35": "gerbera_peach",
+            "36": "sunflower",
+            "37": "spray_rose_yellow",
+            "38": "spray_rose_yellow",
+            "39": "rose_cream",
+            "40": "spray_rose_yellow",
+            "41": "rose_cream",
+            "42": "rose_orange",
+            "43": "rose_ivory",
+            "44": "spray_rose_yellow",
+            "45": "rose_ivory"
+          }
+        }
+      },
+      "cover": "/studio/assets/catalog/thumbs/golden-autumn-mix.webp"
+    },
+    {
+      "id": "ivory-and-rust",
+      "name": "Ivory & Rust",
+      "en": "Ivory & Rust",
+      "description": "A centre of white roses, a rust mum border and gold button mum sprigs.",
+      "mode": "dome",
+      "preset": "fresh",
+      "counts": {
+        "rose_white": 11,
+        "rose_white_cupped": 7,
+        "mum_rust": 17
+      },
+      "design": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 36,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "rose_white",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 379.55544970485045,
+                "y": 387.80085773215353,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "rose_white_cupped",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 337.12680585452256,
+                "y": 414.22228334440445,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "rose_white",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 358.97052972974194,
+                "y": 346.8328621334474,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "rose_white_cupped",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 390.28203524207345,
+                "y": 429.5807161669228,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_white",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 312.4693324459423,
+                "y": 376.8256098755636,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "rose_white",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 416.54798916300996,
+                "y": 350.5049249009216,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "rose_white_cupped",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 347.3084116426781,
+                "y": 460.43598936727517,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "rose_white",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 312.55410973090306,
+                "y": 322.6623443137652,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "rose_white_cupped",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 434.51722417979954,
+                "y": 408.12412762197437,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_white",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 287.1491832578385,
+                "y": 430.80362137020205,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_white",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 396.0456061332164,
+                "y": 306.60175861164583,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_white_cupped",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 391.39698499325476,
+                "y": 476.5665569312722,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "rose_white",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 272.2415361536869,
+                "y": 344.45238033710194,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "rose_white_cupped",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 457.88319910314874,
+                "y": 369.5377379875375,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "rose_white",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 304.9983341852259,
+                "y": 471.8432846817754,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "rose_white",
+            "slot": 15,
+            "anchors": {
+              "dome": {
+                "x": 349.3320825378613,
+                "y": 295.0903914438982,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "rose_white_cupped",
+            "slot": 16,
+            "anchors": {
+              "dome": {
+                "x": 436.5428382802961,
+                "y": 455.6782296531852,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "rose_white",
+            "slot": 17,
+            "anchors": {
+              "dome": {
+                "x": 262.62028872969836,
+                "y": 392.34530658188044,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "mum_rust",
+            "slot": 18,
+            "anchors": {
+              "dome": {
+                "x": 450.64508684461134,
+                "y": 294.3373113486769,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "mum_rust",
+            "slot": 19,
+            "anchors": {
+              "dome": {
+                "x": 349.17224513067436,
+                "y": 518.6014898719253,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "mum_rust",
+            "slot": 20,
+            "anchors": {
+              "dome": {
+                "x": 271.0632053259455,
+                "y": 286.9608684296321,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "mum_rust",
+            "slot": 21,
+            "anchors": {
+              "dome": {
+                "x": 491.7902461603027,
+                "y": 416.4561648101645,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "mum_rust",
+            "slot": 22,
+            "anchors": {
+              "dome": {
+                "x": 255.27889424344855,
+                "y": 481.1542087419704,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "mum_rust",
+            "slot": 23,
+            "anchors": {
+              "dome": {
+                "x": 367.82625040969555,
+                "y": 251.60337791669545,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b25",
+            "id": "mum_rust",
+            "slot": 24,
+            "anchors": {
+              "dome": {
+                "x": 440.552110928255,
+                "y": 504.1956311820639,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b26",
+            "id": "mum_rust",
+            "slot": 25,
+            "anchors": {
+              "dome": {
+                "x": 219.9821712926541,
+                "y": 377.1223303726173,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b27",
+            "id": "mum_rust",
+            "slot": 26,
+            "anchors": {
+              "dome": {
+                "x": 480.6974916269018,
+                "y": 324.806797517668,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b28",
+            "id": "mum_rust",
+            "slot": 27,
+            "anchors": {
+              "dome": {
+                "x": 301.3975852251358,
+                "y": 517.8027548611003,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b29",
+            "id": "mum_rust",
+            "slot": 28,
+            "anchors": {
+              "dome": {
+                "x": 313.8746952040516,
+                "y": 259.55753552823944,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b30",
+            "id": "mum_rust",
+            "slot": 29,
+            "anchors": {
+              "dome": {
+                "x": 480.2639635218064,
+                "y": 464.02900790545857,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b31",
+            "id": "mum_rust",
+            "slot": 30,
+            "anchors": {
+              "dome": {
+                "x": 229.574416939912,
+                "y": 432.6530221479536,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b32",
+            "id": "mum_rust",
+            "slot": 31,
+            "anchors": {
+              "dome": {
+                "x": 417.11276151242765,
+                "y": 262.48931119800875,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b33",
+            "id": "mum_rust",
+            "slot": 32,
+            "anchors": {
+              "dome": {
+                "x": 394.76970799057705,
+                "y": 525.0111236200834,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b34",
+            "id": "mum_rust",
+            "slot": 33,
+            "anchors": {
+              "dome": {
+                "x": 233.72608246820377,
+                "y": 324.79055751864274,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b35",
+            "id": "mum_rust",
+            "slot": 34,
+            "anchors": {
+              "dome": {
+                "x": 502.0084150255056,
+                "y": 369.89093458200296,
+                "manual": true
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 147.17336715588183,
+            "unit": 74.70233665809253,
+            "scale": 1,
+            "capacity": 35,
+            "rings": 0,
+            "top": 221.72244325345844,
+            "tip": 554.8920582833204,
+            "halfWidth": 179.35958335455186
+          }
+        },
+        "finishes": {
+          "paper": "kraft",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "blank_cocoa",
+          "sashText": "Happy Birthday",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": 0,
+          "crown": false,
+          "greenRim": false,
+          "bow": false,
+          "pumpkin": false,
+          "pumpkinPosition": "right",
+          "pumpkinScale": 1,
+          "fillerCount": 0,
+          "fillerPattern": "scatter",
+          "greeneryCount": 0,
+          "initial": "",
+          "initialScale": 1,
+          "initialOffset": 0,
+          "decorations": [
+            {
+              "id": "satin_cocoa",
+              "x": -0.57,
+              "y": 0.03,
+              "scale": 0.92,
+              "rotation": -9,
+              "layer": "front"
+            }
+          ],
+          "spookyMask": false,
+          "spookyBow": false,
+          "ghostCount": 0,
+          "thistleCount": 0,
+          "studio": {
+            "v": 1,
+            "wrap": "round",
+            "referenceFillers": {
+              "mum_button_gold": 4
+            }
+          }
+        },
+        "title": "Ivory & Rust",
+        "note": "",
+        "template": {
+          "capacity": 35,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_red",
+            "fill": "rose_red",
+            "center": "rose_red",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {
+            "0": "rose_white",
+            "1": "rose_white_cupped",
+            "2": "rose_white",
+            "3": "rose_white_cupped",
+            "4": "rose_white",
+            "5": "rose_white",
+            "6": "rose_white_cupped",
+            "7": "rose_white",
+            "8": "rose_white_cupped",
+            "9": "rose_white",
+            "10": "rose_white",
+            "11": "rose_white_cupped",
+            "12": "rose_white",
+            "13": "rose_white_cupped",
+            "14": "rose_white",
+            "15": "rose_white",
+            "16": "rose_white_cupped",
+            "17": "rose_white",
+            "18": "mum_rust",
+            "19": "mum_rust",
+            "20": "mum_rust",
+            "21": "mum_rust",
+            "22": "mum_rust",
+            "23": "mum_rust",
+            "24": "mum_rust",
+            "25": "mum_rust",
+            "26": "mum_rust",
+            "27": "mum_rust",
+            "28": "mum_rust",
+            "29": "mum_rust",
+            "30": "mum_rust",
+            "31": "mum_rust",
+            "32": "mum_rust",
+            "33": "mum_rust",
+            "34": "mum_rust"
+          }
+        }
+      },
+      "cover": "/studio/assets/catalog/thumbs/ivory-and-rust.webp"
+    },
+    {
+      "id": "midnight-orchard",
+      "name": "Midnight Orchard",
+      "en": "Midnight Orchard",
+      "description": "Wine, fuchsia and lime flowers with a bold red daisy mum and green gap accents.",
+      "mode": "dome",
+      "preset": "fresh",
+      "counts": {
+        "rose_fuchsia": 5,
+        "carnation_picotee": 10,
+        "alstroemeria_fuchsia": 3,
+        "hydrangea_lime": 2,
+        "mum_red_daisy": 1,
+        "calla_black": 3,
+        "mum_button_lime": 3,
+        "mum_magenta": 5
+      },
+      "design": {
+        "version": 6,
+        "mode": "dome",
+        "seed": 11,
+        "nextId": 33,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "rose_fuchsia",
+            "slot": 0,
+            "anchors": {
+              "dome": {
+                "x": 385.150021703344,
+                "y": 390.81187301137976,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "carnation_picotee",
+            "slot": 1,
+            "anchors": {
+              "dome": {
+                "x": 338.4421231651095,
+                "y": 416.2685305036166,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "alstroemeria_fuchsia",
+            "slot": 2,
+            "anchors": {
+              "dome": {
+                "x": 358.51787144379654,
+                "y": 350.2178228474774,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "carnation_picotee",
+            "slot": 3,
+            "anchors": {
+              "dome": {
+                "x": 386.2437069957267,
+                "y": 434.58219127593094,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "rose_fuchsia",
+            "slot": 4,
+            "anchors": {
+              "dome": {
+                "x": 316.7236447282328,
+                "y": 374.37719295012784,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "hydrangea_lime",
+            "slot": 5,
+            "anchors": {
+              "dome": {
+                "x": 414.0428070880088,
+                "y": 355.93479785783705,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "carnation_picotee",
+            "slot": 6,
+            "anchors": {
+              "dome": {
+                "x": 345.1693788814,
+                "y": 468.96175949037746,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "alstroemeria_fuchsia",
+            "slot": 7,
+            "anchors": {
+              "dome": {
+                "x": 312.4157525094499,
+                "y": 320.8621142569326,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "mum_red_daisy",
+            "slot": 8,
+            "anchors": {
+              "dome": {
+                "x": 433.9066240377026,
+                "y": 422.4427818364089,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "calla_black",
+            "slot": 9,
+            "anchors": {
+              "dome": {
+                "x": 280.57010784391787,
+                "y": 410.96248267753964,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "mum_button_lime",
+            "slot": 10,
+            "anchors": {
+              "dome": {
+                "x": 399.99800770779274,
+                "y": 312.9690040557759,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "mum_button_lime",
+            "slot": 11,
+            "anchors": {
+              "dome": {
+                "x": 394.9950387244491,
+                "y": 475.1122516739705,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "rose_fuchsia",
+            "slot": 12,
+            "anchors": {
+              "dome": {
+                "x": 274.64507433563114,
+                "y": 353.3754834933244,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "carnation_picotee",
+            "slot": 13,
+            "anchors": {
+              "dome": {
+                "x": 452.13800208773915,
+                "y": 373.5638000412253,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "hydrangea_lime",
+            "slot": 14,
+            "anchors": {
+              "dome": {
+                "x": 300.23006368206177,
+                "y": 455.61528167184747,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "calla_black",
+            "slot": 15,
+            "anchors": {
+              "dome": {
+                "x": 353.49436839778815,
+                "y": 299.87470171925617,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "calla_black",
+            "slot": 16,
+            "anchors": {
+              "dome": {
+                "x": 443.2864702525099,
+                "y": 485.25249031591903,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "mum_button_lime",
+            "slot": 17,
+            "anchors": {
+              "dome": {
+                "x": 231.01358357002422,
+                "y": 381.46836490359857,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "carnation_picotee",
+            "slot": 18,
+            "anchors": {
+              "dome": {
+                "x": 459.1375878003945,
+                "y": 313.3343805713346,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "mum_magenta",
+            "slot": 19,
+            "anchors": {
+              "dome": {
+                "x": 354.68830600427214,
+                "y": 518.5232530821706,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "mum_magenta",
+            "slot": 20,
+            "anchors": {
+              "dome": {
+                "x": 275.6824256798968,
+                "y": 289.3265104317164,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "carnation_picotee",
+            "slot": 21,
+            "anchors": {
+              "dome": {
+                "x": 491.08566778962916,
+                "y": 404.8054064288626,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "rose_fuchsia",
+            "slot": 22,
+            "anchors": {
+              "dome": {
+                "x": 259.154218478492,
+                "y": 476.89899524003556,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b24",
+            "id": "carnation_picotee",
+            "slot": 23,
+            "anchors": {
+              "dome": {
+                "x": 380.0284878936172,
+                "y": 259.7140751238368,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b25",
+            "id": "mum_magenta",
+            "slot": 24,
+            "anchors": {
+              "dome": {
+                "x": 406.37123215540197,
+                "y": 517.5618667622931,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b26",
+            "id": "alstroemeria_fuchsia",
+            "slot": 25,
+            "anchors": {
+              "dome": {
+                "x": 239.12704568569433,
+                "y": 328.76279303068685,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b27",
+            "id": "carnation_picotee",
+            "slot": 26,
+            "anchors": {
+              "dome": {
+                "x": 490.1740889488584,
+                "y": 351.01700076667373,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b28",
+            "id": "rose_fuchsia",
+            "slot": 27,
+            "anchors": {
+              "dome": {
+                "x": 303.79459993268307,
+                "y": 509.3899712587216,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b29",
+            "id": "carnation_picotee",
+            "slot": 28,
+            "anchors": {
+              "dome": {
+                "x": 323.4864729171897,
+                "y": 262.1262769379314,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b30",
+            "id": "mum_magenta",
+            "slot": 29,
+            "anchors": {
+              "dome": {
+                "x": 475.96381703036917,
+                "y": 452.9910361216673,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b31",
+            "id": "mum_magenta",
+            "slot": 30,
+            "anchors": {
+              "dome": {
+                "x": 234.46532849739498,
+                "y": 431.6655350805555,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b32",
+            "id": "carnation_picotee",
+            "slot": 31,
+            "anchors": {
+              "dome": {
+                "x": 429.2617886128135,
+                "y": 275.5259055097005,
+                "manual": true
+              }
+            }
+          }
+        ],
+        "frames": {
+          "dome": {
+            "mode": "dome",
+            "engine": "v2-fixed-slots",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 140.72465516542783,
+            "unit": 77.35087583687042,
+            "scale": 1,
+            "capacity": 32,
+            "rings": 0,
+            "top": 228.77372478908862,
+            "tip": 549.4636034169188,
+            "halfWidth": 169.76110570806435
+          }
+        },
+        "finishes": {
+          "paper": "black",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "none",
+          "sashText": "",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": 0,
+          "crown": false,
+          "greenRim": false,
+          "bow": false,
+          "pumpkin": false,
+          "pumpkinPosition": "right",
+          "pumpkinScale": 1,
+          "fillerCount": 0,
+          "fillerPattern": "scatter",
+          "greeneryCount": 0,
+          "initial": "",
+          "initialScale": 1,
+          "initialOffset": 0,
+          "decorations": [],
+          "spookyMask": false,
+          "spookyBow": false,
+          "ghostCount": 0,
+          "thistleCount": 0,
+          "studio": {
+            "v": 1,
+            "wrap": "round",
+            "referenceFillers": {
+              "hypericum_green": 3,
+              "bupleurum_lime": 3,
+              "stock_purple": 3
+            }
+          }
+        },
+        "title": "Midnight Orchard",
+        "note": "",
+        "template": {
+          "capacity": 32,
+          "palette": [
+            "rose_red"
+          ],
+          "formation": "patches",
+          "accent": {
+            "id": "lily",
+            "count": 0,
+            "pattern": "cluster",
+            "angle": 340
+          },
+          "zones": {
+            "wall": "rose_red",
+            "fill": "rose_red",
+            "center": "rose_red",
+            "formation": "zones",
+            "doubleWall": false
+          },
+          "overrides": {
+            "0": "rose_fuchsia",
+            "1": "carnation_picotee",
+            "2": "alstroemeria_fuchsia",
+            "3": "carnation_picotee",
+            "4": "rose_fuchsia",
+            "5": "hydrangea_lime",
+            "6": "carnation_picotee",
+            "7": "alstroemeria_fuchsia",
+            "8": "mum_red_daisy",
+            "9": "calla_black",
+            "10": "mum_button_lime",
+            "11": "mum_button_lime",
+            "12": "rose_fuchsia",
+            "13": "carnation_picotee",
+            "14": "hydrangea_lime",
+            "15": "calla_black",
+            "16": "calla_black",
+            "17": "mum_button_lime",
+            "18": "carnation_picotee",
+            "19": "mum_magenta",
+            "20": "mum_magenta",
+            "21": "carnation_picotee",
+            "22": "rose_fuchsia",
+            "23": "carnation_picotee",
+            "24": "mum_magenta",
+            "25": "alstroemeria_fuchsia",
+            "26": "carnation_picotee",
+            "27": "rose_fuchsia",
+            "28": "carnation_picotee",
+            "29": "mum_magenta",
+            "30": "mum_magenta",
+            "31": "carnation_picotee"
+          }
+        }
+      },
+      "cover": "/studio/assets/catalog/thumbs/midnight-orchard.webp"
+    },
+    {
+      "id": "midnight-orchard-classic",
+      "name": "Midnight Orchard · Classic",
+      "en": "Midnight Orchard · Classic",
+      "description": "Hand-tied wine and lime flowers in smoke-black paper, with upright black callas.",
+      "mode": "classic",
+      "preset": "fresh",
+      "counts": {
+        "alstroemeria_fuchsia": 3,
+        "calla_black": 2,
+        "mum_magenta": 4,
+        "rose_fuchsia": 3,
+        "hydrangea_lime": 2,
+        "mum_button_lime": 3,
+        "carnation_picotee": 5,
+        "mum_red_daisy": 1
+      },
+      "design": {
+        "version": 6,
+        "mode": "classic",
+        "seed": 11,
+        "nextId": 24,
+        "items": [
+          {
+            "uid": "b1",
+            "id": "alstroemeria_fuchsia",
+            "anchors": {
+              "classic": {
+                "x": 312.26,
+                "y": 249.24,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b2",
+            "id": "alstroemeria_fuchsia",
+            "anchors": {
+              "classic": {
+                "x": 368.68,
+                "y": 241.08,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b3",
+            "id": "alstroemeria_fuchsia",
+            "anchors": {
+              "classic": {
+                "x": 208.10000000000002,
+                "y": 314.52,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b4",
+            "id": "calla_black",
+            "anchors": {
+              "classic": {
+                "x": 427.27,
+                "y": 265.56,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b5",
+            "id": "calla_black",
+            "anchors": {
+              "classic": {
+                "x": 266.69,
+                "y": 304.32,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b6",
+            "id": "mum_magenta",
+            "anchors": {
+              "classic": {
+                "x": 488.03,
+                "y": 281.88,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b7",
+            "id": "mum_magenta",
+            "anchors": {
+              "classic": {
+                "x": 537.94,
+                "y": 351.24,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b8",
+            "id": "mum_magenta",
+            "anchors": {
+              "classic": {
+                "x": 331.79,
+                "y": 326.76,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b9",
+            "id": "mum_magenta",
+            "anchors": {
+              "classic": {
+                "x": 375.19,
+                "y": 502.2,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b10",
+            "id": "rose_fuchsia",
+            "anchors": {
+              "classic": {
+                "x": 342.64,
+                "y": 375.72,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b11",
+            "id": "rose_fuchsia",
+            "anchors": {
+              "classic": {
+                "x": 412.08,
+                "y": 359.4,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b12",
+            "id": "rose_fuchsia",
+            "anchors": {
+              "classic": {
+                "x": 399.06,
+                "y": 420.6,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b13",
+            "id": "hydrangea_lime",
+            "anchors": {
+              "classic": {
+                "x": 264.52,
+                "y": 465.48,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b14",
+            "id": "hydrangea_lime",
+            "anchors": {
+              "classic": {
+                "x": 464.15999999999997,
+                "y": 369.6,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b15",
+            "id": "mum_button_lime",
+            "anchors": {
+              "classic": {
+                "x": 227.63,
+                "y": 363.48,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b16",
+            "id": "mum_button_lime",
+            "anchors": {
+              "classic": {
+                "x": 496.71000000000004,
+                "y": 475.68,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b17",
+            "id": "mum_button_lime",
+            "anchors": {
+              "classic": {
+                "x": 440.28999999999996,
+                "y": 518.52,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b18",
+            "id": "carnation_picotee",
+            "anchors": {
+              "classic": {
+                "x": 171.21,
+                "y": 345.12,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b19",
+            "id": "carnation_picotee",
+            "anchors": {
+              "classic": {
+                "x": 171.21,
+                "y": 416.52,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b20",
+            "id": "carnation_picotee",
+            "anchors": {
+              "classic": {
+                "x": 214.60999999999999,
+                "y": 475.68,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b21",
+            "id": "carnation_picotee",
+            "anchors": {
+              "classic": {
+                "x": 329.62,
+                "y": 438.96,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b22",
+            "id": "carnation_picotee",
+            "anchors": {
+              "classic": {
+                "x": 546.62,
+                "y": 426.72,
+                "manual": true
+              }
+            }
+          },
+          {
+            "uid": "b23",
+            "id": "mum_red_daisy",
+            "anchors": {
+              "classic": {
+                "x": 479.35,
+                "y": 434.88,
+                "manual": true
+              }
+            }
+          }
+        ],
+        "frames": {
+          "classic": {
+            "mode": "classic",
+            "engine": "classic-gathered",
+            "center": {
+              "x": 360,
+              "y": 390
+            },
+            "radius": 230,
+            "unit": 68,
+            "scale": 1,
+            "origin": {
+              "x": 54,
+              "y": 0
+            },
+            "waist": {
+              "x": 360,
+              "y": 730
+            },
+            "rimY": 560
+          }
+        },
+        "finishes": {
+          "paper": "black",
+          "tint": "#dcc8b7",
+          "ribbon": "none",
+          "sash": "none",
+          "sashText": "",
+          "sashPlacement": "auto",
+          "sashOffset": 0,
+          "sashScale": 1,
+          "collar": true,
+          "butterfly": 0,
+          "crown": false,
+          "greenRim": false,
+          "bow": false,
+          "pumpkin": false,
+          "pumpkinPosition": "right",
+          "pumpkinScale": 1,
+          "fillerCount": 0,
+          "fillerPattern": "scatter",
+          "greeneryCount": 0,
+          "initial": "",
+          "initialScale": 1,
+          "initialOffset": 0,
+          "decorations": [
+            {
+              "id": "satin_black",
+              "x": -0.3,
+              "y": 0.15,
+              "scale": 1,
+              "rotation": 0,
+              "layer": "front"
+            }
+          ],
+          "spookyMask": false,
+          "spookyBow": false,
+          "ghostCount": 0,
+          "thistleCount": 0,
+          "studio": {
+            "v": 1,
+            "wrap": "smoke-upright",
+            "referenceFillers": {
+              "hypericum_green": 3,
+              "bupleurum_lime": 3,
+              "stock_purple": 2
+            }
+          }
+        },
+        "title": "Midnight Orchard · Classic",
+        "note": ""
+      },
+      "cover": "/studio/assets/catalog/thumbs/midnight-orchard-classic.webp"
     }
   ]
 }

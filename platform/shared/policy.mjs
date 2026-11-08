@@ -42,7 +42,7 @@ export function normalizePolicy(draft, catalog) {
       policy: null,
     };
   const preset = draft.preset || "fresh";
-  if (!["fresh", "satin"].includes(preset))
+  if (!["fresh", "satin", "mixed"].includes(preset))
     issues.push(
       issue("invalid_preset", "preset", "Choose fresh or satin flowers."),
     );
@@ -93,7 +93,7 @@ export function normalizePolicy(draft, catalog) {
         );
     }
     for (const row of rows)
-      if (!row.preset || row.preset === preset)
+      if (!row.preset || preset === "mixed" || row.preset === preset)
         policy[field][row.id] =
           Object.hasOwn(draft[field] || {}, row.id) &&
           cents(draft[field][row.id])
@@ -188,7 +188,44 @@ export function mapDesignIds(design, catalog, preset, direction = "runtime") {
   return out;
 }
 
+export function designPreset(design, catalog, fallback = "fresh") {
+  if (["fresh", "satin"].includes(design?.flowerType)) return design.flowerType;
+  const refs = [
+    ...(Array.isArray(design?.items) ? design.items : []).map(
+      (item) => item?.id,
+    ),
+    ...(Array.isArray(design?.template?.palette)
+      ? design.template.palette
+      : []),
+    design?.template?.accent?.id,
+    ...Object.values(design?.template?.zones || {}),
+    ...Object.values(design?.template?.overrides || {}),
+  ];
+  return (
+    catalog?.flowers?.find((row) => refs.includes(row.id))?.preset || fallback
+  );
+}
+
 function evaluate(design, draft, catalog, { allowUnpriced = false } = {}) {
+  const mixed = draft?.preset === "mixed";
+  if (mixed) {
+    const shopPolicy = normalizePolicy(draft, catalog);
+    if (!shopPolicy.ok)
+      return {
+        ok: false,
+        issues: shopPolicy.issues,
+        design: null,
+        pricing: null,
+      };
+    const preset = designPreset(design, catalog);
+    draft = {
+      ...draft,
+      preset,
+      enabledModes: shopPolicy.policy.enabledModes.filter(
+        (mode) => preset !== "satin" || mode !== "classic",
+      ),
+    };
+  }
   const normalized = normalizePolicy(draft, catalog),
     issues = [...normalized.issues],
     policy = normalized.policy;
@@ -355,7 +392,8 @@ function evaluate(design, draft, catalog, { allowUnpriced = false } = {}) {
     whiteSprays: "white_flower_spray",
   };
   const extraLines = calculated.extraLines.map((line) => {
-    const flowerId = sourceFlower[line.id];
+    const flowerId = sourceFlower[line.id] ||
+      (runtime.CAT[line.id]?.referenceFiller ? line.id : null);
     if (flowerId) {
       const row = runtimeFlowers.get(flowerId);
       checkFlower(row?.id, "finishes." + line.id, true, true);
@@ -428,7 +466,10 @@ function evaluate(design, draft, catalog, { allowUnpriced = false } = {}) {
   return {
     ok: issues.length === 0,
     issues,
-    design: mapDesignIds(canonical, catalog, policy.preset, "catalog"),
+    design: {
+      ...mapDesignIds(canonical, catalog, policy.preset, "catalog"),
+      ...(mixed ? { flowerType: policy.preset } : {}),
+    },
     pricing,
   };
 }

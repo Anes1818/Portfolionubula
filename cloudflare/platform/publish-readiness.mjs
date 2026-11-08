@@ -1,4 +1,4 @@
-import { entitled, validateDraft, validatePublication } from "./validation.mjs";
+import { entitled, publicationOffers, validateDraft, validatePublication } from "./validation.mjs";
 import {
   normalizePolicy,
   validateDesign,
@@ -52,16 +52,7 @@ export function publicationReport(shop, catalog, env = {}) {
         add(item.code, item.path, item.message, "/dashboard/prices");
     } else {
       const policy = normalized.policy;
-      const flowers = (catalog.flowers || []).filter(
-        (item) =>
-          (!item.preset || item.preset === draft.preset) &&
-          !policy.disabledFlowers.includes(item.id),
-      );
-      const extras = (catalog.extras || []).filter(
-        (item) =>
-          (!item.preset || item.preset === draft.preset) &&
-          !policy.disabledExtras.includes(item.id),
-      );
+      const { flowers, extras } = publicationOffers(catalog, policy);
       stats.offeredFlowers = flowers.length;
       stats.offeredExtras = extras.length;
       stats.pricedFlowers = flowers.filter((item) =>

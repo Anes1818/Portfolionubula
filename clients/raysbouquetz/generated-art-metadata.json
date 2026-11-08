@@ -346,5 +346,17 @@
     ],
     "centreAlpha": 253,
     "bytes": 2193068
+  },
+  {
+    "file": "foam-rose-white-v1.png",
+    "width": 512,
+    "height": 512,
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "centreAlpha": 255,
+    "bytes": 316182
   }
 ]

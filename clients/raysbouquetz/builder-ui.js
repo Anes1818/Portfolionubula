@@ -54,8 +54,8 @@ function refreshReview(){
  $('orderRecapPrice').textContent=money(p.totalCents);
  if(!$('saveDialog').open)return;
  const rows=[];function row(label,value){const a=document.createElement('span'),b=document.createElement('span');a.textContent=label;b.textContent=value;rows.push(a,b);}
- for(const l of p.lines)row(l.quantity+' × '+NebulaConfig.CAT[l.id].en,l.includedInBouquet?'Included in bouquet price':l.quoteRequired?'Ray’s quote':l.suppliedByCustomer?'Supplied by you':money(l.totalCents));
- for(const l of p.extraLines)row((l.quantity>1?l.quantity+' × ':'')+(l.label||NebulaI18n.en[l.id]||l.id),l.quoteRequired?'Ray’s quote':money(l.totalCents));
+ for(const l of p.lines)row(l.quantity+' × '+NebulaConfig.CAT[l.id].en,l.includedInBouquet?'Included in bouquet price':l.quoteRequired?'Shop quote':l.suppliedByCustomer?'Supplied by you':money(l.totalCents));
+ for(const l of p.extraLines)row((l.quantity>1?l.quantity+' × ':'')+(l.label||NebulaI18n.en[l.id]||l.id),l.quoteRequired?'Shop quote':money(l.totalCents));
  row(p.quoteRequired?'Known / starting amount':'Estimate',money(p.totalCents));
  if(p.range)row('Menu range, before variable quote extras',money(p.totalCents)+' – '+money(p.maxCents));
  row((p.payment.choice==='full'?'Full payment':'50% deposit')+(p.quoteRequired?' on starting amount':'')+' · preview',money(p.payment.dueCents));row('Balance at delivery · preview',money(p.payment.balanceCents));
@@ -72,7 +72,7 @@ function build(){
  const family=$('family');
  for(const [value,text]of [['foam','Foam roses'],['dahlia','Ribbon dahlias'],['plumeria','Ribbon plumerias'],['sunflower','Satin sunflowers'],['money','Folded notes']]){const o=document.createElement('option');o.value=value;o.textContent=text;family.append(o);}
  const money=document.createElement('details');money.id='rayMoney';money.className='ray-money';
- money.innerHTML='<summary>Money bouquets · CAD / USD</summary><div class="ray-money-fields"><label class="field"><span>Note currency</span><select id="rayCurrency"><option value="USD">USD notes</option><option value="CAD">CAD notes</option></select></label><label class="field"><span>Value per note</span><select id="rayDenomination"></select></label></div><label class="field ray-cash-supply"><span>Who supplies the cash?</span><select id="rayCashSupply"><option value="shop">Ray supplies it — add cash value</option><option value="customer">I supply it — cash value excluded</option></select></label><div class="ray-note-count"><label class="field"><span>Number of notes</span><input id="rayNoteCount" type="number" min="0" max="100" step="1" inputmode="numeric" value="20"></label><button type="button" id="rayUpdateNotes" class="button secondary small">Update notes</button></div><p id="rayCash" class="helper" aria-live="polite"></p><button id="rayPaintNotes" type="button" class="button secondary small">Choose folded note</button><p class="helper">One pictured fold represents one note. Artwork is illustrative; its printed value and colour do not change. The final estimate is always in CAD.</p><p id="rayRate" class="ray-rate"></p>';
+ money.innerHTML='<summary>Money bouquets · CAD / USD</summary><div class="ray-money-fields"><label class="field"><span>Note currency</span><select id="rayCurrency"><option value="USD">USD notes</option><option value="CAD">CAD notes</option></select></label><label class="field"><span>Value per note</span><select id="rayDenomination"></select></label></div><label class="field ray-cash-supply"><span>Who supplies the cash?</span><select id="rayCashSupply"><option value="shop">The shop supplies it — add cash value</option><option value="customer">I supply it — cash value excluded</option></select></label><div class="ray-note-count"><label class="field"><span>Number of notes</span><input id="rayNoteCount" type="number" min="0" max="100" step="1" inputmode="numeric" value="20"></label><button type="button" id="rayUpdateNotes" class="button secondary small">Update notes</button></div><p id="rayCash" class="helper" aria-live="polite"></p><button id="rayPaintNotes" type="button" class="button secondary small">Choose folded note</button><p class="helper">One pictured fold represents one note. Artwork is illustrative; its printed value and colour do not change. The final estimate is always in CAD.</p><p id="rayRate" class="ray-rate"></p>';
  $('panel-flowers').prepend(money);noteOptions(noteChoice);
  $('rayNoteCount').addEventListener('input',()=>$('rayNoteCount').setCustomValidity(''));
  for(const [id,event]of [['family','change'],['flowerSearch','input']])$(id).addEventListener(event,()=>queueMicrotask(decorateCatalog));
@@ -115,10 +115,10 @@ function render(s,lang,ready){
  refreshReview();
  $('rayPaymentAmount').textContent=(price.quoteRequired?'Preview on known amounts — ':'')+'Due now: '+M.money(price.payment.dueCents)+' CAD · Balance at delivery: '+M.money(price.payment.balanceCents)+' CAD.';
  $('rayCash').textContent=cash.length?cash.join(' · ')+(price.cashSupply==='customer'?' · You supply these notes; their face value is excluded from the amount payable.':' · Cash value is included.')+' CAD $80 styling includes wrapping and assembly.':'Choose a value, then paint folded notes into the existing flower slots.';
- const rate=B.policy.usdToCad;$('rayRate').textContent='TD cash-buying rate snapshot: USD $1 = CAD $'+(rate.numerator/rate.denominator).toFixed(4)+', dated '+rate.asOf.slice(0,10)+'. No extra exchange margin. Ray’s confirms the applicable rate with your quote.';
+ const rate=B.policy.usdToCad;$('rayRate').textContent='TD cash-buying rate snapshot: USD $1 = CAD $'+(rate.numerator/rate.denominator).toFixed(4)+', dated '+rate.asOf.slice(0,10)+'. No extra exchange margin. The shop confirms the applicable rate with your quote.';
  $('totalPrice').textContent=M.money(price.totalCents);
  document.querySelector('.summary-price>span').textContent=price.quoteRequired?'FROM · QUOTE REQUIRED · CAD':'PREVIEW ESTIMATE · CAD';
- $('saveDisclaimer').textContent=price.quoteRequired?'Known amounts / menu starting estimate only. '+price.missing.join('. ')+'. Final quote required.':'CAD estimate. Ray’s confirms availability, the cash rate and the final quote before payment.';
+ $('saveDisclaimer').textContent=price.quoteRequired?'Known amounts / menu starting estimate only. '+price.missing.join('. ')+'. Final quote required.':'CAD estimate. The shop confirms availability, the cash rate and the final quote before payment.';
  decorateCatalog();
  for(const card of document.querySelectorAll('[data-detail]'))if(B.policy.extrasCents[card.dataset.detail]===null)card.querySelector('small').textContent='Price varies · quote';
  const picked=NebulaConfig.CAT[NebulaApp.brush];if(picked&&(picked.priceCents===null||['dahlia','plumeria','sunflower'].includes(picked.family)))$('pickedPrice').textContent='Quoted with your bouquet';
@@ -131,7 +131,7 @@ function render(s,lang,ready){
   b.onclick=()=>edit(n=>{n.finishes.paper=value;n.finishes.tint='#b69aca';});return b;
  }));
  $('wrapPreview').src=B.wrapArt(s).url;$('wrapHeading').textContent=s.mode==='heart'?'Triangle heart wrapping':'Triangle dome wrapping';
- $('wrapCopy').textContent='Small layered triangles, inspired by Ray’s wrapping. Choose an available colour.';
+ $('wrapCopy').textContent='Small layered triangles, inspired by the shop’s wrapping. Choose an available colour.';
  $('customTintLabel').hidden=true;
  for(const id of ['autumnFinishes','halloweenFinishes','finishShortcuts','greenRimLabel','ribbonBlock','startingPanel'])$(id).hidden=true;
  $('language').closest('label').hidden=true;

@@ -10,6 +10,7 @@ export function activationInput(value) {
     "amountCents",
     "currency",
     "confirmed",
+    "reason",
   ]);
   requireValue(
     /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(
@@ -22,8 +23,8 @@ export function activationInput(value) {
     "A valid activation revision is required.",
   );
   requireValue(
-    ["extend", "suspend", "test"].includes(value.action),
-    "Choose activate/extend or suspend.",
+    ["extend", "suspend", "test", "grant"].includes(value.action),
+    "Choose paid activation, complimentary access or suspend.",
   );
   if (value.action === "extend") {
     requireValue(
@@ -36,7 +37,7 @@ export function activationInput(value) {
     );
     requireValue(
       /^[A-Z0-9-]{8,80}$/.test(value.paymentReference || ""),
-      "Enter the PayPal transaction reference, not an email or screenshot.",
+      "PayPal reference must contain 8–80 uppercase letters, digits or hyphens. Copy the actual transaction ID from PayPal.",
     );
   } else
     requireValue(
@@ -44,7 +45,18 @@ export function activationInput(value) {
         value.amountCents === undefined &&
         value.currency === undefined &&
         value.confirmed === undefined,
-      "Suspending access does not record a payment.",
+      "Non-payment access changes cannot record payment details.",
+    );
+  if (value.action === "grant") {
+    value.reason = text(value.reason, "Access reason", 200, true);
+    requireValue(
+      value.reason.length >= 5,
+      "Enter an access reason of at least 5 characters.",
+    );
+  } else
+    requireValue(
+      value.reason === undefined,
+      "An access reason applies only to complimentary access.",
     );
   return value;
 }
@@ -60,12 +72,27 @@ export async function activationRoutes(store, request) {
       "Manual activation is not available yet.",
       503,
     );
-    object(await readJson(request, 1024), "Activation request", []);
-    if (shop.activationRequest?.status !== "pending") {
+    const input = await readJson(request, 1024);
+    object(input, "Activation request", ["customDomainInterest"]);
+    requireValue(
+      input.customDomainInterest === undefined ||
+        typeof input.customDomainInterest === "boolean",
+      "Custom domain interest must be true or false.",
+    );
+    const current = store.shop();
+    const previous = current.activationRequest;
+    const pending = previous?.status === "pending";
+    const customDomainInterest = input.customDomainInterest === true;
+    if (!pending || (customDomainInterest && !previous.customDomainInterest)) {
       const next = {
-        ...shop,
-        activationRequest: { status: "pending", requestedAt: Date.now() },
-        summaryRevision: (shop.summaryRevision || shop.version) + 1,
+        ...current,
+        activationRequest: {
+          ...(pending
+            ? previous
+            : { status: "pending", requestedAt: Date.now() }),
+          ...(customDomainInterest ? { customDomainInterest: true } : {}),
+        },
+        summaryRevision: (current.summaryRevision || current.version) + 1,
       };
       sql.exec(
         "UPDATE shop SET data=? WHERE singleton=1",
@@ -104,6 +131,13 @@ export async function activationRoutes(store, request) {
       store.env.ENVIRONMENT === "test" &&
         store.env.SANDBOX_TEST_ACCESS === "true",
       "Test access is unavailable in this environment.",
+      403,
+    );
+  if (input.action === "grant")
+    requireValue(
+      store.env.ENVIRONMENT !== "test" &&
+        store.env.BILLING_TEST_MODE !== "true",
+      "Use isolated sandbox test access in this environment.",
       403,
     );
   const actor = text(
@@ -178,10 +212,13 @@ export async function activationRoutes(store, request) {
             testEnvironment: true,
             revision: input.revision + 1,
           }
-        : input.action === "extend"
+        : input.action === "extend" || input.action === "grant"
           ? {
               status: "active",
-              source: "manual_paypal",
+              source:
+                input.action === "grant"
+                  ? "admin_complimentary"
+                  : "manual_paypal",
               paidUntil: base + 30 * 86400000,
               testEnvironment: false,
               revision: input.revision + 1,
@@ -195,6 +232,7 @@ export async function activationRoutes(store, request) {
       ...current,
       subscription,
       activationRequest: {
+        ...current.activationRequest,
         status: input.action === "suspend" ? "suspended" : "resolved",
         updatedAt: at,
       },

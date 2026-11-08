@@ -1,5 +1,12 @@
 /* Tenant policy and persistence around the unchanged bouquet engines. */
-import { normalizePolicy, validateDesign, mapDesignIds } from "/policy.mjs";
+import {
+  normalizePolicy,
+  validateDesign,
+  mapDesignIds,
+  designPreset,
+} from "/policy.mjs";
+import { bouquetSlots, nextBouquetSlot } from "/bouquet-slots.mjs";
+import { demoShop, keepTrial, readTrial, clearTrial } from "/launch-demo.mjs";
 const $ = (id) => document.getElementById(id),
   clone = (value) => JSON.parse(JSON.stringify(value));
 const cents = (value) =>
@@ -16,7 +23,16 @@ let shop,
   saveButton,
   status,
   customer = false,
-  blank = false;
+  blank = false,
+  onboarding = false,
+  exploring = false;
+let requestedSlot = 0,
+  trying = false,
+  publicDemo = false;
+const designDraft = () =>
+  exploring
+    ? { ...shop.draft, disabledFlowers: [], disabledExtras: [] }
+    : shop.draft;
 const flower = (id) =>
   catalog.flowers.find(
     (row) => row.preset === policy.preset && (row.runtimeId || row.id) === id,
@@ -43,8 +59,10 @@ const extraAllowed = (id) => {
     (!customer || cents(policy.extrasCents[row.id]))
   );
 };
-const semantic = (state) =>
-  mapDesignIds(state, catalog, policy.preset, "catalog");
+const semantic = (state) => ({
+  ...mapDesignIds(state, catalog, policy.preset, "catalog"),
+  ...(shop?.draft.preset === "mixed" ? { flowerType: policy.preset } : {}),
+});
 function message(title, text, { login = false } = {}) {
   const host = $("platformBoot");
   host.hidden = false;
@@ -199,7 +217,7 @@ function configure(library, initial) {
   const assess = (s) => {
     if (!s || s.photographic)
       return { ok: false, restricted: true, reason: "unsupported" };
-    const r = validateDesign(semantic(s), d, catalog, {
+    const r = validateDesign(semantic(s), designDraft(), catalog, {
       allowUnpriced: !customer,
     });
     return {
@@ -301,6 +319,7 @@ function configure(library, initial) {
     const moneyNote = document.createElement("p");
     moneyNote.id = "platformMoneyPolicy";
     moneyNote.className = "helper";
+    moneyNote.hidden = publicDemo;
     moneyNote.textContent =
       "Folded notes use your florist’s price per note in " +
       d.currency +
@@ -351,6 +370,7 @@ function configure(library, initial) {
       ["cocoaBow", "bow"],
       ["fillerMore", "filler"],
       ["breathWrap", "filler"],
+      ["whiteBudMore", "whiteLilyBud"],
     ])
       toggle(id, extraAllowed(key));
     for (const [id, key] of [
@@ -369,28 +389,28 @@ function configure(library, initial) {
     if (breath && !extraAllowed("filler") && !breath.hidden)
       breath.hidden = true;
     if (policy.preset === "satin") {
+      const mode = window.NebulaApp?.state?.mode || initial.mode;
+      if (mode === "heart" && $("customTintLabel") && !$("customTintLabel").hidden)
+        $("customTintLabel").hidden = true;
       for (const id of [
         "autumnFinishes",
         "halloweenFinishes",
         "greenRimLabel",
         "ribbonChoices",
         "finishShortcuts",
-        "customTintLabel",
       ])
         if ($(id) && !$(id).hidden) $(id).hidden = true;
       for (const n of document.querySelectorAll("[data-paper]")) {
         const hidden =
-          !RayBuilder.wraps[window.NebulaApp?.state?.mode || initial.mode]?.[
-            n.dataset.paper
-          ];
+          !RayBuilder.wraps[mode]?.[n.dataset.paper];
         if (n.hidden !== hidden) n.hidden = hidden;
       }
       for (const option of $("sash")?.options || []) {
-        const hidden = !["none", "blank_blackband"].includes(option.value);
+        const hidden = !["none", "blank_blackband", "blank_champagne"].includes(option.value);
         if (option.hidden !== hidden) option.hidden = hidden;
       }
       if (
-        (window.NebulaApp?.state?.mode || initial.mode) === "dome" &&
+        mode === "dome" &&
         !document.querySelector('[data-paper="blush"]')
       ) {
         const pink = document.createElement("button");
@@ -426,7 +446,149 @@ function configure(library, initial) {
   restrict();
   return assess;
 }
+function demoToolbar() {
+  document.body.classList.add("public-builder-demo");
+  const css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = "/demo-studio.css";
+  document.head.append(css);
+  const bar = document.createElement("aside");
+  bar.className = "demo-studio-bar";
+  bar.innerHTML =
+    '<a href="/demo">← Choose a bouquet</a><span>DEMO · Sample prices · No real orders</span><button id="demoReview" type="button">Preview the request</button><button id="demoStartShop" type="button">Use this for my shop ↗</button><p id="demoFeedback" role="status"></p>';
+  materialSwitch();
+  document.body.prepend(bar);
+  const feedback = bar.querySelector("#demoFeedback");
+  const continueToShop = () => {
+    try {
+      const r = validateDesign(semantic(NebulaApp.state), shop.draft, catalog);
+      if (!r.ok || !r.design.items.length)
+        throw Error(
+          r.issues[0]?.message || "Add a flower before keeping this design.",
+        );
+      keepTrial(r.design, policy.preset);
+      location.assign(
+        "/login?mode=signup&returnTo=" +
+          encodeURIComponent("/dashboard/collection"),
+      );
+    } catch (e) {
+      feedback.textContent = e.message;
+    }
+  };
+  bar.querySelector("#demoStartShop").onclick = continueToShop;
+  bar.querySelector("#demoReview").onclick = async (event) => {
+    const trigger = event.currentTarget;
+    trigger.disabled = true;
+    try {
+      const snapshot = clone(NebulaApp.state);
+      const r = validateDesign(semantic(snapshot), shop.draft, catalog);
+      if (!r.ok || !r.design.items.length)
+        throw Error(
+          r.issues[0]?.message || "Add a flower to preview the request.",
+        );
+      await NebulaRenderer.awaitAssets(snapshot);
+      const image = NebulaRenderer.exportCanvas(
+        snapshot,
+        480,
+        480,
+        NebulaApp.lang,
+      ).toDataURL("image/jpeg", 0.8);
+      const esc = (value) =>
+        String(value).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const overlay = document.createElement("div");
+      overlay.className = "demo-review-overlay";
+      overlay.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="demoReviewTitle"><button type="button" class="demo-close" aria-label="Close demo request">×</button><p class="demo-kicker">EXAMPLE REQUEST · NOTHING IS SENT</p><h2 id="demoReviewTitle">The idea, ready to share.</h2><img src="${image}" alt="Your current bouquet design"><p>A florist receives the saved design, its contents and the customer’s contact and pickup or delivery details.</p><ul>${[...r.pricing.lines, ...r.pricing.extraLines].map((row) => `<li>${esc(row.quantity)} × ${esc(catalog.flowers.find((f) => f.id === row.id)?.en || catalog.extras.find((f) => f.id === row.id)?.label || row.id)}</li>`).join("")}</ul><p><strong>Sample estimate: ${esc(new Intl.NumberFormat("en", { style: "currency", currency: "USD" }).format(r.pricing.totalCents / 100))}</strong></p><p class="demo-muted">Your shop uses your approved prices. Text and WhatsApp requests let you confirm the details; Square checkout is optional when available. This demo creates no order or payment.</p><button type="button" data-demo-continue>Use this for my shop ↗</button></section>`;
+      const overflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const close = () => {
+        overlay.remove();
+        document.body.style.overflow = overflow;
+        document.removeEventListener("keydown", keydown);
+        trigger.focus();
+      };
+      const keydown = (event) => {
+        if (event.key === "Escape") close();
+        if (event.key !== "Tab") return;
+        const buttons = [...overlay.querySelectorAll("button")];
+        if (event.shiftKey && document.activeElement === buttons[0]) {
+          event.preventDefault();
+          buttons.at(-1).focus();
+        } else if (
+          !event.shiftKey &&
+          document.activeElement === buttons.at(-1)
+        ) {
+          event.preventDefault();
+          buttons[0].focus();
+        }
+      };
+      overlay.querySelector(".demo-close").onclick = close;
+      overlay.querySelector("[data-demo-continue]").onclick = continueToShop;
+      document.addEventListener("keydown", keydown);
+      document.body.append(overlay);
+      overlay.querySelector(".demo-close").focus();
+    } catch (e) {
+      feedback.textContent = e.message;
+    } finally {
+      trigger.disabled = false;
+    }
+  };
+  const browse = $("browseTemplates");
+  if (browse) {
+    browse.removeAttribute("data-i18n");
+    browse.href = "/demo";
+    browse.textContent = "Choose a bouquet";
+  }
+  const brand = document.querySelector(".brand");
+  if (brand) brand.href = "/";
+}
+function materialSwitch() {
+  const group = document.createElement("label");
+  group.className = "material-switch";
+  group.textContent = "Flower type";
+  const select = document.createElement("select");
+  select.id = "platformFlowerType";
+  select.setAttribute("aria-label", "Flower collection");
+  for (const [value, title] of [
+    ["fresh", "Fresh flowers"],
+    ["satin", "Satin flowers"],
+  ])
+    select.add(new Option(title, value, false, policy.preset === value));
+  select.onchange = () => {
+    const value = select.value;
+    if (value === policy.preset) return;
+    if (
+      NebulaApp.state.items.length &&
+      !confirm(
+        "Start a new " +
+          value +
+          " bouquet? This replaces the current demo design.",
+      )
+    ) {
+      select.value = policy.preset;
+      return;
+    }
+    const url = new URL(location.href);
+    url.hash = "";
+    for (const key of ["recipe", "template", "mode", "blank"])
+      url.searchParams.delete(key);
+    url.searchParams.set("flowers", value);
+    location.assign(url.href);
+  };
+  group.append(select);
+  $("panel-flowers").prepend(group);
+}
 function toolbar() {
+  if (publicDemo) return demoToolbar();
   const bar = document.createElement("aside");
   bar.className = "platform-bar";
   const back = document.createElement("a"),
@@ -434,13 +596,64 @@ function toolbar() {
   back.href = customer
     ? "/s/" + encodeURIComponent(shop.slug)
     : "/dashboard/collection?shop=" + encodeURIComponent(shop.id);
+  if (onboarding) back.href = "/s/" + encodeURIComponent(shop.slug);
   back.textContent = customer ? "← Back to the shop" : "← My collection";
+  if (onboarding) back.textContent = "← My shop preview";
   notice.textContent = customer
     ? "Your bouquet · " + shop.draft.name
     : "Owner preview · " +
       (card?.title || "New bouquet") +
       " · Orders and payments are disabled.";
+  if (onboarding)
+    notice.textContent =
+      "Build your bouquet · Your photo and prices come next · Private preview";
   bar.append(back, notice);
+  if (shop.draft.preset === "mixed") {
+    const label = document.createElement("label"),
+      select = document.createElement("select");
+    label.className = "material-switch";
+    label.textContent = "Flower type";
+    select.id = "platformFlowerType";
+    select.setAttribute("aria-label", "Flower collection");
+    for (const [value, name] of [
+      ["fresh", "Fresh flowers"],
+      ["satin", "Satin flowers"],
+    ]) {
+      if (
+        customer &&
+        !catalog.flowers.some(
+          (row) =>
+            row.preset === value &&
+            !shop.draft.disabledFlowers.includes(row.id) &&
+            cents(shop.draft.flowerPrices[row.id]),
+        )
+      )
+        continue;
+      select.add(new Option(name, value, false, value === policy.preset));
+    }
+    select.onchange = () => {
+      const next = select.value;
+      if (
+        NebulaApp.state.items.length &&
+        !confirm(
+          "Start a new " +
+            next +
+            " bouquet? Save your current bouquet first if you want to keep it.",
+        )
+      ) {
+        select.value = policy.preset;
+        return;
+      }
+      const url = new URL(location.href);
+      for (const key of ["card", "recipe", "template", "mode"])
+        url.searchParams.delete(key);
+      url.searchParams.set("blank", "1");
+      url.searchParams.set("flowers", next);
+      location.assign(url.href);
+    };
+    label.append(select);
+    $("panel-flowers").prepend(label);
+  }
   status = document.createElement("span");
   status.id = "platformSaveStatus";
   status.setAttribute("role", "status");
@@ -451,7 +664,9 @@ function toolbar() {
     request.id = "platformRequestOrder";
     request.className = "button primary small";
     request.textContent = shop.features?.requestsEnabled
-      ? "Request this bouquet"
+      ? shop.features?.checkoutEnabled
+        ? "Review & pay"
+        : "Request this bouquet"
       : "Online requests are not ready";
     request.disabled = !shop.features?.requestsEnabled;
     request.onclick = async () => {
@@ -465,11 +680,36 @@ function toolbar() {
         if (!r.ok) throw Error(r.issues[0].message);
         if (!r.design.items.length)
           throw Error("Add at least one flower first.");
+        const snapshot = clone(NebulaApp.state);
+        await NebulaRenderer.awaitAssets(snapshot);
+        const scene = NebulaRenderer.scene(snapshot),
+          bounds = NebulaRenderer.artBounds(snapshot, scene);
+        let preview;
+        for (const size of [480, 360, 280]) {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = size;
+          const ctx = canvas.getContext("2d"),
+            scale = Math.min((size - 24) / bounds.w, (size - 24) / bounds.h);
+          ctx.fillStyle = "#f7f3eb";
+          ctx.fillRect(0, 0, size, size);
+          ctx.translate(
+            (size - bounds.w * scale) / 2 - bounds.x * scale,
+            (size - bounds.h * scale) / 2 - bounds.y * scale,
+          );
+          ctx.scale(scale, scale);
+          NebulaRenderer.drawArt(ctx, snapshot, { scene });
+          // Art only: no stale estimated-price or "no order placed" export footer.
+          preview = canvas.toDataURL("image/jpeg", 0.76);
+          if (preview.length <= 100000) break;
+        }
+        if (preview.length > 100000)
+          throw Error("The bouquet preview is too large. Please try again.");
         const { openOrderRequest } = await import("/order-ui.js");
         await openOrderRequest({
           shop,
           kind: "design",
           design: r.design,
+          previewImage: preview,
           ...(card ? { cardId: card.id } : {}),
         });
       } catch (e) {
@@ -519,6 +759,11 @@ function toolbar() {
       title.maxLength = 80;
       title.placeholder = "Bouquet name";
       title.value = "Custom bouquet";
+      if (onboarding) {
+        title.value =
+          "My bouquet " + (requestedSlot || shop.draft.collection.length + 1);
+        title.hidden = true;
+      }
       title.setAttribute("aria-label", "Bouquet name");
       const target = document.createElement("select");
       target.id = "platformSaveTarget";
@@ -547,12 +792,15 @@ function toolbar() {
         target.append(option);
       }
       bar.append(title, target);
+      if (onboarding) target.hidden = true;
     }
     saveButton = document.createElement("button");
     saveButton.id = "platformSaveCollection";
     saveButton.type = "button";
     saveButton.className = "button primary small";
-    saveButton.textContent = "Save to my collection";
+    saveButton.textContent = onboarding
+      ? "Next: photo & prices →"
+      : "Save to my collection";
     saveButton.onclick = save;
     bar.append(saveButton);
     const cover = document.createElement("button");
@@ -563,8 +811,17 @@ function toolbar() {
     cover.disabled = !card?.design;
     cover.onclick = useDesignCover;
     bar.append(cover);
+    if (onboarding) cover.hidden = true;
   }
   bar.append(status);
+  if (trying) {
+    notice.textContent =
+      "Customer preview · Try customising this recipe. Your saved bouquet stays unchanged.";
+    for (const node of bar.querySelectorAll(
+      "input,select,#platformSaveCollection,#platformUseDesignCover",
+    ))
+      node.hidden = true;
+  }
   document.body.prepend(bar);
   if (blank && !customer) saveButton.disabled = !$("platformSaveTarget").value;
   const browse = $("browseTemplates");
@@ -581,9 +838,14 @@ async function save() {
   saveButton.disabled = true;
   status.textContent = "Saving your exact bouquet design…";
   try {
-    const r = validateDesign(semantic(NebulaApp.state), shop.draft, catalog, {
-      allowUnpriced: true,
-    });
+    const r = validateDesign(
+      semantic(NebulaApp.state),
+      designDraft(),
+      catalog,
+      {
+        allowUnpriced: true,
+      },
+    );
     if (!r.ok)
       throw Error(r.issues[0]?.message || "Review your design before saving.");
     if (!r.design.items.length)
@@ -597,8 +859,14 @@ async function save() {
       if (id === "__new") {
         if (draft.collection.length >= 6)
           throw Error("All six collection slots are full.");
+        if (requestedSlot && bouquetSlots(draft.collection)[requestedSlot - 1])
+          throw Error(
+            "This slot is already filled. Return to your bouquets to edit it.",
+          );
         target = {
-          id: "bouquet-" + crypto.randomUUID(),
+          id: requestedSlot
+            ? "bouquet-slot-" + requestedSlot
+            : "bouquet-" + crypto.randomUUID(),
           title,
           recipeId: null,
           design: null,
@@ -623,6 +891,20 @@ async function save() {
         "This card was removed. Download your design before returning to your collection.",
       );
     target.design = r.design;
+    if (exploring) {
+      const flowers = new Set(r.pricing.lines.map((row) => row.id));
+      const extras = new Set();
+      for (const row of r.pricing.extraLines)
+        (row.source === "flower" ? flowers : extras).add(row.id);
+      draft.disabledFlowers = draft.disabledFlowers.filter(
+        (id) => !flowers.has(id),
+      );
+      draft.disabledExtras = draft.disabledExtras.filter(
+        (id) => !extras.has(id),
+      );
+    }
+    if (!draft.home.sections.includes("custom"))
+      draft.home.sections.unshift("custom");
     const id = target.id;
     const result = await session.api(
       "/api/shops/" + encodeURIComponent(shop.id) + "/draft",
@@ -637,6 +919,7 @@ async function save() {
         "The save could not be confirmed. Your design remains in this browser.",
       );
     shop = result.shop;
+    if (new URLSearchParams(location.search).get("trial") === "1") clearTrial();
     card = shop.draft.collection.find((row) => row.id === id);
     blank = false;
     for (const id of ["platformCardTitle", "platformSaveTarget"])
@@ -644,12 +927,35 @@ async function save() {
     const url = new URL(location.href);
     url.searchParams.delete("blank");
     url.searchParams.delete("new");
+    url.searchParams.delete("slot");
+    url.searchParams.delete("trial");
     url.searchParams.set("card", id);
     history.replaceState(null, "", url);
     status.textContent = "Saved to your collection.";
     NebulaPlatformStudio.version = shop.version;
     NebulaPlatformStudio.cardId = id;
     $("platformUseDesignCover").disabled = false;
+    if (onboarding && !trying) {
+      const { finishBouquet } = await import("/owner-onboarding.js");
+      const completed = await finishBouquet({
+        shop,
+        cardId: id,
+        catalog,
+        api: session.api,
+        makeDesignPhoto: () => designPhotoBlob(clone(NebulaApp.state)),
+      });
+      if (completed) {
+        shop = completed;
+        location.assign(
+          "/s/" +
+            encodeURIComponent(shop.slug) +
+            "?created=" +
+            encodeURIComponent(id),
+        );
+      } else
+        status.textContent =
+          "Your design is saved. Choose Next whenever you’re ready to add its photo and prices.";
+    }
     return true;
   } catch (e) {
     if (e.status === 409 || e.statusCode === 409) {
@@ -680,27 +986,7 @@ async function useDesignCover() {
   saveButton.disabled = true;
   status.textContent = "Creating a photo from your saved design…";
   try {
-    await NebulaRenderer.awaitAssets(snapshot);
-    let blob;
-    for (const size of [720, 600, 480]) {
-      const canvas = NebulaRenderer.exportCanvas(
-        snapshot,
-        size,
-        size,
-        NebulaApp.lang,
-      );
-      for (const quality of [0.86, 0.7, 0.52]) {
-        blob = await new Promise((resolve) =>
-          canvas.toBlob(resolve, "image/webp", quality),
-        );
-        if (blob && blob.size <= 150 * 1024) break;
-      }
-      if (blob && blob.size <= 150 * 1024) break;
-    }
-    if (!blob || blob.size > 150 * 1024)
-      throw Error(
-        "This preview is too large. Upload a compressed cover photo from your collection instead.",
-      );
+    const blob = await designPhotoBlob(snapshot);
     const index = shop.draft.collection.findIndex((row) => row.id === cardId);
     if (index < 0)
       throw Error("This bouquet was removed. Reopen your current collection.");
@@ -739,9 +1025,33 @@ async function useDesignCover() {
     button.disabled = saveButton.disabled || !card?.design;
   }
 }
+async function designPhotoBlob(snapshot) {
+  await NebulaRenderer.awaitAssets(snapshot);
+  for (const size of [720, 600, 480]) {
+    const canvas = NebulaRenderer.exportCanvas(
+      snapshot,
+      size,
+      size,
+      NebulaApp.lang,
+    );
+    for (const quality of [0.86, 0.7, 0.52]) {
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/webp", quality),
+      );
+      if (blob && blob.size <= 150 * 1024) return blob;
+    }
+  }
+  throw Error(
+    "This preview is too large. Choose your own compressed bouquet photo instead.",
+  );
+}
 async function branding(d) {
   const key = "assets/brand/owner-logo.webp";
-  if (d.logoMediaId) {
+  if (publicDemo) {
+    window.NEBULA_EMBED = {
+      [key]: location.origin + "/assets/nebula-logo.jpg",
+    };
+  } else if (d.logoMediaId) {
     const headers = customer
         ? {}
         : { Authorization: "Bearer " + (await session.token()) },
@@ -790,13 +1100,23 @@ async function boot() {
     slug = q.get("slug"),
     cardId = q.get("card");
   let id = q.get("shop");
+  // A demo can never be combined with a tenant identifier or customer slug.
+  publicDemo = q.get("demo") === "1" && !id && !slug && !cardId;
+  let trial = null;
   customer = !!slug;
   blank = q.get("blank") === "1" || q.get("new") === "1";
+  onboarding = !customer && q.get("onboarding") === "1";
+  trying = !customer && q.get("try") === "1";
+  requestedSlot =
+    !customer && /^[1-6]$/.test(q.get("slot") || "")
+      ? Number(q.get("slot"))
+      : 0;
+  exploring = !customer && (onboarding || blank);
   if (
     (id && !/^[A-Za-z0-9_-]{1,60}$/.test(id)) ||
     (slug && !/^[a-z0-9-]{3,48}$/.test(slug)) ||
-    (!customer && !id) ||
-    (!blank && !cardId && !q.get("recipe"))
+    (!customer && !id && !publicDemo) ||
+    (!blank && !cardId && !q.get("recipe") && !publicDemo)
   )
     return message(
       "Choose a bouquet first",
@@ -804,7 +1124,21 @@ async function boot() {
     );
   catalog = await json("../catalog.json");
   let result;
-  if (customer) {
+  if (publicDemo) {
+    const preset = q.get("flowers") === "satin" ? "satin" : "fresh";
+    id = "nebula-demo";
+    result = { shop: demoShop(catalog, preset) };
+    blank = q.get("blank") === "1";
+    onboarding = trying = exploring = false;
+    requestedSlot = 0;
+    if (
+      !blank &&
+      !catalog.recipes.some(
+        (row) => row.id === q.get("recipe") && row.preset === preset,
+      )
+    )
+      q.set("recipe", preset === "satin" ? "satin-pink-heart" : "pink-promise");
+  } else if (customer) {
     const r = await fetch("/api/public/shops/" + encodeURIComponent(slug), {
       credentials: "omit",
       cache: "no-store",
@@ -824,6 +1158,39 @@ async function boot() {
     result = await session.api("/api/shops/" + encodeURIComponent(id));
   }
   shop = verify(result.shop, id);
+  if (!publicDemo && !customer && blank && q.get("trial") === "1") {
+    const pending = readTrial();
+    if (pending && [pending.preset, "mixed"].includes(shop.draft.preset)) {
+      const checked = validateDesign(
+        pending.design,
+        {
+          ...shop.draft,
+          preset: pending.preset,
+          disabledFlowers: [],
+          disabledExtras: [],
+          enabledModes: shop.draft.enabledModes.filter(
+            (mode) => pending.preset !== "satin" || mode !== "classic",
+          ),
+        },
+        catalog,
+        { allowUnpriced: true },
+      );
+      if (checked.ok) {
+        trial = { preset: pending.preset, design: checked.design };
+        q.set("flowers", pending.preset);
+      }
+    }
+  }
+  if (!customer && blank && !requestedSlot)
+    requestedSlot = nextBouquetSlot(shop.draft.collection);
+  if (
+    blank &&
+    requestedSlot &&
+    bouquetSlots(shop.draft.collection)[requestedSlot - 1]
+  )
+    throw Error(
+      "This bouquet slot is already filled. Return to your collection to edit its recipe.",
+    );
   card = shop.draft.collection.find((row) => row.id === cardId);
   if (cardId && !card)
     return message(
@@ -832,11 +1199,73 @@ async function boot() {
     );
   if (customer && card?.available === false)
     throw Error("This bouquet is currently unavailable.");
-  const d = shop.draft,
-    library = catalog.recipes.filter(
-      (row) =>
-        row.preset === d.preset && policy.enabledModes.includes(row.mode),
+  let selectedPreset = shop.draft.preset;
+  if (selectedPreset === "mixed") {
+    const savedDesign =
+      card?.design ||
+      catalog.recipes.find(
+        (row) => row.id === (card?.recipeId || q.get("recipe")),
+      )?.design;
+    selectedPreset = savedDesign
+      ? designPreset(savedDesign, catalog)
+      : q.get("flowers");
+    if (!["fresh", "satin"].includes(selectedPreset)) {
+      message(
+        "What would you like to create?",
+        "Choose your flowers to open the matching bouquet builder.",
+      );
+      const host = $("platformBoot");
+      for (const [type, label] of [
+        ["fresh", "Fresh flowers"],
+        ["satin", "Satin flowers"],
+      ]) {
+        if (
+          type === "satin" &&
+          !shop.draft.enabledModes.some((mode) =>
+            ["dome", "heart"].includes(mode),
+          )
+        )
+          continue;
+        if (
+          customer &&
+          !catalog.flowers.some(
+            (row) =>
+              row.preset === type &&
+              !shop.draft.disabledFlowers.includes(row.id) &&
+              cents(shop.draft.flowerPrices[row.id]),
+          )
+        )
+          continue;
+        const link = document.createElement("a"),
+          url = new URL(location.href);
+        url.searchParams.set("flowers", type);
+        link.href = url.href;
+        link.textContent = label + " →";
+        link.className = "button";
+        link.style.margin = "16px";
+        host.append(link);
+      }
+      return;
+    }
+  }
+  const d = {
+    ...shop.draft,
+    ...(exploring ? { disabledFlowers: [], disabledExtras: [] } : {}),
+    preset: selectedPreset,
+    enabledModes: shop.draft.enabledModes.filter(
+      (mode) => selectedPreset !== "satin" || mode !== "classic",
+    ),
+  };
+  const selectedPolicy = normalizePolicy(d, catalog);
+  if (!selectedPolicy.ok)
+    throw Error(
+      selectedPolicy.issues[0]?.message ||
+        "This flower collection is unavailable.",
     );
+  policy = selectedPolicy.policy;
+  const library = catalog.recipes.filter(
+    (row) => row.preset === d.preset && policy.enabledModes.includes(row.mode),
+  );
   window.NEBULA_SHOP = {
     id: "platform-" + id.replaceAll("_", "-").toLowerCase(),
     name: d.name.trim(),
@@ -872,13 +1301,17 @@ async function boot() {
       ? "satin/runtime-manifest.json"
       : "runtime-manifest.json",
   );
-  for (const file of manifest.scripts) await script(file);
+  // async=false preserves execution order while all files download concurrently.
+  await Promise.all(manifest.scripts.map(script));
   if (d.preset === "satin") {
     const price = NebulaModel.price;
-    await script("satin/runtime-data.js");
+    const [delivery] = await Promise.all([
+      json("satin/art-delivery.json"),
+      script("satin/runtime-data.js"),
+    ]);
     for (const file of Object.keys(RAY_ART))
       window.NEBULA_EMBED["art/" + file] = new URL(
-        "satin/art/" + file,
+        "satin/art/" + (delivery[file] || file),
         import.meta.url,
       ).href;
     await script("satin/builder-runtime.js");
@@ -888,8 +1321,13 @@ async function boot() {
     css.href = "satin/builder-theme.css";
     document.head.append(css);
   }
+  const polish = document.createElement("link");
+  polish.rel = "stylesheet";
+  polish.href = "/builder-polish.css";
+  document.head.append(polish);
   let initial;
-  if (blank)
+  if (trial) initial = mapDesignIds(trial.design, catalog, trial.preset);
+  else if (blank)
     initial = newDesign(
       policy.enabledModes.includes(q.get("mode"))
         ? q.get("mode")
@@ -912,6 +1350,27 @@ async function boot() {
   }
   if (!configure(library, initial)(initial).ok)
     throw Error("This bouquet uses an unavailable catalogue option.");
+  if (publicDemo) {
+    Object.assign(NebulaI18n.en, {
+      studio: "TRY THE BOUQUET BUILDER",
+      demoEstimate: "DEMO · SAMPLE PRICES",
+      sampleShort: "sample",
+      separateHint: "Change a flower or colour, then preview the request.",
+      priceDisclaimer: "Sample prices in USD. No order or payment is created.",
+      saveHint:
+        "Use this for my shop keeps your design in this tab while you create your account.",
+    });
+    Object.assign(NebulaI18n.es, {
+      studio: "PRUEBA EL CREADOR DE RAMOS",
+      demoEstimate: "DEMO · PRECIOS DE EJEMPLO",
+      sampleShort: "ejemplo",
+      separateHint: "Cambia una flor o un color y revisa la solicitud.",
+      priceDisclaimer:
+        "Precios de ejemplo en USD. No se crea ningún pedido ni pago.",
+      saveHint:
+        "Tu diseño se conserva en esta pestaña mientras creas tu cuenta.",
+    });
+  }
   const url = new URL(location.href);
   url.searchParams.delete("saved");
   url.searchParams.set("template", "platform-card");
@@ -926,7 +1385,7 @@ async function boot() {
     preview: !customer,
     design: () => semantic(NebulaApp.state),
     price: () =>
-      validateDesign(semantic(NebulaApp.state), shop.draft, catalog, {
+      validateDesign(semantic(NebulaApp.state), designDraft(), catalog, {
         allowUnpriced: !customer,
       }).pricing,
   };

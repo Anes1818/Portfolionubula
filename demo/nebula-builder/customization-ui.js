@@ -9,7 +9,7 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
  const flowers=$('panel-flowers'),finish=$('panel-finishing');
  const fillers=section('flowerFillers','Finishing flowers',flowers);flowers.insertBefore(fillers,$('flowerGrid'));
  const title=el('strong','breathHeading');title.textContent='Baby’s breath';fillers.append(title,el('div','breathLevels','custom-segments'));
- for(let i=0;i<4;i++){const b=el('button');b.type='button';b.dataset.breath=i;b.onclick=()=>edit(s=>{studio(s).breath=i;delete studio(s).breathStems;s.finishes.fillerCount=0;});$('breathLevels').append(b);}
+ for(let i=0;i<4;i++){const b=el('button');b.type='button';b.dataset.breath=i;b.onclick=()=>edit(s=>{studio(s).breath=i;delete studio(s).breathStems;studio(s).edge=false;s.finishes.fillerCount=0;for(const key of ['positions','placements'])for(const id of Object.keys(studio(s)[key]||{}))if(id.startsWith('air-'))delete studio(s)[key][id];});$('breathLevels').append(b);}
  const row=el('div',null,'toggle-row'),label=el('span','whiteSprayHeading'),step=el('span',null,'stepper');row.append(label,step);
  for(const [id,delta] of [['whiteSprayLess',-1],['whiteSprayMore',1]]){const b=el('button',id);b.type='button';b.textContent=delta<0?'−':'+';b.setAttribute('aria-label',delta<0?'Fewer white flowering accents':'More white flowering accents');b.onclick=()=>edit(s=>{const o=studio(s);o.sprays=Math.max(0,Math.min(8,(o.sprays||0)+delta));});step.append(b);if(delta<0)step.append(el('output','whiteSprayCount'));}
  fillers.append(row,el('small','fillerCost','helper'));g.NebulaFillerOptions?.buildControls(fillers);
@@ -26,7 +26,7 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
  const small=section('smallAccents','Small details',finish);small.append(document.querySelector('.finish-toggles'));
  const edge=section('edgeFinishing','Around the bouquet',finish);edge.append($('greenRimLabel'));
  fillers.append($('greeneryCount').closest('.toggle-row'));
- const edgeLabel=el('label',null,'autumn-toggle'),check=el('input','breathWrap');check.type='checkbox';const words=el('span','breathWrapLabel');edgeLabel.append(words,check);edge.append(edgeLabel);check.onchange=()=>edit(s=>{studio(s).edge=check.checked;});
+ const edgeLabel=el('label',null,'autumn-toggle'),check=el('input','breathWrap');check.type='checkbox';const words=el('span','breathWrapLabel');edgeLabel.append(words,check);edge.append(edgeLabel);edgeLabel.hidden=true;check.onchange=()=>edit(s=>{studio(s).edge=check.checked;});
  const gift=$('chocolateBox')?.closest('label');if(gift){const sec=section('simpleGifts','Gift to accompany your bouquet',finish);sec.append(gift);}
  // Keep existing controls/handlers for old state; remove duplicate customer paths.
  for(const id of ['autumnFinishes','ribbonBlock','finishShortcuts'])$(id).classList.add('superseded-control');
@@ -36,14 +36,14 @@ function build(){if(built||!$('panel-flowers'))return;built=true;document.body.c
 function render(s,lang,ready){build();if(!built)return;const o=s.finishes.studio||{},level=U.level(s),es=lang==='es';
  const hide=['roseArtworkControl','sunflowerArtworkControl'];for(const id of hide)if($(id))$(id).hidden=true;
  $('flowerFillers').querySelector('h3').textContent=text('Filler flowers','Flores de relleno',lang);$('breathHeading').textContent=text('Baby’s breath','Paniculata',lang);
- for(const b of $('breathLevels').children){const i=+b.dataset.breath;b.textContent=(es?['Ninguna','Ligera','Media','Abundante']:['None','Light','Medium','Full'])[i];b.setAttribute('aria-pressed',String(i===level));b.disabled=!ready;}
+ for(const b of $('breathLevels').children){const i=+b.dataset.breath;b.textContent=(es?['Sin','Mini','Media','Completa']:['Off','Mini','Mid','Full'])[i];b.setAttribute('aria-pressed',String(i===level));b.disabled=!ready;}
  $('whiteSprayHeading').textContent=text('White flowering accents','Ramas de flores blancas',lang);$('whiteSprayCount').textContent=o.sprays||0;$('whiteSprayLess').disabled=!ready||!o.sprays;$('whiteSprayMore').disabled=!ready||(o.sprays||0)>=8;
  $('whiteSprayLess').setAttribute('aria-label',text('Fewer white flowering accents','Menos ramas blancas',lang));$('whiteSprayMore').setAttribute('aria-label',text('More white flowering accents','Más ramas blancas',lang));
  $('thistleCountRow').hidden=true;
  const legacy=s.items.filter(n=>n.id==='white_flower_spray').length,convertible=Math.min(legacy,8-(o.sprays||0));$('convertLegacySprays').hidden=!legacy;$('convertLegacySprays').textContent=text('Move '+convertible+' existing white sprays out of flower slots','Convertir '+convertible+' ramas existentes en relleno',lang);
  $('convertLegacySprays').disabled=(o.sprays||0)>=8;
  const cost=U.extras(s).filter(n=>n.id!=='breathBorder').reduce((t,n)=>t+n.totalCents,0);
- $('fillerCost').textContent=text('Light: a few airy sprigs. Medium: fuller branches between flowers. Full: abundant blossom clusters. ','Ligera: unas ramitas. Media: más ramas entre las flores. Abundante: más grupos de flores. ',lang)+NebulaModel.money(cost,lang)+text(' sample total',' total de muestra',lang);
+ $('fillerCost').textContent=NebulaModel.money(cost,lang)+text(' sample total',' total de muestra',lang);
  const chosen=U.style(s);$('wrapStyleChoices').replaceChildren(...U.wraps[s.mode].map(id=>{const b=el('button');b.type='button';b.textContent=U.wrapNames[id][es?1:0];b.dataset.wrapStyle=id;b.setAttribute('aria-pressed',String(id===chosen));b.onclick=()=>edit(n=>{studio(n).wrap=id;n.finishes.collar=true;n.finishes.paper=['fan','round','heart'].includes(id)?'black':'ivory';});return b;}));
  $('wrapStyles').querySelector('h3').textContent=text('Paper shape','Forma del papel',lang);$('collarToggleLabel').hidden=false;
  const p=U.paper(s,s.frames[s.mode]);if(p){$('wrapPreview').src=NebulaRenderer.source(p.back.url);$('wrapHeading').textContent=U.wrapNames[chosen][es?1:0];}

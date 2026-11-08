@@ -103,7 +103,7 @@ const { chromium } = require("playwright");
       .click();
     await page
       .getByRole("status")
-      .filter({ hasText: "Enter the PayPal reference" })
+      .filter({ hasText: "PayPal reference must contain 8–80" })
       .waitFor();
     assert.equal(await page.evaluate(() => qa.calls.length), 0);
     await page.locator('input[name="reference"]').fill("PAYPAL-TEST-0001");
@@ -159,6 +159,28 @@ const { chromium } = require("playwright");
     assert.deepEqual(calls[0], calls[1]);
     assert.deepEqual(calls[1], calls[2]);
     assert.equal(await page.evaluate(() => qa.changes), 1);
+    await page.locator(".complimentary-access summary").click();
+    await page
+      .getByRole("button", { name: "Grant 30 days · no payment" })
+      .click();
+    await page
+      .getByRole("status")
+      .filter({ hasText: "Enter an access reason" })
+      .waitFor();
+    assert.equal(await page.evaluate(() => qa.calls.length), 3);
+    await page.locator('input[name="reason"]').fill("Own shop trial");
+    await page
+      .getByRole("button", { name: "Grant 30 days · no payment" })
+      .click();
+    await page
+      .getByRole("status")
+      .filter({ hasText: "Complimentary access activated" })
+      .waitFor();
+    const complimentary = await page.evaluate(() => qa.calls.at(-1));
+    assert.equal(complimentary.action, "grant");
+    assert.equal(complimentary.reason, "Own shop trial");
+    assert.equal(complimentary.paymentReference, undefined);
+    assert.equal(complimentary.amountCents, undefined);
     // A late completion must not render into a different merchant's panel.
     await page.evaluate(async () => {
       const { mountActivationAdmin } = await import("/manual-ui.js");

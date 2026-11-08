@@ -21,6 +21,13 @@ const SCOPES = Object.freeze([
 ]);
 const TEN_MINUTES = 10 * 60000,
   SIX_DAYS = 6 * 86400000;
+const MARKET_COUNTRIES = Object.freeze({
+  USD: ["US"],
+  CAD: ["CA"],
+  GBP: ["GB"],
+  AUD: ["AU"],
+  EUR: ["EU", "IE", "FR", "ES", "DE", "IT", "NL", "BE", "AT", "PT", "FI"],
+});
 const tokenString = (value) =>
   typeof value === "string" && /^[A-Za-z0-9_-]{43}$/.test(value);
 const identifier = (value) =>
@@ -29,9 +36,12 @@ const plain = (value) =>
   !!value && typeof value === "object" && !Array.isArray(value);
 const clone = (value) => (value == null ? value : structuredClone(value));
 const fail = (message, status = 503) => new HttpError(status, message);
-const providerFailure = () =>
+const providerFailure = (stage, timedOut = false) =>
   fail(
-    "Square is temporarily unavailable. No connection change was confirmed.",
+    (timedOut ? "Square timed out" : "Square could not be reached") +
+      " during " +
+      stage +
+      ". Start a fresh connection and try again. No connection change was confirmed.",
   );
 
 function safeCallback(value) {
@@ -128,6 +138,10 @@ export function createSquareConnectionService(
     c.environment === "production"
       ? "https://connect.squareup.com"
       : "https://connect.squareupsandbox.com";
+  const OAUTH =
+    c.environment === "production"
+      ? "https://connect.squareup.com"
+      : "https://app.squareupsandbox.com";
   const COOKIE = "__Host-nebula-square-" + c.environment;
   const configured = () => {
     try {
@@ -163,9 +177,8 @@ export function createSquareConnectionService(
       404,
     );
     requireValue(
-      (ctx.country === "CA" && ctx.currency === "CAD") ||
-        (ctx.country === "US" && ctx.currency === "USD"),
-      "Square requires an approved Canadian CAD or US USD shop market.",
+      MARKET_COUNTRIES[ctx.currency]?.includes(ctx.country),
+      "Square requires an approved USD, CAD, GBP, EUR, or AUD shop market.",
       409,
     );
     return ctx;
@@ -237,12 +250,22 @@ export function createSquareConnectionService(
     path,
     { method = "GET", body, token, revoke = false } = {},
   ) {
+    // Labels come from our fixed operations; never expose provider exception
+    // text, request bodies, authorization codes or credentials in diagnostics.
+    const stage =
+      path === "/v2/locations"
+        ? "seller location verification"
+        : path === "/oauth2/revoke"
+          ? "authorization revocation"
+          : body?.grant_type === "refresh_token"
+            ? "authorization renewal"
+            : "authorization code exchange";
     const controller = new AbortController();
     let timer;
     const deadline = new Promise((_, reject) => {
       timer = setTimeout(() => {
         controller.abort();
-        reject(providerFailure());
+        reject(providerFailure(stage, true));
       }, timeoutMs);
     });
     const work = (async () => {
@@ -250,7 +273,10 @@ export function createSquareConnectionService(
       try {
         response = await fetchImpl(API + path, {
           method,
-          redirect: "error",
+          // Workers rejects redirect:"error" before sending the request.
+          // Return redirects without following them; response.ok below rejects
+          // every 3xx, so credentials never follow a Location header.
+          redirect: "manual",
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
@@ -264,7 +290,7 @@ export function createSquareConnectionService(
           ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         });
       } catch {
-        throw providerFailure();
+        throw providerFailure(stage);
       }
       if (response.status === 401 || response.status === 403) {
         const error = fail(
@@ -320,7 +346,7 @@ export function createSquareConnectionService(
       return await Promise.race([work, deadline]);
     } catch (error) {
       if (error instanceof HttpError) throw error;
-      throw providerFailure();
+      throw providerFailure(stage);
     } finally {
       clearTimeout(timer);
     }
@@ -332,17 +358,22 @@ export function createSquareConnectionService(
       "Square returned invalid location information.",
       503,
     );
-    return data.locations
+    const activeForMerchant = data.locations.filter(
+      (row) =>
+        plain(row) &&
+        identifier(row.id) &&
+        row.status === "ACTIVE" &&
+        row.merchant_id === merchantId &&
+        Array.isArray(row.capabilities) &&
+        row.capabilities.includes("CREDIT_CARD_PROCESSING"),
+    );
+    const matching = activeForMerchant
       .filter(
         (row) =>
-          plain(row) &&
-          identifier(row.id) &&
-          row.status === "ACTIVE" &&
-          row.country === ctx.country &&
           row.currency === ctx.currency &&
-          row.merchant_id === merchantId &&
-          Array.isArray(row.capabilities) &&
-          row.capabilities.includes("CREDIT_CARD_PROCESSING"),
+          (ctx.country === "EU"
+            ? MARKET_COUNTRIES.EUR.includes(row.country)
+            : row.country === ctx.country),
       )
       .map((row) => ({
         id: row.id,
@@ -350,6 +381,14 @@ export function createSquareConnectionService(
         country: row.country,
         currency: row.currency,
       }));
+    matching.otherCurrencies = [
+      ...new Set(
+        activeForMerchant
+          .map((row) => row.currency)
+          .filter((cur) => typeof cur === "string" && cur !== ctx.currency),
+      ),
+    ];
+    return matching;
   }
   function publicStatus(record) {
     const available = configured() && c.enabled === true;
@@ -491,7 +530,7 @@ export function createSquareConnectionService(
           currency: ctx.currency,
           expiresAt,
         });
-        const url = new URL(API + "/oauth2/authorize");
+        const url = new URL(OAUTH + "/oauth2/authorize");
         for (const [key, value] of Object.entries({
           client_id: c.applicationId,
           scope: SCOPES.join(" "),
@@ -583,7 +622,14 @@ export function createSquareConnectionService(
         );
         requireValue(
           eligible.length,
-          "No active Square card-processing location matches this shop market.",
+          "No active Square card-processing location matches this shop market (" +
+            ctx.currency +
+            ")." +
+            (eligible.otherCurrencies?.length
+              ? " Your Square account has active " +
+                eligible.otherCurrencies.join("/") +
+                " locations—switch your shop currency to match."
+              : ""),
           409,
         );
         await registry.claim({

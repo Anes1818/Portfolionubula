@@ -114,7 +114,7 @@ export function fixture(options = {}) {
       async fetch(request) {
         const path = new URL(request.url).pathname;
         if (path === "/catalog.json") return Response.json(catalog);
-        if (path === "/index.html")
+        if (["/index.html", "/welcome.html", "/try.html"].includes(path))
           return new Response("<main>Private beta</main>", {
             headers: { "Content-Type": "text/html" },
           });

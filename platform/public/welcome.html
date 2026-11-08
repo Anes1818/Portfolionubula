@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f7f5ef" />
+    <meta
+      name="description"
+      content="Turn your bouquets into designs your customers can customise. Try Nebula's fresh and satin bouquet builder without signing up."
+    />
+    <title>Nebula · Your bouquets. Their imagination.</title>
+    <link rel="icon" href="/assets/nebula-logo.jpg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/launch.css" />
+  </head>
+  <body class="launch-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="app-header">
+      <a class="wordmark" href="/" aria-label="Nebula home"
+        ><span class="nebula-logo-mark"
+          ><img
+            src="/assets/nebula-logo.jpg"
+            alt=""
+            width="640"
+            height="640" /></span
+        >nebula<span class="wordmark-dot">.</span></a
+      >
+      <nav class="launch-nav" aria-label="Main">
+        <a href="/login">Florist sign in</a
+        ><a class="button secondary small" href="/login?mode=signup"
+          >Create my shop</a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <section class="launch-hero">
+        <div>
+          <p class="eyebrow">THE BOUQUET BUILDER FOR FLOWER SHOPS</p>
+          <h1>
+            Let customers design their bouquet.<br /><em>You make it real.</em>
+          </h1>
+          <p class="launch-intro">
+            Your flowers. Your prices. Your own branded page. Receive the saved
+            design and customer details with each order.
+          </p>
+          <p>
+            Fresh flowers or satin. Connect Square for online payments, or take
+            requests through WhatsApp or SMS.
+          </p>
+          <div class="actions">
+            <a class="button" href="/demo">Try the bouquet builder →</a
+            ><a class="plain-button" href="/login?mode=signup"
+              >Use it for my shop ↗</a
+            >
+          </div>
+          <p class="helper">
+            No sign-up to try. Free private preview. Open your shop for $29 USD
+            per 30 days after manual activation.
+          </p>
+        </div>
+        <section
+          class="bouquet-showcase"
+          aria-label="Real bouquets and their builder designs"
+        >
+          <div class="showcase-top">
+            <span class="eyebrow">YOUR BOUQUET, IN THE BUILDER</span
+            ><button
+              id="showcasePlay"
+              type="button"
+              aria-label="Pause comparison animation"
+            >
+              Pause ⏸
+            </button>
+          </div>
+          <div class="showcase-stage" style="--reveal: 100%">
+            <img
+              id="showcaseDesign"
+              src="/assets/showcase/pink-promise-design.webp"
+              alt="Pink Promise recreated in the bouquet builder"
+              width="864"
+              height="984"
+            />
+            <div class="showcase-photo">
+              <img
+                id="showcaseReal"
+                src="/assets/showcase/pink-promise-real.webp"
+                alt="Real Pink Promise bouquet by La Flor Eterna"
+                width="832"
+                height="1100"
+                fetchpriority="high"
+              />
+            </div>
+            <span class="showcase-label real">Real bouquet</span
+            ><span class="showcase-label design">Builder design</span>
+            <div class="showcase-divider" aria-hidden="true">
+              <span>↔</span>
+            </div>
+            <input
+              id="showcaseReveal"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+              aria-label="Compare real bouquet and builder design"
+              aria-valuetext="Real bouquet fully visible"
+            />
+          </div>
+          <div class="showcase-caption">
+            <div>
+              <h2 id="showcaseTitle">Pink Promise</h2>
+              <p id="showcaseCredit">Fresh flowers · La Flor Eterna</p>
+            </div>
+            <a
+              id="showcaseOpen"
+              href="/studio/studio.html?demo=1&amp;flowers=fresh&amp;recipe=pink-promise"
+              >Customise this bouquet ↗</a
+            >
+          </div>
+          <div
+            class="showcase-examples"
+            role="group"
+            aria-label="Choose a bouquet example"
+          >
+            <button type="button" data-example="0" aria-pressed="true">
+              Pink Promise</button
+            ><button type="button" data-example="1" aria-pressed="false">
+              Crimson Velvet</button
+            ><button type="button" data-example="2" aria-pressed="false">
+              Money Moves
+            </button>
+          </div>
+          <p class="showcase-hint">
+            Drag to compare. Then open the design and make it yours.
+          </p>
+        </section>
+      </section>
+      <section class="launch-steps" aria-labelledby="how">
+        <div>
+          <p class="eyebrow">FROM YOUR WORK TO THEIR NEXT GIFT</p>
+          <h2 id="how">Start with a bouquet<br /><em>you already make.</em></h2>
+        </div>
+        <ol>
+          <li>
+            <span>01</span>
+            <div>
+              <h3>Build its recipe</h3>
+              <p>
+                Choose its flowers, wrapping and finishing touches in the
+                builder.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>Add your photo &amp; prices</h3>
+              <p>
+                See the bouquet in a shop preview with your name. Add up to six
+                signature bouquets at your own pace.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>Let customers make it theirs</h3>
+              <p>
+                They can order the bouquet as shown or open its recipe to
+                customise it. You receive the design and order details.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+      <section class="launch-bottom">
+        <div>
+          <p class="eyebrow">YOUR WAY OF TAKING ORDERS</p>
+          <h2>A clearer request.<br /><em>A familiar conversation.</em></h2>
+          <p>
+            Choose text or WhatsApp requests and arrange payment your usual way.
+            Square checkout is an optional connection for eligible shops; live
+            card payments are still being tested.
+          </p>
+          <p>
+            Already have a website? Add a button that opens your Nebula bouquet
+            page.
+          </p>
+        </div>
+        <aside class="surface">
+          <p class="eyebrow">START WITH YOUR PRIVATE PREVIEW</p>
+          <h2>$29 <small>USD / 30 days</small></h2>
+          <p>
+            Create and explore your private preview for free. Contact Nebula to
+            activate and publish when your bouquet is ready. No automatic charge
+            starts at sign-up.
+          </p>
+          <a class="button" href="/login?mode=signup"
+            >Create my shop preview →</a
+          >
+          <p class="helper">
+            Need help with your first bouquet?
+            <a
+              href="https://www.instagram.com/nebulaa_studio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Show us your photo and price menu ↗</a
+            >
+          </p>
+        </aside>
+      </section>
+    </main>
+    <footer class="app-footer">
+      <a href="/">Nebula Sites Studio</a
+      ><span>Your flowers. Your prices. Your shop.</span>
+    </footer>
+    <script type="module" src="/showcase.js"></script>
+  </body>
+</html>

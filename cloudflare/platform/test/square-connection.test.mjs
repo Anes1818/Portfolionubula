@@ -228,7 +228,7 @@ test("OAuth uses the exact sandbox origin, fixed scopes, secure browser cookie a
   const f = fixture(),
     first = await f.begin(),
     url = new URL(first.start.authorizationUrl);
-  assert.equal(url.origin, "https://connect.squareupsandbox.com");
+  assert.equal(url.origin, "https://app.squareupsandbox.com");
   assert.equal(url.pathname, "/oauth2/authorize");
   assert.equal(url.searchParams.get("redirect_uri"), defaults.callbackUrl);
   assert.equal(url.searchParams.get("client_id"), defaults.applicationId);
@@ -282,12 +282,28 @@ test("callback rejects wrong state/browser/expiry and consumes denied authorizat
   assert.equal(f.calls.length, 0);
 });
 
-test("successful CAD and USD callbacks encrypt tenant-bound tokens and return no server credentials", async () => {
+test("successful CAD, USD, GBP, EUR, and AUD callbacks encrypt tenant-bound tokens and return no server credentials", async () => {
   for (const [country, currency] of [
     ["CA", "CAD"],
     ["US", "USD"],
+    ["GB", "GBP"],
+    ["IE", "EUR"],
+    ["AU", "AUD"],
   ]) {
-    const f = fixture();
+    const f = fixture({
+      respond: (call, body) =>
+        response(
+          call.url.endsWith("/v2/locations")
+            ? {
+                locations: body.locations.map((row) => ({
+                  ...row,
+                  country,
+                  currency,
+                })),
+              }
+            : body,
+        ),
+    });
     f.context.country = country;
     f.context.currency = currency;
     const result = await f.connect(),
@@ -330,7 +346,7 @@ test("successful CAD and USD callbacks encrypt tenant-bound tokens and return no
     );
     assert.equal(f.claims.length, 1);
     assert.equal(f.calls[0].body.client_secret, defaults.applicationSecret);
-    assert.equal(f.calls[0].options.redirect, "error");
+    assert.equal(f.calls[0].options.redirect, "manual");
     await assert.rejects(f.service.start(f.actor()), (e) => e.status === 409);
   }
 });
@@ -512,6 +528,39 @@ test("refresh mismatch, malformed token, overlarge body, redirects and timeouts 
   mismatch = true;
   await assert.rejects(f.service.refreshConnection(), (e) => e.status === 503);
   assert.equal(f.connection().merchantId, "merchant-fixture");
+});
+
+test("transport failures identify only the fixed stage and never leak provider exceptions", async () => {
+  for (const path of ["/oauth2/token", "/v2/locations"]) {
+    const f = fixture({
+      respond: (call, body) => {
+        if (call.url.endsWith(path))
+          throw Error(
+            "sensitive-provider-detail:" + defaults.applicationSecret,
+          );
+        return response(body);
+      },
+    });
+    await assert.rejects(f.connect(), (error) => {
+      assert.equal(error.status, 503);
+      assert.match(
+        error.message,
+        path === "/oauth2/token"
+          ? /authorization code exchange/
+          : /seller location verification/,
+      );
+      assert.ok(!error.message.includes("sensitive-provider-detail"));
+      assert.ok(!error.message.includes(defaults.applicationSecret));
+      return true;
+    });
+    assert.equal(f.connection(), undefined);
+  }
+  const f = fixture({ respond: () => new Promise(() => {}) });
+  await assert.rejects(
+    f.connect(),
+    /Square timed out during authorization code exchange/,
+  );
+  assert.equal(f.connection(), undefined);
 });
 
 test("copied/corrupt connection rows cannot provide cross-tenant credentials", async () => {

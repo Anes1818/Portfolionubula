@@ -4,6 +4,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 const crypto = require("node:crypto");
 const assert = require("node:assert/strict");
+const referenceRecipes = require("../shop-factory/reference-recipes.cjs");
 
 const root = path.resolve(__dirname, "../..");
 const source = path.join(root, "demo/nebula-builder");
@@ -32,6 +33,7 @@ const scripts = [
   "crimson-arrangement.js",
   "celebration-arrangement.js",
   "classic-wrapping.js",
+  "reference-flowers.js",
   "filler-options.js",
   "customization.js",
   "customization-ui.js",
@@ -150,7 +152,7 @@ function buildPolicyRuntime() {
     ).map((row) => [row.file, row]),
   );
   const satinHeader =
-    "var RAY_BUILDER={pricing:" +
+    "var RAY_BUILDER={platform:true,pricing:" +
     JSON.stringify(satinPricing) +
     ",recipes:[]};var RAY_STORE={designs:[]};var RAY_ART=" +
     JSON.stringify(art) +
@@ -234,6 +236,7 @@ function addSatinCatalog(catalog) {
       en: row.en,
       family: row.family,
       preset: "satin",
+      ...(rawId === "foam_rose_white" ? { optional: true } : {}),
       priceCents: ["rose", "foam"].includes(row.family) ? row.priceCents : null,
       classic: false,
       modes: ["dome", "heart"],
@@ -368,6 +371,21 @@ function addSatinCatalog(catalog) {
       design: s,
     });
   }
+  const foam = referenceRecipes.foam;
+  const s = M.defaultMode("dome");
+  M.resize(s, foam.capacity, "foam_rose_white");
+  const white = "foam_rose_white";
+  s.template.palette = [white];
+  s.template.accent.id = white;
+  for (const key of ["wall", "fill", "center"]) s.template.zones[key] = white;
+  s.template.overrides = {};
+  s.title = foam.name;
+  Object.assign(s.finishes, {
+    paper: foam.paper, tint: foam.tint, sash: foam.sash, sashText: foam.message,
+  });
+  M.syncTemplate(s);
+  assert.ok(M.validate(s), "Invalid Aqua Keepsake recipe");
+  catalog.recipes.push(referenceRecipes.catalogRecipe(foam, canonical(s), "satin"));
 }
 
 function write(file, bytes) {
@@ -380,7 +398,7 @@ function write(file, bytes) {
   fs.writeFileSync(target, bytes);
 }
 
-function runtimeCatalog() {
+function referenceRuntime() {
   const listeners = [];
   const ctx = {
     console,
@@ -417,6 +435,11 @@ function runtimeCatalog() {
     }).runInContext(ctx);
   }
   for (const callback of listeners) callback();
+  return ctx;
+}
+
+function runtimeCatalog() {
+  const ctx = referenceRuntime();
   const recipes = JSON.parse(
     fs.readFileSync(
       path.join(root, "builder/shop-factory/library.json"),
@@ -440,6 +463,7 @@ function runtimeCatalog() {
     presets: [
       { id: "fresh", name: "Fresh flowers", available: true },
       { id: "satin", name: "Satin and eternal flowers", available: true },
+      { id: "mixed", name: "Fresh + satin flowers", available: true },
     ],
     flowers: Object.entries(ctx.NebulaConfig.CAT).map(([id, row]) => ({
       id,
@@ -449,6 +473,7 @@ function runtimeCatalog() {
       classic: row.classic === true && row.classicOffered !== false,
       preset: "fresh",
       runtimeId: id,
+      ...(row.optional ? { optional: true } : {}),
       modes: [
         ...(row.classic === true && row.classicOffered !== false
           ? ["classic"]
@@ -460,9 +485,13 @@ function runtimeCatalog() {
     extras: Object.entries(ctx.NebulaConfig.CONFIG.extrasCents).map(
       ([id, priceCents]) => ({
         id,
-        label: ctx.NebulaI18n.en[id] || id.replaceAll("_", " "),
+        label:
+          id === "filler" ? "Baby’s breath"
+            : id === "whiteLilyBud" ? ctx.NebulaReferenceFlowers.whiteBud.label
+            : ctx.NebulaI18n.en[id] || id.replaceAll("_", " "),
         priceCents,
         preset: "fresh",
+        ...(id === "whiteLilyBud" ? { optional: true, image: "/studio/" + ctx.NebulaReferenceFlowers.whiteBud.url } : {}),
       }),
     ),
     recipes: recipes.map((row) => ({
@@ -477,14 +506,27 @@ function runtimeCatalog() {
       counts: row.counts,
     })),
   };
-  return { catalog, recipes };
+  return { catalog, recipes, ctx };
 }
 
 function build() {
   fs.mkdirSync(output, { recursive: true });
   buildPolicyRuntime();
-  const { catalog, recipes } = runtimeCatalog();
+  const { catalog, recipes, ctx } = runtimeCatalog();
   addSatinCatalog(catalog);
+  for (const spec of referenceRecipes.fresh) {
+    const design = referenceRecipes.prepareFresh(spec, ctx);
+    assert.ok(design, "Invalid reference bouquet " + spec.id);
+    catalog.recipes.push(referenceRecipes.catalogRecipe(spec, design, "fresh"));
+  }
+  const midnightClassic = referenceRecipes.midnightClassic;
+  const classicDesign = referenceRecipes.prepareClassic(midnightClassic, ctx);
+  assert.ok(classicDesign, "Invalid Classic Midnight Orchard");
+  catalog.recipes.push(referenceRecipes.catalogRecipe(midnightClassic, classicDesign, "fresh"));
+  for (const spec of [...referenceRecipes.fresh, referenceRecipes.foam, midnightClassic]) {
+    const file = path.join(root, "builder/shop-factory/covers", spec.id + ".webp");
+    write("assets/catalog/thumbs/" + spec.id + ".webp", fs.readFileSync(file));
+  }
   const hashes = {};
   for (const file of [...scripts, "app.js", "app.css"]) {
     const bytes = fs.readFileSync(path.join(source, file));
@@ -579,6 +621,8 @@ function build() {
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
     .replace(/<link\b[^>]*rel="stylesheet"[^>]*>/gi, "")
     .replace(/<meta\b[^>]*property="og:[^>]*>/gi, "")
+    .replace(/\s*<details id="aboutBlock"[\s\S]*?<\/details>/, "")
+    .replace(/\s*<div class="move-toolbar">[^\n]*?<\/div>/, "")
     .replace(
       /<title>[\s\S]*?<\/title>/,
       "<title>Your collection studio — Nebula</title>",
@@ -596,18 +640,34 @@ function build() {
         ".platform-status{max-width:650px;margin:12vh auto;padding:28px;line-height:1.6}.platform-status h1{font:32px Georgia}" +
         "#platformSaveStatus{font-size:13px;flex-basis:100%}#platformSaveCollection{white-space:nowrap}" +
         "#platformSaveStatus:empty{display:none}" +
-        "@media(max-width:820px){.platform-bar{display:grid;grid-template-columns:1fr auto;padding:8px 12px;gap:5px 10px;flex-shrink:0;font-size:12px}.platform-bar p{grid-column:1/-1;grid-row:2;font-size:10px;line-height:1.4;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.platform-bar button{width:auto;min-height:40px;padding:8px 12px;font-size:12px}.platform-bar #platformSaveStatus{grid-column:1/-1;font-size:11px;line-height:1.4}body[data-organic=true]:not(.preview-focus) .art-surface,body[data-berry-dome=true]:not(.preview-focus) .art-surface{height:clamp(196px,25dvh,245px)}body.preview-focus .platform-bar{display:none}}" +
+        "@media(max-width:820px){.platform-bar{display:grid;grid-template-columns:1fr auto;padding:8px 12px;gap:5px 10px;flex-shrink:0;font-size:12px}.platform-bar p{grid-column:1/-1;grid-row:2;font-size:10px;line-height:1.4;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.platform-bar button{width:auto;min-height:40px;padding:8px 12px;font-size:12px}.platform-bar #platformSaveStatus{grid-column:1/-1;font-size:11px;line-height:1.4}body[data-organic=true]:not(.preview-focus) .art-surface,body[data-berry-dome=true]:not(.preview-focus) .art-surface{height:clamp(196px,25dvh,245px)}body.preview-focus .platform-bar{display:none}.platform-bar input,.platform-bar select{font-size:16px;min-height:44px;min-width:0;max-width:100%;grid-column:1/-1}.platform-bar button,.platform-bar>a{min-height:44px}.platform-bar>a{display:flex;align-items:center}.platform-bar p{font-size:12px}.platform-bar #platformSaveStatus{overflow-wrap:anywhere}}" +
         '</style><script type="module" src="builder-adapter.js"></script></head>',
     )
     .replace(
       "<body>",
-      '<body class="platform-loading"><section id="platformBoot" class="platform-status" role="status"><h1>Opening your collection studio…</h1><p>Loading your signed-in shop and saved design.</p></section>',
+      '<body class="platform-studio platform-loading"><section id="platformBoot" class="platform-status" role="status"><h1>Opening your collection studio…</h1><p>Loading your signed-in shop and saved design.</p></section>',
     )
     .replace(
       "</body>",
       '<noscript><p class="platform-status">Sign in and enable JavaScript to edit your shop’s collection.</p></noscript></body>',
     );
   write("studio.html", html);
+  require("node:child_process").execFileSync(
+    "python",
+    [path.join(__dirname, "optimize-platform-art.py")],
+    { stdio: "inherit" },
+  );
+  const delivery = JSON.parse(
+    fs.readFileSync(path.join(output, "satin/art-delivery.json"), "utf8"),
+  );
+  for (const rows of [catalog.flowers, catalog.recipes])
+    for (const row of rows) {
+      for (const key of ["image", "cover"]) {
+        const file = row[key]?.split("/").pop();
+        if (row[key]?.startsWith("/studio/satin/art/") && delivery[file])
+          row[key] = "/studio/satin/art/" + delivery[file];
+      }
+    }
   fs.writeFileSync(
     path.join(root, "platform/public/catalog.json"),
     JSON.stringify(catalog, null, 2) + "\n",
@@ -624,7 +684,7 @@ function build() {
       " unchanged runtime scripts, " +
       assetCount +
       " artwork assets, " +
-      recipes.length +
+      catalog.recipes.filter(row => row.preset === "fresh").length +
       " fresh recipes. Engine identity and syntax checks passed.",
   );
   return { catalog, scripts, engineFiles, output };

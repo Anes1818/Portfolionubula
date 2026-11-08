@@ -69,11 +69,17 @@
     berry:      { cov: 0.34, base: 1.25, spin: 7, radial: true },
     knot:       { cov: 0.40, base: 0.62, spin: 180 },
     fan:        { cov: 0.34, base: 0.80, spin: 180 },
-    euc:        { cov: 0.30, base: 0.55, spin: 180 }
+    euc:        { cov: 0.30, base: 0.55, spin: 180 },
+    calla:      { cov: 0.41, base: 1.16, spin: 22 },
+    mum:        { cov: 0.47, base: 1.06, spin: 180 },
+    buttonMum:  { cov: 0.46, base: 0.78, spin: 180 },
+    smallSpray: { cov: 0.37, base: 0.86, spin: 40 }
   };
 
   function specKey(id) {
     if (!id) return 'rose';
+    const custom = global.NebulaConfig?.CAT[id]?.domeSpec;
+    if (custom) return custom;
     if (id.indexOf('rose_') === 0) return 'rose';
     if (id.indexOf('carnation_') === 0) return 'carnation';
     if (id.indexOf('tulip_') === 0) return 'tulip';

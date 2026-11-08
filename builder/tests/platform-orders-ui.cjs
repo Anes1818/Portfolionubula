@@ -50,6 +50,8 @@ const { chromium } = require("playwright");
     ...shop.draft,
     phone: "+14165550123",
     flowerPrices: { rose_red: 500 },
+    disabledFlowers: [],
+    home: {...shop.draft.home,sections:["products","builder","contact"]},
     products: [
       {
         id: "ready-roses",
@@ -110,6 +112,23 @@ const { chromium } = require("playwright");
     JSON.stringify({ ...row, subscription: { status: "inactive" } }),
   );
   await f.create("Other Flower Room", "other-requests-room", "other");
+  sql.exec(
+    "INSERT INTO merchant_notifications(id,created_at,unread,due_at,email_status,data) VALUES(?,?,1,NULL,'off',?)",
+    "browser-notice",
+    Date.now(),
+    JSON.stringify({
+      id: "browser-notice",
+      orderId: "fixture-order",
+      requestId: designRequest.id,
+      reference: "NB-TESTORDER",
+      amountCents: 500,
+      balanceCents: 0,
+      currency: "USD",
+      title: "Saved design",
+      status: "paid",
+      createdAt: Date.now(),
+    }),
+  );
   const server = http.createServer(async (req, res) => {
     try {
       const chunks = [];
@@ -178,6 +197,44 @@ const { chromium } = require("playwright");
     assert.match(
       await page.locator(".requests-toolbar").innerText(),
       /plan is inactive/,
+    );
+    await page.locator('[data-notification="browser-notice"]').waitFor();
+    await page.locator('[data-notification="browser-notice"]').click();
+    await page
+      .getByRole("heading", { name: "The bouquet they created" })
+      .waitFor();
+    assert.equal(
+      (await (await f.call(`/api/shops/${shop.id}/notifications`)).json())
+        .unread,
+      0,
+    );
+    await page.locator(".notification-panel summary").click();
+    const noticeRoute = "**/api/shops/*/notifications";
+    const rejectPreference = async (route) => {
+      if (route.request().method() !== "PUT") return route.fallback();
+      return route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Preference save unavailable" }),
+      });
+    };
+    await page.route(noticeRoute, rejectPreference);
+    await page.locator("#merchantEmailEnabled").click();
+    await page.getByText("Preference save unavailable", { exact: true }).waitFor();
+    assert.equal(await page.locator("#merchantEmailEnabled").isChecked(), false);
+    assert.equal(await page.locator("#merchantEmailEnabled").isEnabled(), true);
+    await page.unroute(noticeRoute, rejectPreference);
+    const preferenceSaved = page.waitForResponse(
+      (r) =>
+        new URL(r.url()).pathname.endsWith("/notifications") &&
+        r.request().method() === "PUT",
+    );
+    await page.locator("#merchantEmailEnabled").check();
+    await preferenceSaved;
+    assert.equal(
+      (await (await f.call(`/api/shops/${shop.id}/notifications`)).json())
+        .settings.email,
+      "owner@example.test",
     );
     const id = await page
       .locator(".request-list-item")

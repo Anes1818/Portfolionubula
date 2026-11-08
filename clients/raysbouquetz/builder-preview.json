@@ -179,11 +179,11 @@
     }
   },
   "assumptions": [
-    "The four recipe counts and inclusions come from Ray’s latest reply. Colours and accessory positions remain visual interpretations.",
-    "CAD $80 money styling includes wrapping and assembly; cash value is additional when Ray supplies the notes.",
+    "The four recipe counts and inclusions come from the shop’s confirmed details. Colours and accessory positions remain visual interpretations.",
+    "CAD $80 money styling includes wrapping and assembly; cash value is additional when the shop supplies the notes.",
     "USD conversions use a dated TD cash-buying-rate snapshot with no additional exchange margin. The final quote uses the rate confirmed at ordering.",
     "Published menus contain starting prices and ranges. Mixed bouquets, unlisted counts, plush toys, candy and size-dependent crowns need a final quote.",
-    "Premium dahlia/plumeria/sunflower adjustments are per bouquet, not per flower. Their application to mixed money designs needs Ray’s quote.",
+    "Premium dahlia/plumeria/sunflower adjustments are per bouquet, not per flower. Their application to mixed money designs needs a quote from the shop.",
     "Only menu items with suitable existing artwork are offered in the visual builder. Personal Cricut toppers remain a quote request.",
     "Photo reference prices remain the originally supplied catalogue amounts. Square payments await merchant connection."
   ],

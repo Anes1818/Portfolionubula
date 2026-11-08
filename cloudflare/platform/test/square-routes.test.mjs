@@ -223,15 +223,15 @@ test("Square callbacks clear cookies on failure, trust no redirect and cannot cr
       },
     );
     assert.match(rejected.headers.get("Location"), /connection_failed$/);
-    assert.equal(
-      (
-        await parsed(
-          await f.call("/api/shops/" + other.id + "/square/status", {
-            token: "other",
-          }),
-        )
-      ).connected,
-      false,
+    const failedStatus = await parsed(
+      await f.call("/api/shops/" + other.id + "/square/status", {
+        token: "other",
+      }),
+    );
+    assert.equal(failedStatus.connected, false);
+    assert.match(
+      failedStatus.lastError || "",
+      /already bound to another shop/i,
     );
     const registry = f.env.REGISTRY.objects.values().next().value.state
       .storage.sql;
@@ -275,6 +275,61 @@ test("Square stays closed with absent configuration and never exposes server con
     assert.equal(callback.status, 303);
     assert.match(callback.headers.get("Location"), /connection_failed$/);
     assert.equal(network.calls.length, 0);
+  } finally {
+    network.restore();
+  }
+});
+
+test("public health distinguishes configured Square connection from enabled checkout without claiming merchant verification", async () => {
+  const f = await setup();
+  const health = async () => parsed(await f.call("/api/health", { token: null }));
+  assert.equal((await health()).providers.square, "connection_configured");
+  assert.equal((await health()).checkoutEnabled, false);
+  f.env.CHECKOUT_ENABLED = "true";
+  assert.equal((await health()).providers.square, "connection_configured");
+  f.env.SQUARE_SANDBOX_WEBHOOK_SIGNATURE_KEY = "fixture-signature-key";
+  assert.equal((await health()).providers.square, "checkout_configured");
+  f.env.SQUARE_SANDBOX_CONNECT_ENABLED = "false";
+  assert.equal((await health()).providers.square, "pending_setup");
+  assert.equal((await health()).checkoutEnabled, false);
+});
+test("Square connection uses current draft currency and surfaces currency mismatch in status.lastError", async () => {
+  const f = await setup(),
+    network = fakeSquare();
+  try {
+    const current = f.object.instance.shop();
+    f.object.state.storage.sql.exec(
+      "UPDATE shop SET data=? WHERE singleton=1",
+      JSON.stringify({
+        ...current,
+        draft: { ...current.draft, currency: "CAD" },
+        published: { version: 1, draft: { ...current.draft, currency: "USD" } },
+      }),
+    );
+    const start = await f.call("/api/shops/" + f.shop.id + "/square/connect", {
+        method: "POST",
+        body: {},
+      }),
+      data = await parsed(start),
+      url = new URL(data.authorizationUrl),
+      state = url.searchParams.get("state"),
+      cookie = start.headers.get("Set-Cookie").split(";")[0];
+    assert.equal(url.origin, "https://app.squareupsandbox.com");
+    const cb = await f.call(
+      "/api/square/callback?" +
+        new URLSearchParams({ state, code: "fixture-code" }),
+      { token: null, from: null, headers: { Cookie: cookie } },
+    );
+    assert.equal(cb.status, 303);
+    assert.match(cb.headers.get("Location"), /connection_failed$/);
+    const status = await parsed(
+      await f.call("/api/shops/" + f.shop.id + "/square/status"),
+    );
+    assert.equal(status.connected, false);
+    assert.match(
+      status.lastError || "",
+      /No active Square card-processing location matches this shop market \(CAD\)\..*active USD locations/i,
+    );
   } finally {
     network.restore();
   }

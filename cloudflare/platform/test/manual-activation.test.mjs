@@ -29,6 +29,81 @@ const grant = (revision = 0, reference = "PAYPAL-TEST-001") => ({
   confirmed: true,
 });
 
+test("complimentary activation requires fresh admin and a reason, restores suspended access and never claims a payment", async () => {
+  const f = await prepared();
+  const suspended = await parse(
+    await f.call(f.path, {
+      method: "POST",
+      token: "admin",
+      body: {
+        operationId: crypto.randomUUID(),
+        revision: 0,
+        action: "suspend",
+      },
+    }),
+  );
+  assert.equal(suspended.shop.subscription.status, "suspended");
+  const body = {
+    operationId: crypto.randomUUID(),
+    revision: 1,
+    action: "grant",
+    reason: "Own shop preview test",
+  };
+  for (const token of ["owner", "other", "stale", null])
+    assert.ok(
+      [401, 403].includes(
+        (await f.call(f.path, { method: "POST", token, body })).status,
+      ),
+    );
+  await parse(
+    await f.call(f.path, {
+      method: "POST",
+      token: "admin",
+      body: { ...body, reason: "" },
+    }),
+    400,
+  );
+  await parse(
+    await f.call(f.path, {
+      method: "POST",
+      token: "admin",
+      body: { ...body, amountCents: 2900 },
+    }),
+    400,
+  );
+  const result = await parse(
+    await f.call(f.path, { method: "POST", token: "admin", body }),
+  );
+  assert.equal(result.shop.subscription.status, "active");
+  assert.equal(result.shop.subscription.source, "admin_complimentary");
+  assert.equal(result.shop.subscription.testEnvironment, false);
+  assert.ok(
+    Math.abs(result.shop.subscription.paidUntil - Date.now() - 30 * 86400000) <
+      1000,
+  );
+  const retry = await parse(
+    await f.call(f.path, { method: "POST", token: "admin", body }),
+  );
+  assert.equal(
+    retry.shop.subscription.paidUntil,
+    result.shop.subscription.paidUntil,
+  );
+  const audit = await parse(await f.call(f.path, { token: "admin" }));
+  const row = audit.history.find((row) => row.action === "grant");
+  assert.equal(row.reason, "Own shop preview test");
+  assert.equal(row.paymentReference, undefined);
+  assert.equal(row.amountCents, undefined);
+  f.env.ENVIRONMENT = "test";
+  await parse(
+    await f.call(f.path, {
+      method: "POST",
+      token: "admin",
+      body: { ...body, operationId: crypto.randomUUID(), revision: 2 },
+    }),
+    403,
+  );
+});
+
 test("manual activation requires fresh server admin, records audit and preserves draft", async () => {
   const f = await prepared(),
     input = grant(),
@@ -140,10 +215,28 @@ test("activation request is persisted once and appears in the indexed admin dire
   const f = await prepared();
   const path = `/api/shops/${f.shop.id}/billing/activation-request`;
   const first = await parse(await f.call(path, { method: "POST", body: {} }));
+  const interested = await parse(
+    await f.call(path, {
+      method: "POST",
+      body: { customDomainInterest: true },
+    }),
+  );
+  assert.equal(interested.shop.activationRequest.customDomainInterest, true);
   const second = await parse(await f.call(path, { method: "POST", body: {} }));
   assert.equal(
     first.shop.activationRequest.requestedAt,
     second.shop.activationRequest.requestedAt,
+  );
+  assert.equal(second.shop.activationRequest.customDomainInterest, true);
+  assert.equal(second.shop.summaryRevision, interested.shop.summaryRevision);
+  const adminDetails = await parse(await f.call(f.path, { token: "admin" }));
+  assert.equal(adminDetails.request.customDomainInterest, true);
+  await parse(
+    await f.call(path, {
+      method: "POST",
+      body: { customDomainInterest: "$35" },
+    }),
+    400,
   );
   const directory = await parse(
     await f.call("/api/admin/users", { token: "admin" }),

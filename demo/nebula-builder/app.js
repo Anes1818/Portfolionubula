@@ -93,7 +93,7 @@ function renderStudio(){
 }
 function scheduleCanvas(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(isReady){sc=R.paint($('bouquet'),st,{selected:selectedDetail?"detail-"+selectedDetail:selected,ghost:hover,guides:true,camera,moveTargets:moveTargets()});positionDelete();}});}
 /* Some catalogue entries only read correctly from one camera angle. */
-function offered(id){if(window.NebulaCustomization&&['white_flower_spray','babys_breath','eucalyptus','lily_bud'].includes(id))return false;if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
+function offered(id){if(CAT[id].referenceFiller)return false;if(window.NebulaCustomization&&['white_flower_spray','babys_breath','eucalyptus','lily_bud'].includes(id))return false;if(NebulaSpooky.active(st))return Array.from({length:st.template.capacity},(_,i)=>NebulaSpooky.allowed(st,i,id)).some(Boolean);return st.mode==='classic'?CAT[id].classic!==false&&CAT[id].classicOffered!==false:CAT[id].top!==false;}
 function fillChoices(el,current,{empty=false,classic=false}={}){
  const ids=Object.keys(CAT).filter(id=>offered(id)&&(!classic||CAT[id].classic)),sig=lang+':'+classic+':'+empty+':'+st.mode;
  if(el.dataset.choiceSignature!==sig){el.replaceChildren();if(empty){const o=document.createElement('option');o.value='';o.textContent=t('emptySlot');el.append(o);}for(const id of ids){const o=document.createElement('option');o.value=id;o.textContent=name(id)+' · '+M.money(CAT[id].priceCents,lang);el.append(o);}el.dataset.choiceSignature=sig;}
@@ -141,7 +141,8 @@ function render(save=true){
  $('totalPrice').textContent=M.money(p.totalCents,lang);document.querySelector('.summary-price>span').textContent=t(CONFIG.demo?'demoEstimate':'requestPrice')+' · '+CONFIG.currency;
  $('compositionLabel').textContent=t(st.mode==='classic'?'classicNote':st.mode==='dome'?'domeNote':'heartNote');$('bouquet').setAttribute('aria-label',t('stageLabel',{mode:t(st.mode),n:p.pieces}));
  $('gapCheck').hidden=true;$('collarNotice').hidden=true;
- $('moveFlowers').textContent=t(moveMode?'moveFinish':'moveFlowers');pressed($('moveFlowers'),moveMode);$('moveHelp').textContent=moveMode?t(selected?(top?'movePickTarget':'movePickAnywhere'):'movePickFlower'):'';
+ const moveButton=$('moveFlowers');
+ if(moveButton){moveButton.textContent=t(moveMode?'moveFinish':'moveFlowers');pressed(moveButton,moveMode);$('moveHelp').textContent=moveMode?t(selected?(top?'movePickTarget':'movePickAnywhere'):'movePickFlower'):'';}
  $('gestureHint').hidden=moveMode;
  $('gestureHint').textContent=panMode?t('panView'):brush?t(top?'paintHint':'classicBrushHint'):t(top?'topSelectHint':'classicSelectHint');
  $('undo').disabled=!undoStack.length;$('redo').disabled=!redoStack.length;document.querySelectorAll('[data-mode]').forEach(el=>{pressed(el,el.dataset.mode===st.mode);el.disabled=false;});
@@ -208,7 +209,8 @@ function renderCapabilities(){
  if(NebulaShop.restricted){
   // Custom options are a separate owner decision. Keep recovery/save/export available.
   const options=window.NEBULA_SHOP.recipeOptions?.[policy.recipeId]||{};
-  for(const id of ['sizePanel','templateTools','arrangeRow','flowerGrid','catalogueFilters','catalogueNote','pickedFlower','moveFlowers','inlineDelete'])$(id).hidden=true;
+  for(const id of ['sizePanel','templateTools','arrangeRow','flowerGrid','catalogueFilters','catalogueNote','pickedFlower','inlineDelete'])$(id).hidden=true;
+  if(moveButton)moveButton.hidden=true;
   $('panel-wrapping').querySelectorAll('input,select,button').forEach(el=>{el.disabled=true;});
   $('panel-finishing').querySelectorAll('input,select,button').forEach(el=>{el.disabled=!['designName','giftNote'].includes(el.id);});
   for(const key of ['paper','ribbon'])document.querySelectorAll('[data-'+key+']').forEach(el=>{el.disabled=!options[key]?.includes(el.dataset[key]);});
@@ -567,7 +569,9 @@ function tapMove(p){
  if(result.ok){selected=null;selectedSlot=null;render(false);toast(t('moveDone'));}
 }
 function beginPointer(e){
- if(!isReady||e.button!==0||gesture)return;const p=point(e),detail=!panMode&&!brush?R.detailHit(sc,p):null,filler=!detail&&!panMode&&!brush?window.NebulaFillerOptions?.hit(sc,p):null,node=detail||filler?null:R.hit(sc,p);hover=null;
+ if(!isReady||e.button!==0||gesture)return;
+ const scale=$('bouquet').getBoundingClientRect().width/720*R.view(st,camera).scale;
+ const p=point(e),detail=!panMode&&!brush?R.detailHit(sc,p):null,filler=!detail&&!panMode&&!brush?window.NebulaFillerOptions?.hit(sc,p,(e.pointerType==='touch'?10:4)/Math.max(.1,scale)):null,node=detail||filler?null:R.hit(sc,p);hover=null;
  if(detail){selectedDetail=detail.detailId;selected=null;renderDetails();}else selectedDetail=null;
  /* A finger is coarser than a mouse: give touch more slack before a tap counts as a drag.
     Measured in real CSS pixels, not canvas units, so it does not change with preview size. */
@@ -649,7 +653,8 @@ $('spookyDetails').onclick=()=>{setTab('finishing');$('tab-finishing').focus();}
 $('family').onchange=()=>{renderCatalog();$('catalogueNote').textContent=t(NebulaSpooky.active(st)?'spookyFixed':$('family').value==='texture'?'textureNote':st.mode==='classic'?'classicCatalogueNote':'topCatalogueNote');};$('flowerSearch').oninput=renderCatalog;
 $('addOne').onclick=()=>addItem();$('undo').onclick=()=>history('undo');$('redo').onclick=()=>history('redo');
 let deleteArmed=false;
-$('inlineDelete').onpointerdown=()=>{deleteArmed=true;};$('inlineDelete').onpointercancel=()=>{deleteArmed=false;};$('inlineDelete').onclick=e=>{const allowed=deleteArmed||e.detail===0;deleteArmed=false;if(allowed){if(currentDetail())deleteDetail();else removeItem();}};$('stopBrush').onclick=stopBrush;$('moveFlowers').onclick=()=>setMoveMode(!moveMode);
+$('inlineDelete').onpointerdown=()=>{deleteArmed=true;};$('inlineDelete').onpointercancel=()=>{deleteArmed=false;};$('inlineDelete').onclick=e=>{const allowed=deleteArmed||e.detail===0;deleteArmed=false;if(allowed){if(currentDetail())deleteDetail();else removeItem();}};$('stopBrush').onclick=stopBrush;
+$('moveFlowers')?.addEventListener('click',()=>setMoveMode(!moveMode));
 $('zoomIn').onclick=()=>setZoom(camera.zoom+.5);$('zoomOut').onclick=()=>setZoom(camera.zoom-.5);$('resetView').onclick=()=>setZoom(1);$('panView').onclick=()=>{moveMode=false;panMode=!panMode;render(false);};
 for(const el of document.querySelectorAll('[data-tab]')){el.onclick=()=>setTab(el.dataset.tab);el.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const keys=['flowers','wrapping','finishing'];const i=e.key==='Home'?0:e.key==='End'?2:(keys.indexOf(tab)+(e.key==='ArrowRight'?1:2))%3;setTab(keys[i]);$('tab-'+keys[i]).focus();};}
 for(const el of document.querySelectorAll('[data-mode]'))el.onclick=()=>switchBouquet(el.dataset.mode);

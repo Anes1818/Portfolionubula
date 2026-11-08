@@ -22,7 +22,7 @@ const held = (q) => ["review_required", "refunded"].includes(q.status);
 export function defaultSettings(shop) {
   return {
     shop,
-    name: shop === "raysbouquetz" ? "Ray’s Bouquetz" : shop,
+    name: shop,
     checkoutEnabled: false,
     cashPaymentsApproved: false,
     owners: [],

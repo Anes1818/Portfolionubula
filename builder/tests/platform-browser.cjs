@@ -191,11 +191,17 @@ const { chromium } = require("playwright");
   }
   async function addCards(p, n) {
     await p.goto(origin + "/dashboard/collection");
-    for (let i = 0; i < n; i++)
+    for (let i = 0; i < n; i++) {
+      await p.locator("#recipeInspiration").evaluate((n) => (n.open = true));
       await p
         .locator('[data-action="add-card"]')
         .nth(i % 3)
         .click();
+      await p.waitForFunction(
+        (n) => document.querySelectorAll(".collection-editor").length === n,
+        i + 1,
+      );
+    }
     await clickSave(p);
   }
   try {
@@ -217,9 +223,13 @@ const { chromium } = require("playwright");
       .getByRole("link", { name: "Florist workspace ↗", exact: true })
       .click();
     await page.locator("#shopName").fill("Runtime Flower Room");
+    await page.locator("#createShopForm > details > summary").click();
     await page.locator('[data-wizard="currency"]').selectOption("CAD");
     await page.locator('#createShopForm button[type="submit"]').click();
-    await page.locator('#createShopForm button[type="submit"]').click();
+    await page
+      .getByRole("button", { name: "Explore my shop first", exact: true })
+      .click();
+    await page.goto(origin + "/dashboard/products?setup=1");
     await page.locator(".sidebar").waitFor();
     let shop = await readShop();
     assert.equal(
@@ -414,10 +424,8 @@ const { chromium } = require("playwright");
       .first()
       .locator("a[data-studio]")
       .evaluateAll((nodes) => nodes.map((n) => n.href));
-    assert.equal(
-      new URL(links[0]).searchParams.get("card"),
-      new URL(links[1]).searchParams.get("card"),
-    );
+    assert.equal(links.length, 1, "Only Customise navigates to the builder");
+    assert.ok(new URL(links[0]).searchParams.get("card"));
     await page.screenshot({
       path: path.join(output, "storefront-desktop.png"),
       fullPage: true,
@@ -425,15 +433,19 @@ const { chromium } = require("playwright");
     await page
       .locator("#custom .flower-card")
       .first()
-      .getByRole("link", { name: "Custom Order" })
+      .getByRole("button", { name: "Order", exact: false })
       .click();
-    await studioReady(page);
     await page.locator(".nb-order-review").waitFor();
     assert.equal(
       await page.locator('.nb-order-form button[type="submit"]').isEnabled(),
       false,
       "Owner order preview cannot send",
     );
+    assert.equal(
+      await page.locator('.nb-order-form input[name="name"]').isDisabled(),
+      true,
+    );
+    await page.getByRole("link", { name: "Go to publishing" }).waitFor();
     await page
       .locator(".nb-order-form")
       .evaluate((form) =>
@@ -449,6 +461,12 @@ const { chromium } = require("playwright");
     await page
       .getByRole("button", { name: "Close request", exact: true })
       .click();
+    await page
+      .locator("#custom .flower-card")
+      .first()
+      .getByRole("link", { name: "Customise" })
+      .click();
+    await studioReady(page);
     await page.evaluate(() => NebulaApp.setTab("finishing"));
     await page.locator("#designName").fill("Saved exact fresh design");
     await page.locator("#designName").blur();
@@ -462,7 +480,10 @@ const { chromium } = require("playwright");
     );
     shop = await readShop();
     assert.deepEqual(shop.draft.collection[0].design, firstDesign);
-    await page.reload();
+    // Keep explicit coverage of the older direct editor/cover-export route too.
+    const legacyEditor = new URL(page.url());
+    legacyEditor.searchParams.delete("onboarding");
+    await page.goto(legacyEditor.href);
     await studioReady(page);
     assert.deepEqual(
       await page.evaluate(() => NebulaPlatformStudio.design()),
@@ -542,6 +563,29 @@ const { chromium } = require("playwright");
     const satin = await context({ width: 390, height: 844 }, "other");
     const phone = await satin.newPage();
     phone.setDefaultTimeout(15000);
+    // Explicit Sandbox helper saves a valid small catalogue without granting
+    // access or approving tax/payment rules; the main app does not show it.
+    await phone.route("**/api/config", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        json: { ...(await response.json()), sandboxTestAccess: true },
+      });
+    });
+    await phone.goto(origin + "/dashboard/billing");
+    await phone.locator('[data-action="review-publication"]').click();
+    await phone.locator('[data-action="sandbox-test-catalog"]').waitFor();
+    phone.once("dialog", (dialog) => dialog.accept());
+    await phone.locator('[data-action="sandbox-test-catalog"]').click();
+    await phone
+      .locator("#pageMessage")
+      .filter({ hasText: "Test catalogue saved" })
+      .waitFor();
+    assert.equal(
+      (await readShop("other")).subscription?.status === "active",
+      false,
+    );
+    await phone.unroute("**/api/config");
     await fillSample(phone);
     await phone.locator('[data-action="disable-unpriced"]').click();
     await clickSave(phone);
@@ -655,6 +699,12 @@ const { chromium } = require("playwright");
       await page.locator("#shopAddress").inputValue(),
       origin + "/s/" + shop.slug,
     );
+    await page.goto(origin + "/s/" + shop.slug);
+    await page.getByRole("link", { name: "Open customer shop" }).click();
+    await page.locator('[data-action="product-request"]').first().waitFor();
+    assert.equal(await page.locator(".preview-banner").count(), 0);
+    assert.ok(new URL(page.url()).searchParams.get("view") === "live");
+    await page.goto(origin + "/dashboard/billing");
     await visitor.reload();
     await visitor.locator("#products .flower-card").first().waitFor();
     assert.equal(await visitor.locator("#custom .flower-card").count(), 6);
@@ -694,7 +744,7 @@ const { chromium } = require("playwright");
       .locator('.nb-order-form input[name="phone"]')
       .fill("5551234567");
     await visitor.locator('.nb-order-form button[type="submit"]').click();
-    await visitor.getByText("YOUR REQUEST IS SAVED", { exact: true }).waitFor();
+    await visitor.getByText("YOUR ENQUIRY IS SAVED", { exact: true }).waitFor();
     const requests = await (
       await f.call("/api/shops/" + shop.id + "/requests")
     ).json();
@@ -724,24 +774,57 @@ const { chromium } = require("playwright");
       .locator('.nb-order-form input[name="phone"]')
       .fill("5551234568");
     await visitor.locator('.nb-order-form button[type="submit"]').click();
-    await visitor.getByText("YOUR REQUEST IS SAVED", { exact: true }).waitFor();
+    await visitor.getByText("YOUR ENQUIRY IS SAVED", { exact: true }).waitFor();
     assert.equal(
       (await (await f.call("/api/shops/" + shop.id + "/requests")).json())
         .requests.length,
       2,
     );
+    const savedDesignRequest = (
+      await (await f.call("/api/shops/" + shop.id + "/requests")).json()
+    ).requests.find((r) => r.kind === "design");
+    const savedDesignDetail = (
+      await (
+        await f.call(
+          "/api/shops/" + shop.id + "/requests/" + savedDesignRequest.id,
+        )
+      ).json()
+    ).request;
+    assert.match(savedDesignDetail.preview, /^data:image\/jpeg;base64,/);
+    assert.ok(savedDesignDetail.preview.length <= 100000);
+    await page.goto(
+      origin + "/dashboard/orders?request=" + savedDesignRequest.id,
+    );
+    await page.locator('.request-contents img[src^="data:image/"]').waitFor();
+    assert.ok(
+      await page
+        .locator(".request-contents img")
+        .evaluate((img) => img.complete && img.naturalWidth > 0),
+    );
+    await page.screenshot({
+      path: path.join(output, "merchant-saved-bouquet.png"),
+      fullPage: true,
+    });
     await visitor.goto(origin + "/s/" + shop.slug);
     await visitor
       .locator("#custom .flower-card")
       .first()
-      .getByRole("link", { name: "Custom Order" })
+      .getByRole("button", { name: "Order", exact: false })
       .click();
-    await studioReady(visitor);
     await visitor.locator(".nb-order-review").waitFor();
+    assert.equal(new URL(visitor.url()).pathname, "/s/" + shop.slug);
+    const uploadedCover = shop.draft.collection[0].cover;
+    assert.ok(uploadedCover);
+    await visitor
+      .locator(`.nb-order-review img[src$="/${uploadedCover}"]`)
+      .waitFor();
+    await visitor.waitForFunction(
+      () => document.querySelector(".nb-order-review img")?.naturalWidth > 0,
+    );
     assert.equal(
       await visitor.locator('.nb-order-form button[type="submit"]').isEnabled(),
       true,
-      "Public order action opens the same recipe review",
+      "Public Order opens checkout directly without visiting the builder",
     );
     assert.equal(new URL(visitor.url()).searchParams.has("action"), false);
     await visitor
@@ -762,12 +845,56 @@ const { chromium } = require("playwright");
       fullPage: true,
     });
     await page.goto(origin + "/dashboard/payments");
+    await page.locator(".optional-square > summary").click();
     await page.getByText("SETUP PENDING", { exact: true }).waitFor();
     assert.equal(
       await page.locator('[data-action="square-connect"]').isEnabled(),
       false,
     );
+    await page.locator("#commerceSettings").waitFor({ state: "attached" });
+    assert.equal(await page.locator("#enableSandboxCheckout").count(), 0);
+    await page.route("**/api/config", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        json: {
+          ...(await response.json()),
+          sandboxTestAccess: true,
+          squareEnvironment: "sandbox",
+        },
+      });
+    });
+    await page.reload();
+    await page.locator("#enableSandboxCheckout").waitFor();
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.locator("#enableSandboxCheckout").click();
+    await page
+      .getByText(
+        "Checkout rules saved. Existing paid orders keep their agreed totals.",
+        { exact: true },
+      )
+      .waitFor();
+    const testRules = (
+      await (await f.call(`/api/shops/${shop.id}/commerce`)).json()
+    ).settings;
+    assert.equal(testRules.enabled, true);
+    assert.equal(testRules.taxBps, 0);
+    assert.equal(testRules.pricesApproved, true);
+    assert.match(testRules.terms, /Sandbox testing only/);
+    // Still no Square setup in this fixture: the shortcut never creates a
+    // connection or skips any server checkout gate.
+    assert.equal(
+      (await (await f.call(`/api/shops/${shop.id}/square/status`)).json())
+        .connected,
+      false,
+    );
+    await page.unroute("**/api/config");
+    await page.reload();
+    await page.locator(".checkout-settings > summary").click();
     await page.locator("#commerceSettings").waitFor();
+    assert.equal(await page.locator("#enableSandboxCheckout").count(), 0);
+    await page.locator(".payment-options > summary").click();
+    await page.locator('#commerceSettings input[name="enabled"]').uncheck();
     await page.locator('#commerceSettings input[name="tax"]').fill("0");
     await page.locator('#commerceSettings input[name="delivery"]').fill("5");
     await page
@@ -803,9 +930,8 @@ const { chromium } = require("playwright");
         '[data-action="admin-filter"][data-status="activation_requested"]',
       )
       .click();
-    await page
-      .locator(`[data-action="admin-select"][data-id="${shop.id}"]`)
-      .waitFor();
+    await page.getByText("No matching accounts.", { exact: true }).waitFor();
+    // This fixture still has paid access: renewal requests do not hide its active status.
     await page.locator('[data-action="admin-filter"][data-status=""]').click();
     await page
       .locator(`[data-action="admin-select"][data-id="${satinShop.id}"]`)
@@ -1006,6 +1132,278 @@ const { chromium } = require("playwright");
       await switchPage.locator(".app-header .beta-label").textContent(),
       "FLORIST WORKSPACE",
     );
+    await switchPage.locator(".shop-health").waitFor();
+    await switchPage.screenshot({
+      path: path.join(output, "simple-workspace-desktop.png"),
+      fullPage: true,
+    });
+    assert.equal(await switchPage.locator(".sidebar-nav .ui-icon").count(), 5);
+    await switchPage.setViewportSize({ width: 390, height: 844 });
+    assert.ok(
+      await switchPage.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+    );
+    await switchPage.screenshot({
+      path: path.join(output, "simple-workspace-mobile.png"),
+      fullPage: true,
+    });
+    await switchPage.locator("#workspacePage").selectOption("/dashboard/shop");
+    await switchPage
+      .locator('.workspace-subnav a[href="/dashboard/payments"]')
+      .click();
+    await switchPage.locator(".request-channel-panel").waitFor();
+    assert.ok(
+      await switchPage.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+    );
+    await switchPage.locator("#workspacePage").selectOption("/dashboard");
+    await switchPage.locator(".shop-health").waitFor();
+    await switchPage.setViewportSize({ width: 1365, height: 900 });
+    await switchPage.goto(origin + "/dashboard/payments");
+    await switchPage
+      .locator("#commerceSettings")
+      .waitFor({ state: "attached" });
+    assert.equal(
+      await switchPage.locator("#commerceSettings").isVisible(),
+      false,
+    );
+    await switchPage
+      .locator('.request-channel-panel [data-path="requestChannel"]')
+      .selectOption("both");
+    await saved(switchPage);
+    assert.equal((await readShop()).draft.requestChannel, "both");
+    await switchPage.screenshot({
+      path: path.join(output, "simple-payments-desktop.png"),
+      fullPage: true,
+    });
+
+    await switchPage.goto(origin + "/dashboard/shop");
+    const previousMixed = await readShop();
+    await switchPage.locator("[data-preset]").selectOption("mixed");
+    await saved(switchPage);
+    let mixed = await readShop();
+    assert.equal(mixed.draft.preset, "mixed");
+    const withoutType = (rows) =>
+      rows.map((row) => {
+        const copy = structuredClone(row);
+        if (copy.design) delete copy.design.flowerType;
+        return copy;
+      });
+    assert.deepEqual(
+      withoutType(mixed.draft.collection),
+      withoutType(previousMixed.draft.collection),
+    );
+    assert.equal(
+      mixed.published.draft.preset,
+      previousMixed.published.draft.preset,
+    );
+    // Seed explicit QA-only prices; no real merchant prices are changed by this test.
+    mixed.draft.flowerPrices = Object.fromEntries(
+      catalog.flowers.map((row) => [row.id, 100]),
+    );
+    mixed.draft.extrasCents = Object.fromEntries(
+      catalog.extras.map((row) => [row.id, 50]),
+    );
+    mixed.draft.disabledFlowers = [];
+    mixed.draft.disabledExtras = [];
+    mixed.draft.requestChannel = "both";
+    const freshRecipe = catalog.recipes.find((row) => row.preset === "fresh");
+    const satinRecipe = catalog.recipes.find((row) => row.preset === "satin");
+    mixed.draft.collection = [freshRecipe, satinRecipe].map((row) => ({
+      id: row.preset + "-mixed",
+      title: row.name,
+      recipeId: row.id,
+      design: null,
+      cover: null,
+      available: true,
+      category: "",
+    }));
+    const mixedSaved = await f.call(`/api/shops/${mixed.id}/draft`, {
+      method: "PUT",
+      body: { version: mixed.version, draft: mixed.draft },
+    });
+    assert.equal(mixedSaved.status, 200, await mixedSaved.clone().text());
+    mixed = (await mixedSaved.json()).shop;
+    await switchPage.goto(origin + "/dashboard/prices");
+    await switchPage.locator("#flowerTypeFilter").selectOption("fresh");
+    assert.equal(
+      await switchPage
+        .locator('[data-flower-price="satin_rose_pink"]')
+        .isVisible(),
+      false,
+    );
+    await switchPage.locator("#flowerTypeFilter").selectOption("satin");
+    assert.equal(
+      await switchPage
+        .getByRole("heading", { name: "Fresh · Rose", exact: true })
+        .isVisible(),
+      false,
+      "Collection filters hide empty headings and tables",
+    );
+    assert.equal(
+      await switchPage.locator('[data-flower-price="rose_red"]').isVisible(),
+      false,
+    );
+    for (const width of [320, 360, 390, 430, 768]) {
+      await switchPage.setViewportSize({ width, height: 740 });
+      assert.ok(
+        await switchPage.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth + 1,
+        ),
+        `Catalogue fits ${width}px`,
+      );
+      assert.ok(
+        await switchPage
+          .locator("#flowerTypeFilter")
+          .evaluate((el) => parseFloat(getComputedStyle(el).fontSize) >= 16),
+      );
+      const hit = await switchPage
+        .locator(".availability-hit:visible")
+        .first()
+        .boundingBox();
+      assert.ok(hit.width >= 40 && hit.height >= 44);
+      await switchPage.evaluate(() => scrollTo(0, 900));
+      const nav = await switchPage.locator("#workspacePage").boundingBox();
+      const save = await switchPage
+        .locator('.save-bar [data-action="save"]')
+        .boundingBox();
+      assert.ok(
+        nav.y >= 0 && nav.y + nav.height < 100,
+        `Page menu stays reachable at ${width}px`,
+      );
+      assert.ok(
+        save.y >= 0 && save.y + save.height <= 741,
+        `Save stays reachable at ${width}px`,
+      );
+    }
+    await switchPage.setViewportSize({ width: 390, height: 844 });
+    await switchPage.evaluate(() => scrollTo(0, 0));
+    await switchPage.screenshot({
+      path: path.join(output, "phone-price-controls.png"),
+      fullPage: false,
+    });
+    await switchPage.setViewportSize({ width: 1365, height: 900 });
+    await switchPage.goto(
+      origin + `/studio/studio.html?shop=${mixed.id}&blank=1`,
+    );
+    await switchPage
+      .getByRole("heading", { name: "What would you like to create?" })
+      .waitFor();
+    await switchPage.getByRole("link", { name: "Satin flowers" }).click();
+    await studioReady(switchPage);
+    assert.equal(
+      await switchPage.locator("#platformFlowerType").inputValue(),
+      "satin",
+    );
+    await switchPage.locator("#platformFlowerType").selectOption("fresh");
+    await switchPage.waitForURL(/flowers=fresh/);
+    await studioReady(switchPage);
+    assert.equal(
+      await switchPage.locator("#platformFlowerType").inputValue(),
+      "fresh",
+    );
+    await switchPage.locator("#platformFlowerType").selectOption("satin");
+    await switchPage.waitForURL(/flowers=satin/);
+    await studioReady(switchPage);
+    assert.equal(
+      await switchPage.locator('[data-mode="classic"]').isVisible(),
+      false,
+    );
+    await switchPage.goto(
+      origin + `/studio/studio.html?shop=${mixed.id}&card=fresh-mixed`,
+    );
+    await studioReady(switchPage);
+    assert.equal(await switchPage.locator('[data-mode="classic"]').count(), 1);
+    await switchPage.goto(
+      origin + `/studio/studio.html?shop=${mixed.id}&card=satin-mixed`,
+    );
+    await studioReady(switchPage);
+    assert.equal(
+      (await switchPage.evaluate(() => NebulaPlatformStudio.design()))
+        .flowerType,
+      "satin",
+    );
+    assert.equal(
+      (await switchPage.evaluate(() => NebulaPlatformStudio.price())).ok,
+      true,
+    );
+    assert.equal(
+      (
+        await f.call(`/api/shops/${mixed.id}/publish`, {
+          method: "POST",
+          body: { version: mixed.version },
+        })
+      ).status,
+      200,
+    );
+    const messageCtx = await context({ width: 390, height: 844 }),
+      messagePage = await messageCtx.newPage();
+    for (const channel of ["both", "whatsapp", "sms"]) {
+      const currentMessageShop = (
+        await (await f.call(`/api/shops/${mixed.id}`)).json()
+      ).shop;
+      currentMessageShop.draft.requestChannel = channel;
+      const messageSave = await f.call(`/api/shops/${mixed.id}/draft`, {
+        method: "PUT",
+        body: {
+          version: currentMessageShop.version,
+          draft: currentMessageShop.draft,
+        },
+      });
+      assert.equal(messageSave.status, 200);
+      const messageVersion = (await messageSave.json()).shop.version;
+      assert.equal(
+        (
+          await f.call(`/api/shops/${mixed.id}/publish`, {
+            method: "POST",
+            body: { version: messageVersion },
+          })
+        ).status,
+        200,
+      );
+      await messagePage.goto(origin + `/s/${mixed.slug}`);
+      await messagePage
+        .locator("#custom .flower-card")
+        .last()
+        .getByRole("button", { name: "Order", exact: false })
+        .click();
+      await messagePage.locator('[name="name"]').fill("Message QA");
+      await messagePage.locator('[name="phone"]').fill("+14165550199");
+      assert.match(
+        await messagePage.locator("[data-message-steps]").innerText(),
+        /tap Send/,
+      );
+      await messagePage
+        .getByRole("button", { name: "Send unpaid request" })
+        .click();
+      await messagePage
+        .getByRole("heading", { name: "Send your request to the florist." })
+        .waitFor();
+      assert.equal(
+        await messagePage
+          .getByRole("link", { name: "Open WhatsApp draft" })
+          .count(),
+        channel === "sms" ? 0 : 1,
+      );
+      assert.equal(
+        await messagePage.getByRole("link", { name: "Open SMS draft" }).count(),
+        channel === "whatsapp" ? 0 : 1,
+      );
+      if (channel !== "whatsapp") {
+        const smsHref = await messagePage
+          .getByRole("link", { name: "Open SMS draft" })
+          .getAttribute("href");
+        assert.match(smsHref, /^sms:\+\d+\?body=/);
+        assert.ok(decodeURIComponent(smsHref).includes("florist sign-in"));
+      }
+      await messagePage.screenshot({
+        path: path.join(output, "message-order-mobile.png"),
+        fullPage: true,
+      });
+    }
+    await messageCtx.close();
     await switchLogin.close();
     assert.deepEqual(errors, [], "No unhandled browser errors");
     assert.deepEqual(badRequests, [], "No unexpected outbound service");

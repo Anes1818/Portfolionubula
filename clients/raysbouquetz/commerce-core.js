@@ -679,7 +679,7 @@
                   !["rose", "foam"].includes(CAT[id].family)))));
         if (unknown)
           missing.push(
-            n ? converted.reason : CAT[id].en + " needs Ray’s quote",
+            n ? converted.reason : CAT[id].en + " needs a quote from the shop",
           );
         const unitCents =
           includedInBouquet || unknown
@@ -744,15 +744,15 @@
           });
         if (families.length > 1 || !range.exact || premium)
           missing.push(
-            "Ray’s confirms the final bouquet quote from the menu starting prices/ranges",
+            "The shop confirms the final bouquet quote from the menu starting prices/ranges",
           );
       }
       if (!cash && families.length === 2)
         missing.push(
-          "Two-flower-type arrangements need Ray’s quote; the mixed menu covers three or more types",
+          "Two-flower-type arrangements need a quote from raysbouquetz; the mixed menu covers three or more types",
         );
       if (cash && flowerItems.length)
-        missing.push("Ray’s confirms the final mixed money and flower quote");
+        missing.push("The shop confirms the final mixed money and flower quote");
       add("butterfly", s.finishes.butterfly | 0);
       add("crown", s.finishes.crown ? 1 : 0);
       const bow = s.finishes.decorations.find((d) => d.id.startsWith("bow_")),

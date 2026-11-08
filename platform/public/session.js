@@ -1,4 +1,5 @@
 /* Shared verified-owner session for the dashboard and bouquet studio. */
+import { ensureHuman } from "/human-check.js";
 let initialization;
 let currentUser = null;
 let auth;
@@ -87,7 +88,10 @@ export async function refreshUser() {
   return currentUser;
 }
 
-export async function api(path, { method = "GET", body } = {}) {
+export async function api(
+  path,
+  { method = "GET", body, humanRetry = false } = {},
+) {
   const url = new URL(path, location.origin);
   if (url.origin !== location.origin || !url.pathname.startsWith("/api/"))
     throw requestError("This shop request has an invalid address.");
@@ -121,6 +125,14 @@ export async function api(path, { method = "GET", body } = {}) {
       "The service returned an incomplete response. Please try again.",
       response.status,
     );
+  }
+  if (
+    response.status === 403 &&
+    data.code === "human_verification_required" &&
+    !humanRetry
+  ) {
+    await ensureHuman(publicConfig);
+    return api(path, { method, body, humanRetry: true });
   }
   if (!response.ok)
     throw requestError(

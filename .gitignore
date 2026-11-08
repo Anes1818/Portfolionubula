@@ -10,6 +10,7 @@ firebase/functions/.secret.local
 cloudflare/**/.dev.vars*
 cloudflare/**/.env*
 cloudflare/**/.wrangler/
+cloudflare/**/.private/
 /.wrangler/
 cloudflare/**/dist/
 

@@ -19,6 +19,7 @@ const flowers=[
  ['rose_black','Black satin rose','black','rose','satin-rose-black-v1.png'],
  ['rose_red_glitter','Glitter red satin rose','red','rose','satin-rose-red-glitter-v1.png'],
  ['foam_rose_black','Black foam rose','black','foam','foam-rose-black-v1.png'],
+ ['foam_rose_white','White foam rose','white','foam','foam-rose-white-v1.png'],
  ['satin_dahlia_pink','Pink ribbon dahlia','pink','dahlia','satin-dahlia-pink-v1.png'],
  ['satin_dahlia_blue','Blue ribbon dahlia','blue','dahlia','satin-dahlia-blue-v1.png'],
  ['satin_dahlia_ivory','Ivory ribbon dahlia','ivory','dahlia','satin-dahlia-ivory-v1.png'],
@@ -42,7 +43,9 @@ for(const [currency,values]of Object.entries(P.denominations))for(const denomina
 }
 CONFIG.baseCents=P.baseCents;CONFIG.laborCents={classic:0,...P.laborCents};Object.assign(CONFIG.extrasCents,P.extrasCents);
 const wraps={dome:{black:'black',ivory:'ivory',blush:'pink',custom:'lilac'},heart:{black:'black',custom:'lilac'}};
-function wrapArt(s){const colour=wraps[s.mode]?.[s.finishes.paper]||'black';return art('wrap-triangle-'+colour+'-'+s.mode+'-v1.png');}
+const customTint=s=>RAY_BUILDER.platform&&s.mode==='dome'&&s.finishes.paper==='custom'&&!['#dcc8b7','#b69aca'].includes(s.finishes.tint);
+const sashOptions=RAY_BUILDER.platform?['none','blank_blackband','blank_champagne']:['none','blank_blackband'];
+function wrapArt(s){const colour=customTint(s)?'ivory':wraps[s.mode]?.[s.finishes.paper]||'black';return art('wrap-triangle-'+colour+'-'+s.mode+'-v1.png');}
 meta.collars.dome=art('wrap-triangle-black-dome-v1.png');meta.collars.heart=art('wrap-triangle-black-heart-v1.png');
 meta.collars.domeIvory=art('wrap-triangle-ivory-dome-v1.png');meta.collars.domeCocoa=meta.collars.dome;
 meta.wrap.back=meta.collars.dome.url;meta.wrap.front=meta.collars.dome.url;meta.wraps={};
@@ -71,27 +74,33 @@ NebulaGeometry.nodes=s=>{const sc=baseNodes(s);if(!modes.includes(s.mode))return
  sc.nodes=sc.nodes.map(n=>{
   if(!isNote(n.id)){
    if(!allowed.has(n.id)||n.id==='__choc')return n;
-   return {...n,w:n.w*1.18,h:n.h*1.18,d:n.d*1.18};
+   // Broad sunflower petals sit above the rose bed. Give their face a little
+   // more room without changing slots, neighbours, recipe counts or pricing.
+   const size=CAT[n.id]?.family==='sunflower'?1.28:1.18;
+   return {...n,w:n.w*size,h:n.h*size,d:n.d*size};
   }
   const dx=n.x-sc.frame.center.x,dy=n.y-sc.frame.center.y;
   const h=sc.frame.unit*1.45*(s.mode==='heart'?1.45:1.30);
   return {...n,w:h*2/3,h,d:h*.8,rot:Math.hypot(dx,dy)<sc.frame.unit*.35?0:Math.atan2(dy,dx)+Math.PI/2,bright:1};
  });
- // Cash sits behind the satin heads, so notes cannot hide their faces.
- sc.nodes.sort((a,b)=>Number(!isNote(a.id))-Number(!isNote(b.id))||a.z-b.z);
+ // Paint notes, the rose bed, then focal sunflowers. Distance from the centre
+ // still controls overlap within each layer, but a central rose can no longer
+ // cover a neighbouring sunflower. Slot centres remain unchanged for arranging.
+ const layer=n=>isNote(n.id)?0:CAT[n.id]?.family==='sunflower'?2:1;
+ sc.nodes.sort((a,b)=>layer(a)-layer(b)||a.z-b.z||a.index-b.index);
  return sc;
 };
 function paper(s,f){
  if(s.finishes.collar===false)return null;const a=wrapArt(s);
  const w=(f.radius+f.unit*.32)*(s.mode==='heart'?3.12:3.2);
- return {uid:'paper',url:a.url,x:f.center.x,y:f.center.y,w,h:w*a.height/a.width,d:w,rot:0,bright:1,untinted:true};
+ return {uid:'paper',url:a.url,x:f.center.x,y:f.center.y,w,h:w*a.height/a.width,d:w,rot:0,bright:1,untinted:!customTint(s)};
 }
 // Existing renderer extension points select the new photographic surround.
 g.NebulaRoseArt={paper,apply(){},complete(){},assets:s=>[wrapArt(s).url],reference:()=>false};
 g.NebulaCustomization={assets:s=>[wrapArt(s).url,...s.finishes.decorations.map(d=>meta.finishes[d.id].url)],extras:()=>[],complete(){},valid:o=>o&&o.v===1&&Object.keys(o).every(k=>['v','cashSupply','paymentPlan'].includes(k))&&(o.cashSupply===undefined||['shop','customer'].includes(o.cashSupply))&&(o.paymentPlan===undefined||['deposit','full'].includes(o.paymentPlan)),beforeDetail(s,id){if(id.startsWith('bow_'))s.finishes.decorations=s.finishes.decorations.filter(d=>!d.id.startsWith('bow_'));},placeDetail:(s,d)=>d,detailFrame:(s,f)=>f};
 function inScope(s){
  if(!s||!modes.includes(s.mode)||!Array.isArray(s.items)||s.items.some(i=>!allowed.has(i.id)))return false;
- const f=s.finishes;if(!f||!Object.hasOwn(wraps[s.mode],f.paper)||f.ribbon!=='none'||!['none','blank_blackband'].includes(f.sash))return false;
+ const f=s.finishes;if(!f||!Object.hasOwn(wraps[s.mode],f.paper)||f.ribbon!=='none'||!sashOptions.includes(f.sash))return false;
  if(['fillerCount','greeneryCount','initial','greenRim','pumpkin','bow','spookyMask','spookyBow','ghostCount','thistleCount','chocolateBox'].some(k=>!!f[k])||f.roseArtwork||s.photographic||s.template?.layout)return false;
  if((f.decorations||[]).some(d=>!Object.hasOwn(detailSpecs,d.id)))return false;
  const t=s.template;if(t&&(t.palette.some(id=>!allowed.has(id))||['wall','fill','center'].some(k=>!allowed.has(t.zones[k]))||(t.accent.count&&!allowed.has(t.accent.id))||Object.values(t.overrides).some(id=>id!==null&&!allowed.has(id))))return false;
@@ -101,7 +110,7 @@ const validate=M.validate;
 M.validate=raw=>{try{if(!inScope(raw))return null;const s=validate(raw);return inScope(s)?s:null;}catch{return null;}};
 const migrate=M.migrateV3;M.migrateV3=raw=>{try{const s=migrate(raw);return inScope(s)?s:null;}catch{return null;}};
 const defaultMode=M.defaultMode;
-M.defaultMode=mode=>{if(!modes.includes(mode))throw Error('Ray’s supports Buchón and Heart only.');const s=defaultMode(mode);s.template.accent.id='rose_pink';s.finishes.studio={v:1};return s;};
+M.defaultMode=mode=>{if(!modes.includes(mode))throw Error('This shop supports Buchón and Heart only.');const s=defaultMode(mode);s.template.accent.id='rose_pink';s.finishes.studio={v:1};return s;};
 const switchMode=M.switchMode;M.switchMode=(s,mode,bank)=>modes.includes(mode)?switchMode(s,mode,bank):{ok:false,reason:'unsupported'};
 function recipe(id){
  const r=RAY_BUILDER.recipes.find(r=>r.id===id),d=RAY_STORE.designs.find(d=>d.id===id);if(!r||!d)return null;
@@ -119,22 +128,22 @@ NebulaRomance.recipes=RAY_STORE.designs.map(d=>({id:d.id,en:d.name,es:d.name,mod
 M.portfolio=(s,bank)=>({format:'nebula-bouquet-studio',version:6,activeMode:s.mode,bouquets:Object.fromEntries(modes.filter(mode=>mode===s.mode||bank[mode]).map(mode=>[mode,M.clone(mode===s.mode?s:bank[mode])]))});
 M.validatePortfolio=raw=>{if(!raw||raw.format!=='nebula-bouquet-studio'||raw.version!==6||!modes.includes(raw.activeMode)||!raw.bouquets||Object.keys(raw.bouquets).some(k=>!modes.includes(k)))return null;const bouquets={};for(const [mode,design]of Object.entries(raw.bouquets)){const s=M.validate(design);if(!s||s.mode!==mode)return null;bouquets[mode]=s;}return bouquets[raw.activeMode]?{format:raw.format,version:6,activeMode:raw.activeMode,bouquets}:null;};
 M.price=s=>g.RayPayments?.price(s)||RayCommerce.preview(s,P);
-M.order=(s,lang='en')=>({format:'nebula-bouquet',version:6,estimateOnly:true,draft:true,currency:'CAD',design:M.clone(s),pickList:M.price(s).lines.map(l=>({...l,name:CAT[l.id][lang]})),pricing:M.price(s),notice:'Owner preview with confirmed starting recipes. Variable prices require Ray’s final quote. No order or payment has been placed.'});
+M.order=(s,lang='en')=>({format:'nebula-bouquet',version:6,estimateOnly:true,draft:true,currency:'CAD',design:M.clone(s),pickList:M.price(s).lines.map(l=>({...l,name:CAT[l.id][lang]})),pricing:M.price(s),notice:'Owner preview with confirmed starting recipes. Variable prices require a final quote from the shop. No order or payment has been placed.'});
 // The original export compositor is synchronous. Change only its amount label
 // for quotes, restoring the shared formatter even if drawing fails.
 const exportCanvas=NebulaRenderer.exportCanvas;
 NebulaRenderer.exportCanvas=(s,w,h,lang)=>{const money=M.money,p=M.price(s);try{if(p.quoteRequired)M.money=()=> 'QUOTE REQUIRED';return exportCanvas(s,w,h,lang);}finally{M.money=money;}};
 NebulaRenderer.blob=async(s,w,h,lang)=>{await NebulaRenderer.awaitAssets(s);const cv=NebulaRenderer.exportCanvas(s,w,h,lang);return new Promise((resolve,reject)=>cv.toBlob(b=>b?resolve(b):reject(Error('PNG export failed.')),'image/png'));};
-Object.assign(NebulaShop,{restricted:false,recipeAllowed:id=>RAY_STORE.designs.some(d=>d.id===id),recipe,modeAllowed:mode=>modes.includes(mode),assess:s=>({ok:inScope(s),restricted:false}),message:()=>"Choose a supported satin design for Ray’s Bouquetz."});
+Object.assign(NebulaShop,{restricted:false,recipeAllowed:id=>RAY_STORE.designs.some(d=>d.id===id),recipe,modeAllowed:mode=>modes.includes(mode),assess:s=>({ok:inScope(s),restricted:false}),message:()=>"Choose a supported satin design for raysbouquetz."});
 Object.assign(NebulaI18n.en,{
  studio:'HANDMADE SATIN & FOAM BOUQUETS',dome:'Buchón / Dome',domeShort:'A rounded satin bouquet',heart:'Heart',heartShort:'A heart made by hand',roses:'Satin roses',
- yourAtelier:'THE RAY’S BOUQUET STUDIO',pageTitle:'A little more you.',flowers:'Flowers',perStem:'per flower',demoEstimate:'PREVIEW ESTIMATE',sampleShort:'draft',
- aboutLead:'Try their colours and finishing touches before Ray’s makes your gift.',aboutPoint1:'Explore handmade satin flowers in your favourite colours.',aboutHonest:'A visual preview. Ray’s confirms the finished arrangement and final quote.',
+ yourAtelier:'BOUQUET STUDIO',pageTitle:'A little more you.',flowers:'Flowers',perStem:'per flower',demoEstimate:'PREVIEW ESTIMATE',sampleShort:'draft',
+ aboutLead:'Try their colours and finishing touches before the shop makes your gift.',aboutPoint1:'Explore handmade satin flowers in your favourite colours.',aboutHonest:'A visual preview. The shop confirms the finished arrangement and final quote.',
  topCatalogueNote:'Choose a satin flower, then tap a bloom to replace it. Money artwork is illustrative.',domeNote:'Satin & foam flowers · rounded arrangement',heartNote:'Satin & foam flowers · heart arrangement',
- separateHint:'Buchón and Heart each keep their own design.',blackCollar:'Small triangle wrapping',collarDescription:'Layered triangular paper around your satin bouquet.',realPaper:'RAY’S SIGNATURE WRAPPING',tintDisclosure:'Preview artwork; paper styles and colours are subject to shop approval.',
- orderIt:'Review this bouquet',orderEyebrow:'DESIGN REVIEW',orderTitle:'Your bouquet preview',orderHint:'Review your design. Ray’s will confirm quantities, availability and the final CAD price.',orderDemo:'Owner preview with confirmed recipe counts. Variable menu items need a final quote; payments are not connected.',orderFine:'Requests and Square payments will be enabled after shop approval.',orderSend:'Ordering opens after approval',
- priceDisclaimer:'Preview estimates in CAD. Menu starting prices, variable add-ons and the dated USD rate need a final quote. Ray’s confirms the final quote before payment.',
- saveTitle:'Keep your creation.',priceBreakdown:'Your preview estimate',base:'Preparation (preview: included)',labor:'Arranging (preview: included)',bow_lilac:'Lilac satin bow',bow_black:'Black satin bow',graduation_cap:'Graduation cap',money_styling:'Money styling — wrapping & assembly included',message_bow_bundle:'Personalised message ribbon + bow',bouquet_menu:'Bouquet menu starting price',mixed_menu:'Mixed bouquet menu starting price',glitter:'Glitter finish',custom:'Lilac triangle paper',black:'Black triangle paper',ivory:'Ivory triangle paper',blush:'Pink triangle paper',
+ separateHint:'Buchón and Heart each keep their own design.',blackCollar:'Small triangle wrapping',collarDescription:'Layered triangular paper around your satin bouquet.',realPaper:'SIGNATURE WRAPPING',tintDisclosure:'Preview artwork; paper styles and colours are subject to shop approval.',
+ orderIt:'Review this bouquet',orderEyebrow:'DESIGN REVIEW',orderTitle:'Your bouquet preview',orderHint:'Review your design. The shop will confirm quantities, availability and the final CAD price.',orderDemo:'Owner preview with confirmed recipe counts. Variable menu items need a final quote; payments are not connected.',orderFine:'Requests and Square payments will be enabled after shop approval.',orderSend:'Ordering opens after approval',
+ priceDisclaimer:'Preview estimates in CAD. Menu starting prices, variable add-ons and the dated USD rate need a final quote. The shop confirms the final quote before payment.',
+ saveTitle:'Keep your creation.',priceBreakdown:'Your preview estimate',base:'Preparation (preview: included)',labor:'Arranging (preview: included)',bow_lilac:'Lilac satin bow',bow_black:'Black satin bow',graduation_cap:'Graduation cap',money_styling:'Money styling — wrapping & assembly included',message_bow_bundle:'Personalised message ribbon + bow',bouquet_menu:'Bouquet menu starting price',mixed_menu:'Mixed bouquet menu starting price',glitter:'Glitter finish',custom:RAY_BUILDER.platform?'Custom triangle paper':'Lilac triangle paper',black:'Black triangle paper',ivory:'Ivory triangle paper',blush:'Pink triangle paper',
  usd_exchange_margin:'USD exchange buffer (preview)',allFlowers:'Flowers, notes & chocolates',
  moveFlowers:'Arrange',moveFinish:'Done',
  });

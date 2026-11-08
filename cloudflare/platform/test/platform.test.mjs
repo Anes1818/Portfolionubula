@@ -657,6 +657,8 @@ test("draft/media mutations have owner-local rate caps and SPA routes serve the 
   );
   for (const path of [
     "/",
+    "/demo",
+    "/demo/",
     "/login",
     "/dashboard",
     "/dashboard/shop",
@@ -1022,7 +1024,7 @@ test("publication freezes a paid snapshot while later immutable uploads and draf
         method: "PUT",
         body: {
           version: 3,
-          draft: { ...next, preset: "satin", enabledModes: ["dome"] },
+          draft: { ...next, preset: "satin", enabledModes: ["dome"], disabledFlowers:[],disabledExtras:[] },
         },
       })
     ).status,
@@ -1362,6 +1364,8 @@ test("custom requests price the published policy and reject unknown, disabled, u
   const { shop } = await f.create();
   const publishedDraft = {
     ...shop.draft,
+    disabledFlowers: [],
+    home: {...shop.draft.home,sections:["builder","contact"]},
     flowerPrices: { rose_red: 725 },
     collection: [
       {

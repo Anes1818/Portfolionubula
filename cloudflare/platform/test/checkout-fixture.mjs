@@ -41,6 +41,9 @@ export async function setup(currency = "USD") {
     phone: "15551234567",
     city: "Town",
     flowerPrices: { rose_red: 1001 },
+    disabledFlowers: [],
+    disabledExtras: [],
+    home: { ...shop.draft.home, sections: ["products", "builder", "contact"] },
     extrasCents: { card: 0 },
     products: [
       {
@@ -130,7 +133,8 @@ export async function setup(currency = "USD") {
             id: location,
             merchant_id: merchant,
             name: "Shop",
-            country: currency === "CAD" ? "CA" : "US",
+            country:
+              { CAD: "CA", GBP: "GB", AUD: "AU", EUR: "IE" }[currency] || "US",
             currency,
             status: "ACTIVE",
             capabilities: ["CREDIT_CARD_PROCESSING"],
@@ -141,6 +145,18 @@ export async function setup(currency = "USD") {
       path === "/v2/online-checkout/payment-links" &&
       opts.method === "POST"
     ) {
+      if (network.rejectPhone && body.pre_populated_data?.buyer_phone_number)
+        return Response.json(
+          {
+            errors: [
+              {
+                code: "INVALID_PHONE_NUMBER",
+                field: "pre_populated_data.buyer_phone_number",
+              },
+            ],
+          },
+          { status: 400 },
+        );
       let link = network.links.get(body.idempotency_key);
       if (!link) {
         const n = network.links.size + 1;
@@ -202,6 +218,7 @@ export async function setup(currency = "USD") {
     accessToken: token,
     customer: {
       name: "Customer <script>",
+      address: "123 Blossom Lane, Test Town",
       phone: "15551230000",
       note: "Birthday",
       date: null,

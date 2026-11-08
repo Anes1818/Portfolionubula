@@ -53,15 +53,44 @@ export async function square(
     );
   }
   if (!response.ok) {
+    // Enumerated diagnostics only: never log response text, tokens or buyer data.
+    if (env.ENVIRONMENT !== "production")
+      console.warn(
+        "square_api_rejected",
+        JSON.stringify({
+          status: response.status,
+          path,
+          errors: (Array.isArray(data?.errors) ? data.errors : [])
+            .slice(0, 5)
+            .map((error) => ({
+              code: /^[A-Z_]{1,80}$/.test(error.code || "")
+                ? error.code
+                : "UNKNOWN",
+              field: /^[A-Za-z0-9_.\[\]]{1,120}$/.test(error.field || "")
+                ? error.field
+                : undefined,
+            })),
+        }),
+      );
     if (response.status === 401)
       throw new HttpError(
         409,
         "Square needs reconnecting. No payment was confirmed.",
       );
-    throw new HttpError(
+    const failure = new HttpError(
       503,
       "Square could not complete this request. Your order is saved.",
     );
+    failure.squareStatus = response.status;
+    failure.squareErrors = (Array.isArray(data?.errors) ? data.errors : [])
+      .slice(0, 5)
+      .map((error) => ({
+        code: /^[A-Z_]{1,80}$/.test(error.code || "") ? error.code : "UNKNOWN",
+        field: /^[A-Za-z0-9_.\[\]]{1,120}$/.test(error.field || "")
+          ? error.field
+          : undefined,
+      }));
+    throw failure;
   }
   return data;
 }

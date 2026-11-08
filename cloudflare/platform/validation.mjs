@@ -7,6 +7,13 @@ import {
 // Six independently bounded 24 KiB designs leave 48 KiB for shop content.
 export const DRAFT_LIMIT = 192 * 1024;
 export const REQUEST_LIMIT = DRAFT_LIMIT + 4096;
+export const SUPPORTED_CURRENCIES = Object.freeze([
+  "USD",
+  "CAD",
+  "GBP",
+  "EUR",
+  "AUD",
+]);
 const encoder = new TextEncoder();
 const idPattern = /^[a-zA-Z0-9_][a-zA-Z0-9_-]{0,79}$/;
 const draftFields = [
@@ -14,11 +21,14 @@ const draftFields = [
   "tagline",
   "city",
   "phone",
+  "requestChannel",
   "instagram",
   "logoMediaId",
   "theme",
   "currency",
   "preset",
+  "country",
+  "timeZone",
   "flowerPrices",
   "disabledFlowers",
   "extrasCents",
@@ -172,6 +182,15 @@ export function multilineText(value, label, max) {
   return clean;
 }
 
+export function normalizeEmail(value, label = "Email") {
+  const clean = text(value, label, 254, true).toLowerCase();
+  requireValue(
+    /^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/.test(clean),
+    "Enter a valid email address.",
+  );
+  return clean;
+}
+
 export const REQUEST_STATUSES = Object.freeze([
   "requested",
   "accepted",
@@ -282,7 +301,14 @@ export function safeId(value, label = "Item ID") {
 }
 
 export function createInput(input) {
-  object(input, "Shop", ["name", "slug", "currency", "preset"]);
+  object(input, "Shop", [
+    "name",
+    "slug",
+    "currency",
+    "preset",
+    "country",
+    "timeZone",
+  ]);
   const name = text(input.name, "Shop name", 80, true);
   requireValue(
     typeof input.slug === "string" &&
@@ -293,11 +319,11 @@ export function createInput(input) {
     "Choose a unique shop address using 3–48 lowercase letters, numbers, and hyphens.",
   );
   requireValue(
-    ["USD", "CAD"].includes(input.currency),
-    "Currency must be USD or CAD.",
+    SUPPORTED_CURRENCIES.includes(input.currency),
+    "Currency must be USD, CAD, GBP, EUR, or AUD.",
   );
   requireValue(
-    ["fresh", "satin"].includes(input.preset),
+    ["fresh", "satin", "mixed"].includes(input.preset),
     "Choose the fresh or satin preset.",
   );
   return {
@@ -305,38 +331,72 @@ export function createInput(input) {
     slug: input.slug,
     currency: input.currency,
     preset: input.preset,
+    country: countryCode(input.country),
+    timeZone: shopTimeZone(input.timeZone),
   };
 }
 
-export function initialDraft(input) {
+export function countryCode(value = "") {
+  requireValue(
+    typeof value === "string" && /^(?:[A-Z]{2})?$/.test(value),
+    "Choose a valid two-letter shop country.",
+  );
+  return value;
+}
+export function shopTimeZone(value = "UTC") {
+  requireValue(
+    typeof value === "string" && value.length <= 80,
+    "Choose a valid shop time zone.",
+  );
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: value }).format();
+  } catch {
+    throw new HttpError(400, "Choose a valid shop time zone.");
+  }
+  return value;
+}
+
+export function initialDraft(input, { catalog } = {}) {
+  const matches = (item) =>
+    !item.preset || input.preset === "mixed" || item.preset === input.preset;
   return {
     schemaVersion: 2,
     name: input.name,
     tagline: "",
     city: "",
     phone: "",
+    requestChannel: "whatsapp",
     instagram: "",
     logoMediaId: null,
     theme: { primary: "#7c6649", background: "#f7f4ee" },
     currency: input.currency,
     preset: input.preset,
+    country: input.country || "",
+    timeZone: input.timeZone || "UTC",
     flowerPrices: {},
-    disabledFlowers: [],
+    disabledFlowers: catalog
+      ? catalog.flowers.filter(matches).map((item) => item.id)
+      : [],
     extrasCents: {},
     collection: [],
     products: [],
-    disabledExtras: [],
+    disabledExtras: catalog
+      ? catalog.extras.filter(matches).map((item) => item.id)
+      : [],
     enabledModes:
       input.preset === "satin"
         ? ["dome", "heart"]
         : ["classic", "dome", "heart"],
     home: {
       headline: input.name,
-      description: "",
       heroMediaId: null,
       about: "",
-      sections: ["custom", "products", "builder", "about", "contact"],
+      sections: ["builder", "custom", "about", "contact"],
       ...storefrontHomeDefaults,
+      heroButtonTarget: "builder",
+      builderButtonLabel: "Design your bouquet",
+      description:
+        "Choose your flowers, wrapping and finishing touches. Create a bouquet that feels like you.",
     },
   };
 }
@@ -358,7 +418,11 @@ export function hydrateDraft(draft) {
       available: item.available ?? true,
       category: item.category ?? "",
     })),
-    home: { ...defaults.home, ...(draft.home || {}) },
+    home: {
+      ...defaults.home,
+      ...storefrontHomeDefaults,
+      ...(draft.home || {}),
+    },
   };
 }
 
@@ -554,34 +618,56 @@ export function validateDraft(value, catalog, { semantic = true } = {}) {
     result.theme[key] = value.theme[key].toLowerCase();
   }
   requireValue(
-    ["USD", "CAD"].includes(value.currency),
-    "Currency must be USD or CAD.",
+    SUPPORTED_CURRENCIES.includes(value.currency),
+    "Currency must be USD, CAD, GBP, EUR, or AUD.",
   );
   requireValue(
-    ["fresh", "satin"].includes(value.preset),
+    ["fresh", "satin", "mixed"].includes(value.preset),
     "Choose the fresh or satin preset.",
   );
   result.currency = value.currency;
   result.preset = value.preset;
+  result.country = countryCode(value.country);
+  result.timeZone = shopTimeZone(value.timeZone);
+  requireValue(
+    ["whatsapp", "sms", "both"].includes(value.requestChannel || "whatsapp"),
+    "Choose WhatsApp, SMS, or both for requests.",
+  );
+  result.requestChannel = value.requestChannel || "whatsapp";
   result.logoMediaId = mediaId(value.logoMediaId, "logo");
   const flowers = catalog?.flowers
     ? new Set(
         catalog.flowers
-          .filter((item) => !item.preset || item.preset === value.preset)
+          .filter(
+            (item) =>
+              !item.preset ||
+              value.preset === "mixed" ||
+              item.preset === value.preset,
+          )
           .map((item) => item.id),
       )
     : null;
   const extras = catalog?.extras
     ? new Set(
         catalog.extras
-          .filter((item) => !item.preset || item.preset === value.preset)
+          .filter(
+            (item) =>
+              !item.preset ||
+              value.preset === "mixed" ||
+              item.preset === value.preset,
+          )
           .map((item) => item.id),
       )
     : null;
   const recipes = catalog?.recipes
     ? new Set(
         catalog.recipes
-          .filter((item) => !item.preset || item.preset === value.preset)
+          .filter(
+            (item) =>
+              !item.preset ||
+              value.preset === "mixed" ||
+              item.preset === value.preset,
+          )
           .map((item) => item.id),
       )
     : null;
@@ -760,6 +846,17 @@ export function validateDraft(value, catalog, { semantic = true } = {}) {
   return result;
 }
 
+export function publicationOffers(catalog, policy) {
+  const offered = (rows, prices, disabled) => rows.filter(({ id, optional }) =>
+    Object.hasOwn(prices, id) && !disabled.includes(id) &&
+    (!optional || Number.isSafeInteger(prices[id])),
+  );
+  return {
+    flowers: offered(catalog.flowers, policy.flowerPrices, policy.disabledFlowers),
+    extras: offered(catalog.extras, policy.extrasCents, policy.disabledExtras),
+  };
+}
+
 export function validatePublication(value, catalog) {
   const draft = validateDraft(value, catalog);
   const preset = catalog.presets?.find((item) => item.id === draft.preset);
@@ -770,21 +867,17 @@ export function validatePublication(value, catalog) {
   );
   const normalized = normalizePolicy(draft, catalog).policy;
   if (draft.home.sections.includes("builder")) {
-    const offered = Object.entries(normalized.flowerPrices).filter(
-      ([id]) => !normalized.disabledFlowers.includes(id),
-    );
+    const { flowers, extras } = publicationOffers(catalog, normalized);
     requireValue(
-      offered.length > 0,
+      flowers.length > 0,
       "Offer at least one flower before publishing the open builder.",
     );
     requireValue(
-      offered.every(([, cents]) => Number.isSafeInteger(cents)),
+      flowers.every(({ id }) => Number.isSafeInteger(normalized.flowerPrices[id])),
       "Set prices for every offered flower before publishing the open builder.",
     );
     requireValue(
-      Object.entries(normalized.extrasCents)
-        .filter(([id]) => !normalized.disabledExtras.includes(id))
-        .every(([, cents]) => Number.isSafeInteger(cents)),
+      extras.every(({ id }) => Number.isSafeInteger(normalized.extrasCents[id])),
       "Set prices for every offered finishing item before publishing the open builder.",
     );
   }

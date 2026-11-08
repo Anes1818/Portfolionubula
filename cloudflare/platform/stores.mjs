@@ -19,8 +19,10 @@ import {
   requestPage,
   requestCursor,
   hydrateRequest,
+  normalizeEmail,
 } from "./validation.mjs";
 import { canonicalCatalog } from "./catalogue.mjs";
+import { checkFulfillment } from "../../platform/public/fulfillment-rules.mjs";
 import { publicationReport } from "./publish-readiness.mjs";
 import {
   storedSquareService,
@@ -32,6 +34,11 @@ import {
 } from "../../platform/shared/policy.mjs";
 import { handleBillingInternal, reconcileBillingForAlarm } from "./billing.mjs";
 import { activationRoutes } from "./manual-activation.mjs";
+import {
+  initNotifications,
+  notificationRoutes,
+  deliverNotifications,
+} from "./notifications.mjs";
 import {
   checkoutRoutes,
   checkoutService,
@@ -118,6 +125,9 @@ export class ShopRegistry {
     );
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS square_merchants (environment TEXT NOT NULL, merchant_id TEXT NOT NULL, shop_id TEXT NOT NULL, owner_uid TEXT NOT NULL, PRIMARY KEY(environment,merchant_id), UNIQUE(environment,shop_id))",
+    );
+    this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS email_reservations (email TEXT PRIMARY KEY, shop_id TEXT NOT NULL UNIQUE, placeholder_uid TEXT NOT NULL UNIQUE, slug TEXT NOT NULL, name TEXT NOT NULL, preset TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', operation_id TEXT NOT NULL UNIQUE, fingerprint TEXT NOT NULL, created_at INTEGER NOT NULL, created_by TEXT NOT NULL, claimed_by_uid TEXT, claimed_at INTEGER, conflict_uid TEXT)",
     );
   }
 
@@ -283,19 +293,107 @@ export class ShopRegistry {
           typeof body.uid === "string" &&
             body.uid.length > 0 &&
             body.uid.length <= 128 &&
+            !body.uid.startsWith("pending:") &&
             typeof body.email === "string" &&
             body.email.length <= 320,
           "Invalid account.",
         );
-        const now = Date.now();
-        this.sql.exec(
-          "INSERT INTO users(uid,email,created_at,last_seen_at) VALUES(?,?,?,?) ON CONFLICT(uid) DO UPDATE SET email=excluded.email,last_seen_at=excluded.last_seen_at",
-          body.uid,
-          body.email,
-          now,
-          now,
-        );
-        return json({ ok: true });
+        const now = Date.now(),
+          normalizedEmail = body.email.trim().toLowerCase();
+        const claimedEntry = this.state.storage.transactionSync(() => {
+          this.sql.exec(
+            "INSERT INTO users(uid,email,created_at,last_seen_at) VALUES(?,?,?,?) ON CONFLICT(uid) DO UPDATE SET email=excluded.email,last_seen_at=excluded.last_seen_at",
+            body.uid,
+            body.email,
+            now,
+            now,
+          );
+          const reservation = first(
+            this.sql.exec(
+              "SELECT * FROM email_reservations WHERE email = ? AND status = 'pending'",
+              normalizedEmail,
+            ),
+          );
+          if (!reservation) return null;
+          const existingShop = first(
+            this.sql.exec(
+              "SELECT id FROM registry WHERE owner_uid = ?",
+              body.uid,
+            ),
+          );
+          if (existingShop) {
+            this.sql.exec(
+              "UPDATE email_reservations SET conflict_uid = ? WHERE email = ? AND status = 'pending'",
+              body.uid,
+              normalizedEmail,
+            );
+            return null;
+          }
+          const regRow = first(
+            this.sql.exec(
+              "SELECT seed FROM registry WHERE id = ? AND owner_uid = ?",
+              reservation.shop_id,
+              reservation.placeholder_uid,
+            ),
+          );
+          requireValue(regRow, "Reserved shop not found.", 404);
+          const placeholderUser = first(
+            this.sql.exec(
+              "SELECT * FROM users WHERE uid = ?",
+              reservation.placeholder_uid,
+            ),
+          );
+          const seed = {
+            ...JSON.parse(regRow.seed),
+            ownerUid: body.uid,
+            claimedFrom: reservation.placeholder_uid,
+            claimedAt: now,
+          };
+          this.sql.exec(
+            "UPDATE registry SET owner_uid = ?, seed = ? WHERE id = ? AND owner_uid = ?",
+            body.uid,
+            JSON.stringify(seed),
+            reservation.shop_id,
+            reservation.placeholder_uid,
+          );
+          this.sql.exec(
+            "UPDATE billing_resources SET owner_uid = ? WHERE shop_id = ?",
+            body.uid,
+            reservation.shop_id,
+          );
+          this.sql.exec(
+            "UPDATE square_merchants SET owner_uid = ? WHERE shop_id = ?",
+            body.uid,
+            reservation.shop_id,
+          );
+          if (placeholderUser) {
+            this.sql.exec(
+              "UPDATE users SET shop_id=?,slug=?,name=?,preset=?,status=?,subscription_status=?,published_version=?,version=?,summary_revision=? WHERE uid=?",
+              placeholderUser.shop_id,
+              placeholderUser.slug,
+              placeholderUser.name,
+              placeholderUser.preset,
+              placeholderUser.status,
+              placeholderUser.subscription_status,
+              placeholderUser.published_version,
+              placeholderUser.version,
+              placeholderUser.summary_revision,
+              body.uid,
+            );
+            this.sql.exec(
+              "DELETE FROM users WHERE uid = ?",
+              reservation.placeholder_uid,
+            );
+          }
+          this.sql.exec(
+            "UPDATE email_reservations SET status = 'claimed', claimed_by_uid = ?, claimed_at = ?, conflict_uid = NULL WHERE email = ? AND status = 'pending'",
+            body.uid,
+            now,
+            normalizedEmail,
+          );
+          return seed;
+        });
+        return json({ ok: true, ...(claimedEntry ? { claimedEntry } : {}) });
       }
       if (request.method === "POST" && url.pathname === "/summary") {
         const { summary } = await readJson(request, 8192);
@@ -393,6 +491,194 @@ export class ShopRegistry {
           ),
         });
       }
+      if (request.method === "GET" && url.pathname === "/reservations") {
+        const list = rows(
+          this.sql.exec(
+            "SELECT * FROM email_reservations ORDER BY created_at DESC, email ASC",
+          ),
+        ).map(reservationRecord);
+        return json({ reservations: list });
+      }
+      if (request.method === "GET" && url.pathname === "/reservation") {
+        const email = (url.searchParams.get("value") || "").trim().toLowerCase();
+        requireValue(
+          email.length > 0 && email.length <= 254,
+          "Invalid reservation lookup.",
+        );
+        const row = first(
+          this.sql.exec(
+            "SELECT * FROM email_reservations WHERE email = ?",
+            email,
+          ),
+        );
+        return json({ entry: reservationRecord(row) });
+      }
+      if (request.method === "POST" && url.pathname === "/reserve") {
+        const body = await readJson(request, 16384),
+          email = normalizeEmail(body.email, "Owner email"),
+          input = createInput(body.input);
+        requireValue(
+          /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(
+            body.operationId || "",
+          ) &&
+            /^[a-f0-9]{64}$/.test(body.fingerprint || "") &&
+            typeof body.actorUid === "string" &&
+            body.actorUid.length > 0 &&
+            body.actorUid.length <= 128 &&
+            !body.actorUid.startsWith("pending:"),
+          "Invalid reservation request.",
+        );
+        const result = this.state.storage.transactionSync(() => {
+          const byOperation = first(
+            this.sql.exec(
+              "SELECT * FROM email_reservations WHERE operation_id = ?",
+              body.operationId,
+            ),
+          );
+          if (byOperation) {
+            requireValue(
+              byOperation.email === email &&
+                byOperation.fingerprint === body.fingerprint &&
+                byOperation.status === "pending",
+              "This operation ID was already used for a different reservation.",
+              409,
+            );
+            const reg = first(
+              this.sql.exec(
+                "SELECT seed FROM registry WHERE id = ?",
+                byOperation.shop_id,
+              ),
+            );
+            return {
+              entry: JSON.parse(reg.seed),
+              reservation: reservationRecord(byOperation),
+              replayed: true,
+            };
+          }
+          const existingEmail = first(
+            this.sql.exec(
+              "SELECT * FROM email_reservations WHERE email = ?",
+              email,
+            ),
+          );
+          requireValue(
+            !existingEmail,
+            existingEmail?.status === "claimed"
+              ? "This email reservation has already been claimed."
+              : "This email already has a reserved shop.",
+            409,
+          );
+          const existingOwnerWithShop = first(
+            this.sql.exec(
+              "SELECT registry.id FROM users JOIN registry ON registry.owner_uid = users.uid WHERE lower(users.email) = ?",
+              email,
+            ),
+          );
+          requireValue(
+            !existingOwnerWithShop,
+            "An account with this email already owns a shop.",
+            409,
+          );
+          requireValue(
+            !first(
+              this.sql.exec(
+                "SELECT id FROM registry WHERE slug = ?",
+                input.slug,
+              ),
+            ),
+            "This shop address is already taken.",
+            409,
+          );
+          const now = Date.now(),
+            id = "sh_" + crypto.randomUUID().replaceAll("-", ""),
+            placeholderUid =
+              "pending:" + crypto.randomUUID().replaceAll("-", ""),
+            entry = {
+              id,
+              ownerUid: placeholderUid,
+              reservedEmail: email,
+              slug: input.slug,
+              input,
+              createdAt: now,
+            };
+          this.sql.exec(
+            "INSERT INTO registry (owner_uid, id, slug, seed) VALUES (?, ?, ?, ?)",
+            placeholderUid,
+            id,
+            input.slug,
+            JSON.stringify(entry),
+          );
+          this.sql.exec(
+            "INSERT INTO users(uid,email,created_at,last_seen_at,shop_id,slug,name,preset,status,subscription_status,published_version,version,summary_revision) VALUES(?,?,?,?,?,?,?,?,'draft','inactive',0,1,1)",
+            placeholderUid,
+            email,
+            now,
+            now,
+            id,
+            input.slug,
+            input.name,
+            input.preset,
+          );
+          this.sql.exec(
+            "INSERT INTO email_reservations(email,shop_id,placeholder_uid,slug,name,preset,status,operation_id,fingerprint,created_at,created_by) VALUES(?,?,?,?,?,?,'pending',?,?,?,?)",
+            email,
+            id,
+            placeholderUid,
+            input.slug,
+            input.name,
+            input.preset,
+            body.operationId,
+            body.fingerprint,
+            now,
+            body.actorUid,
+          );
+          const row = first(
+            this.sql.exec(
+              "SELECT * FROM email_reservations WHERE email = ?",
+              email,
+            ),
+          );
+          return {
+            entry,
+            reservation: reservationRecord(row),
+            replayed: false,
+          };
+        });
+        return json(result, result.replayed ? 200 : 201);
+      }
+      if (request.method === "POST" && url.pathname === "/reserve/cancel") {
+        const body = await readJson(request, 4096),
+          email = normalizeEmail(body.email, "Owner email");
+        const cancelled = this.state.storage.transactionSync(() => {
+          const row = first(
+            this.sql.exec(
+              "SELECT * FROM email_reservations WHERE email = ?",
+              email,
+            ),
+          );
+          requireValue(row, "Reservation not found.", 404);
+          requireValue(
+            row.status === "pending",
+            "Claimed reservations cannot be cancelled.",
+            409,
+          );
+          this.sql.exec(
+            "DELETE FROM registry WHERE id = ? AND owner_uid = ?",
+            row.shop_id,
+            row.placeholder_uid,
+          );
+          this.sql.exec(
+            "DELETE FROM users WHERE uid = ?",
+            row.placeholder_uid,
+          );
+          this.sql.exec(
+            "DELETE FROM email_reservations WHERE email = ? AND status = 'pending'",
+            email,
+          );
+          return reservationRecord(row);
+        });
+        return json({ ok: true, cancelled });
+      }
       if (request.method === "GET") {
         const field =
           url.pathname === "/owner"
@@ -419,7 +705,8 @@ export class ShopRegistry {
         requireValue(
           typeof body.ownerUid === "string" &&
             body.ownerUid.length > 0 &&
-            body.ownerUid.length <= 128,
+            body.ownerUid.length <= 128 &&
+            !body.ownerUid.startsWith("pending:"),
           "Invalid owner.",
         );
         const entry = this.state.storage.transactionSync(() => {
@@ -469,6 +756,26 @@ export class ShopRegistry {
   }
 }
 
+function reservationRecord(row) {
+  return row
+    ? {
+        email: row.email,
+        shopId: row.shop_id,
+        placeholderUid: row.placeholder_uid,
+        slug: row.slug,
+        name: row.name,
+        preset: row.preset,
+        status: row.status,
+        operationId: row.operation_id,
+        createdAt: row.created_at,
+        createdBy: row.created_by,
+        claimedByUid: row.claimed_by_uid || null,
+        claimedAt: row.claimed_at || null,
+        conflictUid: row.conflict_uid || null,
+      }
+    : null;
+}
+
 function userRecord(row) {
   return row
     ? {
@@ -512,6 +819,7 @@ export class ShopStore {
     this.state = state;
     this.env = env;
     this.sql = state.storage.sql;
+    initNotifications(this);
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS checkout_state(key TEXT PRIMARY KEY,data TEXT NOT NULL)",
     );
@@ -619,6 +927,7 @@ export class ShopStore {
         );
       }
     }
+    if (shop) await deliverNotifications(this);
   }
 
   async fetch(request) {
@@ -630,6 +939,9 @@ export class ShopStore {
           entry?.ownerUid && entry?.id && entry?.slug,
           "Invalid shop record.",
         );
+        const starterCatalog = this.shop()
+          ? null
+          : await canonicalCatalog(this.env);
         const shop = this.state.storage.transactionSync(() => {
           let current = this.shop();
           if (!current) {
@@ -638,7 +950,7 @@ export class ShopStore {
               ownerUid: entry.ownerUid,
               slug: entry.slug,
               version: 1,
-              draft: initialDraft(entry.input),
+              draft: initialDraft(entry.input, { catalog: starterCatalog }),
               subscription: { status: "inactive" },
               square: { status: "not_connected" },
               published: null,
@@ -646,6 +958,50 @@ export class ShopStore {
             this.sql.exec(
               "INSERT INTO shop (singleton, data) VALUES (1, ?)",
               JSON.stringify(current),
+            );
+          } else if (
+            current.ownerUid !== entry.ownerUid &&
+            entry.claimedFrom &&
+            current.ownerUid === entry.claimedFrom &&
+            current.id === entry.id &&
+            current.slug === entry.slug
+          ) {
+            const at = entry.claimedAt || Date.now();
+            current = {
+              ...current,
+              ownerUid: entry.ownerUid,
+              claimedAt: at,
+              summaryRevision: (current.summaryRevision || current.version) + 1,
+            };
+            this.sql.exec(
+              "UPDATE shop SET data = ? WHERE singleton = 1",
+              JSON.stringify(current),
+            );
+            for (const row of rows(
+              this.sql.exec("SELECT key, data FROM square_state"),
+            )) {
+              const parsed = JSON.parse(row.data);
+              if (parsed && parsed.ownerUid === entry.claimedFrom) {
+                parsed.ownerUid = entry.ownerUid;
+                this.sql.exec(
+                  "UPDATE square_state SET data = ? WHERE key = ?",
+                  JSON.stringify(parsed),
+                  row.key,
+                );
+              }
+            }
+            this.sql.exec(
+              "INSERT OR IGNORE INTO activation_history(id,at,data) VALUES(?,?,?)",
+              "claim:" + entry.id,
+              at,
+              JSON.stringify({
+                operationId: "claim:" + entry.id,
+                action: "claim_reservation",
+                actor: entry.ownerUid,
+                previousOwnerUid: entry.claimedFrom,
+                email: entry.reservedEmail || null,
+                at,
+              }),
             );
           }
           requireValue(
@@ -658,6 +1014,124 @@ export class ShopStore {
           return current;
         });
         return json({ shop: decorated(shop) });
+      }
+      if (request.method === "POST" && url.pathname === "/seed") {
+        const current = this.shop();
+        this.owner(request, current);
+        requireValue(
+          current.ownerUid.startsWith("pending:"),
+          "Only an unclaimed reserved shop can be seeded.",
+          409,
+        );
+        const body = await readJson(request, 2 * 1024 * 1024);
+        requireValue(
+          /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(
+            body.operationId || "",
+          ) &&
+            typeof body.actorUid === "string" &&
+            body.actorUid.length > 0 &&
+            Array.isArray(body.media) &&
+            body.media.length <= 18,
+          "Invalid seed payload.",
+        );
+        const existingAudit = first(
+          this.sql.exec(
+            "SELECT id FROM activation_history WHERE id = ?",
+            body.operationId,
+          ),
+        );
+        if (existingAudit) return json({ shop: decorated(current) });
+        const draft = body.draft
+          ? validateDraft(body.draft, await canonicalCatalog(this.env))
+          : null;
+        if (draft) {
+          requireValue(
+            draft.name === current.draft.name &&
+              draft.currency === current.draft.currency &&
+              draft.preset === current.draft.preset,
+            "Seeded draft identity must match the reserved shop.",
+          );
+          requireValue(
+            mediaReferences(draft).length <= 18,
+            "A shop can reference up to eighteen active photos.",
+          );
+        }
+        const mediaItems = body.media.map((item) => {
+          requireValue(
+            item &&
+              /^img_[a-f0-9]{64}$/.test(item.id || "") &&
+              ["logo", "cover", "hero"].includes(item.kind) &&
+              ["image/png", "image/jpeg", "image/webp"].includes(item.mime) &&
+              typeof item.base64 === "string",
+            "Invalid seed media item.",
+          );
+          const binary = atob(item.base64),
+            bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++)
+            bytes[i] = binary.charCodeAt(i);
+          return {
+            id: item.id,
+            kind: item.kind,
+            mime: item.mime,
+            bytes,
+          };
+        });
+        const seeded = this.state.storage.transactionSync(() => {
+          const now = Date.now();
+          for (const item of mediaItems) {
+            const exists = first(
+              this.sql.exec("SELECT id FROM media WHERE id = ?", item.id),
+            );
+            if (exists) continue;
+            const total = first(
+              this.sql.exec(
+                "SELECT COALESCE(SUM(byte_length),0) total FROM media",
+              ),
+            ).total;
+            requireValue(
+              total + item.bytes.byteLength <= 12 * 1024 * 1024,
+              "Shop image storage is full. Remove unused photos and try again later.",
+              413,
+            );
+            this.sql.exec(
+              "INSERT INTO media (id, kind, mime, body, byte_length, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+              item.id,
+              item.kind,
+              item.mime,
+              item.bytes,
+              item.bytes.byteLength,
+              now,
+            );
+          }
+          let next = this.shop();
+          if (draft) {
+            checkMediaReferences(this.sql, draft);
+            next = {
+              ...next,
+              draft,
+              updatedAt: now,
+              summaryRevision: (next.summaryRevision || next.version) + 1,
+            };
+            this.sql.exec(
+              "UPDATE shop SET data = ? WHERE singleton = 1",
+              JSON.stringify(next),
+            );
+          }
+          this.sql.exec(
+            "INSERT INTO activation_history(id,at,data) VALUES(?,?,?)",
+            body.operationId,
+            now,
+            JSON.stringify({
+              operationId: body.operationId,
+              action: "reserve_seed",
+              actor: body.actorUid,
+              email: body.email || null,
+              at: now,
+            }),
+          );
+          return next;
+        });
+        return json({ shop: decorated(seeded) });
       }
       const shop = this.shop();
       requireValue(shop, "Shop not found.", 404);
@@ -690,6 +1164,8 @@ export class ShopStore {
         const result = await checkoutRoutes(this, request);
         if (result) return result;
       }
+      if (url.pathname === "/notifications")
+        return notificationRoutes(this, request);
       if (url.pathname.startsWith("/billing/")) {
         const result = await handleBillingInternal(request, {
           shop,
@@ -702,9 +1178,26 @@ export class ShopStore {
       this.owner(request, shop);
       if (url.pathname.startsWith("/square/")) {
         const service = storedSquareService(this),
-          path = url.pathname;
-        if (path === "/square/status" && request.method === "GET")
-          return json(await service.status({ uid: shop.ownerUid }));
+          path = url.pathname,
+          envName = this.env.SQUARE_ENVIRONMENT || "sandbox",
+          errKey = `square_error:${envName}`,
+          connKey = `square:${envName}:${shop.id}:connection`;
+        if (path === "/square/status" && request.method === "GET") {
+          const status = await service.status({ uid: shop.ownerUid });
+          if (!status.connected) {
+            const errRow = first(
+              this.sql.exec(
+                "SELECT data FROM square_state WHERE key=?",
+                errKey,
+              ),
+            );
+            if (errRow) {
+              const parsedErr = JSON.parse(errRow.data);
+              if (parsedErr?.lastError) status.lastError = parsedErr.lastError;
+            }
+          }
+          return json(status);
+        }
         requireValue(request.method === "POST", "Not found.", 404);
         const body = await readJson(request, 4096),
           actor = body.actor;
@@ -712,6 +1205,7 @@ export class ShopStore {
         // Invalid public callbacks must not consume the owner's change budget.
         if (path !== "/square/callback") limit(this.sql, "square-changes", 5);
         if (path === "/square/connect") {
+          this.sql.exec("DELETE FROM square_state WHERE key=?", errKey);
           const { authorizationUrl, setCookie, expiresAt } =
             await service.start(actor);
           const response = json({ authorizationUrl, expiresAt });
@@ -719,18 +1213,43 @@ export class ShopStore {
           return response;
         }
         if (path === "/square/callback") {
-          const result = await service.callback(body.callback);
-          if (result.connected)
-            await this.state.storage.setAlarm(
-              Math.min(
-                (await this.state.storage.getAlarm()) || Infinity,
-                Date.now() + 6 * 86400000,
+          try {
+            const result = await service.callback(body.callback);
+            this.sql.exec("DELETE FROM square_state WHERE key=?", errKey);
+            if (result.connected)
+              await this.state.storage.setAlarm(
+                Math.min(
+                  (await this.state.storage.getAlarm()) || Infinity,
+                  Date.now() + 6 * 86400000,
+                ),
+              );
+            const { clearCookie, ...status } = result,
+              response = json(status);
+            response.headers.set("Set-Cookie", clearCookie);
+            return response;
+          } catch (error) {
+            const connRow = first(
+              this.sql.exec(
+                "SELECT data FROM square_state WHERE key=?",
+                connKey,
               ),
             );
-          const { clearCookie, ...status } = result,
-            response = json(status);
-          response.headers.set("Set-Cookie", clearCookie);
-          return response;
+            const conn = connRow ? JSON.parse(connRow.data) : null;
+            if (conn?.status !== "connected") {
+              this.sql.exec(
+                "INSERT INTO square_state(key,data) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET data=excluded.data",
+                errKey,
+                JSON.stringify({
+                  lastError:
+                    error instanceof HttpError
+                      ? error.message
+                      : "Square authorization could not be completed. Start a fresh connection and try again.",
+                  lastErrorAt: Date.now(),
+                }),
+              );
+            }
+            throw error;
+          }
         }
         if (path === "/square/verify")
           return json(await service.status(actor, { verify: true }));
@@ -758,8 +1277,10 @@ export class ShopStore {
         }
         if (path === "/square/location")
           return json(await service.chooseLocation(actor, body.locationId));
-        if (path === "/square/disconnect")
+        if (path === "/square/disconnect") {
+          this.sql.exec("DELETE FROM square_state WHERE key=?", errKey);
           return json(await service.disconnect(actor));
+        }
         throw new HttpError(404, "Not found.");
       }
       if (url.pathname === "/readiness" && request.method === "GET")
@@ -782,8 +1303,10 @@ export class ShopStore {
           customer,
           fulfillment,
           design: rawDesign,
+          preview,
+          asListed,
           accessHash,
-        } = await readJson(request, 32 * 1024);
+        } = await readJson(request, 160 * 1024);
         let design = rawDesign,
           pricing = null;
         requireValue(
@@ -887,6 +1410,42 @@ export class ShopStore {
             totalCents = pricing.totalCents;
             summary = card?.title || "Custom bouquet";
           }
+          let savedPreview = preview;
+          const cover =
+            product?.cover ||
+            (cardId &&
+              current.published.draft.collection.find(
+                (item) => item.id === cardId,
+              )?.cover);
+          if (!savedPreview && cover) {
+            const image = first(
+              this.sql.exec("SELECT mime,body FROM media WHERE id=?", cover),
+            );
+            if (image) {
+              let binary = "";
+              for (const byte of new Uint8Array(image.body))
+                binary += String.fromCharCode(byte);
+              savedPreview = `data:${image.mime};base64,${btoa(binary)}`;
+            }
+          }
+          if (
+            current.commerce &&
+            (current.commerce.pickupEnabled || current.commerce.deliveryEnabled)
+          )
+            requireValue(
+              current.commerce[fulfillment + "Enabled"] === true,
+              "This pickup or delivery option is unavailable. Choose another option.",
+              409,
+            );
+          const fulfillmentCheck = checkFulfillment({
+            rules: current.commerce?.fulfillmentRules,
+            method: fulfillment,
+            customer,
+            timeZone: current.published.draft.timeZone,
+            country: current.published.draft.country,
+            deliveryCents: current.commerce?.deliveryCents,
+          });
+          requireValue(fulfillmentCheck.ok, fulfillmentCheck.error, 409);
           limit(this.sql, "request:" + ipBucket, 10);
           const entry = {
             id: "rq_" + crypto.randomUUID().replaceAll("-", ""),
@@ -896,9 +1455,11 @@ export class ShopStore {
             paymentStatus: "unpaid",
             ...(accessHash ? { accessHash } : {}),
             kind,
+            ...(asListed ? { asListed: true } : {}),
             totalCents,
             currency: current.published.draft.currency,
             summary,
+            ...(savedPreview ? { preview: savedPreview } : {}),
             ...(product
               ? { product: structuredClone(product) }
               : {
@@ -957,9 +1518,10 @@ export class ShopStore {
             pageSize + 1,
           ),
         );
-        const requests = page
-          .slice(0, pageSize)
-          .map((row) => hydrateRequest(JSON.parse(row.data)));
+        const requests = page.slice(0, pageSize).map((row) => {
+          const { preview, ...record } = hydrateRequest(JSON.parse(row.data));
+          return record;
+        });
         const counts = {
           all: 0,
           ...Object.fromEntries(REQUEST_STATUSES.map((status) => [status, 0])),
@@ -1120,7 +1682,9 @@ export class ShopStore {
           );
           limit(this.sql, "draft", 60);
           requireValue(
-            !current.published || draft.preset === current.draft.preset,
+            !current.published ||
+              draft.preset === current.draft.preset ||
+              draft.preset === "mixed",
             "The preset cannot be changed after publication.",
             409,
           );

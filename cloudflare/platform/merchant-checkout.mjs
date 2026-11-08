@@ -11,6 +11,16 @@ import {
   readJson,
 } from "../rays-payments/security.mjs";
 import { object, multilineText, entitled } from "./validation.mjs";
+import { orderReference, merchantOrderPath } from "./order-preview.mjs";
+import {
+  emptyFulfillmentRules,
+  normalizeFulfillmentRules,
+  checkFulfillment,
+} from "../../platform/public/fulfillment-rules.mjs";
+import {
+  recordPaymentNotifications,
+  scheduleNotifications,
+} from "./notifications.mjs";
 import {
   storedSquareService,
   squareCheckoutConfigured,
@@ -22,24 +32,30 @@ export const commerceDefaults = () => ({
   version: 0,
   enabled: false,
   pricesApproved: false,
+  paymentOptions: "full_and_deposit",
   taxBps: null,
   deliveryCents: null,
+  deliveryNote: "",
   pickupEnabled: true,
   deliveryEnabled: false,
   terms: "",
   cashProductIds: [],
+  fulfillmentRules: emptyFulfillmentRules(),
 });
 export function commerceInput(v) {
   object(v, "Checkout settings", [
     "version",
     "enabled",
     "pricesApproved",
+    "paymentOptions",
     "taxBps",
     "deliveryCents",
+    "deliveryNote",
     "pickupEnabled",
     "deliveryEnabled",
     "terms",
     "cashProductIds",
+    "fulfillmentRules",
   ]);
   requireValue(
     Number.isSafeInteger(v.version) && v.version >= 0,
@@ -72,17 +88,53 @@ export function commerceInput(v) {
       ),
     "Choose valid cash products.",
   );
+  requireValue(
+    v.paymentOptions === undefined ||
+      ["full", "full_and_deposit"].includes(v.paymentOptions),
+    "Choose full payment only or full payment and a 50% deposit.",
+  );
+  const paymentOptions = v.paymentOptions ?? "full_and_deposit";
   const terms = multilineText(v.terms, "Fulfillment and refund terms", 2000);
+  let fulfillmentRules;
+  try {
+    fulfillmentRules = normalizeFulfillmentRules(v.fulfillmentRules);
+  } catch (error) {
+    throw new HttpError(400, error.message);
+  }
+  const deliveryCents =
+    fulfillmentRules.enforceDeliveryZones && v.deliveryCents === null
+      ? 0
+      : v.deliveryCents;
+  requireValue(
+    !v.enabled ||
+      !v.deliveryEnabled ||
+      !fulfillmentRules.enforceDeliveryZones ||
+      fulfillmentRules.deliveryZones.length > 0,
+    "Add at least one delivery zone before enabling postcode-restricted checkout.",
+  );
   if (v.enabled)
     requireValue(
       v.pricesApproved &&
         v.taxBps !== null &&
         (v.pickupEnabled || v.deliveryEnabled) &&
-        (!v.deliveryEnabled || v.deliveryCents !== null) &&
+        (!v.deliveryEnabled || deliveryCents !== null) &&
         terms.length >= 20,
       "Approve exact prices, tax, fulfillment and refund terms before enabling checkout.",
     );
-  return { ...v, terms, cashProductIds: [...new Set(v.cashProductIds)] };
+  const deliveryNote = multilineText(
+    v.deliveryNote ?? "",
+    "Delivery areas and instructions",
+    600,
+  );
+  return {
+    ...v,
+    paymentOptions,
+    terms,
+    deliveryNote,
+    deliveryCents,
+    fulfillmentRules,
+    cashProductIds: [...new Set(v.cashProductIds)],
+  };
 }
 
 function storageFor(store) {
@@ -123,7 +175,10 @@ function storageFor(store) {
         ].map((r) => [r.key, JSON.parse(r.data)]),
       );
     },
-    setAlarm: (t) => store.state.storage.setAlarm(t),
+    setAlarm: async (t) =>
+      store.state.storage.setAlarm(
+        Math.min((await store.state.storage.getAlarm()) || Infinity, t),
+      ),
   };
 }
 
@@ -184,34 +239,59 @@ class MerchantCheckout extends ShopService {
     return "merchant";
   }
   async saveOrder(q) {
-    await super.saveOrder(q);
-    if (q.sourceRequestId) {
-      const row = [
-        ...this.store.sql.exec(
-          "SELECT data FROM customer_requests WHERE id=?",
-          q.sourceRequestId,
-        ),
-      ][0];
-      if (row) {
-        const request = JSON.parse(row.data);
-        request.checkout = {
-          orderId: q.id,
-          totalCents: q.totalCents,
-          paidCents: q.paidCents,
-          refundedCents: q.refundedCents,
-          balanceCents: Math.max(0, q.totalCents - q.paidCents),
-          status: q.status,
-        };
-        request.paymentStatus = q.status;
-        request.version = (request.version || 1) + 1;
-        request.updatedAt = this.now();
-        this.store.sql.exec(
-          "UPDATE customer_requests SET data=? WHERE id=?",
-          JSON.stringify(request),
-          request.id,
-        );
+    const previous = await this.storage.get("order:" + q.id);
+    const serialized = JSON.stringify(q);
+    requireValue(
+      new TextEncoder().encode(serialized).length <= 256 * 1024,
+      "Order storage limit exceeded.",
+      413,
+    );
+    this.store.state.storage.transactionSync(() => {
+      this.store.sql.exec(
+        "INSERT INTO checkout_state(key,data) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET data=excluded.data",
+        "order:" + q.id,
+        serialized,
+      );
+      recordPaymentNotifications(this.store, q, previous);
+      if (q.sourceRequestId) {
+        const row = [
+          ...this.store.sql.exec(
+            "SELECT data FROM customer_requests WHERE id=?",
+            q.sourceRequestId,
+          ),
+        ][0];
+        if (row) {
+          const request = JSON.parse(row.data);
+          const checkout = {
+            orderId: q.id,
+            totalCents: q.totalCents,
+            paidCents: q.paidCents,
+            refundedCents: q.refundedCents,
+            balanceCents: Math.max(0, q.totalCents - q.paidCents),
+            status: q.status,
+          };
+          // Status polling re-verifies completed payments. It must not manufacture
+          // merchant edit conflicts when no customer-visible payment facts changed.
+          if (
+            JSON.stringify(request.checkout) === JSON.stringify(checkout) &&
+            request.paymentStatus === q.status &&
+            request.reference === orderReference(q)
+          )
+            return;
+          request.checkout = checkout;
+          request.paymentStatus = q.status;
+          request.reference = orderReference(q);
+          request.version = (request.version || 1) + 1;
+          request.updatedAt = this.now();
+          this.store.sql.exec(
+            "UPDATE customer_requests SET data=? WHERE id=?",
+            JSON.stringify(request),
+            request.id,
+          );
+        }
       }
-    }
+    });
+    await scheduleNotifications(this.store);
   }
   async checkout(id, token, input) {
     const q = await this.customerOrder(id, token);
@@ -224,6 +304,11 @@ class MerchantCheckout extends ShopService {
     requireValue(
       row && JSON.parse(row.data).status !== "cancelled",
       "This request has been cancelled by the florist. Contact the shop.",
+      409,
+    );
+    requireValue(
+      input?.choice !== "deposit" || q.paymentOptions !== "full",
+      "This florist accepts full payment only.",
       409,
     );
     return super.checkout(id, token, input);
@@ -269,6 +354,13 @@ class MerchantCheckout extends ShopService {
       409,
     );
     requireValue(
+      r.fulfillment !== "delivery" ||
+        (typeof r.customer.address === "string" &&
+          r.customer.address.trim().length >= 3),
+      "Enter a delivery address before starting payment.",
+      409,
+    );
+    requireValue(
       !p.cashProductIds.includes(r.product?.id) &&
         !/\b(money|cash|banknote)\b/i.test(r.product?.title || "") &&
         !(r.design?.items || []).some((i) =>
@@ -278,8 +370,17 @@ class MerchantCheckout extends ShopService {
       "Cash-containing bouquets require provider eligibility review and cannot be paid online.",
       409,
     );
+    const eligibility = checkFulfillment({
+      rules: p.fulfillmentRules,
+      method: r.fulfillment,
+      customer: r.customer,
+      timeZone: shop.published.draft.timeZone,
+      country: shop.published.draft.country,
+      deliveryCents: p.deliveryCents,
+    });
+    requireValue(eligibility.ok, eligibility.error, 409);
     const subtotalCents = r.totalCents,
-      deliveryCents = r.fulfillment === "delivery" ? p.deliveryCents : 0;
+      deliveryCents = eligibility.deliveryCents;
     requireValue(
       cents(subtotalCents) && cents(deliveryCents),
       "This request has no final payable price.",
@@ -320,6 +421,7 @@ class MerchantCheckout extends ShopService {
       accessHash: r.accessHash,
       sourceRequestId: r.id,
       totalCents,
+      paymentOptions: p.paymentOptions || "full_and_deposit",
       paidCents: 0,
       refundedCents: 0,
       currency: r.currency,
@@ -336,6 +438,7 @@ class MerchantCheckout extends ShopService {
         method: r.fulfillment === "pickup" ? "Pickup" : "Delivery",
       },
       snapshot: {
+        preview: r.preview || null,
         design: r.design || null,
         product: r.product || null,
         summary: r.summary,
@@ -343,6 +446,7 @@ class MerchantCheckout extends ShopService {
       },
       cancellationPolicy: p.terms,
       pickupInstructions: r.fulfillment === "pickup" ? shop.draft.city : "",
+      deliveryNote: r.fulfillment === "delivery" ? p.deliveryNote : "",
       requests: [],
       payments: {},
       refunds: {},
@@ -370,11 +474,54 @@ class MerchantCheckout extends ShopService {
     return this.publicOrder(q);
   }
   publicOrder(q) {
+    const base = super.publicOrder(q);
+    const shop = this.store.shop();
+    const draft = shop?.published?.draft || shop?.draft;
+    const phone = (draft?.phone || "").replace(/\D/g, "");
+    const money = (amount) =>
+      new Intl.NumberFormat("en", {
+        style: "currency",
+        currency: q.currency || "USD",
+      }).format((amount || 0) / 100);
+    const statusLabel =
+      q.status === "paid"
+        ? `Paid in full via Square (${money(q.paidCents)})`
+        : q.status === "deposit_paid"
+          ? `50% deposit paid via Square (${money(q.paidCents)}; remaining balance ${money(Math.max(0, q.totalCents - q.paidCents))})`
+          : `Order saved · Total ${money(q.totalCents)} (${q.status.replaceAll("_", " ")})`;
+    const whatsappUrl = /^\d{8,15}$/.test(phone)
+      ? `https://wa.me/${phone}?text=${encodeURIComponent(
+          `Order ${q.id} (${q.sourceRequestId || "request"}): ${q.snapshot?.summary || "Flower order"}. ${q.customer.name}${q.customer.phone ? ", " + q.customer.phone : ""}. ${q.customer.method}${q.customer.address ? " to " + q.customer.address : ""}${q.customer.date ? " on " + q.customer.date : ""}. ${statusLabel}.`,
+        )}`
+      : null;
     return {
-      ...super.publicOrder(q),
+      ...base,
+      paymentOptions: q.paymentOptions || "full_and_deposit",
+      reference: orderReference(q),
+      deliveryNote: q.deliveryNote || "",
+      checkoutAttempt:
+        !held(q) && ["creating", "pending"].includes(q.requests.at(-1)?.status)
+          ? {
+              status: q.requests.at(-1).status,
+              choice: q.requests.at(-1).choice,
+              dueCents: q.requests.at(-1).dueCents,
+            }
+          : null,
+      customer: {
+        ...base.customer,
+        ...(q.customer.address ? { address: q.customer.address } : {}),
+        ...(q.customer.recipient ? { recipient: q.customer.recipient } : {}),
+        ...(q.customer.postalCode
+          ? {
+              postalCode: q.customer.postalCode,
+              country: q.customer.country || "",
+            }
+          : {}),
+      },
       snapshot: q.snapshot,
       environment: this.env.ENVIRONMENT,
       sourceRequestId: q.sourceRequestId,
+      whatsappUrl,
     };
   }
   async rate(visitor, kind) {
@@ -403,25 +550,28 @@ class MerchantCheckout extends ShopService {
     return super.event(event);
   }
   async createLink(q, r) {
+    const paymentLabel =
+      r.choice === "deposit"
+        ? "50% deposit"
+        : q.paidCents
+          ? "Balance payment"
+          : "Full payment";
     const { accessToken, connection } = await this.token();
     requireValue(
       connection.locationId,
       "The shop must select its Square location.",
       409,
     );
-    const link = await createHostedCheckout({
-      env: this.env,
-      token: accessToken,
-      fetchImpl: this.fetchImpl,
-      body: {
+    if (!r.createPayload) {
+      r.createPayload = {
         idempotency_key: r.key,
         quick_pay: {
           name:
             (await this.settings()).name +
             " · " +
-            q.id +
+            orderReference(q) +
             " · " +
-            (r.choice === "deposit" ? "50% deposit" : "Balance payment"),
+            paymentLabel,
           price_money: { amount: r.dueCents, currency: q.currency },
           location_id: connection.locationId,
         },
@@ -436,15 +586,69 @@ class MerchantCheckout extends ShopService {
             "&order=" +
             q.id,
         },
-        pre_populated_data: { buyer_email: q.customer.email },
+        ...(q.customer.email
+          ? {
+              pre_populated_data: {
+                buyer_email: q.customer.email,
+              },
+            }
+          : {}),
         payment_note:
           "Nebula order " +
-          q.id +
+          orderReference(q) +
           ". " +
-          (r.choice === "deposit" ? "50% deposit." : "Balance payment.") +
-          " Balance due at delivery.",
-      },
-    });
+          paymentLabel +
+          ". View saved bouquet: " +
+          this.env.SITE_ORIGIN +
+          merchantOrderPath(q) +
+          " (florist sign-in required).",
+      };
+      r.createMerchantId = connection.merchantId;
+      await this.saveOrder(q);
+    }
+    requireValue(
+      r.createPayload.quick_pay.location_id === connection.locationId &&
+        r.createMerchantId === connection.merchantId,
+      "The shop’s Square location changed. Contact the florist about this saved checkout.",
+      409,
+    );
+    let link;
+    try {
+      link = await createHostedCheckout({
+        env: this.env,
+        token: accessToken,
+        fetchImpl: this.fetchImpl,
+        body: r.createPayload,
+      });
+    } catch (error) {
+      // Older saved attempts may contain an optional phone Square rejects.
+      // Only an explicit validation rejection proves this attempt made no link.
+      // Ambiguous transport failures must retain their original key and payload.
+      if (
+        error.squareStatus === 400 &&
+        r.createPayload.pre_populated_data?.buyer_phone_number &&
+        error.squareErrors?.length &&
+        error.squareErrors.every(
+          (item) =>
+            item.code === "INVALID_PHONE_NUMBER" &&
+            item.field === "pre_populated_data.buyer_phone_number",
+        )
+      ) {
+        r.status = "rejected";
+        r.failureCode = "INVALID_PHONE_NUMBER";
+        await this.saveOrder(q);
+        await this.audit("checkout_rejected", "customer", {
+          orderId: q.id,
+          attempt: r.number,
+          code: r.failureCode,
+        });
+        throw new HttpError(
+          503,
+          "Square rejected the optional contact prefill. Your order is saved; retry checkout.",
+        );
+      }
+      throw error;
+    }
     Object.assign(r, {
       status: "pending",
       squareLinkId: link.id,
@@ -634,7 +838,9 @@ export async function checkoutRoutes(store, request) {
   if (path === "/commerce") {
     store.owner(request, shop);
     if (request.method === "GET")
-      return Response.json({ settings: shop.commerce || commerceDefaults() });
+      return Response.json({
+        settings: { ...commerceDefaults(), ...shop.commerce },
+      });
     requireValue(request.method === "PUT", "Not found.", 404);
     const body = commerceInput(await readJson(request, 8192));
     return checkoutLocked(store, async () => {

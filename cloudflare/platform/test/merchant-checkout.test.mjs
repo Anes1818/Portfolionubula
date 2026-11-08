@@ -85,8 +85,8 @@ test("authoritative quote adds tax/delivery, checks secret and refuses browser a
   }
 });
 
-test("USD and CAD deposits, balance, duplicate webhook and refund reconciliation use seller connection", async () => {
-  for (const currency of ["USD", "CAD"]) {
+test("USD, CAD, GBP, EUR, and AUD deposits, balance, duplicate webhook and refund reconciliation use seller connection", async () => {
+  for (const currency of ["USD", "CAD", "GBP", "EUR", "AUD"]) {
     const f = await setup(currency);
     try {
       let { order } = await parse(
@@ -312,6 +312,9 @@ test("real Dome and Heart designs preserve browser/server prices and complete de
       const draft = {
         ...current.draft,
         preset,
+        disabledFlowers: [],
+        disabledExtras: [],
+        home: {...current.draft.home,sections:["builder","contact"]},
         enabledModes:
           preset === "satin" ? ["dome", "heart"] : ["classic", "dome", "heart"],
         flowerPrices: Object.fromEntries(
